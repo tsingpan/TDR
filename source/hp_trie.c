@@ -49,7 +49,7 @@ hpint32 hp_trie_init(HP_TRIE* xtrie, hpuint32 xtrie_size, const char* token_set)
 	{
 		goto ERROR_RET;
 	}
-	if((xtrie_size < 0) || (xtrie_size < (hpint32)HP_OFFSET_OF(HP_TRIE, xmempool)))
+	if((xtrie_size < 0) || (xtrie_size < (hpuint32)HP_OFFSET_OF(HP_TRIE, xmempool)))
 	{
 		goto ERROR_RET;
 	}

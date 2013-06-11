@@ -43,9 +43,9 @@ typedef unsigned long long hpuint64;
 
 #define HP_MAX_FILE_PATH_LENGTH 1024
 
-#define HP_OFFSET_OF(type, member) ((hpuint64) &((type *)0)->member)
+#define HP_OFFSET_OF(type, member) ((size_t) &((type *)0)->member)
 
-#define HP_CONTAINER_OF(ptr, type, member) ((type *)((hpuint64)ptr - HP_OFFSET_OF(type, member)))
+#define HP_CONTAINER_OF(ptr, type, member) ((type *)((size_t)ptr - HP_OFFSET_OF(type, member)))
 
 
 #ifndef HP_IN
