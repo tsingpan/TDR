@@ -15,7 +15,7 @@
 
 #define strtoll(begin_ptr, end_ptr, length) _strtoi64(begin_ptr, end_ptr, length)
 #define strtoull(begin_ptr, end_ptr, length) _strtoui64(begin_ptr, end_ptr, length)
-#define hp_snprintf _snprintf
+#define snprintf _snprintf
 
 #define PRIu64 "I64d"
 #define PRIi64 "I64d"

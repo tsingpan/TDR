@@ -29,7 +29,7 @@ hpint32 hp_file_add_path(HP_FILE* xfile, const char* path)
 
 	if(xfile->itail < HP_FILE_MAX_PATH_COUNT)
 	{
-		hp_snprintf(xfile->includePath[xfile->itail], HP_FILE_PATH_LENGTH, "%s", path);
+		snprintf(xfile->includePath[xfile->itail], HP_FILE_PATH_LENGTH, "%s", path);
 		++xfile->itail;
 		return E_HP_NOERROR;
 	}
@@ -53,7 +53,7 @@ hpint32 hp_file_fix_path(char* _path, hpint32 *_len)
 	}
 	len = strlen(_path);
 
-	hp_snprintf(path, HP_FILE_PATH_LENGTH, "%s", _path);
+	snprintf(path, HP_FILE_PATH_LENGTH, "%s", _path);
 #ifndef WIN32
 	if(_path[0] == '/')
 	{
@@ -174,7 +174,7 @@ hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len)
 
 	for(i = 0; i < xfile->itail; ++i)
 	{
-		hp_snprintf(realPath, HP_FILE_PATH_LENGTH, "%s%c%s", xfile->includePath[i], HP_FILE_SEPARATOR, path);
+		snprintf(realPath, HP_FILE_PATH_LENGTH, "%s%c%s", xfile->includePath[i], HP_FILE_SEPARATOR, path);
 		len = HP_FILE_PATH_LENGTH;
 		if(hp_file_fix_path(realPath, &len) != E_HP_NOERROR)
 		{
@@ -188,7 +188,7 @@ hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len)
 			{
 				*_len = len;
 			}
-			hp_snprintf(path, *_len, "%s", realPath);
+			snprintf(path, *_len, "%s", realPath);
 			return E_HP_NOERROR;
 		}
 	}
