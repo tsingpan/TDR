@@ -1,7 +1,6 @@
-#include "hotpot/xmath.h"
-#include "hotpot/typedef.h"
-#include "hotpot/xbase.h"
-#include "hotpot/xerror.h"
+#include "hotpot/hp_math.h"
+#include "hotpot/hp_platform.h"
+#include "hotpot/hp_error.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -9,18 +8,18 @@
 #include <assert.h>
 #include <math.h>
 
-#define MAX_NUM 1000000
-int g_prime[MAX_NUM];
-int g_prime_num;
-int g_is_prime[MAX_NUM];
-int g_euler[MAX_NUM];
+#define HP_MAX_NUM 1000000
+static hpint32 g_prime[HP_MAX_NUM];
+static hpint32 g_prime_num;
+static hpint32 g_is_prime[HP_MAX_NUM];
+static hpint32 g_euler[HP_MAX_NUM];
 
 static void _geteuler()
 {
-	int	i,j,t;
+	hpint32	i,j,t;
 
 	g_euler[1] = 0;
-	for (i = 2;i < MAX_NUM;i++)
+	for (i = 2;i < HP_MAX_NUM;i++)
 	{
 		if(g_is_prime[i] == TRUE)
 		{
@@ -53,24 +52,24 @@ static void _geteuler()
 
 static void _getprime()
 {
-	int i,j;
+	hpint32 i,j;
 	
-	for(i = 0; i < MAX_NUM; ++i)
+	for(i = 0; i < HP_MAX_NUM; ++i)
 	{
 		g_is_prime[i] = TRUE;
 	}
 	g_is_prime[0] = FALSE;//其实不是素数也不是合数
 	g_is_prime[1] = FALSE;//其实不是素数也不是合数
 	i = 2;
-	while(i <= sqrt(MAX_NUM))
+	while(i <= sqrt(HP_MAX_NUM))
 	{	
-		while((i < MAX_NUM)&&(g_is_prime[i] == FALSE))
+		while((i < HP_MAX_NUM)&&(g_is_prime[i] == FALSE))
 		{
 			i++;
 		}
 
 		j = i * 2;
-		while (j < MAX_NUM)
+		while (j < HP_MAX_NUM)
 		{
 			g_is_prime[j] = FALSE;
 			j += i;
@@ -79,7 +78,7 @@ static void _getprime()
 	}
 
 	g_prime_num = 0;
-	for(i = 2; i < MAX_NUM; ++i)
+	for(i = 2; i < HP_MAX_NUM; ++i)
 	{
 		if(g_is_prime[i] == TRUE)
 		{
@@ -89,34 +88,34 @@ static void _getprime()
 	}
 }
 
-int xmath_init()
+hpint32 hp_math_init()
 {
 	g_prime_num = 0;
 	memset(g_is_prime, 0, sizeof(g_is_prime));
 	memset(g_euler, 0, sizeof(g_euler));
 	_getprime();
 	//最好初始化一个随机种子？
-	srand((unsigned int)time(0));
+	srand((hpuint32)time(0));
 
 	//这个计算比较慢， 考虑是否算好了编译进来……
 	_geteuler();
 
 
-	return XNOERROR;
+	return E_HP_NOERROR;
 }
 
-int euler(int n)
+hpint32 hp_euler(hpint32 n)
 {
-	if((n >= 0) && (n < MAX_NUM))
+	if((n >= 0) && (n < HP_MAX_NUM))
 	{
-		return XERROR;
+		return E_HP_ERROR;
 	}
 
-	assert(g_euler[n] != XERROR);
+	assert(g_euler[n] != E_HP_ERROR);
 	return g_euler[n];
 }
 
-hpuint64 mulmod(hpuint64 a, hpuint64 b, hpuint64 n)
+hpuint64 hp_mulmod(hpuint64 a, hpuint64 b, hpuint64 n)
 {
 	hpuint64	t;	
 	
@@ -133,7 +132,7 @@ hpuint64 mulmod(hpuint64 a, hpuint64 b, hpuint64 n)
 	return t;
 }
 
-hpuint64 powermod(hpuint64 a,hpuint64 b, hpuint64 n)
+hpuint64 hp_powermod(hpuint64 a,hpuint64 b, hpuint64 n)
 {
 	hpuint64 d;
 	
@@ -142,21 +141,21 @@ hpuint64 powermod(hpuint64 a,hpuint64 b, hpuint64 n)
 	{
 		if (b&1)
 		{
-			d = mulmod(d, a, n);
+			d = hp_mulmod(d, a, n);
 		}
 		b = b>>1;
-		a = mulmod(a, a, n);
+		a = hp_mulmod(a, a, n);
 	}
 	return d;
 }
 
-int	rabin_miller(hpuint64	n)
+hpint32	hp_rabin_miller(hpuint64	n)
 {
-	const unsigned int	rule[10]={2,3,5,7,11,13,17,19,23,29};
+	const hpuint32	rule[10]={2,3,5,7,11,13,17,19,23,29};
 	hpuint64	x,b,last;
-	int					i,j,count;	
+	hpint32					i,j,count;	
 
-	if(n < MAX_NUM)
+	if(n < HP_MAX_NUM)
 	{
 		return g_is_prime[n];
 	}
@@ -175,7 +174,7 @@ int	rabin_miller(hpuint64	n)
 		{
 			return TRUE;
 		}
-		x = powermod(rule[i], b, n);
+		x = hp_powermod(rule[i], b, n);
 
 		if (x == 1)
 		{
@@ -185,7 +184,7 @@ int	rabin_miller(hpuint64	n)
 		for(j = 1; j <= count; ++j)
 		{
 			last = x;
-			x = mulmod(last, last, n);
+			x = hp_mulmod(last, last, n);
 			if(x == 1)
 			{
 				if(last != n - 1)
@@ -207,7 +206,7 @@ int	rabin_miller(hpuint64	n)
 	return TRUE;
 }
 
-hpuint64	gcd(hpuint64 a, hpuint64 b)
+hpuint64	hp_gcd(hpuint64 a, hpuint64 b)
 {
 	hpuint64 t;
 		
@@ -221,11 +220,11 @@ hpuint64	gcd(hpuint64 a, hpuint64 b)
 	return a;
 }
 
-hpuint64 rho(hpuint64 n)
+hpuint64 hp_rho(hpuint64 n)
 {
 	hpuint64	x,y,k,i,d,c;
 	
-	while(TRUE)
+	for(;;)
 	{	
 		x = rand()%(n-2)+2;;
 		y = x;
@@ -238,14 +237,14 @@ hpuint64 rho(hpuint64 n)
 		while(d == 1)
 		{
 			++i;
-			x = (mulmod(x, x, n) + n - c) % n;
+			x = (hp_mulmod(x, x, n) + n - c) % n;
 			if (x > y)
 			{
-				d = gcd(x-y, n);
+				d = hp_gcd(x-y, n);
 			}
 			else
 			{
-				d = gcd(y - x, n);
+				d = hp_gcd(y - x, n);
 			}
 
 			if((d != 1)&&(d != n))
@@ -260,11 +259,9 @@ hpuint64 rho(hpuint64 n)
 			}
 		}
 	}
-
-	return d;
 }
 
-void extendgcd(hpint64	a,hpint64	b,hpint64	*x,hpint64	*y, hpint64 *d)
+void hp_extendgcd(hpint64	a,hpint64	b,hpint64	*x,hpint64	*y, hpint64 *d)
 {
 	hpint64 tx, ty;
 	
@@ -276,7 +273,7 @@ void extendgcd(hpint64	a,hpint64	b,hpint64	*x,hpint64	*y, hpint64 *d)
 		return;
 	}
 	
-	extendgcd(b, a % b, &tx, &ty, d);	
+	hp_extendgcd(b, a % b, &tx, &ty, d);	
 	*x = ty;
 	*y = tx - (a / b) * ty;
 }
@@ -285,11 +282,11 @@ void extendgcd(hpint64	a,hpint64	b,hpint64	*x,hpint64	*y, hpint64 *d)
 //d是a,n的最大公约数，表示解空间有d个基
 //tx返回最小的大于0的解。
 //一组最小基为tx+i*n/d  (0<=i<d)
-int	congruence(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *d)
+hpint32	congruence(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *d)
 {
 	hpint64 ty, t;
 	
-	extendgcd(a, n, tx, &ty, d);
+	hp_extendgcd(a, n, tx, &ty, d);
 	if(b % *d)
 	{
 		return FALSE;
@@ -302,11 +299,11 @@ int	congruence(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *d)
 	return TRUE;
 }
 
-int equation(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *ty, hpint64 *d)
+hpint32 hp_equation(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *ty, hpint64 *d)
 {
 	hpint64 t;
 
-	extendgcd(a, b, tx, ty, d);
+	hp_extendgcd(a, b, tx, ty, d);
 	if(n % (*d))
 	{
 		return FALSE;
@@ -319,22 +316,22 @@ int equation(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *ty, hpint64 
 	return TRUE;
 }
 
-hpint64 lcm(hpint64	a,hpint64	b)
+hpint64 hp_lcm(hpint64	a,hpint64	b)
 {
-	return(a* b / gcd(a, b));
+	return(a* b / hp_gcd(a, b));
 }
 
-int	china(hpint64	*a,hpint64 *m,int	tail,hpint64	*a1,hpint64	*m1)
+hpint32	hp_china(hpint64	*a,hpint64 *m,hpint32	tail,hpint64	*a1,hpint64	*m1)
 {
 	hpint64	tx,ty,d,t;
-	int		i;
+	hpint32		i;
 	
 	*a1 = a[1];
 	*m1 = m[1];
 	
 	for(i = 2; i <= tail; ++i)
 	{		
-		extendgcd(*m1, m[i], &tx, &ty, &d);
+		hp_extendgcd(*m1, m[i], &tx, &ty, &d);
 		t = ((a[i] - (*a1)) %m[i] + m[i]) % m[i];	
 		if(t % d)
 		{

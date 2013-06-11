@@ -1,18 +1,13 @@
-#include "hotpot/xfile.h"
-#include "hotpot/xbase.h"
-#include "hotpot/xerror.h"
+#include "hotpot/hp_file.h"
+#include "hotpot/hp_platform.h"
+#include "hotpot/hp_error.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 
-#ifdef WIN32
-#pragma warning(disable:4996)
-#endif
-
-
-int xfile_init(XFILE* xfile)
+hpint32 hp_file_init(HP_FILE* xfile)
 {
 	if(xfile == NULL)
 	{
@@ -20,45 +15,45 @@ int xfile_init(XFILE* xfile)
 	}
 	xfile->itail = 0;
 
-	return XNOERROR;
+	return E_HP_NOERROR;
 ERROR_RET:
-	return XERROR;
+	return E_HP_ERROR;
 }
 
-int xfile_add_path(XFILE* xfile, const char* path)
+hpint32 hp_file_add_path(HP_FILE* xfile, const char* path)
 {
 	if((xfile == NULL) || (path == NULL))
 	{
-		return XERROR;
+		return E_HP_ERROR;
 	}
 
-	if(xfile->itail < XFILE_MAX_PATH_COUNT)
+	if(xfile->itail < HP_FILE_MAX_PATH_COUNT)
 	{
-		SNPRINTF(xfile->includePath[xfile->itail], XFILE_PATH_LENGTH, "%s", path);
+		hp_snprintf(xfile->includePath[xfile->itail], HP_FILE_PATH_LENGTH, "%s", path);
 		++xfile->itail;
-		return XNOERROR;
+		return E_HP_NOERROR;
 	}
-	return XERROR;
+	return E_HP_ERROR;
 }
 
-int xfile_fix_path(char* _path, int *_len)
+hpint32 hp_file_fix_path(char* _path, hpint32 *_len)
 {	
-	char path[XFILE_PATH_LENGTH];
-	char *p[XFILE_PATH_LENGTH];
-	int ptail = 0;
-	int first = 1;
-	int i = 0;
-	int j = 0;
-	int len = 0;
-	int tlen = 0;
+	char path[HP_FILE_PATH_LENGTH];
+	char *p[HP_FILE_PATH_LENGTH];
+	hpint32 ptail = 0;
+	hpint32 first = 1;
+	hpint32 i = 0;
+	hpint32 j = 0;
+	hpint32 len = 0;
+	hpint32 tlen = 0;
 
 	if((_path == NULL) || (_len == NULL))
 	{
-		return XERROR;
+		return E_HP_ERROR;
 	}
 	len = strlen(_path);
 
-	SNPRINTF(path, XFILE_PATH_LENGTH, "%s", _path);
+	hp_snprintf(path, HP_FILE_PATH_LENGTH, "%s", _path);
 #ifndef WIN32
 	if(_path[0] == '/')
 	{
@@ -117,20 +112,20 @@ int xfile_fix_path(char* _path, int *_len)
 
 	for(i = 0; i < ptail; ++i)
 	{
-		if((len > 0) && (strlen(p[i]) > 0) && (_path[len - 1] != FILE_SEPARATOR))
+		if((len > 0) && (strlen(p[i]) > 0) && (_path[len - 1] != HP_FILE_SEPARATOR))
 		{
 			if(len < *_len)
 			{
-				_path[len++] += FILE_SEPARATOR;
+				_path[len++] += HP_FILE_SEPARATOR;
 			}
 			else
 			{
 				*_len = len;
-				return XERROR;
+				return E_HP_ERROR;
 			}
 		}
 
-		for(j = 0; j < (int)strlen(p[i]); ++j)
+		for(j = 0; j < (hpint32)strlen(p[i]); ++j)
 		{
 			if(len < *_len)
 			{
@@ -139,7 +134,7 @@ int xfile_fix_path(char* _path, int *_len)
 			else
 			{
 				*_len = len;
-				return XERROR;
+				return E_HP_ERROR;
 			}
 		}
 	}
@@ -149,43 +144,43 @@ int xfile_fix_path(char* _path, int *_len)
 		_path[len++] = 0;
 		*_len = len;
 	}
-	return XNOERROR;
+	return E_HP_NOERROR;
 }
 
 
-int xfile_search_file(const XFILE* xfile, char* path, int *_len)
+hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len)
 {
-	int i = 0;
-	int len = 0;
-	char realPath[XFILE_PATH_LENGTH];
+	hpint32 i = 0;
+	hpint32 len = 0;
+	char realPath[HP_FILE_PATH_LENGTH];
 
 	if((xfile == NULL) | (path == NULL) || (_len == NULL))
 	{
-		return XERROR;
+		return E_HP_ERROR;
 	}
 	len = strlen(path);
 
 	if(fopen(path, "r") != NULL)
 	{
 		*_len = len;
-		return XNOERROR;
+		return E_HP_NOERROR;
 	}
 #ifndef WIN32
 	if(path[0] == '/')
 	{
-		return XERROR;
+		return E_HP_ERROR;
 	}
 #endif//WIN32
 
 	for(i = 0; i < xfile->itail; ++i)
 	{
-		SNPRINTF(realPath, XFILE_PATH_LENGTH, "%s%c%s", xfile->includePath[i], FILE_SEPARATOR, path);
-		len = XFILE_PATH_LENGTH;
-		if(xfile_fix_path(realPath, &len) != XNOERROR)
+		hp_snprintf(realPath, HP_FILE_PATH_LENGTH, "%s%c%s", xfile->includePath[i], HP_FILE_SEPARATOR, path);
+		len = HP_FILE_PATH_LENGTH;
+		if(hp_file_fix_path(realPath, &len) != E_HP_NOERROR)
 		{
 			memset(path, 0, *_len);
 			*_len = 0;
-			return XERROR;
+			return E_HP_ERROR;
 		}
 		if(fopen(realPath, "r") != NULL)
 		{
@@ -193,20 +188,20 @@ int xfile_search_file(const XFILE* xfile, char* path, int *_len)
 			{
 				*_len = len;
 			}
-			SNPRINTF(path, *_len, "%s", realPath);
-			return XNOERROR;
+			hp_snprintf(path, *_len, "%s", realPath);
+			return E_HP_NOERROR;
 		}
 	}
 	memset(path, 0, *_len);
 	*_len = 0;
-	return XERROR;
+	return E_HP_ERROR;
 }
 
-void xfile_cut_path(char* file_name)
+void hp_file_cut_path(char* file_name)
 {
-	int i = 0;
-	int pos = 0;
-	int len = strlen(file_name);
+	hpint32 i = 0;
+	hpint32 pos = 0;
+	hpint32 len = strlen(file_name);
 	
 	for(i = 0; i < len; ++i)
 	{
@@ -220,7 +215,7 @@ void xfile_cut_path(char* file_name)
 	file_name[len - pos] = 0;
 }
 
-void xfile_cut_suffix(char *file_name, const char* suffix)
+void hp_file_cut_suffix(char *file_name, const char* suffix)
 {
 	if(strlen(file_name) >= strlen(suffix))
 	{

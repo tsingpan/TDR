@@ -1,11 +1,10 @@
-#include "hotpot/xnumber.h"
-#include "hotpot/typedef.h"
-#include "hotpot/xerror.h"
+#include "hotpot/hp_number.h"
+#include "hotpot/hp_error.h"
 
 #include <string.h>
 
 
-int varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result)
+hpint32 hp_varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result)
 {
 	hpuint8 b;
 
@@ -45,15 +44,15 @@ int varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result)
 		goto done;
 	}
 
-	return XERROR;
+	return E_HP_ERROR;
 done:
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
 
-int varint16_encode(const hpuint16 n, char *buff_ptr, hpuint32 *buff_size)
+hpint32 hp_varint16_encode(hpuint16 n, char *buff_ptr, hpuint32 *buff_size)
 {
 	if(*buff_size < 1)
 	{
@@ -95,13 +94,13 @@ int varint16_encode(const hpuint16 n, char *buff_ptr, hpuint32 *buff_size)
 	//return XERROR;
 
 done:
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
 
-int varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result)
+hpint32 hp_varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result)
 {
 	hpuint8 b;
 
@@ -165,16 +164,16 @@ int varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result)
 		goto done;
 	}	
 
-	return XERROR;
+	return E_HP_ERROR;
 done:
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
 
 
-int varint32_encode(hpuint32 n, char *buff_ptr, hpuint32 *buff_size)
+hpint32 hp_varint32_encode(hpuint32 n, char *buff_ptr, hpuint32 *buff_size)
 {
 	if(*buff_size < 1)
 	{
@@ -246,14 +245,14 @@ int varint32_encode(hpuint32 n, char *buff_ptr, hpuint32 *buff_size)
 	//return XERROR;
 
 done:
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
 
 
-int varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result)
+hpint32 hp_varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result)
 {
 	hpuint8 b;
 
@@ -383,22 +382,22 @@ int varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result)
 		*buff_size = 10;
 		goto done;
 	}
-	return XERROR;
+	return E_HP_ERROR;
 done:
 	*result = ((hpuint64)par0) | ((hpuint64)par1 << 28 )| ((hpuint64)par2 << 56);
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
 
-int varint64_encode(hpuint64 n, char *buff_ptr, hpuint32 *buff_size)
+hpint32 hp_varint64_encode(hpuint64 n, char *buff_ptr, hpuint32 *buff_size)
 {
 	hpuint32 part0 = (hpuint32)(n);
 	hpuint32 part1 = (hpuint32)(n >> 28);
 	hpuint32 part2 = (hpuint32)(n >> 56);
 
-	int size;
+	hpint32 size;
 
 	if (part2 == 0)
 	{
@@ -554,8 +553,8 @@ size1:
 	buff_ptr[0] = (char)((part0      ) | 0x80);
 
 	buff_ptr[size-1] &= 0x7F;
-	return XNOERROR;
+	return E_HP_NOERROR;
 
 not_enough_byte_size:
-	return XNOT_ENOUGH_BYTEBUFF_SIZE;
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
