@@ -8,16 +8,16 @@
 
 typedef struct tagHP_TRIE
 {
-	hpint32 token2index[HP_TRIE_MAX_ASCII];
-	hpint32 children_num;
-	hpint32 unit_size;
-	hpint32 unit_num;
+	hpuint32 token2index[HP_TRIE_MAX_ASCII];
+	hpuint32 children_num;
+	hpuint32 unit_size;
+	hpuint32 unit_num;
 	HP_MEMPOOL_ID root_mid;
  	char xmempool[1];
 }HP_TRIE;
 
 
-HP_API hpint32 hp_trie_init(HP_TRIE* xtrie, hpint32 xtrie_size, const char* token_set);
+HP_API hpint32 hp_trie_init(HP_TRIE* xtrie, hpuint32 xtrie_size, const char* token_set);
 
 HP_API hpint32 hp_trie_insert(HP_TRIE* xtrie, const char* s, void* data);
 

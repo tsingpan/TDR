@@ -44,15 +44,15 @@ struct tagHP_MEMPOOL
 
 #define HP_MEMPOOL_INVALID_INDEX 0
 
-#define HP_MEMPOOL_HEAD_SIZE (hpint32)&((HP_MEMPOOL*)0)->data
+#define HP_MEMPOOL_HEAD_SIZE ((size_t)&(((HP_MEMPOOL*)0)->data))
 
-#define HP_MEMPOOL_REAL_UNIT_SIZE(unit_size) (unit_size + (hpint32)&((HP_MEMPOOL_BLOCK*)0)->data)
+#define HP_MEMPOOL_REAL_UNIT_SIZE(unit_size) (unit_size + (size_t)(&((HP_MEMPOOL_BLOCK*)0)->data))
 
 #define HP_MEMPOOL_SIZE(unit_size, unit_num) (HP_MEMPOOL_HEAD_SIZE + HP_MEMPOOL_REAL_UNIT_SIZE(unit_size) * unit_num)
 
 #define HP_MEMPOOL_UNIT_NUM(size, unit_size) ((size - HP_MEMPOOL_HEAD_SIZE) / HP_MEMPOOL_REAL_UNIT_SIZE(unit_size))
 
-HP_API hpint32 hp_mempool_init(HP_MEMPOOL* xmempool, hpint32 size, hpint32 _unit_size, hpint32 _unit_num);
+HP_API hpint32 hp_mempool_init(HP_MEMPOOL* xmempool, hpuint32 size, hpuint32 _unit_size, hpint32 _unit_num);
 
 HP_API HP_MEMPOOL_ID hp_mempool_alloc(HP_MEMPOOL* xmempool);
 

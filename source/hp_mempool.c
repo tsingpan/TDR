@@ -17,7 +17,7 @@ static hpint32 xmempool_gen_sn(HP_MEMPOOL* xmempool)
 	return E_HP_NOERROR;
 }
 
-hpint32 hp_mempool_init(HP_MEMPOOL* xmempool, hpint32 size, hpint32 _unit_size, hpint32 _unit_num)
+hpint32 hp_mempool_init(HP_MEMPOOL* xmempool, hpuint32 size, hpuint32 _unit_size, hpint32 _unit_num)
 {
 	HP_MEMPOOL_BLOCK *b = NULL;
 	hpint32 i;

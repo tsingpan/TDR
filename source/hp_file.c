@@ -36,22 +36,22 @@ hpint32 hp_file_add_path(HP_FILE* xfile, const char* path)
 	return E_HP_ERROR;
 }
 
-hpint32 hp_file_fix_path(char* _path, hpint32 *_len)
+hpint32 hp_file_fix_path(char* _path, hpuint32 *_len)
 {	
 	char path[HP_FILE_PATH_LENGTH];
 	char *p[HP_FILE_PATH_LENGTH];
-	hpint32 ptail = 0;
+	hpuint32 ptail = 0;
 	hpint32 first = 1;
-	hpint32 i = 0;
-	hpint32 j = 0;
-	hpint32 len = 0;
-	hpint32 tlen = 0;
+	hpuint32 i = 0;
+	hpuint32 j = 0;
+	hpuint32 len = 0;
+	hpuint32 tlen = 0;
 
 	if((_path == NULL) || (_len == NULL))
 	{
 		return E_HP_ERROR;
 	}
-	len = strlen(_path);
+	len = (hpuint32)strlen(_path);
 
 	snprintf(path, HP_FILE_PATH_LENGTH, "%s", _path);
 #ifndef WIN32
@@ -80,7 +80,7 @@ hpint32 hp_file_fix_path(char* _path, hpint32 *_len)
 	{
 		if(p[i][0] == '.')
 		{
-			tlen = strlen(p[i]);			
+			tlen = (hpuint32)strlen(p[i]);			
 			for(j = i - 1; (tlen > 1) && (j >= 0); --j)
 			{
 				if(p[j][0] == '.')
@@ -148,17 +148,17 @@ hpint32 hp_file_fix_path(char* _path, hpint32 *_len)
 }
 
 
-hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len)
+hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpuint32 *_len)
 {
 	hpint32 i = 0;
-	hpint32 len = 0;
+	hpuint32 len = 0;
 	char realPath[HP_FILE_PATH_LENGTH];
 
 	if((xfile == NULL) | (path == NULL) || (_len == NULL))
 	{
 		return E_HP_ERROR;
 	}
-	len = strlen(path);
+	len = (hpuint32)strlen(path);
 
 	if(fopen(path, "r") != NULL)
 	{
@@ -199,9 +199,9 @@ hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len)
 
 void hp_file_cut_path(char* file_name)
 {
-	hpint32 i = 0;
-	hpint32 pos = 0;
-	hpint32 len = strlen(file_name);
+	hpuint32 i = 0;
+	hpuint32 pos = 0;
+	hpuint32 len = (hpuint32)strlen(file_name);
 	
 	for(i = 0; i < len; ++i)
 	{

@@ -39,6 +39,7 @@ hpint32 hp_getopt(hpint32 nargc, char * const *nargv, const char *ostr)
                         return -1;
                 }
         }                                                       /* option letter okay? */
+		//fix warning
         if ((hp_optopt = (hpint32) *place++) == (hpint32) ':' ||
                 !(oli = strchr(ostr, hp_optopt)))				
         {

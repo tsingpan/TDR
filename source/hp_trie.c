@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 
-#define INVALID_CHILDREN_INDEX -1
+#define INVALID_CHILDREN_INDEX (0xffffffff)
 
 #ifndef _XTNODE_DEFINED
 #define _XTNODE_DEFINED
@@ -32,7 +32,7 @@ static hpint32 get_token_index(const struct tagHP_TRIE *xtrie, char c)
 
 static void xtnode_init(HP_TRIE *xtrie, XTNODE *xtnode)
 {
-	hpint32 i;
+	hpuint32 i;
 
 	xtnode->count = 0;
 	for(i = 0; i < xtrie->children_num; ++i)
@@ -42,9 +42,9 @@ static void xtnode_init(HP_TRIE *xtrie, XTNODE *xtnode)
 	xtnode->has_data = FALSE;
 }
 
-hpint32 hp_trie_init(HP_TRIE* xtrie, hpint32 xtrie_size, const char* token_set)
+hpint32 hp_trie_init(HP_TRIE* xtrie, hpuint32 xtrie_size, const char* token_set)
 {
-	size_t i;
+	hpuint32 i;
 	if((xtrie == NULL ) || (token_set == NULL))
 	{
 		goto ERROR_RET;
@@ -54,7 +54,7 @@ hpint32 hp_trie_init(HP_TRIE* xtrie, hpint32 xtrie_size, const char* token_set)
 		goto ERROR_RET;
 	}
 
-	xtrie->children_num = strlen(token_set);
+	xtrie->children_num = (hpuint32)strlen(token_set);
 	if((xtrie->children_num > HP_TRIE_MAX_ASCII) || (xtrie->children_num <= 0))
 	{
 		goto ERROR_RET;
@@ -69,7 +69,7 @@ hpint32 hp_trie_init(HP_TRIE* xtrie, hpint32 xtrie_size, const char* token_set)
 		xtrie->token2index[(unsigned)token_set[i]] = i;
 	}
 	xtrie->unit_size = HP_OFFSET_OF(XTNODE, children) + sizeof(HP_MEMPOOL_ID) * xtrie->children_num;
-	xtrie->unit_num = HP_MEMPOOL_UNIT_NUM((unsigned)xtrie_size - HP_OFFSET_OF(HP_TRIE, xmempool), xtrie->unit_size);
+	xtrie->unit_num = HP_MEMPOOL_UNIT_NUM((hpuint32)xtrie_size - (HP_OFFSET_OF(HP_TRIE, xmempool)), xtrie->unit_size);
 
 	return hp_trie_clear(xtrie);
 ERROR_RET:

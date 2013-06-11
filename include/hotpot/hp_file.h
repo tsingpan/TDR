@@ -20,9 +20,9 @@ HP_API hpint32 hp_file_init(HP_FILE* xfile);
 
 HP_API hpint32 hp_file_add_path(HP_FILE* xfile, const char* path);
 
-HP_API hpint32 hp_file_fix_path(char* _path, hpint32 *_len);
+HP_API hpint32 hp_file_fix_path(char* _path, hpuint32 *_len);
 
-HP_API hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpint32 *_len);
+HP_API hpint32 hp_file_search_file(const HP_FILE* xfile, char* path, hpuint32 *_len);
 
 HP_API void hp_file_cut_path(char* file_name);
 
