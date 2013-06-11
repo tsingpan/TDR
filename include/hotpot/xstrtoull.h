@@ -79,12 +79,12 @@ extern int errno;
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-int64 xstrtoll(const char *nptr, char **endptr, register int base)
+hpint64 xstrtoll(const char *nptr, char **endptr, register int base)
 {
 	register const char *s = nptr;
-	register uint64 acc;
+	register hpuint64 acc;
 	register int c;
-	register uint64 cutoff;
+	register hpuint64 cutoff;
 	register int neg = 0, any, cutlim;
 
 	/*
@@ -126,9 +126,9 @@ int64 xstrtoll(const char *nptr, char **endptr, register int base)
 	 * Set any if any `digits' consumed; make it negative to indicate
 	 * overflow.
 	 */
-	cutoff = neg ? -(uint64)X_INT64_MIN : X_INT64_MAX;
-	cutlim = cutoff % (uint64)base;
-	cutoff /= (uint64)base;
+	cutoff = neg ? -(hpuint64)HPINT64_MIN : HPINT64_MAX;
+	cutlim = cutoff % (hpuint64)base;
+	cutoff /= (hpuint64)base;
 	for (acc = 0, any = 0;; c = *s++) {
 		if (ISDIGIT(c))
 			c -= '0';
@@ -147,7 +147,7 @@ int64 xstrtoll(const char *nptr, char **endptr, register int base)
 		}
 	}
 	if (any < 0) {
-		acc = neg ? X_INT64_MIN : X_INT64_MAX;
+		acc = neg ? HPINT64_MIN : HPINT64_MAX;
 		errno = ERANGE;
 	} else if (neg)
 		acc = -acc;

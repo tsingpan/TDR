@@ -55,12 +55,12 @@ extern int errno;
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-uint64 xstrtoull(const char *nptr, char **endptr, register int base)
+hpuint64 xstrtoull(const char *nptr, char **endptr, register int base)
 {
 	register const char *s = nptr;
-	register uint64 acc;
+	register hpuint64 acc;
 	register int c;
-	register uint64 cutoff;
+	register hpuint64 cutoff;
 	register int neg = 0, any, cutlim;
 
 	/*
@@ -82,8 +82,8 @@ uint64 xstrtoull(const char *nptr, char **endptr, register int base)
 	}
 	if (base == 0)
 		base = c == '0' ? 8 : 10;
-	cutoff = (uint64)X_UINT64_MAX / (unsigned long)base;
-	cutlim = (uint64)X_UINT64_MAX % (unsigned long)base;
+	cutoff = (hpuint64)HPUINT64_MAX / (unsigned long)base;
+	cutlim = (hpuint64)HPUINT64_MAX % (unsigned long)base;
 	for (acc = 0, any = 0;; c = *s++) {
 		if (ISDIGIT(c))
 			c -= '0';
@@ -102,7 +102,7 @@ uint64 xstrtoull(const char *nptr, char **endptr, register int base)
 		}
 	}
 	if (any < 0) {
-		acc = X_UINT64_MAX;
+		acc = HPUINT64_MAX;
 		errno = ERANGE;
 	} else if (neg)
 		acc = -acc;

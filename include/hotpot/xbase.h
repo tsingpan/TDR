@@ -18,10 +18,9 @@
 
 #define MAX_FILE_PATH_LENGTH 1024
 
-//warning
-#define OFFSET_OF(type, member) ((uint64) &((type *)0)->member)
+#define OFFSET_OF(type, member) ((hpuint64) &((type *)0)->member)
 
-#define CONTAINER_OF(ptr, type, member) ((type *)((uint64)ptr - OFFSET_OF(type, member)))
+#define CONTAINER_OF(ptr, type, member) ((type *)((hpuint64)ptr - OFFSET_OF(type, member)))
 
 
 #ifndef XIN
@@ -47,7 +46,5 @@
 #else
 	#define SNPRINTF snprintf
 #endif
-
-typedef int8 (*ACCESS_FUNC)(int8 ptr_type, void *ptr, void *userdata);
 
 #endif//_H_XBASE

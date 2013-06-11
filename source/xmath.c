@@ -116,9 +116,9 @@ int euler(int n)
 	return g_euler[n];
 }
 
-uint64 mulmod(uint64 a, uint64 b, uint64 n)
+hpuint64 mulmod(hpuint64 a, hpuint64 b, hpuint64 n)
 {
-	uint64	t;	
+	hpuint64	t;	
 	
 	t=0;
 	while (b)
@@ -133,9 +133,9 @@ uint64 mulmod(uint64 a, uint64 b, uint64 n)
 	return t;
 }
 
-uint64 powermod(uint64 a,uint64 b, uint64 n)
+hpuint64 powermod(hpuint64 a,hpuint64 b, hpuint64 n)
 {
-	uint64 d;
+	hpuint64 d;
 	
 	d = 1;
 	while((b > 0)&&(a != 1))
@@ -150,10 +150,10 @@ uint64 powermod(uint64 a,uint64 b, uint64 n)
 	return d;
 }
 
-int	rabin_miller(uint64	n)
+int	rabin_miller(hpuint64	n)
 {
 	const unsigned int	rule[10]={2,3,5,7,11,13,17,19,23,29};
-	uint64	x,b,last;
+	hpuint64	x,b,last;
 	int					i,j,count;	
 
 	if(n < MAX_NUM)
@@ -207,9 +207,9 @@ int	rabin_miller(uint64	n)
 	return TRUE;
 }
 
-uint64	gcd(uint64 a, uint64 b)
+hpuint64	gcd(hpuint64 a, hpuint64 b)
 {
-	uint64 t;
+	hpuint64 t;
 		
 	while(b)
 	{
@@ -221,9 +221,9 @@ uint64	gcd(uint64 a, uint64 b)
 	return a;
 }
 
-uint64 rho(uint64 n)
+hpuint64 rho(hpuint64 n)
 {
-	uint64	x,y,k,i,d,c;
+	hpuint64	x,y,k,i,d,c;
 	
 	while(TRUE)
 	{	
@@ -264,9 +264,9 @@ uint64 rho(uint64 n)
 	return d;
 }
 
-void extendgcd(int64	a,int64	b,int64	*x,int64	*y, int64 *d)
+void extendgcd(hpint64	a,hpint64	b,hpint64	*x,hpint64	*y, hpint64 *d)
 {
-	int64 tx, ty;
+	hpint64 tx, ty;
 	
 	if(b == 0)
 	{
@@ -285,9 +285,9 @@ void extendgcd(int64	a,int64	b,int64	*x,int64	*y, int64 *d)
 //d是a,n的最大公约数，表示解空间有d个基
 //tx返回最小的大于0的解。
 //一组最小基为tx+i*n/d  (0<=i<d)
-int	congruence(int64 a, int64 b, int64 n, int64 *tx, int64 *d)
+int	congruence(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *d)
 {
-	int64 ty, t;
+	hpint64 ty, t;
 	
 	extendgcd(a, n, tx, &ty, d);
 	if(b % *d)
@@ -302,9 +302,9 @@ int	congruence(int64 a, int64 b, int64 n, int64 *tx, int64 *d)
 	return TRUE;
 }
 
-int equation(int64 a, int64 b, int64 n, int64 *tx, int64 *ty, int64 *d)
+int equation(hpint64 a, hpint64 b, hpint64 n, hpint64 *tx, hpint64 *ty, hpint64 *d)
 {
-	int64 t;
+	hpint64 t;
 
 	extendgcd(a, b, tx, ty, d);
 	if(n % (*d))
@@ -319,14 +319,14 @@ int equation(int64 a, int64 b, int64 n, int64 *tx, int64 *ty, int64 *d)
 	return TRUE;
 }
 
-int64 lcm(int64	a,int64	b)
+hpint64 lcm(hpint64	a,hpint64	b)
 {
 	return(a* b / gcd(a, b));
 }
 
-int	china(int64	*a,int64 *m,int	tail,int64	*a1,int64	*m1)
+int	china(hpint64	*a,hpint64 *m,int	tail,hpint64	*a1,hpint64	*m1)
 {
-	int64	tx,ty,d,t;
+	hpint64	tx,ty,d,t;
 	int		i;
 	
 	*a1 = a[1];

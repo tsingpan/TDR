@@ -28,14 +28,14 @@
 	)
 
 #define _swap64(x) (\
-	((x & (uint64)0x00000000000000ffLL) << 56) | \
-	((x & (uint64)0x000000000000ff00LL) << 40) | \
-	((x & (uint64)0x0000000000ff0000LL) << 24) | \
-	((x & (uint64)0x00000000ff000000LL) << 8) | \
-	((x & (uint64)0x000000ff00000000LL) >> 8) | \
-	((x & (uint64)0x0000ff0000000000LL) >> 24) | \
-	((x & (uint64)0x00ff000000000000LL) >> 40) | \
-	((x & (uint64)0xff00000000000000LL) >> 56)  \
+	((x & (hpuint64)0x00000000000000ffLL) << 56) | \
+	((x & (hpuint64)0x000000000000ff00LL) << 40) | \
+	((x & (hpuint64)0x0000000000ff0000LL) << 24) | \
+	((x & (hpuint64)0x00000000ff000000LL) << 8) | \
+	((x & (hpuint64)0x000000ff00000000LL) >> 8) | \
+	((x & (hpuint64)0x0000ff0000000000LL) >> 24) | \
+	((x & (hpuint64)0x00ff000000000000LL) >> 40) | \
+	((x & (hpuint64)0xff00000000000000LL) >> 56)  \
 	)
 
 #if _BYTE_ORDER == _LITTLE_ENDIAN 
@@ -73,29 +73,25 @@
 
 
 
-#define ZigZagEncode16(n) ((uint16)(((int16)n << 1) ^ ((int16)n >> 15)))
-#define ZigZagEncode32(n) ((uint32)(((int32)n << 1) ^ ((int32)n >> 31)))
-#define ZigZagEncode64(n) ((uint64)(((int64)n << 1) ^ ((int64)n >> 63)))
+#define ZigZagEncode16(n) ((hpuint16)(((hpint16)n << 1) ^ ((hpint16)n >> 15)))
+#define ZigZagEncode32(n) ((hpuint32)(((hpint32)n << 1) ^ ((hpint32)n >> 31)))
+#define ZigZagEncode64(n) ((hpuint64)(((hpint64)n << 1) ^ ((hpint64)n >> 63)))
 
-#define ZigZagDecode16(n) ((int16)((n >> 1) ^ -(int16)(n & 1)))
-#define ZigZagDecode32(n) ((int32)((n >> 1) ^ -(int32)(n & 1)))
-#define ZigZagDecode64(n) ((int64)((n >> 1) ^ -(int64)(n & 1)))
+#define ZigZagDecode16(n) ((hpint16)((n >> 1) ^ -(hpint16)(n & 1)))
+#define ZigZagDecode32(n) ((hpint32)((n >> 1) ^ -(hpint32)(n & 1)))
+#define ZigZagDecode64(n) ((hpint64)((n >> 1) ^ -(hpint64)(n & 1)))
 
 //3
-XAPI int varint16_decode(const char *buff_ptr, uint32 *buff_size, uint16 *result);
-XAPI int varint16_encode(uint16 n, char *buff_ptr, uint32 *buff_size);
+XAPI int varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result);
+XAPI int varint16_encode(hpuint16 n, char *buff_ptr, hpuint32 *buff_size);
 
 //5
-XAPI int varint32_decode(const char *buff_ptr, uint32 *buff_size, uint32 *result);
-XAPI int varint32_encode(uint32 n, char *buff_ptr, uint32 *buff_size);
+XAPI int varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result);
+XAPI int varint32_encode(hpuint32 n, char *buff_ptr, hpuint32 *buff_size);
 
 //10
-XAPI int varint64_decode(const char *buff_ptr, uint32 *buff_size, uint64 *result);
-XAPI int varint64_encode(uint64 n, char *buff_ptr, uint32 *buff_size);
-
-const char* get_type_ename(int8 type);
-
-const char* get_type_name(int8 type);
+XAPI int varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result);
+XAPI int varint64_encode(hpuint64 n, char *buff_ptr, hpuint32 *buff_size);
 
 
 #endif //_H_XNUMBER

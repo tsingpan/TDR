@@ -5,7 +5,7 @@
 #include "typedef.h"
 
 #pragma pack(1)
-typedef uint64 XMEMPOOL_ID;
+typedef hpuint64 XMEMPOOL_ID;
 
 typedef struct tagXMEMPOOL_ID_DESC
 {
