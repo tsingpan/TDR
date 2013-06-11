@@ -9,6 +9,8 @@ typedef unsigned char hpuint8;
 typedef unsigned short int hpuint16;
 typedef unsigned int hpuint32;
 typedef unsigned long long hpuint64;
+typedef char hpchar;
+typedef double hpdouble;
 
 
 #define HP_UINT64_MAX ((((hpuint64)0xffffffffUL) << 32) | 0xffffffffUL)
