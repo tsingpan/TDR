@@ -3,6 +3,6 @@
 
 #define HP_FILE_SEPARATOR '/'
 
-#include <sys/types.h>
+#include <inttypes.h>
 
 #endif//_H_HP_PLATFORM_LINUX
