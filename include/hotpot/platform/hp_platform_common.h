@@ -62,7 +62,7 @@ typedef double hpdouble;
 #define HP_INOUT
 #endif
 
-#if (defined (HP_SHARED_EXPORTS))
+#if (defined (SHARED_EXPORTS))
 #define HP_API __declspec(dllexport)
 #else
 #define HP_API extern
