@@ -6,6 +6,8 @@
 #endif
 
 #include <stddef.h>
+//如果不包含stdlib.h strtoll会出错
+#include <stdlib.h>
 
 #define strtoll(begin_ptr, end_ptr, length) _strtoi64(begin_ptr, end_ptr, length)
 #define strtoull(begin_ptr, end_ptr, length) _strtoui64(begin_ptr, end_ptr, length)
