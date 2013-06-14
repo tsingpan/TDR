@@ -1,0 +1,16 @@
+const uint32 HP_STRING_POT_SIZE = 0x10000;
+const uint32 HP_STRING_LENGTH = 0x1000;
+
+
+struct HP_STRING
+{
+	uint32 no;
+	char str[HP_STRING_LENGTH] if(*p == 0) break;
+};
+
+struct HP_STRING_POT
+{
+	uint16 hp_string_num;
+	HP_STRING hp_string[HP_STRING_POT_SIZE] if(i == hp_string_num) break;
+};
+
