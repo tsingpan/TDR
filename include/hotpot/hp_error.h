@@ -1,6 +1,9 @@
 #ifndef _H_HP_ERROR
 #define _H_HP_ERROR
 
+//一个不存在的错误码
+#define HP_INVALID_ERROR_CODE 0xffffffff
+
 //hotpot错误码区间表
 typedef enum tagHP_HOTPOT_ERROR_CODE_SECTION
 {

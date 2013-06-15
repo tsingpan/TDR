@@ -42,7 +42,7 @@ typedef double hpdouble;
 #define TRUE                1
 #endif
 
-
+#define HP_MAX_ENUM_LENGTH 512
 #define HP_MAX_FILE_PATH_LENGTH 1024
 
 #define HP_OFFSET_OF(type, member) ((size_t) &((type *)0)->member)
