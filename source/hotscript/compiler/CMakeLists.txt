@@ -1,0 +1,34 @@
+PROJECT(HotScriptCompiler)
+
+FILE(GLOB_RECURSE FILE_LIST . *.h *.c)
+
+FILE(GLOB_RECURSE FLEX_FILE *.ll)
+FILE(GLOB_RECURSE BISON_FILE *.yy)
+
+set(FLEX_HEADER ${_BUILD_INCLUDE}/hs_l.h)
+set(FLEX_OUTPUTS ${_BUILD_SOURCE}/hs_l.c)
+set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/hs_y.h)
+set(BISON_OUTPUTS ${_BUILD_SOURCE}/hs_y.c)
+
+#linux 需要创建目录，否则Flex和Bison无法生成文件
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_INCLUDE})
+
+add_custom_command(OUTPUT ${FLEX_OUTPUTS} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS} ${FLEX_HEADER}
+	COMMAND flex -o${FLEX_OUTPUTS} ${FLEX_FILE}
+	COMMAND flex --bison-bridge --bison-locations --reentrant --nounistd --header-file=${FLEX_HEADER} ${FLEX_FILE}
+	COMMAND bison -o${BISON_OUTPUTS} ${BISON_FILE}
+	COMMAND bison --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
+)
+
+INCLUDE_DIRECTORIES(
+	.
+	${INCLUDE}
+	${_BUILD_INCLUDE}
+	)
+ADD_EXECUTABLE(HotScriptCompiler ${FILE_LIST} ${FLEX_FILE} ${BISON_FILE} ${FLEX_OUTPUTS} ${FLEX_HEADER} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS})
+SET_TARGET_PROPERTIES(HotScriptCompiler PROPERTIES OUTPUT_NAME hs)
+
+INSTALL(TARGETS HotScriptCompiler RUNTIME DESTINATION ${BINARY_PATH})
+
+TARGET_LINK_LIBRARIES(HotScriptCompiler HotScript)
