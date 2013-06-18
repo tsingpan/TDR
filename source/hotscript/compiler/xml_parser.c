@@ -45,7 +45,7 @@ void dfs(const XML_TREE *tree, hpint32 index)
 			if(tree->element_list[i].first_child_index == HOTSCRIPT_TRIE_INVALID_INDEX)
 			{
 				hotscript_trie_write_var_begin(&hs_t, tree->element_list[i].name, 0);
-				hotscript_trie_write_string(&hs_t, tree->element_list[i].text);
+				hotscript_trie_write_string(&hs_t, tree->element_list[i].name, tree->element_list[i].text);
 				hotscript_trie_write_var_end(&hs_t, tree->element_list[i].name, 0);
 			}
 			else
@@ -61,6 +61,7 @@ void dfs(const XML_TREE *tree, hpint32 index)
 hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 {
 	hpint32 ret;
+	hpint64 data;
 
 	self->stack_num = 0;
 	self->result = HP_INVALID_ERROR_CODE;
@@ -78,10 +79,14 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 		self->result = E_HP_NOERROR;
 	}
 
+	hotscript_trie_init(&hs_t, HP_OFFSET_OF(HOTSCRIPT_TRIE, xml_tree), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789[]");
 	debug_print(&self->tree, self->tree.element_list_num - 1, 0);
 
 
 	dfs(&self->tree, self->tree.element_list_num - 1);
+
+	ret = hotscript_trie_search(self, "TEST_DATA[0]A[0]", &data);
+	printf("%d\n", data);
 
 	debug_print(&hs_t.xml_tree, 0, 0);
 	return self->result;

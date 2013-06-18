@@ -5,7 +5,7 @@
 #include "hotpot/hp_platform.h"
 #include "xml_tree.h"
 
-#define HOTSCRIPT_TRIE_LEAF_MAX                                           (1000000)
+#define HOTSCRIPT_TRIE_LEAF_MAX                                           (1237376)
 #define HOTSCRIPT_TRIE_CHAR_MAX                                           (255)
 #define HOTSCRIPT_TRIE_WIDTH                                              (68)
 #define HOTSCRIPT_TRIE_INVALID_INDEX                                      (0xffffffff)
@@ -30,6 +30,7 @@ typedef struct tagHSTSTACK_NODE
 	hpuint32 begin_xml_tree_index;
 	hpuint32 last_index;
 	hpuint32 first_index;
+	char name[MAX_TOKEN_LENGTH];
 }HSTSTACK_NODE;
 
 #define MAX_TREE_HEIGHT 65536
@@ -74,7 +75,7 @@ hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *stru
 hpint32 hotscript_trie_write_struct_end(HOTSCRIPT_TRIE *self, const char *struct_name);
 
 hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type);
-hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val);
+hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char *var_name, const char* val);
 hpint32 hotscript_trie_write_var_end(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type);	
 
 #endif//H_HOTSCRIPT_TRIE

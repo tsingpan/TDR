@@ -5,6 +5,7 @@
 #include "hotpot/hp_platform.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 static hpint32 get_token_index(const HOTSCRIPT_TRIE *self, char c)
 {
@@ -39,7 +40,7 @@ hpint32 hotscript_trie_init(HOTSCRIPT_TRIE *self, hpuint64 trie_size, const char
 		self->char2index[token_set[i]] = i;
 	}
 	self->leafs_num = (hpuint32)((trie_size - HP_OFFSET_OF(HOTSCRIPT_TRIE, leafs)) / sizeof(HOTSCRIPT_TRIE_LEAF));
-	if(self->leafs_num >= HOTSCRIPT_TRIE_LEAF_MAX)
+	if(self->leafs_num > HOTSCRIPT_TRIE_LEAF_MAX)
 	{
 		goto ERROR_RET;
 	}
@@ -292,15 +293,59 @@ ERROR_RET:
 
 hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *struct_name)
 {
+	hpuint32 tree_index;
+	char preffix[MAX_TOKEN_LENGTH];
+	hpuint32 root_tree_index;
+	hpint32 ret;
+
 	self->index_stack[self->index_stack_num].tree_index = self->root_index;
 	self->index_stack[self->index_stack_num].begin_xml_tree_index = self->xml_tree.element_list_num;
 	self->index_stack[self->index_stack_num].last_index = HOTSCRIPT_TRIE_INVALID_INDEX;
 	self->index_stack[self->index_stack_num].first_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	if(self->index_stack_num == 0)
+	{
+		self->index_stack[self->index_stack_num].tree_index = self->root_index;
+		root_tree_index = self->root_index;
+		strncpy(self->index_stack[self->index_stack_num].name, struct_name, MAX_TOKEN_LENGTH);
+		snprintf(preffix, MAX_TOKEN_LENGTH, "%s[0]", self->index_stack[self->index_stack_num].name);
+		ret =_insert(self, root_tree_index, preffix, self->xml_tree.element_list_num);
+	}
+	else
+	{
+		strncpy(preffix, self->index_stack[self->index_stack_num].name, MAX_TOKEN_LENGTH);
+		root_tree_index = self->index_stack[self->index_stack_num - 1].tree_index;
+		strncpy(self->index_stack[self->index_stack_num].name, self->xml_tree.element_list[self->xml_tree.element_list_num].name, MAX_TOKEN_LENGTH);
+	}
 	self->xml_tree.element_list[self->xml_tree.element_list_num].first_child_index = HOTSCRIPT_TRIE_INVALID_INDEX;
 	self->xml_tree.element_list[self->xml_tree.element_list_num].next_sibling_index = HOTSCRIPT_TRIE_INVALID_INDEX;
-	++(self->xml_tree.element_list_num);
 
+
+		
+	tree_index = search(self, root_tree_index, preffix);
+
+	
+	if(tree_index == HOTSCRIPT_TRIE_INVALID_INDEX)
+	{
+		return E_HP_ERROR;
+	}
+	else
+	{
+		snprintf(preffix, MAX_TOKEN_LENGTH, "%s[%d]", self->index_stack[self->index_stack_num].name, self->leafs[tree_index].data);		
+		_insert(self, root_tree_index, preffix, 0);
+		tree_index = search(self, root_tree_index, preffix);
+	}
+	self->index_stack[self->index_stack_num].tree_index = tree_index;
+
+	++(self->xml_tree.element_list_num);
 	++(self->index_stack_num);
+
+
+
+
+
+
+
+	
 
 	return E_HP_NOERROR;
 }
@@ -319,8 +364,15 @@ hpint32 hotscript_trie_write_struct_end(HOTSCRIPT_TRIE *self, const char *struct
 
 hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type)
 {
+	hpuint32 tree_index;
+	hpuint32 count;
+	hpint32 ret;
+	char prefix[MAX_TOKEN_LENGTH];
+
+
 	self->xml_tree.element_list[self->xml_tree.element_list_num].first_child_index = HOTSCRIPT_TRIE_INVALID_INDEX;
 	self->xml_tree.element_list[self->xml_tree.element_list_num].next_sibling_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+
 	strncpy(self->xml_tree.element_list[self->xml_tree.element_list_num].name, var_name, MAX_TOKEN_LENGTH);
 
 	if(self->index_stack[self->index_stack_num - 1].last_index != HOTSCRIPT_TRIE_INVALID_INDEX)
@@ -332,11 +384,31 @@ hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_nam
 	{
 		self->index_stack[self->index_stack_num - 1].first_index = self->xml_tree.element_list_num;
 	}
+
+
+	tree_index	= search(self, self->index_stack[self->index_stack_num - 1].tree_index, var_name);
+	if(tree_index == HOTSCRIPT_TRIE_INVALID_INDEX)
+	{
+		snprintf(prefix, MAX_TOKEN_LENGTH, "%s[0]", var_name);
+		printf("%s\n", prefix);
+		_insert(self, self->index_stack[self->index_stack_num - 1].tree_index, prefix, self->xml_tree.element_list_num);
+		ret = _insert(self, self->index_stack[self->index_stack_num - 1].tree_index, var_name, 1);		
+	}
+	else
+	{
+		snprintf(prefix, MAX_TOKEN_LENGTH, "%s[%d]", var_name, self->leafs[tree_index].data);
+		_insert(self, self->index_stack[self->index_stack_num - 1].tree_index, prefix, self->xml_tree.element_list_num);
+		printf("%s\n", prefix);
+		++(self->leafs[tree_index].data);
+	}
+
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val)
+hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char *var_name, const char* val)
 {
+	//ÕâÀï¿ª¸ã
+	
 	strncpy(self->xml_tree.element_list[self->xml_tree.element_list_num].text, val, MAX_TOKEN_LENGTH);	
 	++(self->xml_tree.element_list_num);
 	return E_HP_NOERROR;
