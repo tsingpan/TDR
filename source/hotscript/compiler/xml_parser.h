@@ -17,6 +17,7 @@ struct tagXML_PARSER
 {
 	yyscan_t scanner;
 	YY_BUFFER_STATE bs;	
+	hpint32 result;
 };
 
 hpint32 xml_parser(XML_PARSER *self, FILE *fin);

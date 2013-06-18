@@ -27,16 +27,42 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 content			([a-zA-Z_0-9]*)
-multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-begin_tag		("<"{identifier}">")
-end_tag			("<""/"{identifier}">")
+multicomm		("<!--"[^-]*("-"[^-]+)*"-->")
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \t\r\n]*)
 %%
 
-{begin_tag}		{return tok_begin_tag; }
-{end_tag}		{return tok_end_tag; }
-{content}		{strncpy(yylval->content, yytext, MAX_TOKEN_LENGTH); return tok_content;}
+"<"									{BEGIN INTAG; }
+<INTAG>{identifier} {
+	char c;
+	for(c = input(*yyextra); c != '>'; c = input(*yyextra))
+	{
+		if(c == EOF)
+		{
+			yyterminate();
+		}
+	}
+	strncpy(yylval->begin_tag, yytext, MAX_TOKEN_LENGTH);
+	BEGIN INITIAL; 	
+	return tok_begin_tag;
+}
+
+<INTAG>"/"{identifier} {
+	char c;
+	for(c = input(*yyextra); c != '>'; c = input(*yyextra))
+	{
+		if(c == EOF)
+		{
+			yyterminate();
+		}
+	}
+	strncpy(yylval->end_tag, yytext + 1, MAX_TOKEN_LENGTH);
+	BEGIN INITIAL; 	
+	return tok_end_tag;
+}
+
+
+{content}							{strncpy(yylval->content, yytext, MAX_TOKEN_LENGTH); return tok_content;}
 
 
 #Ê×ÏÈÌø¹ý×¢ÊÍ

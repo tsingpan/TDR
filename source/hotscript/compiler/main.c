@@ -13,6 +13,10 @@ int main()
 	{
 		printf("succeed\n");
 	}
+	else
+	{
+		printf("failed\n");
+	}
 	fclose(fin);
 	return 0;
 }

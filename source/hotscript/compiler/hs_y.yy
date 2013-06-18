@@ -5,6 +5,7 @@
 #include <stdarg.h>
 
 #include "hotpot/hp_platform.h"
+#include "hotpot/hp_error.h"
 
 
 #include "xml_parser.h"
@@ -55,16 +56,22 @@ ERROR_RET:
 %union
 {
 	char content[MAX_TOKEN_LENGTH];
+	char begin_tag[MAX_TOKEN_LENGTH];
+	char end_tag[MAX_TOKEN_LENGTH];
 }
 
-%type <content>							tok_content
-
+%type<content>							tok_content
+%type<begin_tag>						tok_begin_tag
+%type<end_tag>							tok_end_tag
 
 %start XML
 
 %%
 
-XML : Element
+XML :
+	Element
+	{
+	}
 
 
 Content :
@@ -79,11 +86,18 @@ Content :
 Element :
 	tok_begin_tag tok_content tok_end_tag
 	{
-		printf("%s\n", $2);
+		if(strcmp($1, $3) != 0)
+		{
+			GET_XML_PARSER
+			xp->result = E_HP_ERROR;
+			return -1;
+		}
+		printf("%s %s %s\n", $1, $2, $3);
 	}
 |
 	tok_begin_tag Content tok_end_tag
 	{
 	}
+
 %%
 
