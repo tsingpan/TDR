@@ -5,10 +5,10 @@ FILE(GLOB_RECURSE FILE_LIST . *.h *.c)
 FILE(GLOB_RECURSE FLEX_FILE *.ll)
 FILE(GLOB_RECURSE BISON_FILE *.yy)
 
-set(FLEX_HEADER ${_BUILD_INCLUDE}/hs_l.h)
-set(FLEX_OUTPUTS ${_BUILD_SOURCE}/hs_l.c)
-set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/hs_y.h)
-set(BISON_OUTPUTS ${_BUILD_SOURCE}/hs_y.c)
+set(FLEX_HEADER ${_BUILD_INCLUDE}/xml_l.h)
+set(FLEX_OUTPUTS ${_BUILD_SOURCE}/xml_l.c)
+set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/xml_y.h)
+set(BISON_OUTPUTS ${_BUILD_SOURCE}/xml_y.c)
 
 #linux 需要创建目录，否则Flex和Bison无法生成文件
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
