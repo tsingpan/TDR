@@ -50,7 +50,6 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 		self->result = E_HP_NOERROR;
 	}
 
-	printf("----------------------------------------------------------\n");
 	debug_print(&self->tree, self->tree.element_list_num - 1, 0);
 	return self->result;
 }

@@ -91,9 +91,6 @@ Content :
 		xp->stack[xp->stack_num - 1].last_element_index = xp->tree.element_list_num;
 
 		++(xp->tree.element_list_num);
-
-		printf("append\n");
-		printf("\t%s\n",xp->element.name);
 	}
 |	Element
 	{
@@ -106,9 +103,6 @@ Content :
 
 		++(xp->tree.element_list_num);
 		++(xp->stack_num);
-
-		printf("push\n");
-		printf("\t%s\n",xp->element.name);
 	}
 
 
@@ -141,7 +135,6 @@ Element :
 		xp->element.first_child_index = xp->stack[xp->stack_num - 1].first_element_index;
 
 		--(xp->stack_num);
-		printf("pop: %s\n", $1);
 	}
 |
 	tok_begin_tag tok_end_tag
