@@ -1,8 +1,9 @@
-#ifndef H_HSTRIE
-#define H_HSTRIE
+#ifndef H_HOTSCRIPT_TRIE
+#define H_HOTSCRIPT_TRIE
 
 
 #include "hotpot/hp_platform.h"
+#include "xml_tree.h"
 
 #define HOTSCRIPT_TRIE_LEAF_MAX                                           (1000000)
 #define HOTSCRIPT_TRIE_CHAR_MAX                                           (255)
@@ -23,7 +24,15 @@ struct tagHOTSCRIPT_TRIE_LEAF
 	hpuint32	children_index[HOTSCRIPT_TRIE_WIDTH];
 };
 
+typedef struct tagHSTSTACK_NODE
+{
+	hpuint32 tree_index;
+	hpuint32 begin_xml_tree_index;
+	hpuint32 last_index;
+	hpuint32 first_index;
+}HSTSTACK_NODE;
 
+#define MAX_TREE_HEIGHT 65536
 #ifndef _DEF_HOTSCRIPT_TRIE
 #define _DEF_HOTSCRIPT_TRIE
 typedef struct tagHOTSCRIPT_TRIE HOTSCRIPT_TRIE;
@@ -37,6 +46,11 @@ struct tagHOTSCRIPT_TRIE
 	hpuint32	total_alloc;
 	hpuint32	leafs_num;
 	HOTSCRIPT_TRIE_LEAF	leafs[HOTSCRIPT_TRIE_LEAF_MAX];
+
+	XML_TREE	xml_tree;
+
+	hpuint32	index_stack_num;
+	HSTSTACK_NODE	index_stack[MAX_TREE_HEIGHT];
 };
 
 
@@ -63,4 +77,4 @@ hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_nam
 hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val);
 hpint32 hotscript_trie_write_var_end(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type);	
 
-#endif//H_HSTRIE
+#endif//H_HOTSCRIPT_TRIE

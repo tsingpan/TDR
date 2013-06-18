@@ -44,11 +44,11 @@ hpint32 hotscript_trie_init(HOTSCRIPT_TRIE *self, hpuint64 trie_size, const char
 		goto ERROR_RET;
 	}
 
+	self->xml_tree.element_list_num = 0;
+
 	return hotscript_trie_clear(self);
 ERROR_RET:
 	return E_HP_ERROR;
-
-	return E_HP_NOERROR;
 }
 hpint32 hotscript_trie_leaf_new(HOTSCRIPT_TRIE *self)
 {
@@ -202,7 +202,8 @@ hpint32 hotscript_trie_delete(HOTSCRIPT_TRIE* self, const char* s)
 	return _delete(self, self->root_index, s);
 }
 
-static hpint32 _search(HOTSCRIPT_TRIE* self, hpuint32 index, const char* s, hpint64 *data)
+//从index子树开始查找字符串s的位置
+static hpuint32 search(HOTSCRIPT_TRIE* self, hpuint32 index, const char* s)
 {
 	hpuint32 i;
 
@@ -213,34 +214,46 @@ static hpint32 _search(HOTSCRIPT_TRIE* self, hpuint32 index, const char* s, hpin
 
 	if(*s == 0)
 	{
-		if(self->leafs[index].mark != TRUE)
-		{
-			return E_HP_ERROR; 
-		}
-		*data = self->leafs[index].data;
-		return E_HP_NOERROR;
+		return index;
 	}
 	i = get_token_index(self, *s);
 	if((i == HOTSCRIPT_TRIE_INVALID_INDEX) || (i >= HOTSCRIPT_TRIE_WIDTH))
 	{
-		return E_HP_ERROR;
+		goto ERROR_RET;
 	}
 	if(self->leafs[index].children_index[i] == HOTSCRIPT_TRIE_INVALID_INDEX)
 	{
-		return E_HP_ERROR;
+		goto ERROR_RET;
 	}
-	return _search(self, self->leafs[index].children_index[i], s + 1, data);
+	return search(self, self->leafs[index].children_index[i], s + 1);
 ERROR_RET:
-	return E_HP_ERROR;
+	return HOTSCRIPT_TRIE_INVALID_INDEX;
 }
 
 hpint32 hotscript_trie_search(HOTSCRIPT_TRIE* self, const char* s, hpint64 *data)
 {
+	hpuint32 index;
 	if((self == NULL) || (s == NULL) || (data == NULL))
 	{
-		return E_HP_ERROR;
+		goto ERROR_RET;
 	}
-	return _search(self, self->root_index, s, data);
+	index = search(self, self->root_index, s, data);
+
+	if(index == HOTSCRIPT_TRIE_INVALID_INDEX)
+	{
+		goto ERROR_RET;
+	}
+
+	if(!self->leafs[index].mark)
+	{
+		goto ERROR_RET;
+	}
+
+	*data = self->leafs[index].data;
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 
@@ -268,6 +281,9 @@ hpint32 hotscript_trie_clear(HOTSCRIPT_TRIE* self)
 		goto ERROR_RET;
 	}
 
+	self->index_stack_num = 0;
+
+
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -276,21 +292,53 @@ ERROR_RET:
 
 hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *struct_name)
 {
+	self->index_stack[self->index_stack_num].tree_index = self->root_index;
+	self->index_stack[self->index_stack_num].begin_xml_tree_index = self->xml_tree.element_list_num;
+	self->index_stack[self->index_stack_num].last_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	self->index_stack[self->index_stack_num].first_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	self->xml_tree.element_list[self->xml_tree.element_list_num].first_child_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	self->xml_tree.element_list[self->xml_tree.element_list_num].next_sibling_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	++(self->xml_tree.element_list_num);
+
+	++(self->index_stack_num);
+
 	return E_HP_NOERROR;
 }
 
 hpint32 hotscript_trie_write_struct_end(HOTSCRIPT_TRIE *self, const char *struct_name)
 {
+	hpuint32 i;
+	
+	
+
+	self->xml_tree.element_list[self->index_stack[self->index_stack_num - 1].begin_xml_tree_index].first_child_index = self->index_stack[self->index_stack_num - 1].first_index;
+	--(self->index_stack_num);
+	
 	return E_HP_NOERROR;
 }
 
 hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type)
 {
+	self->xml_tree.element_list[self->xml_tree.element_list_num].first_child_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	self->xml_tree.element_list[self->xml_tree.element_list_num].next_sibling_index = HOTSCRIPT_TRIE_INVALID_INDEX;
+	strncpy(self->xml_tree.element_list[self->xml_tree.element_list_num].name, var_name, MAX_TOKEN_LENGTH);
+
+	if(self->index_stack[self->index_stack_num - 1].last_index != HOTSCRIPT_TRIE_INVALID_INDEX)
+	{
+		self->xml_tree.element_list[self->index_stack[self->index_stack_num - 1].last_index].next_sibling_index = self->xml_tree.element_list_num;
+	}
+	self->index_stack[self->index_stack_num - 1].last_index = self->xml_tree.element_list_num;
+	if(self->index_stack[self->index_stack_num - 1].first_index == HOTSCRIPT_TRIE_INVALID_INDEX)
+	{
+		self->index_stack[self->index_stack_num - 1].first_index = self->xml_tree.element_list_num;
+	}
 	return E_HP_NOERROR;
 }
 
 hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val)
 {
+	strncpy(self->xml_tree.element_list[self->xml_tree.element_list_num].text, val, MAX_TOKEN_LENGTH);	
+	++(self->xml_tree.element_list_num);
 	return E_HP_NOERROR;
 }
 

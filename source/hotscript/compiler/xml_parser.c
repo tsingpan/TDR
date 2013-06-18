@@ -3,6 +3,11 @@
 #include "xml_l.h"
 #include "hotpot/hp_error.h"
 
+#include "hotscript/hotscript_trie.h"
+
+
+HOTSCRIPT_TRIE hs_t;
+
 void debug_print_tab(hpuint32 n)
 {
 	hpuint32 i;
@@ -26,8 +31,31 @@ void debug_print(const XML_TREE *tree, hpint32 index, hpuint32 level)
 			debug_print(tree, i, level + 1);
 		}
 		debug_print_tab(level);
-		printf("{\n");
+		printf("}\n");
 	}
+}
+
+void dfs(const XML_TREE *tree, hpint32 index)
+{
+	hpuint32 i;
+	hotscript_trie_write_struct_begin(&hs_t, tree->element_list[index].name);
+	if(tree->element_list[index].first_child_index != -1)
+	{
+		for(i = tree->element_list[index].first_child_index; i != -1; i = tree->element_list[i].next_sibling_index)
+			if(tree->element_list[i].first_child_index == HOTSCRIPT_TRIE_INVALID_INDEX)
+			{
+				hotscript_trie_write_var_begin(&hs_t, tree->element_list[i].name, 0);
+				hotscript_trie_write_string(&hs_t, tree->element_list[i].text);
+				hotscript_trie_write_var_end(&hs_t, tree->element_list[i].name, 0);
+			}
+			else
+			{
+				hotscript_trie_write_var_begin(&hs_t, tree->element_list[i].name, 0);
+				dfs(tree, i);
+				hotscript_trie_write_var_end(&hs_t, tree->element_list[i].name, 0);
+			}
+	}
+	hotscript_trie_write_struct_end(&hs_t, tree->element_list[index].name);
 }
 
 hpint32 xml_parser(XML_PARSER *self, FILE *fin)
@@ -51,5 +79,10 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 	}
 
 	debug_print(&self->tree, self->tree.element_list_num - 1, 0);
+
+
+	dfs(&self->tree, self->tree.element_list_num - 1);
+
+	debug_print(&hs_t.xml_tree, 0, 0);
 	return self->result;
 }

@@ -27,7 +27,7 @@ struct tagXML_PARSER
 	YY_BUFFER_STATE bs;	
 	hpint32 result;
 
-	XML_TREE tree;
+	XML_TREE tree;											//这是一个xml文件
 
 	XML_ELEMENT element;
 	hpuint32 stack_num;
