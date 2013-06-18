@@ -71,32 +71,86 @@ ERROR_RET:
 XML :
 	Element
 	{
+		GET_XML_PARSER
+
+		xp->element.first_child_index = xp->stack[xp->stack_num].first_element_index;
+		xp->element.text[0] = 0;
+
+		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
+		++(xp->tree.element_list_num);
 	}
 
 
 Content :
-	Element
+	Content Element
 	{
+		GET_XML_PARSER;
+		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
+
+		xp->tree.element_list[xp->stack[xp->stack_num - 1].last_element_index].next_sibling_index = xp->tree.element_list_num;
+		xp->stack[xp->stack_num - 1].last_element_index = xp->tree.element_list_num;
+
+		++(xp->tree.element_list_num);
+
+		printf("append\n");
+		printf("\t%s\n",xp->element.name);
 	}
-|	Content Element
+|	Element
 	{
+		GET_XML_PARSER;
+		
+		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
+
+		xp->stack[xp->stack_num].first_element_index = xp->tree.element_list_num;
+		xp->stack[xp->stack_num].last_element_index = xp->tree.element_list_num;
+
+		++(xp->tree.element_list_num);
+		++(xp->stack_num);
+
+		printf("push\n");
+		printf("\t%s\n",xp->element.name);
 	}
 
 
 Element :
 	tok_begin_tag tok_content tok_end_tag
 	{
+		GET_XML_PARSER
+
 		if(strcmp($1, $3) != 0)
 		{
 			GET_XML_PARSER
 			xp->result = E_HP_ERROR;
 			return -1;
 		}
-		printf("%s %s %s\n", $1, $2, $3);
+
+		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);		
+		strncpy(xp->element.text, $2, MAX_TOKEN_LENGTH);
+		xp->element.first_child_index = -1;
+		xp->element.next_sibling_index = -1;
 	}
 |
 	tok_begin_tag Content tok_end_tag
 	{
+		GET_XML_PARSER
+		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);
+
+
+		xp->element.text[0] = 0;
+		xp->element.next_sibling_index = -1;
+		xp->element.first_child_index = xp->stack[xp->stack_num - 1].first_element_index;
+
+		--(xp->stack_num);
+		printf("pop: %s\n", $1);
+	}
+|
+	tok_begin_tag tok_end_tag
+	{
+		GET_XML_PARSER
+		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);
+		xp->element.first_child_index = -1;
+		xp->element.next_sibling_index = -1;
+		xp->element.text[0] = 0;
 	}
 
 %%
