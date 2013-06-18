@@ -1,4 +1,4 @@
-#include "hotscript/hstrie.h"
+#include "hotscript/hotscript_trie.h"
 
 #include "hotpot/hp_error.h"
 
@@ -271,4 +271,30 @@ hpint32 hotscript_trie_clear(HOTSCRIPT_TRIE* self)
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
+}
+
+
+hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *struct_name)
+{
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_trie_write_struct_end(HOTSCRIPT_TRIE *self, const char *struct_name)
+{
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type)
+{
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val)
+{
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_trie_write_var_end(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type)
+{
+	return E_HP_NOERROR;
 }

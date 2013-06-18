@@ -54,4 +54,13 @@ hpint32 hotscript_trie_fini(HOTSCRIPT_TRIE *self);
 
 
 
+
+//like DDDEKit's encoding library
+hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *struct_name);
+hpint32 hotscript_trie_write_struct_end(HOTSCRIPT_TRIE *self, const char *struct_name);
+
+hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type);
+hpint32 hotscript_trie_write_string(HOTSCRIPT_TRIE *self, const char* val);
+hpint32 hotscript_trie_write_var_end(HOTSCRIPT_TRIE *self, const char *var_name, hpint32 var_type);	
+
 #endif//H_HSTRIE
