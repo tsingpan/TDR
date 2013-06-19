@@ -55,6 +55,7 @@ struct tagHOTSCRIPT_TRIE
 };
 
 
+//可以丰富这里的接口
 hpint32 hotscript_trie_init(HOTSCRIPT_TRIE *self, hpuint64 size, const char *token_set);
 
 hpint32 hotscript_trie_insert(HOTSCRIPT_TRIE *self, const char *s, hpint64 data);

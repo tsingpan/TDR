@@ -63,17 +63,18 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 	hpint32 ret;
 	hpint64 data;
 
-	self->stack_num = 0;
+	
 	self->result = HP_INVALID_ERROR_CODE;
 	self->tree.element_list_num = 0;
+	self->stack_num = 0;
 	self->stack[0].first_element_index = -1;
 	self->stack[0].last_element_index = -1;
 	
-	yylex_init_extra(&self->scanner, &self->scanner);
-	self->bs = yy_create_buffer(fin, YY_BUF_SIZE, self->scanner);
+	yyxmllex_init_extra(&self->scanner, &self->scanner);
+	self->bs = yyxml_create_buffer(fin, YY_BUF_SIZE, self->scanner);
 	self->bs->yy_bs_column = 1;
-	yy_switch_to_buffer(self->bs, self->scanner);
-	ret = yyparse(&self->scanner);
+	yyxml_switch_to_buffer(self->bs, self->scanner);
+	ret = yyxmlparse(&self->scanner);
 	if(ret == 0)
 	{
 		self->result = E_HP_NOERROR;
@@ -82,7 +83,7 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 	hotscript_trie_init(&hs_t, HP_OFFSET_OF(HOTSCRIPT_TRIE, xml_tree), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789[].");
 	debug_print(&self->tree, self->tree.element_list_num - 1, 0);
 
-
+	return self->result;
 	dfs(&self->tree, self->tree.element_list_num - 1);
 
 	debug_print(&hs_t.xml_tree, 0, 0);

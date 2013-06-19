@@ -16,10 +16,10 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_INCLUDE})
 
 add_custom_command(OUTPUT ${FLEX_OUTPUTS} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS} ${FLEX_HEADER}
-	COMMAND flex -o${FLEX_OUTPUTS} ${FLEX_FILE}
-	COMMAND flex --bison-bridge --bison-locations --reentrant --nounistd --header-file=${FLEX_HEADER} ${FLEX_FILE}
-	COMMAND bison -o${BISON_OUTPUTS} ${BISON_FILE}
-	COMMAND bison --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
+	COMMAND flex -Pyyxml -o${FLEX_OUTPUTS} ${FLEX_FILE}
+	COMMAND flex -Pyyxml --bison-bridge --bison-locations --reentrant --nounistd --header-file=${FLEX_HEADER} ${FLEX_FILE}
+	COMMAND bison -pyyxml -o${BISON_OUTPUTS} ${BISON_FILE}
+	COMMAND bison -pyyxml --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
 )
 
 INCLUDE_DIRECTORIES(
