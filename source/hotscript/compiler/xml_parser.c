@@ -85,8 +85,36 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 
 	dfs(&self->tree, self->tree.element_list_num - 1);
 
-	ret = hotscript_trie_search(self, "TEST_DATA[0]A[0]", &data);
-	printf("%d\n", data);
+	ret = hotscript_trie_search(&hs_t, "A[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "A[1]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "A[2]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "A[3]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "C[0]D[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "C[0]D[1]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+
+	ret = hotscript_trie_search(&hs_t, "C[0]asdga[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "C[0]asdga[0]asdfasdf[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "DDD[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	ret = hotscript_trie_search(&hs_t, "DDD[1]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
 
 	debug_print(&hs_t.xml_tree, 0, 0);
 	return self->result;
