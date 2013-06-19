@@ -8,7 +8,7 @@
 #include "hotpot/hp_error.h"
 
 
-#include "xml_parser.h"
+#include "script_parser.h"
 
 #define YYERROR_VERBOSE
 
@@ -30,7 +30,7 @@ ERROR_RET:
 	return;
 }
 //这里的代码生成在自身的文件中
-#define GET_XML_PARSER XML_PARSER *xp = HP_CONTAINER_OF(arg, XML_PARSER, scanner);
+#define GET_SCRIPT_PARSER SCRIPT_PARSER *xp = HP_CONTAINER_OF(arg, SCRIPT_PARSER, scanner);
 %}
 %locations
 
@@ -48,103 +48,30 @@ ERROR_RET:
 %parse-param { yyscan_t *arg }
 %pure_parser
 
-%token tok_begin_tag 
-%token tok_end_tag
-%token tok_content
+%token tok_include 
+%token tok_text
 
 
 %union
 {
-	char content[MAX_TOKEN_LENGTH];
-	char begin_tag[MAX_TOKEN_LENGTH];
-	char end_tag[MAX_TOKEN_LENGTH];
+	char text[MAX_TOKEN_LENGTH];
 }
 
-%type<content>							tok_content
-%type<begin_tag>						tok_begin_tag
-%type<end_tag>							tok_end_tag
+%type<text>							tok_text
 
-%start XML
+%start Script
 
 %%
 
-XML :
-	Element
+Script :
+	tok_include
 	{
-		GET_XML_PARSER
+		GET_SCRIPT_PARSER
 
-		xp->element.first_child_index = xp->stack[xp->stack_num].first_element_index;
-		xp->element.text[0] = 0;
-
-		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
-		++(xp->tree.element_list_num);
 	}
 
 
-Content :
-	Content Element
-	{
-		GET_XML_PARSER;
-		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
 
-		xp->tree.element_list[xp->stack[xp->stack_num - 1].last_element_index].next_sibling_index = xp->tree.element_list_num;
-		xp->stack[xp->stack_num - 1].last_element_index = xp->tree.element_list_num;
-
-		++(xp->tree.element_list_num);
-	}
-|	Element
-	{
-		GET_XML_PARSER;
-		
-		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
-
-		xp->stack[xp->stack_num].first_element_index = xp->tree.element_list_num;
-		xp->stack[xp->stack_num].last_element_index = xp->tree.element_list_num;
-
-		++(xp->tree.element_list_num);
-		++(xp->stack_num);
-	}
-
-
-Element :
-	tok_begin_tag tok_content tok_end_tag
-	{
-		GET_XML_PARSER
-
-		if(strcmp($1, $3) != 0)
-		{
-			GET_XML_PARSER
-			xp->result = E_HP_ERROR;
-			return -1;
-		}
-
-		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);		
-		strncpy(xp->element.text, $2, MAX_TOKEN_LENGTH);
-		xp->element.first_child_index = -1;
-		xp->element.next_sibling_index = -1;
-	}
-|
-	tok_begin_tag Content tok_end_tag
-	{
-		GET_XML_PARSER
-		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);
-
-
-		xp->element.text[0] = 0;
-		xp->element.next_sibling_index = -1;
-		xp->element.first_child_index = xp->stack[xp->stack_num - 1].first_element_index;
-
-		--(xp->stack_num);
-	}
-|
-	tok_begin_tag tok_end_tag
-	{
-		GET_XML_PARSER
-		strncpy(xp->element.name, $1, MAX_TOKEN_LENGTH);
-		xp->element.first_child_index = -1;
-		xp->element.next_sibling_index = -1;
-		xp->element.text[0] = 0;
-	}
 
 %%
 
