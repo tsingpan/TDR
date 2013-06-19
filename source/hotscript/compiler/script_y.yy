@@ -55,7 +55,7 @@ ERROR_RET:
 %token tok_identifier
 
 %union
-{	
+{
 	char text[MAX_TOKEN_LENGTH];
 	char file_name[MAX_TOKEN_LENGTH];
 	hpuint64 ui64;
@@ -76,27 +76,27 @@ ERROR_RET:
 Script :
 	StatementList
 	{
-		//printf("%s\n", $2);
 	}
 
 StatementList :
 	StatementList Statement
 	{
-	}	
-|
+	}
+|	Statement
 	{
 	}
+	
 Statement :
 	tok_include tok_file_name
 	{
 	}
-	'$' tok_identifier '[' tok_integer ']'
+|	'$' tok_identifier '[' tok_integer ']'
 	{
 	}
-	'$' tok_identifier '[' '*' ']'
+|	'$' tok_identifier '[' '*' ']'
 	{
 	}
-	tok_text
+|	tok_text
 	{
 	}
 

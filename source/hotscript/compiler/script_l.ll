@@ -34,19 +34,23 @@ comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			("$""[""]""*")
+symbol			([$\[\]])
 newline			("\r"|"\n"|"\r\n")
+whitespace		([ \n\r\t]+)
 %%
 
 #首先跳过注释
 <ST_IN_SCRIPTING>{comment}				{ /* do nothing */																}
 <ST_IN_SCRIPTING>{sillycomm}			{ /* do nothing */																}
 <ST_IN_SCRIPTING>{multicomm}			{ /* do nothing */																}
+<ST_IN_SCRIPTING>{whitespace}			{ /* do nothing */																}
 <*>{newline}							{ yycolumn = 1;																	}
 
 #然后读取关键字
+<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING; /*return tok_open_tag;*/							}
+<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL; /*return tok_close_tag; */}
+<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];														}
 
-<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];																}
 
 
 <ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE; return tok_include;											}
@@ -77,8 +81,7 @@ newline			("\r"|"\n"|"\r\n")
 
 
 
-<INITIAL>"<%"([ \t]|{newline})			{ BEGIN ST_IN_SCRIPTING; /*return tok_open_tag;*/ }
-<INITIAL>"/>"							{ BEGIN INITIAL; /*return tok_close_tag; */}
+
 <ST_IN_SCRIPTING>{text}					{
 	hpuint32 len;
 	len = strlen(yytext);
@@ -91,6 +94,7 @@ newline			("\r"|"\n"|"\r\n")
 	
 	return tok_text;
 }
+
 <ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
 
