@@ -51,17 +51,22 @@ ERROR_RET:
 %token tok_include 
 %token tok_file_name
 %token tok_text
-%token tok_open_tag
-%token tok_close_tag
+%token tok_integer
+%token tok_identifier
 
 %union
-{
+{	
 	char text[MAX_TOKEN_LENGTH];
 	char file_name[MAX_TOKEN_LENGTH];
+	hpuint64 ui64;
+	char identifier[MAX_TOKEN_LENGTH];
 }
+
 
 %type<string>						tok_text
 %type<file_name>					tok_file_name
+%type<ui64>							tok_integer
+%type<identifier>					tok_identifier
 
 
 %start Script
@@ -69,12 +74,31 @@ ERROR_RET:
 %%
 
 Script :
-	tok_include tok_file_name
+	StatementList
 	{
-		printf("%s\n", $2);
+		//printf("%s\n", $2);
 	}
 
-
+StatementList :
+	StatementList Statement
+	{
+	}	
+|
+	{
+	}
+Statement :
+	tok_include tok_file_name
+	{
+	}
+	'$' tok_identifier '[' tok_integer ']'
+	{
+	}
+	'$' tok_identifier '[' '*' ']'
+	{
+	}
+	tok_text
+	{
+	}
 
 %%
 

@@ -27,13 +27,14 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 %option extra-type = "yyscan_t*"
 
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
+intconstant		([0-9]+)
 text			("\""*"\"")
 file_name		("<"[^>]*">")
 comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			([$])
+symbol			("$""[""]""*")
 newline			("\r"|"\n"|"\r\n")
 %%
 
@@ -41,14 +42,14 @@ newline			("\r"|"\n"|"\r\n")
 <ST_IN_SCRIPTING>{comment}				{ /* do nothing */																}
 <ST_IN_SCRIPTING>{sillycomm}			{ /* do nothing */																}
 <ST_IN_SCRIPTING>{multicomm}			{ /* do nothing */																}
-<*>{newline}							{yycolumn = 1;																	}
+<*>{newline}							{ yycolumn = 1;																	}
 
 #然后读取关键字
 
-<ST_IN_SCRIPTING>{symbol}					{return yytext[0];																}
+<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];																}
 
 
-<ST_IN_SCRIPTING>"#include"					{BEGIN ST_INCLUDE; return tok_include;											}
+<ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE; return tok_include;											}
 <ST_INCLUDE>{file_name} {
 	char c;
 	hpuint32 i;
@@ -73,12 +74,26 @@ newline			("\r"|"\n"|"\r\n")
 	BEGIN INITIAL; 
 	return tok_file_name;
 }
-<<EOF>> {
-	script_close_file(yyextra);
-}
+
+
+
 <INITIAL>"<%"([ \t]|{newline})			{ BEGIN ST_IN_SCRIPTING; /*return tok_open_tag;*/ }
 <INITIAL>"/>"							{ BEGIN INITIAL; /*return tok_close_tag; */}
-<ST_IN_SCRIPTING>{text}					{ return tok_text;}
+<ST_IN_SCRIPTING>{text}					{
+	hpuint32 len;
+	len = strlen(yytext);
+	if((len <= 2) || (len >= MAX_TOKEN_LENGTH))
+	{
+		yyterminate();
+	}
+	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
+	yylval->file_name[len - 2] = 0;
+	
+	return tok_text;
+}
+<ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
+<ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
+
 
 
 #检测保留字
@@ -197,34 +212,34 @@ newline			("\r"|"\n"|"\r\n")
 <ST_IN_SCRIPTING>"void"               { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"byte"               { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"namespace"          { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"union"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"struct"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"if"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"const"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"enum"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"union"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"struct"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"if"				  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"const"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"enum"				  { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"case"               { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"typename"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"unique"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"typedef"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"true"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"false"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"lower_bound"		 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"upper_bound"		 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"switch"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"vector"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"string"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"int8"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"int16"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"int32"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"int64"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"uint8"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"uint16"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"uint32"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"uint64"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"char"				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"double"			 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"=="				 { hotscript_reserved_keyword(yytext); }
-<ST_IN_SCRIPTING>"!="				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"typename"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"unique"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"typedef"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"true"				  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"false"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"lower_bound"		  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"upper_bound"		  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"switch"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"vector"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"string"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int8"				  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int16"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int32"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int64"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint8"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint16"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint32"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint64"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"char"				  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"double"			  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"=="				  { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"!="				  { hotscript_reserved_keyword(yytext); }
 
 #跳过没用的字符
 <*>.			     {/* do nothing */																}

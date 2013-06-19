@@ -2,6 +2,7 @@
 
 #include "hotpot/hp_error.h"
 
+
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name)
 {
 	hpint32 ret;
@@ -50,9 +51,7 @@ hpint32 script_close_file(yyscan_t *super)
 
 	fclose(self->stack[self->stack_num - 1].f);
 	yyscript_delete_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
-
 	--self->stack_num;
-
 	if(self->stack_num > 0)
 	{
 		yyscript_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
