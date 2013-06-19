@@ -49,27 +49,30 @@ ERROR_RET:
 %pure_parser
 
 %token tok_include 
+%token tok_file_name
 %token tok_text
-
+%token tok_open_tag
+%token tok_close_tag
 
 %union
 {
 	char text[MAX_TOKEN_LENGTH];
+	char file_name[MAX_TOKEN_LENGTH];
 }
 
-%type<text>							tok_text
+%type<string>						tok_text
+%type<file_name>					tok_file_name
+
 
 %start Script
 
 %%
 
 Script :
-	tok_include
+	tok_include tok_file_name
 	{
-		GET_SCRIPT_PARSER
-
+		printf("%s\n", $2);
 	}
-
 
 
 

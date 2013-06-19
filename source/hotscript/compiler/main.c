@@ -10,7 +10,7 @@ int main()
 {
 	FILE *fin = fopen("d:/1.xml", "rb");
 	//if(xml_parser(&xp, fin) == 0)
-	if(script_parser(&sp, fin) == 0)
+	if(script_parser(&sp, "d:/1.xml") == 0)
 	{
 		printf("succeed\n");
 	}

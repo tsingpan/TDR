@@ -21,10 +21,14 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 
 
 %option noyywrap yylineno reentrant nounistd bison-bridge bison-locations
-%x INTAG
+%x ST_IN_SCRIPTING
+%x ST_INCLUDE
+
 %option extra-type = "yyscan_t*"
 
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
+text			("\""*"\"")
+file_name		("<"[^>]*">")
 comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
@@ -34,163 +38,196 @@ newline			("\r"|"\n"|"\r\n")
 %%
 
 #首先跳过注释
-<*>{comment}			{ /* do nothing */																}
-<*>{sillycomm}			{ /* do nothing */																}
-<*>{multicomm}			{ /* do nothing */																}
-<*>{newline}			{yycolumn = 1;																	}
+<ST_IN_SCRIPTING>{comment}				{ /* do nothing */																}
+<ST_IN_SCRIPTING>{sillycomm}			{ /* do nothing */																}
+<ST_IN_SCRIPTING>{multicomm}			{ /* do nothing */																}
+<*>{newline}							{yycolumn = 1;																	}
 
 #然后读取关键字
-#然后读取关键字
-{symbol}				{return yytext[0];																}
-"include"				{return tok_include;															}
+
+<ST_IN_SCRIPTING>{symbol}					{return yytext[0];																}
+
+
+<ST_IN_SCRIPTING>"#include"					{BEGIN ST_INCLUDE; return tok_include;											}
+<ST_INCLUDE>{file_name} {
+	char c;
+	hpuint32 i;
+	hpuint32 len;
+	for(c = input(*yyextra); c != ';'; c = input(*yyextra))
+	{
+		if(c == EOF)
+		{
+			yyterminate();
+		}
+	}
+
+	len = strlen(yytext);
+	if((len <= 2) || (len >= MAX_TOKEN_LENGTH))
+	{
+		yyterminate();
+	}
+	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
+	yylval->file_name[len - 2] = 0;
+	//这里切缓存
+	script_open_file(yyextra, yylval->file_name);
+	BEGIN INITIAL; 
+	return tok_file_name;
+}
+<<EOF>> {
+	script_close_file(yyextra);
+}
+<INITIAL>"<%"([ \t]|{newline})			{ BEGIN ST_IN_SCRIPTING; /*return tok_open_tag;*/ }
+<INITIAL>"/>"							{ BEGIN INITIAL; /*return tok_close_tag; */}
+<ST_IN_SCRIPTING>{text}					{ return tok_text;}
+
 
 #检测保留字
-"BEGIN"              { hotscript_reserved_keyword(yytext); }
-"END"                { hotscript_reserved_keyword(yytext); }
-"__CLASS__"          { hotscript_reserved_keyword(yytext); }
-"__DIR__"            { hotscript_reserved_keyword(yytext); }
-"__FILE__"           { hotscript_reserved_keyword(yytext); }
-"__FUNCTION__"       { hotscript_reserved_keyword(yytext); }
-"__LINE__"           { hotscript_reserved_keyword(yytext); }
-"__METHOD__"         { hotscript_reserved_keyword(yytext); }
-"__NAMESPACE__"      { hotscript_reserved_keyword(yytext); }
-"abstract"           { hotscript_reserved_keyword(yytext); }
-"alias"              { hotscript_reserved_keyword(yytext); }
-"and"                { hotscript_reserved_keyword(yytext); }
-"args"               { hotscript_reserved_keyword(yytext); }
-"as"                 { hotscript_reserved_keyword(yytext); }
-"assert"             { hotscript_reserved_keyword(yytext); }
-"begin"              { hotscript_reserved_keyword(yytext); }
-"break"              { hotscript_reserved_keyword(yytext); }
-"catch"              { hotscript_reserved_keyword(yytext); }
-"class"              { hotscript_reserved_keyword(yytext); }
-"clone"              { hotscript_reserved_keyword(yytext); }
-"continue"           { hotscript_reserved_keyword(yytext); }
-"declare"            { hotscript_reserved_keyword(yytext); }
-"def"                { hotscript_reserved_keyword(yytext); }
-"default"            { hotscript_reserved_keyword(yytext); }
-"del"                { hotscript_reserved_keyword(yytext); }
-"delete"             { hotscript_reserved_keyword(yytext); }
-"do"                 { hotscript_reserved_keyword(yytext); }
-"dynamic"            { hotscript_reserved_keyword(yytext); }
-"elif"               { hotscript_reserved_keyword(yytext); }
-"else"               { hotscript_reserved_keyword(yytext); }
-"elseif"             { hotscript_reserved_keyword(yytext); }
-"elsif"              { hotscript_reserved_keyword(yytext); }
-"end"                { hotscript_reserved_keyword(yytext); }
-"enddeclare"         { hotscript_reserved_keyword(yytext); }
-"endfor"             { hotscript_reserved_keyword(yytext); }
-"endforeach"         { hotscript_reserved_keyword(yytext); }
-"endif"              { hotscript_reserved_keyword(yytext); }
-"endswitch"          { hotscript_reserved_keyword(yytext); }
-"endwhile"           { hotscript_reserved_keyword(yytext); }
-"ensure"             { hotscript_reserved_keyword(yytext); }
-"except"             { hotscript_reserved_keyword(yytext); }
-"exec"               { hotscript_reserved_keyword(yytext); }
-"finally"            { hotscript_reserved_keyword(yytext); }
-"float"              { hotscript_reserved_keyword(yytext); }
-"for"                { hotscript_reserved_keyword(yytext); }
-"foreach"            { hotscript_reserved_keyword(yytext); }
-"function"           { hotscript_reserved_keyword(yytext); }
-"global"             { hotscript_reserved_keyword(yytext); }
-"goto"               { hotscript_reserved_keyword(yytext); }
-"if"                 { hotscript_reserved_keyword(yytext); }
-"implements"         { hotscript_reserved_keyword(yytext); }
-"import"             { hotscript_reserved_keyword(yytext); }
-"in"                 { hotscript_reserved_keyword(yytext); }
-"inline"             { hotscript_reserved_keyword(yytext); }
-"instanceof"         { hotscript_reserved_keyword(yytext); }
-"interface"          { hotscript_reserved_keyword(yytext); }
-"is"                 { hotscript_reserved_keyword(yytext); }
-"lambda"             { hotscript_reserved_keyword(yytext); }
-"module"             { hotscript_reserved_keyword(yytext); }
-"native"             { hotscript_reserved_keyword(yytext); }
-"new"                { hotscript_reserved_keyword(yytext); }
-"next"               { hotscript_reserved_keyword(yytext); }
-"nil"                { hotscript_reserved_keyword(yytext); }
-"not"                { hotscript_reserved_keyword(yytext); }
-"or"                 { hotscript_reserved_keyword(yytext); }
-"pass"               { hotscript_reserved_keyword(yytext); }
-"public"             { hotscript_reserved_keyword(yytext); }
-"print"              { hotscript_reserved_keyword(yytext); }
-"private"            { hotscript_reserved_keyword(yytext); }
-"protected"          { hotscript_reserved_keyword(yytext); }
-"public"             { hotscript_reserved_keyword(yytext); }
-"raise"              { hotscript_reserved_keyword(yytext); }
-"redo"               { hotscript_reserved_keyword(yytext); }
-"rescue"             { hotscript_reserved_keyword(yytext); }
-"retry"              { hotscript_reserved_keyword(yytext); }
-"register"           { hotscript_reserved_keyword(yytext); }
-"return"             { hotscript_reserved_keyword(yytext); }
-"self"               { hotscript_reserved_keyword(yytext); }
-"sizeof"             { hotscript_reserved_keyword(yytext); }
-"static"             { hotscript_reserved_keyword(yytext); }
-"super"              { hotscript_reserved_keyword(yytext); }
-"synchronized"       { hotscript_reserved_keyword(yytext); }
-"then"               { hotscript_reserved_keyword(yytext); }
-"this"               { hotscript_reserved_keyword(yytext); }
-"throw"              { hotscript_reserved_keyword(yytext); }
-"transient"          { hotscript_reserved_keyword(yytext); }
-"try"                { hotscript_reserved_keyword(yytext); }
-"undef"              { hotscript_reserved_keyword(yytext); }
-"union"              { hotscript_reserved_keyword(yytext); }
-"unless"             { hotscript_reserved_keyword(yytext); }
-"unsigned"           { hotscript_reserved_keyword(yytext); }
-"until"              { hotscript_reserved_keyword(yytext); }
-"use"                { hotscript_reserved_keyword(yytext); }
-"var"                { hotscript_reserved_keyword(yytext); }
-"virtual"            { hotscript_reserved_keyword(yytext); }
-"volatile"           { hotscript_reserved_keyword(yytext); }
-"when"               { hotscript_reserved_keyword(yytext); }
-"while"              { hotscript_reserved_keyword(yytext); }
-"with"               { hotscript_reserved_keyword(yytext); }
-"xor"                { hotscript_reserved_keyword(yytext); }
-"yield"              { hotscript_reserved_keyword(yytext); }
-"list"               { hotscript_reserved_keyword(yytext); }
-"required"           { hotscript_reserved_keyword(yytext); }
-"optional"           { hotscript_reserved_keyword(yytext); }
-"async"              { hotscript_reserved_keyword(yytext); }
-"service"            { hotscript_reserved_keyword(yytext); }
-"throws"             { hotscript_reserved_keyword(yytext); }
-"extends"            { hotscript_reserved_keyword(yytext); }
-"exception"          { hotscript_reserved_keyword(yytext); }
-"binary"             { hotscript_reserved_keyword(yytext); }
-"include"            { hotscript_reserved_keyword(yytext); }
-"bool"               { hotscript_reserved_keyword(yytext); }
-"void"               { hotscript_reserved_keyword(yytext); }
-"byte"               { hotscript_reserved_keyword(yytext); }
-"namespace"          { hotscript_reserved_keyword(yytext); }
-"union"				 { hotscript_reserved_keyword(yytext); }
-"struct"			 { hotscript_reserved_keyword(yytext); }
-"if"				 { hotscript_reserved_keyword(yytext); }
-"const"				 { hotscript_reserved_keyword(yytext); }
-"enum"				 { hotscript_reserved_keyword(yytext); }
-"case"               { hotscript_reserved_keyword(yytext); }
-"typename"			 { hotscript_reserved_keyword(yytext); }
-"unique"			 { hotscript_reserved_keyword(yytext); }
-"typedef"			 { hotscript_reserved_keyword(yytext); }
-"true"				 { hotscript_reserved_keyword(yytext); }
-"false"				 { hotscript_reserved_keyword(yytext); }
-"lower_bound"		 { hotscript_reserved_keyword(yytext); }
-"upper_bound"		 { hotscript_reserved_keyword(yytext); }
-"switch"			 { hotscript_reserved_keyword(yytext); }
-"vector"			 { hotscript_reserved_keyword(yytext); }
-"string"			 { hotscript_reserved_keyword(yytext); }
-"int8"				 { hotscript_reserved_keyword(yytext); }
-"int16"				 { hotscript_reserved_keyword(yytext); }
-"int32"				 { hotscript_reserved_keyword(yytext); }
-"int64"				 { hotscript_reserved_keyword(yytext); }
-"uint8"				 { hotscript_reserved_keyword(yytext); }
-"uint16"			 { hotscript_reserved_keyword(yytext); }
-"uint32"			 { hotscript_reserved_keyword(yytext); }
-"uint64"			 { hotscript_reserved_keyword(yytext); }
-"char"				 { hotscript_reserved_keyword(yytext); }
-"double"			 { hotscript_reserved_keyword(yytext); }
-"=="				 { hotscript_reserved_keyword(yytext); }
-"!="				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"BEGIN"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"END"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__CLASS__"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__DIR__"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__FILE__"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__FUNCTION__"       { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__LINE__"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__METHOD__"         { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"__NAMESPACE__"      { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"abstract"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"alias"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"and"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"args"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"as"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"assert"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"begin"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"break"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"catch"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"class"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"clone"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"continue"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"declare"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"def"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"default"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"del"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"delete"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"do"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"dynamic"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"elif"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"else"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"elseif"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"elsif"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"end"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"enddeclare"         { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"endfor"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"endforeach"         { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"endif"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"endswitch"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"endwhile"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"ensure"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"except"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"exec"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"finally"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"float"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"for"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"foreach"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"function"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"global"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"goto"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"if"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"implements"         { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"import"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"in"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"inline"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"instanceof"         { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"interface"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"is"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"lambda"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"module"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"native"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"new"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"next"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"nil"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"not"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"or"                 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"pass"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"public"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"print"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"private"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"protected"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"public"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"raise"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"redo"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"rescue"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"retry"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"register"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"return"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"self"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"sizeof"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"static"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"super"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"synchronized"       { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"then"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"this"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"throw"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"transient"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"try"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"undef"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"union"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"unless"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"unsigned"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"until"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"use"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"var"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"virtual"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"volatile"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"when"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"while"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"with"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"xor"                { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"yield"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"list"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"required"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"optional"           { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"async"              { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"service"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"throws"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"extends"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"exception"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"binary"             { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"include"            { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"bool"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"void"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"byte"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"namespace"          { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"union"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"struct"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"if"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"const"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"enum"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"case"               { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"typename"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"unique"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"typedef"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"true"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"false"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"lower_bound"		 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"upper_bound"		 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"switch"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"vector"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"string"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int8"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int16"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int32"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"int64"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint8"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint16"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint32"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"uint64"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"char"				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"double"			 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"=="				 { hotscript_reserved_keyword(yytext); }
+<ST_IN_SCRIPTING>"!="				 { hotscript_reserved_keyword(yytext); }
 
 #跳过没用的字符
-<*>.					{/* do nothing */																}
+<*>.			     {/* do nothing */																}
 
 
 
