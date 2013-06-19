@@ -37,6 +37,7 @@ symbol			([$\[\]*\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
+any_char		(.)
 %%
 
 #首先跳过注释
@@ -44,7 +45,7 @@ literal_begin	(['\"])
 <ST_IN_SCRIPTING>{sillycomm}			{ /* do nothing */																}
 <ST_IN_SCRIPTING>{multicomm}			{ /* do nothing */																}
 <ST_IN_SCRIPTING>{whitespace}			{ /* do nothing */																}
-<*>{newline}							{ yycolumn = 1;																	}
+
 
 #然后读取关键字
 <INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING;													}
@@ -280,7 +281,15 @@ literal_begin	(['\"])
 }
 
 #跳过没用的字符
-<*>.			     {/* do nothing */																}
+<ST_IN_SCRIPTING>{newline}			     {/* do nothing */																}
+<ST_IN_SCRIPTING>{any_char}			     {/* reutrn error?*/																}
+
+
+#非脚本中的字符需要进行记录
+<INITIAL>{newline}				 { printf("%s", yytext); yycolumn = 1;													}
+<INITIAL>{any_char}			     {putchar(yytext[0]);
+
+}
 
 
 

@@ -97,7 +97,7 @@ Statement :
 	}
 |	'$' tok_identifier '[' '*' ']' '{' '}'
 	{
-		printf("$%s[*]\n", $2);
+		printf("$%s[*]{}\n", $2);
 	}
 |	tok_literal
 	{
