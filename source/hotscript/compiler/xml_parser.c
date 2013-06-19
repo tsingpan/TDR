@@ -79,43 +79,17 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 		self->result = E_HP_NOERROR;
 	}
 
-	hotscript_trie_init(&hs_t, HP_OFFSET_OF(HOTSCRIPT_TRIE, xml_tree), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789[]");
+	hotscript_trie_init(&hs_t, HP_OFFSET_OF(HOTSCRIPT_TRIE, xml_tree), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789[].");
 	debug_print(&self->tree, self->tree.element_list_num - 1, 0);
 
 
 	dfs(&self->tree, self->tree.element_list_num - 1);
 
-	ret = hotscript_trie_search(&hs_t, "A[0]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "A[1]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "A[2]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "A[3]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "C[0]D[0]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "C[0]D[1]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-
-	ret = hotscript_trie_search(&hs_t, "C[0]asdga[0]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "C[0]asdga[0]asdfasdf[0]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "DDD[0]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
-	ret = hotscript_trie_search(&hs_t, "DDD[1]", &data);
-	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
-
 	debug_print(&hs_t.xml_tree, 0, 0);
+
+	ret = hotscript_trie_search(&hs_t, "level3[0].next_package[1].B[0]", &data);
+	printf("%lld : %s = %s\n", data, hs_t.xml_tree.element_list[data].name, hs_t.xml_tree.element_list[data].text);
+
+	
 	return self->result;
 }

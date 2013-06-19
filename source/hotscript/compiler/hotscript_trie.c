@@ -311,10 +311,9 @@ hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *stru
 	}
 	else
 	{
-		strncpy(preffix, self->index_stack[self->index_stack_num].name, MAX_TOKEN_LENGTH);
 		root_tree_index = self->index_stack[self->index_stack_num - 1].tree_index;
 		strncpy(self->index_stack[self->index_stack_num].name, self->xml_tree.element_list[self->xml_tree.element_list_num].name, MAX_TOKEN_LENGTH);
-		snprintf(preffix, MAX_TOKEN_LENGTH, "%s", self->index_stack[self->index_stack_num].name);
+		strncpy(var_name, self->index_stack[self->index_stack_num].name, MAX_TOKEN_LENGTH);
 	}
 	self->xml_tree.element_list[self->xml_tree.element_list_num].first_child_index = HOTSCRIPT_TRIE_INVALID_INDEX;
 	self->xml_tree.element_list[self->xml_tree.element_list_num].next_sibling_index = HOTSCRIPT_TRIE_INVALID_INDEX;
@@ -326,10 +325,21 @@ hpint32 hotscript_trie_write_struct_begin(HOTSCRIPT_TRIE *self, const char *stru
 	}
 	else
 	{
-		tree_index = search(self, root_tree_index, preffix);
-		snprintf(var_name, MAX_TOKEN_LENGTH, "%s[%d]", self->index_stack[self->index_stack_num].name, self->leafs[tree_index].data - 1);		
-		_insert(self, root_tree_index, var_name, self->xml_tree.element_list_num);
 		tree_index = search(self, root_tree_index, var_name);
+		if(self->index_stack_num == 1)
+		{
+			snprintf(preffix, MAX_TOKEN_LENGTH, "%s[%d]", var_name, self->leafs[tree_index].data - 1);
+		}
+		else
+		{
+			snprintf(preffix, MAX_TOKEN_LENGTH, ".%s[%d]", var_name, self->leafs[tree_index].data - 1);
+		}
+		tree_index = search(self, root_tree_index, preffix);
+		if(tree_index == -1)
+		{
+
+			printf("%s error\n", preffix);
+		}
 	}
 	self->index_stack[self->index_stack_num].tree_index = tree_index;
 
@@ -386,16 +396,29 @@ hpint32 hotscript_trie_write_var_begin(HOTSCRIPT_TRIE *self, const char *var_nam
 	tree_index	= search(self, self->index_stack[self->index_stack_num - 1].tree_index, var_name);
 	if(tree_index == HOTSCRIPT_TRIE_INVALID_INDEX)
 	{
-		snprintf(prefix, MAX_TOKEN_LENGTH, "%s[0]", var_name);
-		printf("%s\n", prefix);
+		if(self->index_stack_num == 1)
+		{
+			snprintf(prefix, MAX_TOKEN_LENGTH, "%s[0]", var_name);
+		}
+		else
+		{
+			snprintf(prefix, MAX_TOKEN_LENGTH, ".%s[0]", var_name);
+		}
 		ret = _insert(self, self->index_stack[self->index_stack_num - 1].tree_index, prefix, self->xml_tree.element_list_num);
-		ret = _insert(self, self->index_stack[self->index_stack_num - 1].tree_index, var_name, 1);		
+		printf("insert: %u %s %d\n", self->index_stack[self->index_stack_num - 1].tree_index, prefix, ret);
+		ret = _insert(self, self->index_stack[self->index_stack_num - 1].tree_index, var_name, 1);				
 	}
 	else
 	{
-		snprintf(prefix, MAX_TOKEN_LENGTH, "%s[%d]", var_name, self->leafs[tree_index].data);
+		if(self->index_stack_num == 1)
+		{
+			snprintf(prefix, MAX_TOKEN_LENGTH, "%s[%d]", var_name, self->leafs[tree_index].data);
+		}
+		else
+		{
+			snprintf(prefix, MAX_TOKEN_LENGTH, ".%s[%d]", var_name, self->leafs[tree_index].data);
+		}
 		ret = _insert(self, self->index_stack[self->index_stack_num - 1].tree_index, prefix, self->xml_tree.element_list_num);
-		printf("%s\n", prefix);
 		++(self->leafs[tree_index].data);
 	}
 
