@@ -50,20 +50,20 @@ ERROR_RET:
 
 %token tok_include 
 %token tok_file_name
-%token tok_text
+%token tok_literal
 %token tok_integer
 %token tok_identifier
 
 %union
 {
-	char text[MAX_TOKEN_LENGTH];
+	char literal[MAX_TOKEN_LENGTH];
 	char file_name[MAX_TOKEN_LENGTH];
 	hpuint64 ui64;
 	char identifier[MAX_TOKEN_LENGTH];
 }
 
 
-%type<string>						tok_text
+%type<literal>						tok_literal
 %type<file_name>					tok_file_name
 %type<ui64>							tok_integer
 %type<identifier>					tok_identifier
@@ -89,15 +89,19 @@ StatementList :
 Statement :
 	tok_include tok_file_name
 	{
+		printf("include %s", $2);
 	}
 |	'$' tok_identifier '[' tok_integer ']'
 	{
+		printf("$%s[%d]\n", $2, $4);
 	}
-|	'$' tok_identifier '[' '*' ']'
+|	'$' tok_identifier '[' '*' ']' '{' '}'
 	{
+		printf("$%s[*]\n", $2);
 	}
-|	tok_text
+|	tok_literal
 	{
+		printf("%s\n", $1);
 	}
 
 %%

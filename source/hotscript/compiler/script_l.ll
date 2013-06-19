@@ -28,15 +28,15 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 intconstant		([0-9]+)
-text			("\""*"\"")
 file_name		("<"[^>]*">")
 comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			([$\[\]])
+symbol			([$\[\]*\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
+literal_begin	(['\"])
 %%
 
 #首先跳过注释
@@ -47,9 +47,9 @@ whitespace		([ \n\r\t]+)
 <*>{newline}							{ yycolumn = 1;																	}
 
 #然后读取关键字
-<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING; /*return tok_open_tag;*/							}
-<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL; /*return tok_close_tag; */}
-<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];														}
+<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING;													}
+<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL;															}
+<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];															}
 
 
 
@@ -79,21 +79,6 @@ whitespace		([ \n\r\t]+)
 	return tok_file_name;
 }
 
-
-
-
-<ST_IN_SCRIPTING>{text}					{
-	hpuint32 len;
-	len = strlen(yytext);
-	if((len <= 2) || (len >= MAX_TOKEN_LENGTH))
-	{
-		yyterminate();
-	}
-	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
-	yylval->file_name[len - 2] = 0;
-	
-	return tok_text;
-}
 
 <ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
@@ -244,6 +229,55 @@ whitespace		([ \n\r\t]+)
 <ST_IN_SCRIPTING>"double"			  { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"=="				  { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"!="				  { hotscript_reserved_keyword(yytext); }
+
+<ST_IN_SCRIPTING>{literal_begin} {
+  char mark = yytext[0];
+  hpuint32 len = 0;
+  for(;;)
+  {
+    int ch = input(*yyextra);
+    switch (ch) {
+      case EOF:
+        //yyerror("end of file while read string at %d\n", yylineno);
+        exit(1);
+      case '\n':
+        //yyerror("end of line while read string at %d\n", yylineno - 1);
+        exit(1);
+      case '\\':
+        ch = input(*yyextra);
+        switch (ch) {
+          case 'r':
+			yylval->literal[len++] = '\r';
+            continue;
+          case 'n':
+			yylval->literal[len++] = '\n';
+            continue;
+          case 't':
+			yylval->literal[len++] = '\t';
+            continue;
+          case '"':
+			yylval->literal[len++] = '"';
+            continue;
+          case '\'':
+			yylval->literal[len++] = '\'';
+            continue;
+          case '\\':
+			yylval->literal[len++] = '\\';
+            continue;
+          default:
+            //yyerror("bad escape character\n");
+            return -1;
+        }
+        break;
+      default:
+        if (ch == mark) {
+          return tok_literal;
+        } else {
+          yylval->literal[len++] = ch;
+        }
+    }
+  }
+}
 
 #跳过没用的字符
 <*>.			     {/* do nothing */																}
