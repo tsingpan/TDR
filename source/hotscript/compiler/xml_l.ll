@@ -22,6 +22,7 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 
 %option noyywrap yylineno reentrant nounistd bison-bridge bison-locations
 %x INTAG
+%x ST_INCLUDE
 %option extra-type = "yyscan_t*"
 
 
@@ -30,7 +31,45 @@ content			([a-zA-Z_0-9]*)
 multicomm		("<!--"[^-]*("-"[^-]+)*"-->")
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \t\r\n]*)
+file_name		("<"[^>]*">")
 %%
+
+"#include" { BEGIN ST_INCLUDE; /*return tok_include; */}
+<ST_INCLUDE>{file_name} {
+	char c;
+	hpuint32 i;
+	hpuint32 len;
+	for(c = input(*yyextra); c != ';'; c = input(*yyextra))
+	{
+		if(c == EOF)
+		{
+			yyterminate();
+		}
+	}
+
+	len = strlen(yytext);
+	if((len <= 2) || (len >= MAX_TOKEN_LENGTH))
+	{
+		yyterminate();
+	}
+	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
+	yylval->file_name[len - 2] = 0;
+	//ÕâÀïÇÐ»º´æ
+	xml_open_file(yyextra, yylval->file_name);
+	BEGIN INITIAL; 
+	/*return tok_file_name;*/
+}
+
+<<EOF>>	{ 
+	if(xml_close_file(yyextra) == E_HP_NOERROR)
+	{
+		BEGIN INITIAL; 
+	}	
+	else
+	{
+		yyterminate();
+	}
+}
 
 "<"									{BEGIN INTAG; }
 <INTAG>{identifier} {

@@ -58,7 +58,7 @@ void dfs(const XML_TREE *tree, hpint32 index)
 	hotscript_trie_write_struct_end(&hs_t, tree->element_list[index].name);
 }
 
-hpint32 xml_parser(XML_PARSER *self, FILE *fin)
+hpint32 xml_parser(XML_PARSER *self, const char* file_name)
 {
 	hpint32 ret;
 	hpint64 data;
@@ -66,14 +66,14 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 	
 	self->result = HP_INVALID_ERROR_CODE;
 	self->tree.element_list_num = 0;
-	self->stack_num = 0;
-	self->stack[0].first_element_index = -1;
-	self->stack[0].last_element_index = -1;
+	self->xml_stack_num = 0;
+	self->xml_stack[0].first_element_index = -1;
+	self->xml_stack[0].last_element_index = -1;
 	
 	yyxmllex_init_extra(&self->scanner, &self->scanner);
-	self->bs = yyxml_create_buffer(fin, YY_BUF_SIZE, self->scanner);
-	self->bs->yy_bs_column = 1;
-	yyxml_switch_to_buffer(self->bs, self->scanner);
+
+	xml_open_file(&self->scanner, file_name);
+
 	ret = yyxmlparse(&self->scanner);
 	if(ret == 0)
 	{
@@ -93,4 +93,45 @@ hpint32 xml_parser(XML_PARSER *self, FILE *fin)
 
 	
 	return self->result;
+}
+
+hpint32 xml_open_file(yyscan_t *super, const char *file_name)
+{
+	XML_PARSER *self = HP_CONTAINER_OF(super, XML_PARSER, scanner);
+
+	self->stack[self->stack_num].f = fopen(file_name, "r");
+	if(self->stack[self->stack_num].f == NULL)
+	{
+		goto ERROR_RET;
+	}
+	self->stack[self->stack_num].bs = yyxml_create_buffer(self->stack[self->stack_num].f, YY_BUF_SIZE, self->scanner);
+	if(self->stack[self->stack_num].bs == NULL)
+	{
+		goto ERROR_RET;
+	}
+	self->stack[self->stack_num].bs->yy_bs_column = 1;
+	++self->stack_num;
+	yyxml_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}
+
+hpint32 xml_close_file(yyscan_t *super)
+{
+	XML_PARSER *self = HP_CONTAINER_OF(super, XML_PARSER, scanner);
+
+	fclose(self->stack[self->stack_num - 1].f);
+	yyxml_delete_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+
+	--self->stack_num;
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+	yyxml_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }

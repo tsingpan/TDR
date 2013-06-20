@@ -48,21 +48,24 @@ ERROR_RET:
 %parse-param { yyscan_t *arg }
 %pure_parser
 
+%token tok_include
 %token tok_begin_tag 
 %token tok_end_tag
 %token tok_content
-
+%token tok_file_name
 
 %union
 {
 	char content[MAX_TOKEN_LENGTH];
 	char begin_tag[MAX_TOKEN_LENGTH];
 	char end_tag[MAX_TOKEN_LENGTH];
+	char file_name[MAX_TOKEN_LENGTH];
 }
 
 %type<content>							tok_content
 %type<begin_tag>						tok_begin_tag
 %type<end_tag>							tok_end_tag
+%type<file_name>						tok_file_name
 
 %start XML
 
@@ -73,7 +76,7 @@ XML :
 	{
 		GET_XML_PARSER
 
-		xp->element.first_child_index = xp->stack[xp->stack_num].first_element_index;
+		xp->element.first_child_index = xp->xml_stack[xp->xml_stack_num].first_element_index;
 		xp->element.text[0] = 0;
 
 		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
@@ -87,8 +90,8 @@ Content :
 		GET_XML_PARSER;
 		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
 
-		xp->tree.element_list[xp->stack[xp->stack_num - 1].last_element_index].next_sibling_index = xp->tree.element_list_num;
-		xp->stack[xp->stack_num - 1].last_element_index = xp->tree.element_list_num;
+		xp->tree.element_list[xp->xml_stack[xp->xml_stack_num - 1].last_element_index].next_sibling_index = xp->tree.element_list_num;
+		xp->xml_stack[xp->xml_stack_num - 1].last_element_index = xp->tree.element_list_num;
 
 		++(xp->tree.element_list_num);
 	}
@@ -98,11 +101,11 @@ Content :
 		
 		xp->tree.element_list[xp->tree.element_list_num] = xp->element;
 
-		xp->stack[xp->stack_num].first_element_index = xp->tree.element_list_num;
-		xp->stack[xp->stack_num].last_element_index = xp->tree.element_list_num;
+		xp->xml_stack[xp->xml_stack_num].first_element_index = xp->tree.element_list_num;
+		xp->xml_stack[xp->xml_stack_num].last_element_index = xp->tree.element_list_num;
 
 		++(xp->tree.element_list_num);
-		++(xp->stack_num);
+		++(xp->xml_stack_num);
 	}
 
 
@@ -132,9 +135,9 @@ Element :
 
 		xp->element.text[0] = 0;
 		xp->element.next_sibling_index = -1;
-		xp->element.first_child_index = xp->stack[xp->stack_num - 1].first_element_index;
+		xp->element.first_child_index = xp->xml_stack[xp->xml_stack_num - 1].first_element_index;
 
-		--(xp->stack_num);
+		--(xp->xml_stack_num);
 	}
 |
 	tok_begin_tag tok_end_tag

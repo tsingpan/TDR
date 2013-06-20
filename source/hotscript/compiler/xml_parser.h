@@ -14,27 +14,39 @@
 
 #define MAX_STACK_DEEP 1024
 
-typedef struct tagSTACK_NODE
+typedef struct tagXML_STACK_NODE
 {
 	hpint32 first_element_index;
 	hpint32 last_element_index;
-}STACK_NODE;
+}XML_STACK_NODE;
+
+
+
+#define MAX_INCLUDE_FILE_LEVEL 1024
+typedef struct tagXML_PARSER_STACK_NODE
+{
+	FILE *f;
+	YY_BUFFER_STATE bs;
+}XML_PARSER_STACK_NODE;
+
 
 typedef struct tagXML_PARSER XML_PARSER;
 struct tagXML_PARSER
 {
 	yyscan_t scanner;
-	YY_BUFFER_STATE bs;	
 	hpint32 result;
 
 	XML_TREE tree;											//这是一个xml文件
 
 	XML_ELEMENT element;
+	hpuint32 xml_stack_num;
+	XML_STACK_NODE xml_stack[MAX_STACK_DEEP];
+
 	hpuint32 stack_num;
-	STACK_NODE stack[MAX_STACK_DEEP];
+	XML_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
 };
 
-hpint32 xml_parser(XML_PARSER *self, FILE *fin);
+hpint32 xml_parser(XML_PARSER *self, const char* file_name);
 
 #endif//_H_XML_PARSER
 

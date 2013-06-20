@@ -83,7 +83,16 @@ any_char		(.)
 
 <ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
-<<EOF>>	{ BEGIN ST_IN_SCRIPTING; script_close_file(yyextra); }
+<<EOF>>	{ 
+	if(script_close_file(yyextra) == E_HP_NOERROR)
+	{
+		BEGIN ST_IN_SCRIPTING; 
+	}	
+	else
+	{
+		yyterminate();
+	}
+}
 
 
 #检测保留字
@@ -289,7 +298,7 @@ any_char		(.)
 
 #非脚本中的字符需要进行记录
 <INITIAL>{newline}				 { printf("%s", yytext); yycolumn = 1;													}
-<INITIAL>{any_char}			     {putchar(yytext[0]);
+<INITIAL>{any_char}			     { putchar(yytext[0]);
 
 }
 

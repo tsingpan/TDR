@@ -53,9 +53,12 @@ hpint32 script_close_file(yyscan_t *super)
 	yyscript_delete_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
 
 	--self->stack_num;
-	if(self->stack_num > 0)
+	if(self->stack_num <= 0)
 	{
-		yyscript_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+		goto ERROR_RET;
 	}
+	yyscript_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
