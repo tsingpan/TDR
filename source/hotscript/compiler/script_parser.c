@@ -51,6 +51,7 @@ hpint32 script_close_file(yyscan_t *super)
 
 	fclose(self->stack[self->stack_num - 1].f);
 	yyscript_delete_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+
 	--self->stack_num;
 	if(self->stack_num > 0)
 	{

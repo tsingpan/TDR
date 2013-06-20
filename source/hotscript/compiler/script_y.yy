@@ -82,27 +82,49 @@ StatementList :
 	StatementList Statement
 	{
 	}
-|	Statement
+|
 	{
 	}
 	
-Statement :
+Statement:
 	tok_include tok_file_name
 	{
-		printf("include %s", $2);
-	}
-|	'$' tok_identifier '[' tok_integer ']'
-	{
-		printf("$%s[%d]\n", $2, $4);
-	}
-|	'$' tok_identifier '[' '*' ']' '{' '}'
-	{
-		printf("$%s[*]{}\n", $2);
+		//printf("include %s", $2);
 	}
 |	tok_literal
 	{
 		printf("%s\n", $1);
 	}
+|	Prefix tok_identifier ArrayIndex '{' StatementList '}'
+	{
+		//printf("$%s[%d]\n", $2, $4);
+	}
+|	Prefix tok_identifier ArrayIndex
+	{
+		//printf("$%s[%d]\n", $2, $4);
+	}
+	
+ArrayIndex :
+	'[' tok_integer ']'
+	{
+	}
+|	'[' '*' ']'
+	{
+	}
+|
+	{
+	}
+	
+Prefix:
+	'$'							
+	{
+	}
+|	'#'
+	{
+	}
+
+
+
 
 %%
 

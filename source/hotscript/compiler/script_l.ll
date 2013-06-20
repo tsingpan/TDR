@@ -33,7 +33,7 @@ comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			([$\[\]*\{\}])
+symbol			(["$""#"\[\]"*"\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
@@ -83,7 +83,7 @@ any_char		(.)
 
 <ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
-
+<<EOF>>	{ BEGIN ST_IN_SCRIPTING; script_close_file(yyextra); }
 
 
 #¼ì²â±£Áô×Ö
@@ -271,8 +271,10 @@ any_char		(.)
         }
         break;
       default:
-        if (ch == mark) {
-          return tok_literal;
+        if (ch == mark)
+        {
+			yylval->literal[len] = 0;
+			return tok_literal;
         } else {
           yylval->literal[len++] = ch;
         }
