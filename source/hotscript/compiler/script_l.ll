@@ -37,7 +37,7 @@ symbol			(["$""#"\[\]"*"\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
-any_char		(.)
+any_char		((.|"\n"))
 %%
 
 #首先跳过注释
@@ -48,13 +48,43 @@ any_char		(.)
 
 
 #然后读取关键字
-<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING;													}
+<INITIAL>{any_char}		     {
+	int i;
+	yylval->text.str_len = 0;
+	for(;;)
+	{
+		int ch = input(*yyextra);
+		if(ch == EOF)
+		{
+			yylval->text.str[yylval->text.str_len] = 0;
+			break;
+		}
+		else
+		{
+			yylval->text.str[yylval->text.str_len] = ch;
+			++(yylval->text.str_len);
+
+			if(yylval->text.str_len >= 2)
+			{
+				if((yylval->text.str[yylval->text.str_len - 2] == '<')
+					&& (yylval->text.str[yylval->text.str_len - 1] == '%'))
+				{
+					yylval->text.str_len -= 2;
+					yylval->text.str[yylval->text.str_len - 2] = 0;
+					BEGIN ST_IN_SCRIPTING;
+					break;
+				}
+			}
+		}
+	}
+
+	return tok_text;
+}
 <ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL;															}
 <ST_IN_SCRIPTING>{symbol}					{ return yytext[0];															}
 
 
-
-<ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE; return tok_include;											}
+<ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE;															}
 <ST_INCLUDE>{file_name} {
 	char c;
 	hpuint32 i;
@@ -77,13 +107,12 @@ any_char		(.)
 	//这里切缓存
 	script_open_file(yyextra, yylval->file_name);
 	BEGIN INITIAL; 
-	return tok_file_name;
 }
 
 
 <ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
-<<EOF>>	{ 
+<<EOF>>	{
 	if(script_close_file(yyextra) == E_HP_NOERROR)
 	{
 		BEGIN ST_IN_SCRIPTING; 
@@ -93,7 +122,6 @@ any_char		(.)
 		yyterminate();
 	}
 }
-
 
 #检测保留字
 <ST_IN_SCRIPTING>"BEGIN"              { hotscript_reserved_keyword(yytext); }
@@ -294,14 +322,5 @@ any_char		(.)
 #跳过没用的字符
 <ST_IN_SCRIPTING>{newline}			     {/* do nothing */																}
 <ST_IN_SCRIPTING>{any_char}			     {/* reutrn error?*/																}
-
-
-#非脚本中的字符需要进行记录
-<INITIAL>{newline}				 { printf("%s", yytext); yycolumn = 1;													}
-<INITIAL>{any_char}			     { putchar(yytext[0]);
-
-}
-
-
 
 %%

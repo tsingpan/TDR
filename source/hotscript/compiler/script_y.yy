@@ -31,6 +31,9 @@ ERROR_RET:
 }
 //这里的代码生成在自身的文件中
 #define GET_SCRIPT_PARSER SCRIPT_PARSER *xp = HP_CONTAINER_OF(arg, SCRIPT_PARSER, scanner);
+
+
+
 %}
 %locations
 
@@ -42,6 +45,15 @@ ERROR_RET:
 #define YYFREE
 #define YYLEX_PARAM *arg
 
+#ifndef _DEF_ST_STRING
+#define _DEF_ST_STRING
+typedef struct _ST_STRING
+{
+	char str[MAX_TOKEN_LENGTH];
+	hpuint32 str_len;
+}ST_STRING;
+typedef struct _ST_STRING ST_STRING;
+#endif//_DEF_ST_STRING
 }//code requires end
 
 %define api.pure
@@ -53,6 +65,7 @@ ERROR_RET:
 %token tok_literal
 %token tok_integer
 %token tok_identifier
+%token tok_text
 
 %union
 {
@@ -60,6 +73,7 @@ ERROR_RET:
 	char file_name[MAX_TOKEN_LENGTH];
 	hpuint64 ui64;
 	char identifier[MAX_TOKEN_LENGTH];
+	ST_STRING text;
 }
 
 
@@ -67,6 +81,7 @@ ERROR_RET:
 %type<file_name>					tok_file_name
 %type<ui64>							tok_integer
 %type<identifier>					tok_identifier
+%type<text>							tok_text
 
 
 %start Script
@@ -87,21 +102,24 @@ StatementList :
 	}
 	
 Statement:
-	tok_include tok_file_name
-	{
-		//printf("include %s", $2);
-	}
 |	tok_literal
 	{
-		printf("%s\n", $1);
+		printf("echo: %s", $1);
 	}
-|	Prefix tok_identifier ArrayIndex '{' StatementList '}'
+|	Prefix tok_identifier ArrayIndex 
+	'{' {printf("push %s\n", $2)}
+	StatementList 
+	'}' {printf("pop %s\n", $2)}
 	{
 		//printf("$%s[%d]\n", $2, $4);
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
-		//printf("$%s[%d]\n", $2, $4);
+		printf("$%s[?]\n", $2);
+	}
+|	tok_text
+	{
+		printf("echo: %s", $1);
 	}
 	
 ArrayIndex :
