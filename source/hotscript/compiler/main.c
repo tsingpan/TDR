@@ -1,15 +1,16 @@
 #include <stdio.h>
-#include "xml_parser.h"
+#include "json_parser.h"
 #include "script_parser.h"
 
 
-XML_PARSER xp;
+JSON_PARSER xp;
 SCRIPT_PARSER sp;
-
 int main()
 {
-	//if(xml_parser(&xp, "d:/_1.xml") == 0)
-	if(script_parser(&sp, "d:/1.xml") == 0)
+	FILE* fout;
+
+	if(json_parser(&xp, "d:/1.xml") == 0)
+	//if(script_parser(&sp, "d:/1.xml") == 0)
 	{
 		printf("succeed\n");
 	}

@@ -119,7 +119,7 @@ Statement:
 	}
 |	tok_text
 	{
-		printf("echo: %s", $1);
+		printf("echo: %s", $1.str);
 	}
 	
 ArrayIndex :

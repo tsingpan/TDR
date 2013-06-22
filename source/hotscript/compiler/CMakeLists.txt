@@ -5,18 +5,18 @@ FILE(GLOB_RECURSE FILE_LIST . *.h *.c)
 
 FILE(GLOB_RECURSE SCRIPT_FLEX_FILE script_l.ll)
 FILE(GLOB_RECURSE SCRIPT_BISON_FILE script_y.yy)
-FILE(GLOB_RECURSE XML_FLEX_FILE xml_l.ll)
-FILE(GLOB_RECURSE XML_BISON_FILE xml_y.yy)
+FILE(GLOB_RECURSE XML_FLEX_FILE json_l.ll)
+FILE(GLOB_RECURSE XML_BISON_FILE json_y.yy)
 
 set(SCRIPT_FLEX_HEADER ${_BUILD_INCLUDE}/script_l.h)
 set(SCRIPT_FLEX_OUTPUTS ${_BUILD_SOURCE}/script_l.c)
 set(SCRIPT_BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/script_y.h)
 set(SCRIPT_BISON_OUTPUTS ${_BUILD_SOURCE}/script_y.c)
 
-set(XML_FLEX_HEADER ${_BUILD_INCLUDE}/xml_l.h)
-set(XML_FLEX_OUTPUTS ${_BUILD_SOURCE}/xml_l.c)
-set(XML_BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/xml_y.h)
-set(XML_BISON_OUTPUTS ${_BUILD_SOURCE}/xml_y.c)
+set(XML_FLEX_HEADER ${_BUILD_INCLUDE}/json_l.h)
+set(XML_FLEX_OUTPUTS ${_BUILD_SOURCE}/json_l.c)
+set(XML_BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/json_y.h)
+set(XML_BISON_OUTPUTS ${_BUILD_SOURCE}/json_y.c)
 
 #linux 需要创建目录，否则Flex和Bison无法生成文件
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
@@ -29,10 +29,10 @@ add_custom_command(OUTPUT ${XML_FLEX_OUTPUTS} ${XML_BISON_DEFINES_OUTPUTS} ${XML
 	COMMAND bison -pyyscript -o${SCRIPT_BISON_OUTPUTS} ${SCRIPT_BISON_FILE}
 	COMMAND bison -pyyscript --defines=${SCRIPT_BISON_DEFINES_OUTPUTS} ${SCRIPT_BISON_FILE}
 
-	COMMAND flex -Pyyxml -o${XML_FLEX_OUTPUTS} ${XML_FLEX_FILE}
-	COMMAND flex -Pyyxml --bison-bridge --bison-locations --reentrant --nounistd --header-file=${XML_FLEX_HEADER} ${XML_FLEX_FILE}
-	COMMAND bison -pyyxml -o${XML_BISON_OUTPUTS} ${XML_BISON_FILE}
-	COMMAND bison -pyyxml --defines=${XML_BISON_DEFINES_OUTPUTS} ${XML_BISON_FILE}
+	COMMAND flex -Pyyjson -o${XML_FLEX_OUTPUTS} ${XML_FLEX_FILE}
+	COMMAND flex -Pyyjson --bison-bridge --bison-locations --reentrant --nounistd --header-file=${XML_FLEX_HEADER} ${XML_FLEX_FILE}
+	COMMAND bison -pyyjson -o${XML_BISON_OUTPUTS} ${XML_BISON_FILE}
+	COMMAND bison -pyyjson --defines=${XML_BISON_DEFINES_OUTPUTS} ${XML_BISON_FILE}
 )
 
 INCLUDE_DIRECTORIES(
