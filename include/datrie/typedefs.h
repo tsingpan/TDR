@@ -29,7 +29,16 @@
 
 #include <limits.h>
 
-typedef enum { FALSE = 0, TRUE = 1 } Bool;
+//typedef enum { FALSE = 0, TRUE = 1 } Bool;
+
+typedef int Bool;
+#ifndef FALSE
+#define FALSE               0
+#endif
+
+#ifndef TRUE
+#define TRUE                1
+#endif
 
 # if UCHAR_MAX == 0xff
 #   ifndef UINT8_TYPEDEF

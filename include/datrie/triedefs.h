@@ -37,7 +37,7 @@
 /**
  * @brief Trie character type for alphabet
  */
-typedef uint32         AlphaChar;
+typedef char AlphaChar;
 
 /**
  * @brief Error value for alphabet character
@@ -70,7 +70,7 @@ typedef int32          TrieIndex;
 /**
  * @brief Type of value associated to trie entries
  */
-typedef int32          TrieData;
+typedef void*          TrieData;
 /**
  * @brief Trie error data
  */
