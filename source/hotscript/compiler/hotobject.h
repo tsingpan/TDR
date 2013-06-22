@@ -73,7 +73,7 @@ void hotobject_read_object_begin(HotObjectConstIterator* self, const char *name)
 
 void hotobject_read_object_end(HotObjectConstIterator* self, const char *name);
 
-void hotobject_read_string(HotObjectConstIterator* self, const char *name, char ** string);
+void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char ** string);
 
 #endif//_H_HOT_OBJECT
 

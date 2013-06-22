@@ -2,16 +2,16 @@
 
 #include "hotpot/hp_error.h"
 
-
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name)
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const HotObject *ho)
 {
 	hpint32 ret;
 
 	yyscriptlex_init_extra(&self->scanner, &self->scanner);
 
 	self->stack_num = 0;
-
 	script_open_file(&self->scanner, file_name);
+	self->ho = ho;
+	hotobject_get_const_iterator(&self->ho_const_iter, ho);
 
 	ret = yyscriptparse(&self->scanner);
 	if(ret == 0)

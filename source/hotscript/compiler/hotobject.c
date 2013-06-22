@@ -148,8 +148,6 @@ void hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 {
 	HotObject *ob = hotobject_get(self);
 	HotObject *new_ob = NULL;
-	
-
 	if(name == NULL)
 	{
 		name = hotobject_get_normal_name(self);
@@ -158,9 +156,6 @@ void hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 	new_ob = hotobject_new();
 	new_ob->type = E_OBJECT;
 	hotobject_push(self, new_ob);
-
-	
-
 	trie_store_if_absent(ob->keys, name, new_ob);
 }
 
@@ -208,7 +203,7 @@ void hotobject_read_object_end(HotObjectConstIterator* self, const char *name)
 }
 
 
-void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char **string)
+void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char ** string)
 {
 	const HotObject *ob = hotobject_get_const(self);
 	const HotObject *new_ob = NULL;

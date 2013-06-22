@@ -16,15 +16,25 @@ const char *str;
 
 int main()
 {
-	if(json_parser(&xp, "d:/1.xml") == 0)
-	//if(script_parser(&sp, "d:/1.xml") == 0)
+	if(json_parser(&xp, "d:/1.json") == 0)
 	{
-		printf("succeed\n");
+		printf("input succeed\n");
 	}
 	else
 	{
-		printf("failed\n");
+		printf("input failed\n");
 	}
+	/*
+
+	if(script_parser(&sp, "d:/2.xml", xp.ho) == 0)
+	{
+		printf("output succeed\n");
+	}
+	else
+	{
+		printf("output failed\n");
+	}
+	*/
 
 	ho = hotobject_new();
 	hotobject_get_iterator(&iter, ho);
@@ -35,8 +45,8 @@ int main()
 
 	hotobject_get_const_iterator(&citer, ho);
 	hotobject_read_object_begin(&citer, "haha");
-	hotobject_read_string(&citer, 0, &str);
-	hotobject_read_string(&citer, 0, &str);
+	hotobject_read_string(&citer, "[0]", &str);
+	hotobject_read_string(&citer, "[1]", &str);
 	hotobject_read_object_end(&citer, "haha");
 
 	hotobject_free(ho);

@@ -80,7 +80,16 @@ string_begin	(['\"])
 
 {symbols}		{ return yytext[0]; }
 
-{identifier}	{ return tok_identifier; }
+{identifier}	{ 
+	hpuint32 i = 0;
+	for(i = 0;i < yyleng;++i)
+	{
+		yylval->name[i] = yytext[i];
+	}
+	yytext[i] = 0;
+	return tok_identifier;
+}
+	
 {string_begin} {
   char mark = yytext[0];
   yylval->string_length = 0;
@@ -148,6 +157,7 @@ string_begin	(['\"])
         if (ch == mark)
         {
 			yylval->string[yylval->string_length] = 0;
+			yylval->type = E_ZN_STRING;
 			return tok_string;
         }
         else

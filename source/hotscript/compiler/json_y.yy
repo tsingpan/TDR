@@ -9,6 +9,7 @@
 
 
 #include "json_parser.h"
+#include "hotobject.h"
 
 #define YYERROR_VERBOSE
 
@@ -31,7 +32,7 @@ ERROR_RET:
 	return;
 }
 //这里的代码生成在自身的文件中
-#define GET_XML_PARSER XML_PARSER *xp = HP_CONTAINER_OF(arg, XML_PARSER, scanner);
+#define GET_JSON_PARSER JSON_PARSER *jp = HP_CONTAINER_OF(arg, JSON_PARSER, scanner);
 %}
 %locations
 
@@ -46,11 +47,24 @@ ERROR_RET:
 #define MAX_STRING_LENGTH 124
 #define MAX_NAME_LENGTH 64
 
+
 #ifndef _DEF_ZNODE
 #define _DEF_ZNODE
+
+typedef enum _ZNODE_TYPE
+{
+	E_ZN_STRING,
+	E_ZN_OBJECT,
+	E_ZN_MEMBERS,
+	E_ZN_PAIR,
+	E_ZN_ELEMENTS,
+	E_ZN_ARRAY,
+}ZNODE_TYPE;
+
 typedef struct _znode znode;
 struct _znode
 {
+	ZNODE_TYPE type;
 	char name[MAX_NAME_LENGTH];
 	char string[MAX_STRING_LENGTH];
 	hpuint32 string_length;
@@ -94,16 +108,26 @@ Members:
 	
 	
 Pair:
-	tok_identifier ':' Value
+	tok_identifier ':' tok_string
 	{
+		GET_JSON_PARSER;
+		hotobject_write_string(&jp->ho_iter, $1.name, $3.string);
+		printf("%s : %s\n", $1.name, $3.string);
 	}
+|	
+	tok_identifier ':' 
+	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); printf("%s object begin\n", $1.name); }
+	Object
+	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, $1.name); printf("%s object end\n", $1.name); }
+|
+	tok_identifier ':' 
+	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); printf("%s array begin\n", $1.name); } 
+	Array
+	{ GET_JSON_PARSER;	hotobject_write_object_end(&jp->ho_iter, $1.name); printf("%s array end\n", $1.name);}
 	
 	
 Array:
-	'[' ']'
-	{
-	}
-|	'[' Elements ']'
+	'[' Elements ']'
 	{
 	}
 
@@ -114,21 +138,18 @@ Elements:
 |
 	Value ',' Elements
 	{
+			
 	}
-	
-	
 	
 	
 Value:
 	tok_string
 	{
+		GET_JSON_PARSER; hotobject_write_string(&jp->ho_iter, NULL, $1.string);
 	}
-|	Object
-	{
-	}
-|	Array
-	{
-	}	
+|	{GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, NULL); printf("non write object begin\n"); }
+	Object
+	{GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, NULL); printf("non write object end\n"); }
 	
 
 	

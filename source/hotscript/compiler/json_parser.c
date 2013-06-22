@@ -59,6 +59,9 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name)
 
 	json_open_file(&self->scanner, file_name);
 
+	self->ho = hotobject_new();
+	hotobject_get_iterator(&self->ho_iter, self->ho);
+
 	ret = yyjsonparse(&self->scanner);
 	if(ret == 0)
 	{

@@ -10,6 +10,8 @@
 #include "json_y.h"
 #include "json_l.h"
 
+#include "hotobject.h"
+
 
 #define MAX_STACK_DEEP 1024
 
@@ -38,6 +40,10 @@ struct tagJSON_PARSER
 
 	hpuint32 stack_num;
 	JSON_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
+
+
+	HotObject *ho;
+	HotObjectIterator ho_iter;
 };
 
 hpint32 json_parser(JSON_PARSER *self, const char* file_name);
