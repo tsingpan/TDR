@@ -66,23 +66,23 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text)
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
-	op->op0.str = malloc(text->str_len);
-	memcpy(op->op0.str, text->str, text->str_len);
-	op->op0.str_len = text->str_len;
+	op->op0.str = malloc(text->text.str_len);
+	memcpy(op->op0.str, text->text.str, text->text.str_len);
+	op->op0.str_len = text->text.str_len;
 	
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push(SCRIPT_PARSER *self, const char prefix, const char*name)
+hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, const SNODE *name)
 {
 	char *str = malloc(sizeof(char));
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_PUSH;
-	str[0] = prefix;
+	str[0] = prefix->prefix;
 	op->op0.str = str;
 	op->op0.str_len = 1;
 	op->op1.str = name;
@@ -91,22 +91,22 @@ hpint32 hotscript_do_push(SCRIPT_PARSER *self, const char prefix, const char*nam
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, hpuint32 ui32)
+hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, const SNODE *text)
 {
-	if(ui32 != -1)
+	if(text->i32 != -1)
 	{
 		char *str = malloc(sizeof(char));
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_PUSH_INDEX;
-		op->op0.num = ui32;
+		op->op0.num = text->i32;
 	}
 
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, hpuint32 ui32)
+hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, const SNODE *text)
 {
-	if(ui32 != -1)
+	if(text->i32 != -1)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_POP;

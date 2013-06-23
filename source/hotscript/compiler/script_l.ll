@@ -112,7 +112,7 @@ any_char		((.|"\n"))
 }
 
 
-<ST_IN_SCRIPTING>{intconstant}			{ yylval->ui32 = strtoull(yytext, NULL, 10); return tok_integer;}
+<ST_IN_SCRIPTING>{intconstant}			{ yylval->i32 = strtoll(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
 <<EOF>>	{
 	if(script_close_file(yyextra) == E_HP_NOERROR)

@@ -38,15 +38,15 @@ hpint32 script_open_file(yyscan_t *super, const char *file_name);
 hpint32 script_close_file(yyscan_t *super);
 
 
-hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text);
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text);
 
-hpint32 hotscript_do_push(SCRIPT_PARSER *self, const char prefix, const char*name);
+hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, const SNODE *name);
 
-hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, hpuint32 ui32);
+hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, const SNODE *name);
 
 hpint32 hotscript_do_pop(SCRIPT_PARSER *self);
 
-hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, hpuint32 ui32);
+hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, const SNODE *name);
 
 hpint32 hotscript_do_echo_trie(SCRIPT_PARSER *self);
 

@@ -40,20 +40,35 @@ ERROR_RET:
 %code requires
 {
 #include "globals.h"
+#include "hot_vm.h"
 
 #define YYMALLOC
 #define YYFREE
 #define YYLEX_PARAM *arg
 
-#ifndef _DEF_ST_STRING
-#define _DEF_ST_STRING
+#ifndef _DEF_SNODE
+#define _DEF_SNODE
 typedef struct _ST_STRING
 {
 	char str[MAX_TOKEN_LENGTH];
 	hpuint32 str_len;
 }ST_STRING;
 typedef struct _ST_STRING ST_STRING;
-#endif//_DEF_ST_STRING
+
+typedef struct _SNODE
+{
+	ST_STRING literal;
+	char file_name[MAX_TOKEN_LENGTH];
+	char identifier[MAX_TOKEN_LENGTH];
+	ST_STRING text;
+	char prefix;
+	hpint32 i32;
+	HotOp *op;
+}SNODE;
+#endif//_DEF_SNODE
+
+#define YYSTYPE SNODE
+
 }//code requires end
 
 %define api.pure
@@ -66,25 +81,6 @@ typedef struct _ST_STRING ST_STRING;
 %token tok_integer
 %token tok_identifier
 %token tok_text
-
-%union
-{
-	ST_STRING literal;
-	char file_name[MAX_TOKEN_LENGTH];
-	char identifier[MAX_TOKEN_LENGTH];
-	ST_STRING text;
-	char prefix;
-	hpuint32 ui32;
-}
-
-
-%type<literal>						tok_literal
-%type<file_name>					tok_file_name
-%type<ui32>							tok_integer
-%type<identifier>					tok_identifier
-%type<text>							tok_text
-%type<prefix>						Prefix
-%type<ui32>							ArrayIndex
 
 %start Script
 
@@ -113,26 +109,26 @@ Statement:
 |	Prefix tok_identifier ArrayIndex
 	{
 		GET_SCRIPT_PARSER;
-		hotscript_do_push(xp, $1, $2);
-		hotscript_do_push_index(xp, $3);		
+		hotscript_do_push(xp, &$1, &$2);
+		hotscript_do_push_index(xp, &$3);		
 		
 		hotscript_do_echo_trie(xp);
 		
-		hotscript_do_pop_index(xp, $3);
+		hotscript_do_pop_index(xp, &$3);
 		hotscript_do_pop(xp);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
 	{
 		GET_SCRIPT_PARSER;
-		hotscript_do_push(xp, $1, $2);
-		hotscript_do_push_index(xp, $3);
+		hotscript_do_push(xp, &$1, &$2);
+		hotscript_do_push_index(xp, &$3);
 	}
 	StatementList
 	'}'
 	{
 		GET_SCRIPT_PARSER;
-		hotscript_do_pop_index(xp, $3);
+		hotscript_do_pop_index(xp, &$3);
 		hotscript_do_pop(xp);
 	}
 |	tok_text 
@@ -146,29 +142,29 @@ Statement:
 ArrayIndex :
 	'[' tok_integer ']'
 	{
-		$$ = $2;
+		$$.i32 = $2.i32;
 	}
 |	'[' '*' ']'
 	{
-		$$ = -1;
+		$$.i32 = -1;
 	}
 |
 	{
-		$$ = 0;
+		$$.i32 = 0;
 	}
 	
 Prefix:
 	'@'
 	{
-		$$ = '@';
+		$$.prefix = '@';
 	}
 |	'#'
 	{
-		$$ = '#';
+		$$.prefix = '#';
 	}
 |	'$'
 	{
-		$$ = '$';
+		$$.prefix = '$';
 	}
 
 
