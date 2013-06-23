@@ -47,10 +47,16 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>{whitespace}			{ /* do nothing */																}
 
 
+
+<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING;															}
+<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL;															}
+<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];															}
+
 #然后读取关键字
 <INITIAL>{any_char}		     {
 	int i;
-	yylval->text.str_len = 0;
+	yylval->text.str[0] = yytext[0];
+	yylval->text.str_len = 1;
 	for(;;)
 	{
 		int ch = input(*yyextra);
@@ -68,9 +74,8 @@ any_char		((.|"\n"))
 			{
 				if((yylval->text.str[yylval->text.str_len - 2] == '<')
 					&& (yylval->text.str[yylval->text.str_len - 1] == '%'))
-				{
+				{					
 					yylval->text.str_len -= 2;
-					yylval->text.str[yylval->text.str_len - 2] = 0;
 					BEGIN ST_IN_SCRIPTING;
 					break;
 				}
@@ -80,9 +85,6 @@ any_char		((.|"\n"))
 
 	return tok_text;
 }
-<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL;															}
-<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];															}
-
 
 <ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE;															}
 <ST_INCLUDE>{file_name} {

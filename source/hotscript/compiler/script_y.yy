@@ -119,6 +119,9 @@ Statement:
 	}
 |	tok_text
 	{
+		GET_SCRIPT_PARSER;
+		
+		hotscript_do_text(xp, &$1);
 		printf("echo: %s", $1.str);
 	}
 	

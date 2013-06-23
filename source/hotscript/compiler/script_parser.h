@@ -6,6 +6,7 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotobject.h"
+#include "hot_vm.h"
 
 #include "script_y.h"
 #include "script_l.h"
@@ -21,6 +22,7 @@ struct tagSCRIPT_PARSER
 {
 	yyscan_t scanner;
 	hpint32 result;
+	HotOpArr hotoparr;
 
 	hpuint32 stack_num;
 	SCRIPT_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
@@ -34,6 +36,9 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const HotObjec
 hpint32 script_open_file(yyscan_t *super, const char *file_name);
 
 hpint32 script_close_file(yyscan_t *super);
+
+
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text);
 
 #endif//_H_SCRIPT_PARSER
 

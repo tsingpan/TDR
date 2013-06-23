@@ -3,6 +3,7 @@
 #include "script_parser.h"
 
 #include "hotobject.h"
+#include "hot_vm.h"
 
 JSON_PARSER xp;
 SCRIPT_PARSER sp;
@@ -11,6 +12,7 @@ SCRIPT_PARSER sp;
 HotObject *ho;
 HotObjectIterator iter;
 HotObjectConstIterator citer;
+HotVM hotvm;
 
 const char *str;
 
@@ -24,7 +26,7 @@ int main()
 	{
 		printf("input failed\n");
 	}
-	/*
+	
 
 	if(script_parser(&sp, "d:/2.xml", xp.ho) == 0)
 	{
@@ -34,7 +36,9 @@ int main()
 	{
 		printf("output failed\n");
 	}
-	*/
+	printf("------------------------------------------------------------------------------\n");
+	hotvm_execute(&hotvm, &sp.hotoparr);
+
 
 	ho = hotobject_new();
 	hotobject_get_iterator(&iter, ho);

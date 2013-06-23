@@ -6,6 +6,8 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const HotObjec
 {
 	hpint32 ret;
 
+	hotoparr_init(&self->hotoparr);
+
 	yyscriptlex_init_extra(&self->scanner, &self->scanner);
 
 	self->stack_num = 0;
@@ -19,6 +21,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const HotObjec
 		self->result = E_HP_NOERROR;
 	}
 
+	
 	return self->result;
 }
 
@@ -61,4 +64,15 @@ hpint32 script_close_file(yyscan_t *super)
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
+}
+
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text)
+{
+	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	op->op = HOT_ECHO;
+	op->op0.str = malloc(text->str_len);
+	memcpy(op->op0.str, text->str, text->str_len);
+	op->op0.str_len = text->str_len;
+	
+	return E_HP_NOERROR;
 }
