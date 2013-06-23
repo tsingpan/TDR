@@ -86,7 +86,7 @@ string_begin	(['\"])
 	{
 		yylval->name[i] = yytext[i];
 	}
-	yytext[i] = 0;
+	yylval->name[i] = 0;
 	return tok_identifier;
 }
 	

@@ -159,6 +159,13 @@ void hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 	trie_store_if_absent(ob->keys, name, new_ob);
 }
 
+void hotobject_write(HotObjectIterator* self, const char *string)
+{
+	HotObject *ob = hotobject_get(self);
+	ob->type = E_STRING;
+	ob->str = strdup(string);
+}
+
 void hotobject_write_object_end(HotObjectIterator* self, const char *name)
 {
 	hotobject_pop(self);

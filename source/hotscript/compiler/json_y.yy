@@ -111,7 +111,10 @@ Pair:
 	tok_identifier ':' tok_string
 	{
 		GET_JSON_PARSER;
-		hotobject_write_string(&jp->ho_iter, $1.name, $3.string);
+		hotobject_write_object_begin(&jp->ho_iter, $1.name);
+		hotobject_write(&jp->ho_iter, $3.string);
+		hotobject_write_object_end(&jp->ho_iter, $1.name);
+		//hotobject_write_string(&jp->ho_iter, $1.name, $3.string);
 	}
 |	
 	tok_identifier ':' 

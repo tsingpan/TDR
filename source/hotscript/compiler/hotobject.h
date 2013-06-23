@@ -63,6 +63,8 @@ hpint32 hotobject_get_const_iterator(HotObjectConstIterator* self, const HotObje
 
 void hotobject_write_object_begin(HotObjectIterator* self, const char *name);
 
+void hotobject_write(HotObjectIterator* self, const char *string);
+
 void hotobject_write_object_end(HotObjectIterator* self, const char *name);
 
 void hotobject_write_string(HotObjectIterator* self, const char *name, const char *string);
