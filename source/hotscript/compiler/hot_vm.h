@@ -4,8 +4,13 @@
 
 #include "hotpot/hp_platform.h"
 
+#include "hotobject.h"
 
 #define HOT_ECHO                               0
+#define HOT_PUSH							   1
+#define HOT_PUSH_INDEX						   2
+#define HOT_POP								   3
+#define HOT_ECHO_TRIE						   4
 
 //虚拟机操作数
 typedef struct _HotOperand
@@ -41,8 +46,6 @@ HotOp *hotoparr_get_next_op(HotOpArr *self);
 
 hpuint32 hotoparr_get_next_op_number(HotOpArr *self);
 
-
-
 #define MAX_FUNCTION_STACK_DEEP 1024
 typedef struct _HotVM
 {
@@ -50,13 +53,10 @@ typedef struct _HotVM
 
 	hpuint32 current_op;
 
-
-	//函数调用堆栈
-	hpuint32 function_stack[MAX_FUNCTION_STACK_DEEP];
-	hpuint32 function_stack_num;
+	HotObjectConstIterator citer;
 }HotVM;
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr);
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, const HotObject *ho);
 
 #endif//_H_HOT_VM
 

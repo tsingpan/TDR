@@ -76,3 +76,57 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text)
 	
 	return E_HP_NOERROR;
 }
+
+hpint32 hotscript_do_push(SCRIPT_PARSER *self, const char prefix, const char*name)
+{
+	char *str = malloc(sizeof(char));
+	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	op->op = HOT_PUSH;
+	str[0] = prefix;
+	op->op0.str = str;
+	op->op0.str_len = 1;
+	op->op1.str = name;
+	op->op1.str_len = strlen(name);
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, hpuint32 ui32)
+{
+	if(ui32 != -1)
+	{
+		char *str = malloc(sizeof(char));
+		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+		op->op = HOT_PUSH_INDEX;
+		op->op0.num = ui32;
+	}
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, hpuint32 ui32)
+{
+	if(ui32 != -1)
+	{
+		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+		op->op = HOT_POP;
+	}
+	
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_pop(SCRIPT_PARSER *self)
+{
+	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	op->op = HOT_POP;
+	return E_HP_NOERROR;
+}
+
+
+hpint32 hotscript_do_echo_trie(SCRIPT_PARSER *self)
+{
+	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	op->op = HOT_ECHO_TRIE;
+	return E_HP_NOERROR;
+}

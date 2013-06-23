@@ -202,6 +202,11 @@ void hotobject_read_object_end(HotObjectConstIterator* self, const char *name)
 	hotobject_pop_const(self);
 }
 
+void hotobject_read(HotObjectConstIterator* self, const char ** string)
+{
+	const HotObject *ob = hotobject_get_const(self);
+	*string = ob->str;
+}
 
 void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char ** string)
 {

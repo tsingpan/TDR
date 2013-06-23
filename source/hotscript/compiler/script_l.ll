@@ -112,7 +112,7 @@ any_char		((.|"\n"))
 }
 
 
-<ST_IN_SCRIPTING>{intconstant}			{ yylval->ui64 = strtoull(yytext, NULL, 10); return tok_integer;}
+<ST_IN_SCRIPTING>{intconstant}			{ yylval->ui32 = strtoull(yytext, NULL, 10); return tok_integer;}
 <ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
 <<EOF>>	{
 	if(script_close_file(yyextra) == E_HP_NOERROR)
@@ -272,7 +272,6 @@ any_char		((.|"\n"))
 
 <ST_IN_SCRIPTING>{literal_begin} {
   char mark = yytext[0];
-  hpuint32 len = 0;
   for(;;)
   {
     int ch = input(*yyextra);
@@ -287,22 +286,22 @@ any_char		((.|"\n"))
         ch = input(*yyextra);
         switch (ch) {
           case 'r':
-			yylval->literal[len++] = '\r';
+			yylval->literal.str[(yylval->literal.str_len)++] = '\r';
             continue;
           case 'n':
-			yylval->literal[len++] = '\n';
+			yylval->literal.str[(yylval->literal.str_len)++] = '\n';
             continue;
           case 't':
-			yylval->literal[len++] = '\t';
+			yylval->literal.str[(yylval->literal.str_len)++] = '\t';
             continue;
           case '"':
-			yylval->literal[len++] = '"';
+			yylval->literal.str[(yylval->literal.str_len)++] = '"';
             continue;
           case '\'':
-			yylval->literal[len++] = '\'';
+			yylval->literal.str[(yylval->literal.str_len)++] = '\'';
             continue;
           case '\\':
-			yylval->literal[len++] = '\\';
+			yylval->literal.str[(yylval->literal.str_len)++] = '\\';
             continue;
           default:
             //yyerror("bad escape character\n");
@@ -312,10 +311,9 @@ any_char		((.|"\n"))
       default:
         if (ch == mark)
         {
-			yylval->literal[len] = 0;
 			return tok_literal;
         } else {
-          yylval->literal[len++] = ch;
+          yylval->literal.str[(yylval->literal.str_len)++] = ch;
         }
     }
   }

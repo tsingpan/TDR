@@ -31,6 +31,12 @@ hpuint32 hotoparr_get_next_op_number(HotOpArr *self)
 }
 
 
+
+static hotmv_init()
+{
+
+}
+
 hpint32 hotvm_execute_once(HotVM *self)
 {
 	const HotOp *op = &self->hotoparr->oparr[self->current_op];
@@ -45,6 +51,30 @@ hpint32 hotvm_execute_once(HotVM *self)
 			}
 			break;
 		}
+	case HOT_PUSH:
+		{
+			hotobject_read_object_begin(&self->citer, op->op1.str);
+			break;
+		}
+	case HOT_PUSH_INDEX:
+		{
+			char str[1024];
+			snprintf(str, 1024, "[%d]", op->op0.num);
+			hotobject_read_object_begin(&self->citer, str);
+		}
+	case HOT_POP:
+		{
+			hotobject_read_object_end(&self->citer, op->op1.str);
+			break;
+		}
+	case HOT_ECHO_TRIE:
+		{
+			const char * str;
+			hotobject_read(&self->citer, &str);
+			printf("%s", str);
+			
+			break;
+		}
 	default:
 		{
 			exit(1);
@@ -53,8 +83,10 @@ hpint32 hotvm_execute_once(HotVM *self)
 	++(self->current_op);
 }
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr)
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, const HotObject *ho)
 {
+	hotobject_get_const_iterator(&self->citer, ho);
+
 	self->hotoparr = hotoparr;
 	self->current_op = 0;
 

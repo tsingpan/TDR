@@ -69,19 +69,22 @@ typedef struct _ST_STRING ST_STRING;
 
 %union
 {
-	char literal[MAX_TOKEN_LENGTH];
+	ST_STRING literal;
 	char file_name[MAX_TOKEN_LENGTH];
-	hpuint64 ui64;
 	char identifier[MAX_TOKEN_LENGTH];
 	ST_STRING text;
+	char prefix;
+	hpuint32 ui32;
 }
 
 
 %type<literal>						tok_literal
 %type<file_name>					tok_file_name
-%type<ui64>							tok_integer
+%type<ui32>							tok_integer
 %type<identifier>					tok_identifier
 %type<text>							tok_text
+%type<prefix>						Prefix
+%type<ui32>							ArrayIndex
 
 
 %start Script
@@ -104,17 +107,30 @@ StatementList :
 Statement:
 |	tok_literal
 	{
-		printf("echo: %s", $1);
+		GET_SCRIPT_PARSER;
+		
+		hotscript_do_text(xp, &$1);
+		printf("echo: %s", $1.str);
 	}
-|	Prefix tok_identifier ArrayIndex 
-	'{' {printf("push %s\n", $2)}
-	StatementList 
-	'}' {printf("pop %s\n", $2)}
+|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
+	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
+	'{' {printf("push %s\n", $2)}	
+	StatementList '}' {printf("pop %s\n", $2)}
 	{
+		GET_SCRIPT_PARSER;
+		hotscript_do_pop_index(xp, $4);
+		hotscript_do_pop(xp);
 		//printf("$%s[%d]\n", $2, $4);
 	}
-|	Prefix tok_identifier ArrayIndex
+|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
+	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
 	{
+		GET_SCRIPT_PARSER;
+		hotscript_do_echo_trie(xp);
+		
+		hotscript_do_pop_index(xp, $4);
+		hotscript_do_pop(xp);
+		//echo
 		printf("$%s[?]\n", $2);
 	}
 |	tok_text
@@ -128,20 +144,25 @@ Statement:
 ArrayIndex :
 	'[' tok_integer ']'
 	{
+		$$ = $2;
 	}
 |	'[' '*' ']'
 	{
+		$$ = -1;
 	}
 |
 	{
+		$$ = 0;
 	}
 	
 Prefix:
 	'$'							
 	{
+		$$ = '$';
 	}
 |	'#'
 	{
+		$$ = '#';
 	}
 
 
