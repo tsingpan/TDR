@@ -112,18 +112,17 @@ Pair:
 	{
 		GET_JSON_PARSER;
 		hotobject_write_string(&jp->ho_iter, $1.name, $3.string);
-		printf("%s : %s\n", $1.name, $3.string);
 	}
 |	
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); printf("%s object begin\n", $1.name); }
+	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); }
 	Object
-	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, $1.name); printf("%s object end\n", $1.name); }
+	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, $1.name); }
 |
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); printf("%s array begin\n", $1.name); } 
+	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); } 
 	Array
-	{ GET_JSON_PARSER;	hotobject_write_object_end(&jp->ho_iter, $1.name); printf("%s array end\n", $1.name);}
+	{ GET_JSON_PARSER;	hotobject_write_object_end(&jp->ho_iter, $1.name); }
 	
 	
 Array:
@@ -147,9 +146,9 @@ Value:
 	{
 		GET_JSON_PARSER; hotobject_write_string(&jp->ho_iter, NULL, $1.string);
 	}
-|	{GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, NULL); printf("non write object begin\n"); }
+|	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, NULL); }
 	Object
-	{GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, NULL); printf("non write object end\n"); }
+	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, NULL);  }
 	
 
 	

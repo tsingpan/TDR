@@ -104,7 +104,7 @@ Statement:
 	{
 		GET_SCRIPT_PARSER;
 		
-		hotscript_do_text(xp, &$1);
+		hotscript_do_literal(xp, &$1);
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
@@ -142,29 +142,29 @@ Statement:
 ArrayIndex :
 	'[' tok_integer ']'
 	{
-		$$.i32 = $2.i32;
+		$$.i32 = $2.i32;	//指定下表
 	}
 |	'[' '*' ']'
 	{
-		$$.i32 = -1;
+		$$.i32 = -1;		//按次序展开元素， 直到不存在
 	}
 |
 	{
-		$$.i32 = 0;
+		$$.i32 = -2;		//默认为第一个元素
 	}
 	
 Prefix:
 	'@'
 	{
-		$$.prefix = '@';
+		$$.prefix = '@';//局部变量
 	}
 |	'#'
 	{
-		$$.prefix = '#';
+		$$.prefix = '#';//全局变量
 	}
 |	'$'
 	{
-		$$.prefix = '$';
+		$$.prefix = '$';//搜索所有堆栈
 	}
 
 

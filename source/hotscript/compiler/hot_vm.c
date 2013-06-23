@@ -61,6 +61,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			char str[1024];
 			snprintf(str, 1024, "[%d]", op->op0.num);
 			hotobject_read_object_begin(&self->citer, str);
+			break;
 		}
 	case HOT_POP:
 		{

@@ -37,7 +37,7 @@ int main()
 		printf("output failed\n");
 	}
 	printf("------------------------------------------------------------------------------\n");
-	//hotvm_execute(&hotvm, &sp.hotoparr, sp.ho);
+	hotvm_execute(&hotvm, &sp.hotoparr, sp.ho);
 
 
 	ho = hotobject_new();
