@@ -86,7 +86,6 @@ typedef struct _ST_STRING ST_STRING;
 %type<prefix>						Prefix
 %type<ui32>							ArrayIndex
 
-
 %start Script
 
 %%
@@ -110,35 +109,30 @@ Statement:
 		GET_SCRIPT_PARSER;
 		
 		hotscript_do_text(xp, &$1);
-		printf("echo: %s", $1.str);
 	}
 |	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
-	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
-	'{' {printf("push %s\n", $2)}	
-	StatementList '}' {printf("pop %s\n", $2)}
-	{
-		GET_SCRIPT_PARSER;
-		hotscript_do_pop_index(xp, $4);
-		hotscript_do_pop(xp);
-		//printf("$%s[%d]\n", $2, $4);
-	}
-|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
-	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
+	ArrayIndex  {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
 	{
 		GET_SCRIPT_PARSER;
 		hotscript_do_echo_trie(xp);
 		
 		hotscript_do_pop_index(xp, $4);
 		hotscript_do_pop(xp);
-		//echo
-		printf("$%s[?]\n", $2);
 	}
+|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
+	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
+	'{'	StatementList '}'
+	{
+		GET_SCRIPT_PARSER;
+		hotscript_do_pop_index(xp, $4);
+		hotscript_do_pop(xp);
+	}
+
 |	tok_text
 	{
 		GET_SCRIPT_PARSER;
 		
 		hotscript_do_text(xp, &$1);
-		printf("echo: %s", $1.str);
 	}
 	
 ArrayIndex :
@@ -156,15 +150,18 @@ ArrayIndex :
 	}
 	
 Prefix:
-	'$'							
+	'@'
 	{
-		$$ = '$';
+		$$ = '@';
 	}
 |	'#'
 	{
 		$$ = '#';
 	}
-
+|	'$'
+	{
+		$$ = '$';
+	}
 
 
 
