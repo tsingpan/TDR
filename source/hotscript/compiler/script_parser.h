@@ -42,9 +42,9 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const ST_STRING *text);
 
 hpint32 hotscript_do_push(SCRIPT_PARSER *self, const char prefix, const char*name);
 
-hpint32 hotscript_do_pop(SCRIPT_PARSER *self);
-
 hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, hpuint32 ui32);
+
+hpint32 hotscript_do_pop(SCRIPT_PARSER *self);
 
 hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, hpuint32 ui32);
 

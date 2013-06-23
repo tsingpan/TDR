@@ -104,36 +104,44 @@ StatementList :
 	}
 	
 Statement:
-|	tok_literal
+|	tok_literal 
 	{
 		GET_SCRIPT_PARSER;
 		
 		hotscript_do_text(xp, &$1);
 	}
-|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
-	ArrayIndex  {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
+|	Prefix tok_identifier ArrayIndex
 	{
 		GET_SCRIPT_PARSER;
+		hotscript_do_push(xp, $1, $2);
+		hotscript_do_push_index(xp, $3);		
+		
 		hotscript_do_echo_trie(xp);
 		
-		hotscript_do_pop_index(xp, $4);
+		hotscript_do_pop_index(xp, $3);
 		hotscript_do_pop(xp);
 	}
-|	Prefix tok_identifier {GET_SCRIPT_PARSER; hotscript_do_push(xp, $1, $2); }
-	ArrayIndex {GET_SCRIPT_PARSER; hotscript_do_push_index(xp, $4); }
-	'{'	StatementList '}'
+|	Prefix tok_identifier ArrayIndex
+	'{'
 	{
 		GET_SCRIPT_PARSER;
-		hotscript_do_pop_index(xp, $4);
+		hotscript_do_push(xp, $1, $2);
+		hotscript_do_push_index(xp, $3);
+	}
+	StatementList
+	'}'
+	{
+		GET_SCRIPT_PARSER;
+		hotscript_do_pop_index(xp, $3);
 		hotscript_do_pop(xp);
 	}
-
-|	tok_text
+|	tok_text 
 	{
 		GET_SCRIPT_PARSER;
 		
 		hotscript_do_text(xp, &$1);
 	}
+
 	
 ArrayIndex :
 	'[' tok_integer ']'
@@ -162,7 +170,6 @@ Prefix:
 	{
 		$$ = '$';
 	}
-
 
 
 %%
