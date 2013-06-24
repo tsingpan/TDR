@@ -76,12 +76,16 @@ hpint32 hotobject_get_iterator(HotObjectIterator* self, HotObject *hotobject)
 {
 	self->stack_num = 0;
 	hotobject_push(self, hotobject);
+
+	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_get_const_iterator(HotObjectConstIterator* self, const HotObject *hotobject)
 {
 	self->stack_num = 0;
 	hotobject_push_const(self, hotobject);
+
+	return E_HP_NOERROR;
 }
 
 static HotObject *hotobject_get(HotObjectIterator* self)
@@ -156,7 +160,13 @@ hpint32 hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 	new_ob = hotobject_new();
 	new_ob->type = E_OBJECT;
 	hotobject_push(self, new_ob);
-	trie_store_if_absent(ob->keys, name, new_ob);
+	if(!trie_store_if_absent(ob->keys, name, new_ob))
+	{
+		goto ERROR_RET;
+	}
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotobject_write(HotObjectIterator* self, const char *string)
@@ -164,11 +174,14 @@ hpint32 hotobject_write(HotObjectIterator* self, const char *string)
 	HotObject *ob = hotobject_get(self);
 	ob->type = E_STRING;
 	ob->str = strdup(string);
+
+	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_write_object_end(HotObjectIterator* self, const char *name)
 {
 	hotobject_pop(self);
+	return E_HP_NOERROR;
 }
 
 
@@ -176,24 +189,35 @@ hpint32 hotobject_read_object_begin(HotObjectConstIterator* self, const char *na
 {
 	const HotObject *ob = hotobject_get_const(self);
 	const HotObject *new_ob = NULL;
+	int ret;
 
 
 	if(name == NULL)
 	{
 		name = hotobject_get_normal_name_const(self);
 	}
-
-	trie_retrieve(ob->keys, name, &new_ob);
+	
+	ret = trie_retrieve(ob->keys, name, &new_ob);
+	if(!ret)
+	{
+		goto ERROR_RET;
+	}
 	hotobject_push_const(self, new_ob);
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotobject_read_object_end(HotObjectConstIterator* self, const char *name)
 {
 	hotobject_pop_const(self);
+	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_read(HotObjectConstIterator* self, const char ** string)
 {
 	const HotObject *ob = hotobject_get_const(self);
 	*string = ob->str;
+	return E_HP_NOERROR;
 }

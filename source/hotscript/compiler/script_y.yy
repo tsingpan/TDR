@@ -138,7 +138,7 @@ Statement:
 		hotscript_do_text(xp, &$1);
 	}
 
-	
+
 ArrayIndex :
 	'[' tok_integer ']'
 	{
@@ -152,7 +152,7 @@ ArrayIndex :
 	{
 		$$.i32 = -2;		//默认为第一个元素
 	}
-	
+
 Prefix:
 	'@'
 	{
@@ -169,4 +169,3 @@ Prefix:
 
 
 %%
-

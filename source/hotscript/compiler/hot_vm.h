@@ -11,6 +11,7 @@
 #define HOT_PUSH_INDEX						   2
 #define HOT_POP								   3
 #define HOT_ECHO_TRIE						   4
+#define HOT_JMP								   5
 
 //ÐéÄâ»ú²Ù×÷Êý
 typedef struct _HotOperand
