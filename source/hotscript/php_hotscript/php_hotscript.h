@@ -42,8 +42,7 @@ PHP_RINIT_FUNCTION(hotscript);
 PHP_RSHUTDOWN_FUNCTION(hotscript);
 PHP_MINFO_FUNCTION(hotscript);
 
-PHP_FUNCTION(confirm_hotscript_compiled);	/* For testing, remove later. */
-PHP_FUNCTION(myhello);
+PHP_FUNCTION(hot_encode);
 
 /* 
   	Declare any global variables you may need between the BEGIN
