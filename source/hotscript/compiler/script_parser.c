@@ -104,13 +104,15 @@ hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, SNODE *name)
 
 hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, SNODE *index)
 {
-	char *str = (char*)malloc(sizeof(char));
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->op = HOT_PUSH_INDEX;
-	op->op0.num = index->i32;
+	if(index->i32 != -2)
+	{
+		char *str = (char*)malloc(sizeof(char));
+		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+		op->op = HOT_PUSH_INDEX;
+		op->op0.num = index->i32;
 
-	index->op = op;
-
+		index->op = op;
+	}
 	return E_HP_NOERROR;
 }
 
@@ -120,16 +122,18 @@ hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, SNODE *index)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_POP;
-	}
-	
-	if(index->i32 == -1)
-	{
-		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-		op->op = HOT_JMP;
-		op->op0.num = index->op->lineno;		
+
+		if(index->i32 == -1)
+		{
+			HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+			op->op = HOT_JMP;
+			op->op0.num = index->op->lineno;		
+		}
+
+		index->op->op1.num = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 
-	index->op->op1.num = hotoparr_get_next_op_number(&self->hotoparr);
+	
 	
 
 	return E_HP_NOERROR;
