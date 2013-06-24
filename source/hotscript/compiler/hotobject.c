@@ -4,7 +4,7 @@
 #include "datrie/alpha-map.h"
 #include "hotpot/hp_error.h"
 
-
+#include <string.h>
 
 typedef enum _HotObjectType
 {
@@ -144,7 +144,7 @@ static hpint32 hotobject_pop_const(HotObjectConstIterator *self)
 
 
 
-void hotobject_write_object_begin(HotObjectIterator* self, const char *name)
+hpint32 hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 {
 	HotObject *ob = hotobject_get(self);
 	HotObject *new_ob = NULL;
@@ -159,37 +159,20 @@ void hotobject_write_object_begin(HotObjectIterator* self, const char *name)
 	trie_store_if_absent(ob->keys, name, new_ob);
 }
 
-void hotobject_write(HotObjectIterator* self, const char *string)
+hpint32 hotobject_write(HotObjectIterator* self, const char *string)
 {
 	HotObject *ob = hotobject_get(self);
 	ob->type = E_STRING;
 	ob->str = strdup(string);
 }
 
-void hotobject_write_object_end(HotObjectIterator* self, const char *name)
+hpint32 hotobject_write_object_end(HotObjectIterator* self, const char *name)
 {
 	hotobject_pop(self);
 }
 
 
-void hotobject_write_string(HotObjectIterator* self, const char *name, const char *string)
-{
-	HotObject *ob = hotobject_get(self);
-	HotObject *new_ob = NULL;
-	if(name == NULL)
-	{
-		name = hotobject_get_normal_name(self);
-	}
-
-	new_ob = hotobject_new();
-	new_ob->type = E_STRING;
-	new_ob->str = strdup(string);
-	trie_store_if_absent(ob->keys, name, new_ob);
-}
-
-
-
-void hotobject_read_object_begin(HotObjectConstIterator* self, const char *name)
+hpint32 hotobject_read_object_begin(HotObjectConstIterator* self, const char *name)
 {
 	const HotObject *ob = hotobject_get_const(self);
 	const HotObject *new_ob = NULL;
@@ -197,33 +180,20 @@ void hotobject_read_object_begin(HotObjectConstIterator* self, const char *name)
 
 	if(name == NULL)
 	{
-		name = hotobject_get_normal_name(self);
+		name = hotobject_get_normal_name_const(self);
 	}
 
 	trie_retrieve(ob->keys, name, &new_ob);
 	hotobject_push_const(self, new_ob);
 }
 
-void hotobject_read_object_end(HotObjectConstIterator* self, const char *name)
+hpint32 hotobject_read_object_end(HotObjectConstIterator* self, const char *name)
 {
 	hotobject_pop_const(self);
 }
 
-void hotobject_read(HotObjectConstIterator* self, const char ** string)
+hpint32 hotobject_read(HotObjectConstIterator* self, const char ** string)
 {
 	const HotObject *ob = hotobject_get_const(self);
 	*string = ob->str;
-}
-
-void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char ** string)
-{
-	const HotObject *ob = hotobject_get_const(self);
-	const HotObject *new_ob = NULL;
-	if(name == NULL)
-	{
-		name = hotobject_get_normal_name(self);
-	}
-
-	trie_retrieve(ob->keys, name, &new_ob);
-	*string = new_ob->str;
 }

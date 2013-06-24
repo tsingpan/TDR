@@ -61,23 +61,20 @@ struct _HotObjectConstIterator
 hpint32 hotobject_get_iterator(HotObjectIterator* self, HotObject *hotobject);
 hpint32 hotobject_get_const_iterator(HotObjectConstIterator* self, const HotObject *hotobject);
 
-void hotobject_write_object_begin(HotObjectIterator* self, const char *name);
+hpint32 hotobject_write_object_begin(HotObjectIterator* self, const char *name);
 
-void hotobject_write(HotObjectIterator* self, const char *string);
+hpint32 hotobject_write(HotObjectIterator* self, const char *string);
 
-void hotobject_write_object_end(HotObjectIterator* self, const char *name);
-
-void hotobject_write_string(HotObjectIterator* self, const char *name, const char *string);
+hpint32 hotobject_write_object_end(HotObjectIterator* self, const char *name);
 
 
 
-void hotobject_read_object_begin(HotObjectConstIterator* self, const char *name);
+hpint32 hotobject_read_object_begin(HotObjectConstIterator* self, const char *name);
 
-void hotobject_read_object_end(HotObjectConstIterator* self, const char *name);
+hpint32 hotobject_read_object_end(HotObjectConstIterator* self, const char *name);
 
-void hotobject_read(HotObjectConstIterator* self, const char ** string);
+hpint32 hotobject_read(HotObjectConstIterator* self, const char ** string);
 
-void hotobject_read_string(HotObjectConstIterator* self, const char *name, const char ** string);
 
 #endif//_H_HOT_OBJECT
 

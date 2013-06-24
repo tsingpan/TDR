@@ -71,7 +71,7 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
 	op->op0.str = malloc(text->text.str_len);
-	memcpy(op->op0.str, text->text.str, text->text.str_len);
+	memcpy(op->op0.str, text->text.str, text->text.str_len);	
 	op->op0.str_len = text->text.str_len;
 	
 	return E_HP_NOERROR;
@@ -88,7 +88,7 @@ hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const SNODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, const SNODE *name)
+hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, SNODE *name)
 {
 	char *str = malloc(sizeof(char));
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -98,11 +98,11 @@ hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, const SNODE 
 	op->op0.str_len = 1;
 	op->op1.str = strdup(name->identifier);
 	op->op1.str_len = strlen(name->identifier);
-
+	name->op = op;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, const SNODE *index)
+hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, SNODE *index)
 {
 	if(index->i32 != -2)
 	{
@@ -110,27 +110,31 @@ hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, const SNODE *index)
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_PUSH_INDEX;
 		op->op0.num = index->i32;
+
+		index->op = op;
 	}
 
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, const SNODE *index)
+hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, SNODE *index)
 {
 	if(index->i32 != -2)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_POP;
+		index->op->op1.num = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	
 
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop(SCRIPT_PARSER *self)
+hpint32 hotscript_do_pop(SCRIPT_PARSER *self, SNODE *id)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_POP;
+	id->op->op1.num = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
 }
 

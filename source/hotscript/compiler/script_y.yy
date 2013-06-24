@@ -110,12 +110,12 @@ Statement:
 	{
 		GET_SCRIPT_PARSER;
 		hotscript_do_push(xp, &$1, &$2);
-		hotscript_do_push_index(xp, &$3);		
+		hotscript_do_push_index(xp, &$3);
 		
 		hotscript_do_echo_trie(xp);
 		
 		hotscript_do_pop_index(xp, &$3);
-		hotscript_do_pop(xp);
+		hotscript_do_pop(xp, &$2);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
@@ -129,7 +129,7 @@ Statement:
 	{
 		GET_SCRIPT_PARSER;
 		hotscript_do_pop_index(xp, &$3);
-		hotscript_do_pop(xp);
+		hotscript_do_pop(xp, &$2);
 	}
 |	tok_text 
 	{

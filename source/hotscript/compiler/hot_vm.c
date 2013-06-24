@@ -16,13 +16,17 @@ hpint32 hotoparr_init(HotOpArr *self)
 
 HotOp *hotoparr_get_next_op(HotOpArr *self)
 {
+	HotOp *ptr;
 	if(self->next_oparr >= self->oparr_size)
 	{
 		self->oparr_size *= 2;
 		self->oparr = realloc(self->oparr, self->oparr_size);
 	}
 
-	return &self->oparr[(self->next_oparr)++];
+	ptr = &self->oparr[self->next_oparr];
+	ptr->lineno = self->next_oparr;
+	++(self->next_oparr);
+	return ptr;
 }
 
 hpuint32 hotoparr_get_next_op_number(HotOpArr *self)
@@ -68,12 +72,12 @@ hpint32 hotvm_execute_once(HotVM *self)
 			hotobject_read_object_end(&self->citer, op->op1.str);
 			break;
 		}
+	//echoÊ§°ÜÁË¾ÍÌø×ª
 	case HOT_ECHO_TRIE:
 		{
 			const char * str;
 			hotobject_read(&self->citer, &str);
-			printf("%s", str);
-			
+			printf("%s", str);			
 			break;
 		}
 	default:

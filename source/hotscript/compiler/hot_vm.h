@@ -27,6 +27,7 @@ typedef struct _HotOp
 	hpint32 op;
 	HotOperand op0;
 	HotOperand op1;
+	HotOperand op2;
 	hpuint32 lineno;
 }HotOp;
 
