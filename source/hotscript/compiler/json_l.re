@@ -1,4 +1,3 @@
-%{
 #include <stdio.h>
 
 #include "hotpot/hp_platform.h"
@@ -11,14 +10,12 @@
 	yylloc->last_column = yycolumn + yyleng - 1;										\
 	yycolumn += yyleng;																	
 		
-		
+
 static void hotscript_reserved_keyword(char* keyword)
 {
 	//yyerror(&yylloc, hotscript_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
 }
 void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
-
-#define YYSTYPE_IS_DECLARED
 
 
 
@@ -64,23 +61,22 @@ static size_t Utf32toUtf8(unsigned int codepoint, char * utf8Buf)
         return 2;
     }
 }
-%}
 
-
-%option noyywrap yylineno reentrant nounistd bison-bridge bison-locations
-%option extra-type = "yyscan_t*"
-
-
-identifier		([a-zA-Z_][a-zA-Z_0-9]*)
+int lex_scan(JSON_PARSER *jp)
+{
+/*!re2c
 newline			("\r"|"\n"|"\r\n")
-whitespace		([ \t\r\n]*)
-symbols			([,:\[\]\{\}])
-string_begin	(['\"])
-%%
+identifier		[a-zA-Z_][a-zA-Z_0-9]*
+whitespace		[ \t\r\n]*
+symbols			[,:\[\]\{\}]
+string_begin	['\"]
 
-{symbols}		{ return yytext[0]; }
 
-{identifier}	{ 
+<*>{symbols} {
+	return yytext[0];
+}
+
+<*>{identifier}	{ 
 	hpuint32 i = 0;
 
 	yylval->val.str.ptr = yytext;
@@ -88,7 +84,7 @@ string_begin	(['\"])
 	return tok_identifier;
 }
 	
-{string_begin} {
+<*>{string_begin} {
   char mark = yytext[0];
   //最大字符串的限制
   yylval->val.str.ptr = malloc(1024);
@@ -168,6 +164,7 @@ string_begin	(['\"])
   }
 }
 
-"\n" {}
-. {}
-%%
+<*>"\n" {}
+<*>. {}
+*/
+}

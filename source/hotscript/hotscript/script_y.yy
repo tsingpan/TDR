@@ -97,7 +97,7 @@ StatementList :
 	}
 	
 Statement:
-|	tok_literal 
+	tok_literal 
 	{
 		GET_SCRIPT_PARSER;
 		
