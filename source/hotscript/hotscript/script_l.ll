@@ -61,8 +61,11 @@ any_char		((.|"\n"))
 		int ch = input(*yyextra);
 		if(ch == EOF)
 		{
+			//这里出错了
 			yylval->text.str[yylval->text.str_len] = 0;
+			//yyless(yyleng - 1);
 			break;
+			//yyterminate();
 		}
 		else
 		{

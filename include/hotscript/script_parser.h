@@ -32,10 +32,15 @@ struct tagSCRIPT_PARSER
 };
 
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
+hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, size_t script_size, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
+
+hpint32 script_open_str(yyscan_t *super, const char *script, size_t script_size);
 
 hpint32 script_open_file(yyscan_t *super, const char *file_name);
 
 hpint32 script_close_file(yyscan_t *super);
+
+hpint32 script_close_str(yyscan_t *super);
 
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text);

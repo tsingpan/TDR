@@ -18,8 +18,15 @@ HotObjectReader citer;
 
 const char *str;
 
+char buff[102400];
+size_t buff_size;
+
+
 int main()
 {
+	FILE *fin;
+	char c;
+
 	obj = hotobject_new();
 	hotobject_get_writer(&writer, obj);
 	if(json_parser(&xp, "d:/1.json", &writer.super) == 0)
@@ -32,6 +39,7 @@ int main()
 	}
 	
 	hotobject_get_reader(&reader, obj);
+	/*
 	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{
 		printf("output succeed\n");
@@ -40,7 +48,17 @@ int main()
 	{
 		printf("output failed\n");
 	}
-	
+	*/
+	buff_size = 0;
+	fin = fopen("d:/2.xml", "r");
+	while((c = fgetc(fin)) != EOF)
+	{
+		buff[buff_size++] = c;
+	}
+	buff[buff_size++] = 0;
+
+	script_parser_str(&sp, buff, buff_size, &reader.super, NULL, NULL);
+	fclose(fin);
 	return 0;
 }
 

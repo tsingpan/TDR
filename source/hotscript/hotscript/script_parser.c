@@ -25,6 +25,41 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	return self->result;
 }
 
+hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, size_t script_size, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
+{
+	hpint32 ret;
+
+	hotoparr_init(&self->hotoparr);
+
+	yyscriptlex_init_extra(&self->scanner, &self->scanner);
+
+	self->stack_num = 0;
+	script_open_str(&self->scanner, script, script_size);
+	self->reader = reader;
+
+	ret = yyscriptparse(&self->scanner);
+	if(ret == 0)
+	{
+		self->result = E_HP_NOERROR;
+	}
+	script_close_str(&self->scanner);
+	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
+
+	return self->result;
+}
+
+hpint32 script_open_str(yyscan_t *super, const char *script, size_t script_size)
+{
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner);
+	self->stack[self->stack_num].bs = yyscript_scan_bytes(script, script_size, self->scanner);
+	++(self->stack_num);
+	yyscript_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}
+
 hpint32 script_open_file(yyscan_t *super, const char *file_name)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner);
@@ -66,6 +101,23 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
+hpint32 script_close_str(yyscan_t *super)
+{
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner);
+
+	yyscript_delete_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+
+	--self->stack_num;
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+	yyscript_switch_to_buffer(self->stack[self->stack_num - 1].bs, self->scanner);
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}
+
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -74,7 +126,6 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 	op->op0.val.str.len = text->text.str_len;
 	op->op0.val.str.ptr = (char*)malloc(op->op0.val.str.len);
 	memcpy(op->op0.val.str.ptr, text->text.str, op->op0.val.str.len);
-	
 	return E_HP_NOERROR;
 }
 
