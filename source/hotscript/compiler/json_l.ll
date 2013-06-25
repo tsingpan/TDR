@@ -82,17 +82,17 @@ string_begin	(['\"])
 
 {identifier}	{ 
 	hpuint32 i = 0;
-	for(i = 0;i < yyleng;++i)
-	{
-		yylval->name[i] = yytext[i];
-	}
-	yylval->name[i] = 0;
+
+	yylval->val.str.ptr = yytext;
+	yylval->val.str.len = yyleng;
 	return tok_identifier;
 }
 	
 {string_begin} {
   char mark = yytext[0];
-  yylval->string_length = 0;
+  //最大字符串的限制
+  yylval->val.str.ptr = malloc(1024);
+  yylval->val.str.len = 0;
   for(;;)
   {
     int ch = input(*yyextra);
@@ -106,28 +106,28 @@ string_begin	(['\"])
         switch (ch)
         {
           case '"':
-			yylval->string[(yylval->string_length)++] = '"';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '"';
             continue;
           case '\\':
-			yylval->string[(yylval->string_length)++] = '\\';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\\';
             continue;
           case '/':
-			yylval->string[(yylval->string_length)++] = '/';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '/';
             continue;
           case 'b':
-			yylval->string[(yylval->string_length)++] = '\b';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\b';
             continue;
           case 'f':
-			yylval->string[(yylval->string_length)++] = '\f';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\f';
             continue;
           case 'n':
-			yylval->string[(yylval->string_length)++] = '\n';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\n';
             continue;
           case 'r':
-			yylval->string[(yylval->string_length)++] = '\r';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\r';
             continue;
           case 't':
-			yylval->string[(yylval->string_length)++] = '\t';
+			yylval->val.str.ptr[(yylval->val.str.len)++] = '\t';
             continue;
 		  case 'u':
 		  {
@@ -144,7 +144,7 @@ string_begin	(['\"])
 			}
 			//这里要进行错误处理
 			hexToDigit(&d, hex_number);
-			yylval->string_length += Utf32toUtf8(d, yylval->string + (yylval->string_length));
+			yylval->val.str.len += Utf32toUtf8(d, yylval->val.str.ptr + (yylval->val.str.len));
 			
 			continue;
 		  }
@@ -156,13 +156,13 @@ string_begin	(['\"])
       default:
         if (ch == mark)
         {
-			yylval->string[yylval->string_length] = 0;
-			yylval->type = E_ZN_STRING;
+			yylval->val.str.ptr[yylval->val.str.len] = 0;
+			yylval->type = E_HP_STRING;
 			return tok_string;
         }
         else
         {
-          yylval->string[(yylval->string_length)++] = ch;
+          yylval->val.str.ptr[(yylval->val.str.len)++] = ch;
         }
     }
   }

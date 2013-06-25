@@ -44,18 +44,18 @@ hpint32 hotvm_execute_once(HotVM *self)
 	case HOT_ECHO:
 		{
 			hpuint32 i;
-			for(i = 0;i < op->op0.str_len; ++i)
+			for(i = 0;i < op->op0.val.str.len; ++i)
 			{
-				fputc(op->op0.str[i], stdout);
+				fputc(op->op0.val.str.ptr[i], stdout);
 			}
 			++(self->current_op);
 			break;
 		}
 	case HOT_PUSH:
 		{
-			if(hotobject_read_object_begin(&self->citer, op->op1.str) != E_HP_NOERROR)
+			if(hp_reader_begin(self->reader, &op->op1) != E_HP_NOERROR)
 			{
-				self->current_op = op->op2.num;
+				self->current_op = op->op2.val.ui32;
 			}
 			else
 			{
@@ -65,17 +65,9 @@ hpint32 hotvm_execute_once(HotVM *self)
 		}
 	case HOT_PUSH_INDEX:
 		{
-			char str[1024];
-			const char* name = NULL;
-			if(op->op0.num >= 0)
+			if(hp_reader_begin(self->reader, &op->op0) != E_HP_NOERROR)
 			{
-				snprintf(str, 1024, "[%d]", op->op0.num);
-				name = str;
-			}
-
-			if(hotobject_read_object_begin(&self->citer, name) != E_HP_NOERROR)
-			{
-				self->current_op = op->op1.num;
+				self->current_op = op->op1.val.ui32;
 			}
 			else
 			{
@@ -85,21 +77,25 @@ hpint32 hotvm_execute_once(HotVM *self)
 		}
 	case HOT_POP:
 		{
-			hotobject_read_object_end(&self->citer, op->op1.str);
+			hp_reader_end(self->reader);
 			++(self->current_op);
 			break;
 		}
 	case HOT_ECHO_TRIE:
 		{
-			const char * str;
-			hotobject_read(&self->citer, &str);
-			printf("%s", str);
+			HPVar var;
+			hpuint32 i;
+			hp_reader_read(self->reader, &var);
+			for(i = 0;i < var.val.str.len; ++i)
+			{
+				fputc(var.val.str.ptr[i], stdout);
+			}
 			++(self->current_op);
 			break;
 		}
 	case HOT_JMP:
 		{
-			self->current_op = op->op0.num;			
+			self->current_op = op->op0.val.i32;			
 			break;
 		}
 	default:
@@ -111,10 +107,9 @@ hpint32 hotvm_execute_once(HotVM *self)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, const HotObject *ho)
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader)
 {
-	hotobject_get_const_iterator(&self->citer, ho);
-
+	self->reader = reader;
 	self->hotoparr = hotoparr;
 	self->current_op = 0;
 

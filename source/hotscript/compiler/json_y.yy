@@ -9,7 +9,7 @@
 
 
 #include "json_parser.h"
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
 
 #define YYERROR_VERBOSE
 
@@ -28,8 +28,6 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 	va_end(ap);
 
 	return;
-ERROR_RET:
-	return;
 }
 //这里的代码生成在自身的文件中
 #define GET_JSON_PARSER JSON_PARSER *jp = HP_CONTAINER_OF(arg, JSON_PARSER, scanner);
@@ -39,6 +37,7 @@ ERROR_RET:
 %code requires
 {
 #include "globals.h"
+#include "hotpot/hp_value.h"
 
 #define YYMALLOC
 #define YYFREE
@@ -47,30 +46,7 @@ ERROR_RET:
 #define MAX_STRING_LENGTH 124
 #define MAX_NAME_LENGTH 64
 
-
-#ifndef _DEF_ZNODE
-#define _DEF_ZNODE
-
-typedef enum _ZNODE_TYPE
-{
-	E_ZN_STRING,
-	E_ZN_OBJECT,
-	E_ZN_MEMBERS,
-	E_ZN_PAIR,
-	E_ZN_ELEMENTS,
-	E_ZN_ARRAY,
-}ZNODE_TYPE;
-
-typedef struct _znode znode;
-struct _znode
-{
-	ZNODE_TYPE type;
-	char name[MAX_NAME_LENGTH];
-	char string[MAX_STRING_LENGTH];
-	hpuint32 string_length;
-};
-#endif //_DEF_ZNODE
-#define YYSTYPE znode
+#define YYSTYPE HPVar
 
 }//code requires end
 
@@ -111,20 +87,20 @@ Pair:
 	tok_identifier ':' tok_string
 	{
 		GET_JSON_PARSER;
-		hotobject_write_object_begin(&jp->ho_iter, $1.name);
-		hotobject_write(&jp->ho_iter, $3.string);
-		hotobject_write_object_end(&jp->ho_iter, $1.name);
+		hp_writer_begin(jp->writer, &$1);
+		hp_writer_write(jp->writer, &$3);
+		hp_writer_end(jp->writer);
 	}
 |	
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); }
+	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, &$1); }
 	Object
-	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, $1.name); }
+	{ GET_JSON_PARSER; hp_writer_end(jp->writer); }
 |
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, $1.name); } 
+	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, &$1); } 
 	Array
-	{ GET_JSON_PARSER;	hotobject_write_object_end(&jp->ho_iter, $1.name); }
+	{ GET_JSON_PARSER;	hp_writer_end(jp->writer); }
 	
 	
 Array:
@@ -148,13 +124,13 @@ Value:
 	tok_string
 	{
 		GET_JSON_PARSER;
-		hotobject_write_object_begin(&jp->ho_iter, NULL);
-		hotobject_write(&jp->ho_iter, $1.string);
-		hotobject_write_object_end(&jp->ho_iter, NULL);
+		hp_writer_begin(jp->writer, NULL);
+		hp_writer_write(jp->writer, &$1);
+		hp_writer_end(jp->writer);
 	}
-|	{ GET_JSON_PARSER; hotobject_write_object_begin(&jp->ho_iter, NULL); }
+|	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, NULL); }
 	Object
-	{ GET_JSON_PARSER; hotobject_write_object_end(&jp->ho_iter, NULL);  }
+	{ GET_JSON_PARSER; hp_writer_end(jp->writer);  }
 	
 
 	

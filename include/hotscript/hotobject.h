@@ -4,6 +4,10 @@
 
 #include "hotpot/hp_platform.h"
 
+#include "hotpot/hp_value.h"
+#include "hotpot/hp_reader.h"
+#include "hotpot/hp_writer.h"
+
 #ifndef _DEC_HOTOBJECT
 #define _DEC_HOTOBJECT
 typedef struct _HotObject HotObject;
@@ -18,12 +22,12 @@ void hotobject_free(HotObject* self);
 
 #ifndef _DEC_HOTOBJECTITERATORA
 #define _DEC_HOTOBJECTITERATORA
-typedef struct _HotObjectIterator HotObjectIterator;
+typedef struct _HotObjectWriter HotObjectWriter;
 #endif//_DEC_HOTOBJECTITERATORA
 
 #ifndef _DEC_HOTOBJECTCONSTITERATORA
 #define _DEC_HOTOBJECTCONSTITERATORA
-typedef struct _HotObjectConstIterator HotObjectConstIterator;
+typedef struct _HotObjectReader HotObjectReader;
 #endif//_DEC_HOTOBJECTCONSTITERATORA
 
 
@@ -35,12 +39,14 @@ typedef struct _HotObjectStackNode
 	hpuint32 count;	
 }HotObjectStackNode;
 
-struct _HotObjectIterator
+struct _HotObjectWriter
 {
+	HPAbstractWriter super;
+
 	HotObjectStackNode stack[HOTOBJECT_MAX_STACK_DEEP];
 	hpuint32 stack_num;
 
-	char name[HOTOBJECT_MAX_NAME_LENGTH];
+	char name[HOTOBJECT_MAX_NAME_LENGTH];	
 };
 
 
@@ -50,31 +56,18 @@ typedef struct _HotObjectConstStackNode
 	hpuint32 count;	
 }HotObjectConstStackNode;
 
-struct _HotObjectConstIterator
+struct _HotObjectReader
 {
+	HPAbstractReader super;
 	HotObjectConstStackNode stack[HOTOBJECT_MAX_STACK_DEEP];
 	hpuint32 stack_num;
 
 	char name[HOTOBJECT_MAX_NAME_LENGTH];
 };
 
-hpint32 hotobject_get_iterator(HotObjectIterator* self, HotObject *hotobject);
-hpint32 hotobject_get_const_iterator(HotObjectConstIterator* self, const HotObject *hotobject);
+hpint32 hotobject_get_writer(HotObjectWriter* self, HotObject *hotobject);
 
-hpint32 hotobject_write_object_begin(HotObjectIterator* self, const char *name);
-
-hpint32 hotobject_write(HotObjectIterator* self, const char *string);
-
-hpint32 hotobject_write_object_end(HotObjectIterator* self, const char *name);
-
-
-
-hpint32 hotobject_read_object_begin(HotObjectConstIterator* self, const char *name);
-
-hpint32 hotobject_read_object_end(HotObjectConstIterator* self, const char *name);
-
-hpint32 hotobject_read(HotObjectConstIterator* self, const char ** string);
-
+hpint32 hotobject_get_reader(HotObjectReader* self, const HotObject *hotobject);
 
 #endif//_H_HOT_OBJECT
 

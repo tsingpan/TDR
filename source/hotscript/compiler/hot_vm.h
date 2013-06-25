@@ -4,7 +4,8 @@
 
 #include "hotpot/hp_platform.h"
 
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
+#include "hotpot/hp_value.h"
 
 #define HOT_ECHO                               0
 #define HOT_PUSH							   1
@@ -26,9 +27,9 @@ typedef struct _HotOperand
 typedef struct _HotOp
 {
 	hpint32 op;
-	HotOperand op0;
-	HotOperand op1;
-	HotOperand op2;
+	HPVar op0;
+	HPVar op1;
+	HPVar op2;
 	hpuint32 lineno;
 }HotOp;
 
@@ -55,10 +56,10 @@ typedef struct _HotVM
 
 	hpuint32 current_op;
 
-	HotObjectConstIterator citer;
+	HPAbstractReader *reader;
 }HotVM;
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, const HotObject *ho);
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader);
 
 #endif//_H_HOT_VM
 

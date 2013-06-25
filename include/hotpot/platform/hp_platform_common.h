@@ -12,6 +12,12 @@ typedef unsigned long long hpuint64;
 typedef char hpchar;
 typedef double hpdouble;
 
+typedef struct _hpstring
+{
+	char *ptr;
+	hpuint32 len;
+}hpstring;
+
 
 #define HP_UINT64_MAX ((((hpuint64)0xffffffffUL) << 32) | 0xffffffffUL)
 #define HP_INT64_MAX  ((((hpint64) 0x7fffffffL) << 32) | 0xffffffffL)

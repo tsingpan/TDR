@@ -2,23 +2,28 @@
 #include "json_parser.h"
 #include "script_parser.h"
 
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
 #include "hot_vm.h"
 
 JSON_PARSER xp;
 SCRIPT_PARSER sp;
+HotObject *obj;
+HotObjectReader reader;
+HotObjectWriter writer;
 
 
 HotObject *ho;
-HotObjectIterator iter;
-HotObjectConstIterator citer;
+HotObjectWriter iter;
+HotObjectReader citer;
 HotVM hotvm;
 
 const char *str;
 
 int main()
 {
-	if(json_parser(&xp, "d:/1.json") == 0)
+	obj = hotobject_new();
+	hotobject_get_writer(&writer, obj);
+	if(json_parser(&xp, "d:/1.json", &writer.super) == 0)
 	{
 		printf("input succeed\n");
 	}
@@ -27,8 +32,8 @@ int main()
 		printf("input failed\n");
 	}
 	
-
-	if(script_parser(&sp, "d:/2.xml", xp.ho) == 0)
+	hotobject_get_reader(&reader, obj);
+	if(script_parser(&sp, "d:/2.xml", &reader.super) == 0)
 	{
 		printf("output succeed\n");
 	}
@@ -37,19 +42,9 @@ int main()
 		printf("output failed\n");
 	}
 	printf("------------------------------------------------------------------------------\n");
-	hotvm_execute(&hotvm, &sp.hotoparr, sp.ho);
-
-
-	ho = hotobject_new();
-	hotobject_get_iterator(&iter, ho);
-	hotobject_write_object_begin(&iter, "haha");
-	hotobject_write_object_end(&iter, "haha");
-
-	hotobject_get_const_iterator(&citer, ho);
-	hotobject_read_object_begin(&citer, "haha");
-	hotobject_read_object_end(&citer, "haha");
-
-	hotobject_free(ho);
+	hotobject_get_reader(&reader, obj);
+	hotvm_execute(&hotvm, &sp.hotoparr, &reader.super);
+	printf("------------------------------------------------------------------------------\n");
 
 	
 	return 0;

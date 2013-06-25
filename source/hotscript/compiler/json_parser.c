@@ -47,7 +47,7 @@ ERROR_RET:
 }
 
 
-hpint32 json_parser(JSON_PARSER *self, const char* file_name)
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer)
 {
 	hpint32 ret;
 	hpint64 data;
@@ -59,8 +59,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name)
 
 	json_open_file(&self->scanner, file_name);
 
-	self->ho = hotobject_new();
-	hotobject_get_iterator(&self->ho_iter, self->ho);
+	self->writer = writer;
 
 	ret = yyjsonparse(&self->scanner);
 	if(ret == 0)
