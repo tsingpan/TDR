@@ -31,7 +31,7 @@ struct tagSCRIPT_PARSER
 	HotVM hotvm;
 };
 
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader);
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
 hpint32 script_open_file(yyscan_t *super, const char *file_name);
 

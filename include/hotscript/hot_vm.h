@@ -49,17 +49,24 @@ HotOp *hotoparr_get_next_op(HotOpArr *self);
 
 hpuint32 hotoparr_get_next_op_number(HotOpArr *self);
 
+typedef struct _HotVM HotVM;
+typedef void (*vm_user_putc)(HotVM *self, char c);
+
 #define MAX_FUNCTION_STACK_DEEP 1024
-typedef struct _HotVM
+struct _HotVM
 {
 	const HotOpArr *hotoparr;
 
 	hpuint32 current_op;
 
-	HPAbstractReader *reader;
-}HotVM;
+	void *user_data;
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader);
+	vm_user_putc uputc;
+
+	HPAbstractReader *reader;
+};
+
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
 #endif//_H_HOT_VM
 

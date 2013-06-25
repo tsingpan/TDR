@@ -46,7 +46,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			hpuint32 i;
 			for(i = 0;i < op->op0.val.str.len; ++i)
 			{
-				fputc(op->op0.val.str.ptr[i], stdout);
+				self->uputc(self, op->op0.val.str.ptr[i]);
 			}
 			++(self->current_op);
 			break;
@@ -88,7 +88,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			hp_reader_read(self->reader, &var);
 			for(i = 0;i < var.val.str.len; ++i)
 			{
-				fputc(var.val.str.ptr[i], stdout);
+				self->uputc(self, var.val.str.ptr[i]);
 			}
 			++(self->current_op);
 			break;
@@ -107,12 +107,26 @@ hpint32 hotvm_execute_once(HotVM *self)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader)
+static void normal_putc(HotVM *self, char c)
+{
+	fputc(c, stdout);
+}
+
+hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	self->reader = reader;
 	self->hotoparr = hotoparr;
 	self->current_op = 0;
+	self->user_data = user_data;
 
+	if(uputc == NULL)
+	{
+		self->uputc = normal_putc;
+	}
+	else
+	{
+		self->uputc = uputc;
+	}
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{

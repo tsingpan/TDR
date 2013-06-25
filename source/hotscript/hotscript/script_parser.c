@@ -2,7 +2,7 @@
 
 #include "hotpot/hp_error.h"
 
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader)
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	hpint32 ret;
 
@@ -20,7 +20,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 		self->result = E_HP_NOERROR;
 	}
 
-	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader);
+	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
 	
 	return self->result;
 }

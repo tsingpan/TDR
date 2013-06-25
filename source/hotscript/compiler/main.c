@@ -32,7 +32,7 @@ int main()
 	}
 	
 	hotobject_get_reader(&reader, obj);
-	if(script_parser(&sp, "d:/2.xml", &reader.super) == 0)
+	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{
 		printf("output succeed\n");
 	}
