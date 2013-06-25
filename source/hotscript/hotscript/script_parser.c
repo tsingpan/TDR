@@ -97,7 +97,7 @@ hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, SNODE *name)
 	op->op0.val.c = prefix->prefix;
 	op->op1.type = E_HP_STRING;
 	op->op1.val.str.ptr = strdup(name->identifier);
-	op->op1.val.str.len = strlen(name->identifier);
+	op->op1.val.str.len = strlen(name->identifier) + 1;
 	name->op = op;
 	return E_HP_NOERROR;
 }
