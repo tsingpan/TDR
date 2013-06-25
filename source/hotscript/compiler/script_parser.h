@@ -28,6 +28,7 @@ struct tagSCRIPT_PARSER
 	SCRIPT_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
 
 	HPAbstractReader *reader;
+	HotVM hotvm;
 };
 
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader);

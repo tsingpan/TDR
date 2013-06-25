@@ -20,6 +20,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 		self->result = E_HP_NOERROR;
 	}
 
+	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader);
 	
 	return self->result;
 }

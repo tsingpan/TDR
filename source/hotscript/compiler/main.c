@@ -15,7 +15,6 @@ HotObjectWriter writer;
 HotObject *ho;
 HotObjectWriter iter;
 HotObjectReader citer;
-HotVM hotvm;
 
 const char *str;
 
@@ -41,11 +40,6 @@ int main()
 	{
 		printf("output failed\n");
 	}
-	printf("------------------------------------------------------------------------------\n");
-	hotobject_get_reader(&reader, obj);
-	hotvm_execute(&hotvm, &sp.hotoparr, &reader.super);
-	printf("------------------------------------------------------------------------------\n");
-
 	
 	return 0;
 }
