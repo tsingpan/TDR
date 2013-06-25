@@ -8,7 +8,7 @@
 #include "hotpot/hp_error.h"
 
 
-#include "script_parser.h"
+#include "hotscript/script_parser.h"
 
 #define YYERROR_VERBOSE
 
@@ -37,13 +37,12 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 
 %code requires
 {
-#include "globals.h"
-#include "hot_vm.h"
+#include "hotscript/hot_vm.h"
 
 #define YYMALLOC
 #define YYFREE
 #define YYLEX_PARAM *arg
-
+#define MAX_TOKEN_LENGTH 1024
 #ifndef _DEF_SNODE
 #define _DEF_SNODE
 typedef struct _ST_STRING

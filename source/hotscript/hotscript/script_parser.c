@@ -1,4 +1,4 @@
-#include "script_parser.h"
+#include "hotscript/script_parser.h"
 
 #include "hotpot/hp_error.h"
 

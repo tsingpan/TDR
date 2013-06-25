@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "json_parser.h"
-#include "script_parser.h"
+#include "hotscript/script_parser.h"
 
 #include "hotscript/hotobject.h"
-#include "hot_vm.h"
+#include "hotscript/hot_vm.h"
 
 JSON_PARSER xp;
 SCRIPT_PARSER sp;
