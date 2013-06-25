@@ -137,16 +137,16 @@ static hpint32 hotobject_writer_begin(HPAbstractWriter* super, const HPVar *name
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
 	HotObject *new_ob = NULL;
-	const char *str_name;
+	char str_name[1024];
 	if(name == NULL)
 	{
-		str_name = hotobject_get_normal_name(self);
+		strncpy(str_name, hotobject_get_normal_name(self), 1024);
 	}
 	else
 	{
-		str_name = name->val.str.ptr;
+		strncpy(str_name, name->val.str.ptr, 1024);
+		str_name[name->val.str.len] = TRIE_CHAR_TERM;
 	}
-
 	new_ob = hotobject_new();
 	new_ob->type = E_OBJECT;
 	hotobject_push(self, new_ob);
@@ -182,17 +182,17 @@ static hpint32 hotobject_reader_begin(HPAbstractReader* super, const HPVar *name
 	const HotObject *ob = hotobject_get_const(self);
 	const HotObject *new_ob = NULL;
 	int ret;
-	const char *str_name;
-
-	if(str_name == NULL)
+	char str_name[1024];
+	if(name == NULL)
 	{
-		str_name = hotobject_get_normal_name_const(self);
+		strncpy(str_name, hotobject_get_normal_name_const(self), 1024);
 	}
 	else
 	{
-		str_name = name->val.str.ptr;
+		strncpy(str_name, name->val.str.ptr, 1024);
+		str_name[name->val.str.len] = TRIE_CHAR_TERM;
 	}
-	
+
 	ret = trie_retrieve(ob->keys, str_name, &new_ob);
 	if(!ret)
 	{

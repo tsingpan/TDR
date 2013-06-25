@@ -26,8 +26,6 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 	va_end(ap);
 
 	return;
-ERROR_RET:
-	return;
 }
 //这里的代码生成在自身的文件中
 #define GET_SCRIPT_PARSER SCRIPT_PARSER *xp = HP_CONTAINER_OF(arg, SCRIPT_PARSER, scanner);

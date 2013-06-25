@@ -54,7 +54,6 @@ any_char		((.|"\n"))
 
 #然后读取关键字
 <INITIAL>{any_char}		     {
-	int i;
 	yylval->text.str[0] = yytext[0];
 	yylval->text.str_len = 1;
 	for(;;)
@@ -89,7 +88,6 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE;															}
 <ST_INCLUDE>{file_name} {
 	char c;
-	hpuint32 i;
 	hpuint32 len;
 	for(c = input(*yyextra); c != ';'; c = input(*yyextra))
 	{
