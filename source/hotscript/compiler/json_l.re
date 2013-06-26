@@ -62,44 +62,69 @@ static size_t Utf32toUtf8(unsigned int codepoint, char * utf8Buf)
     }
 }
 
-hpint32 lex_scan(JSON_PARSER *jp)
+#define YYCTYPE   unsigned char
+#define YYFILL(n) 
+#define YYCURSOR  jp->yy_cursor
+#define YYLIMIT   jp->yy_limit
+#define yytext jp->yy_text
+#define yyleng jp->yy_leng
+
+#define YYGETCONDITION()  jp->yy_state
+#define YYSETCONDITION(s) jp->yy_state = s
+
+#define STATE(name)  yyc##name
+#define BEGIN(state) YYSETCONDITION(STATE(state))
+#define YYSTATE      YYGETCONDITION()
+
+hpint32 json_lex_scan(JSON_PARSER *jp, YYSTYPE * yylval)
 {
+restart:
+	if(YYCURSOR >= YYLIMIT)
+	{
+		return 0;
+	}
+	//记录开始匹配时候的位置
+	jp->yy_text = YYCURSOR;
 /*!re2c
+re2c:yyfill:check = 0;
+
+
 newline			("\r"|"\n"|"\r\n")
 identifier		[a-zA-Z_][a-zA-Z_0-9]*
 whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
-string_begin	['\"]
+string_begin	['\"']
 
+<!*> := yyleng = YYCURSOR - jp->yy_text;
 
-<*>{symbols} {
-	return yytext[0];
+<INITIAL>{symbols} {
+	return *jp->yy_text;
 }
 
-<*>{identifier}	{ 
-	hpuint32 i = 0;
-
-	yylval->val.str.ptr = yytext;
+<INITIAL>{identifier}	{
+	yylval->type = E_HP_STRING;
+	yylval->val.str.ptr = jp->yy_text;
 	yylval->val.str.len = yyleng;
 	return tok_identifier;
 }
 	
-<*>{string_begin} {
-  char mark = yytext[0];
+<INITIAL>{string_begin} {
+  char mark = *jp->yy_text;
+  //YYCURSOR只比yy_text大1哦~
+
   //最大字符串的限制
   yylval->val.str.ptr = malloc(1024);
-  yylval->val.str.len = 0;
-  for(;;)
-  {
-    int ch = input(*yyextra);
+  yylval->type = E_HP_STRING;
+  yylval->val.str.len = 0;  
+  while (YYCURSOR < YYLIMIT)
+  {	
+	unsigned char ch = *YYCURSOR;
+	++YYCURSOR;
     switch (ch)
     {
-      case EOF:
-        //yyerror("end of file while read string at %d\n", yylineno);
-        exit(1);
       case '\\':
-        ch = input(*yyextra);
-        switch (ch)
+		++YYCURSOR;
+        switch (*YYCURSOR)
         {
           case '"':
 			yylval->val.str.ptr[(yylval->val.str.len)++] = '"';
@@ -132,11 +157,11 @@ string_begin	['\"]
 			unsigned int d;
 			for(i = 0;i < 4; ++i)
 			{
-				hex_number[i] = input(*yyextra);
-				if(hex_number[i] == EOF)
-				{
-					exit(1);
+				++YYCURSOR;
+				if (YYCURSOR >= YYLIMIT) {
+					return 0;
 				}
+				hex_number[i] = *YYCURSOR;
 			}
 			//这里要进行错误处理
 			hexToDigit(&d, hex_number);
@@ -164,7 +189,10 @@ string_begin	['\"]
   }
 }
 
-<*>"\n" {}
-<*>. {}
+<INITIAL>. | '\n' {
+	goto restart;
+}
+
 */
+return 0;
 }

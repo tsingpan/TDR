@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include "json_l.h"
 
 #include "hotpot/hp_platform.h"
 
@@ -13,6 +14,10 @@
 
 
 #define MAX_STACK_DEEP 1024
+
+
+
+
 
 typedef struct tagJSON_STACK_NODE
 {
@@ -28,17 +33,22 @@ typedef struct tagJSON_PARSER_STACK_NODE
 	FILE *f;
 }JSON_PARSER_STACK_NODE;
 
+#define MAX_BUFF_SIZE 1024
 
 typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {
+	enum YYCONDTYPE yy_state;
+	unsigned char *yy_cursor;
+	unsigned char *yy_limit;
+	unsigned char *yy_text;
+	unsigned char buff[MAX_BUFF_SIZE];
+	hpuint32 yy_leng;
+	hpuint32 buff_size;
+
 	hpint32 result;
-
-
 	hpuint32 stack_num;
 	JSON_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
-
-
 	HPAbstractWriter *writer;
 };
 

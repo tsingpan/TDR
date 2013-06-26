@@ -21,6 +21,7 @@
 {
 #include "globals.h"
 #include "hotpot/hp_value.h"
+#include "json_parser.h"
 
 #define YYMALLOC
 #define YYFREE

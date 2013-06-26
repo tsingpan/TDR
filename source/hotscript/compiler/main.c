@@ -36,10 +36,10 @@ int main()
 	else
 	{
 		printf("input failed\n");
+		return 1;
 	}
 	
 	hotobject_get_reader(&reader, obj);
-	/*
 	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{
 		printf("output succeed\n");
@@ -48,7 +48,7 @@ int main()
 	{
 		printf("output failed\n");
 	}
-	*/
+	/*
 	buff_size = 0;
 	fin = fopen("d:/2.xml", "r");
 	while((c = fgetc(fin)) != EOF)
@@ -59,6 +59,7 @@ int main()
 
 	script_parser_str(&sp, buff, buff_size, &reader.super, NULL, NULL);
 	fclose(fin);
+	*/
 	return 0;
 }
 
