@@ -9,7 +9,7 @@
 
 
 #include "json_parser.h"
-#include "hotscript/hotobject.h"
+#include "hotobject.h"
 
 #define YYERROR_VERBOSE
 

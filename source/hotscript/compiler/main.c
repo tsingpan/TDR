@@ -2,7 +2,7 @@
 #include "json_parser.h"
 #include "hotscript/script_parser.h"
 
-#include "hotscript/hotobject.h"
+#include "hotobject.h"
 #include "hotscript/hot_vm.h"
 
 JSON_PARSER xp;

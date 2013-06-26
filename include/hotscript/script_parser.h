@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 #include "hotpot/hp_platform.h"
-#include "hotscript/hotobject.h"
 #include "hot_vm.h"
 #include "script_y.h"
 

@@ -3,8 +3,7 @@
 
 
 #include "hotpot/hp_platform.h"
-
-#include "hotscript/hotobject.h"
+#include "hotpot/hp_reader.h"
 #include "hotpot/hp_value.h"
 
 #define HOT_ECHO                               0

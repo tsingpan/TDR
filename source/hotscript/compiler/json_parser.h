@@ -10,7 +10,7 @@
 
 #include "json_y.h"
 
-#include "hotscript/hotobject.h"
+#include "hotobject.h"
 
 
 #define MAX_STACK_DEEP 1024

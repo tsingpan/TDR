@@ -1,4 +1,4 @@
-#include "hotscript/hotobject.h"
+#include "hotobject.h"
 #include "hotpot/hp_platform.h"
 
 #include "datrie/trie.h"
