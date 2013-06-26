@@ -76,14 +76,46 @@ static size_t Utf32toUtf8(unsigned int codepoint, char * utf8Buf)
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
-hpint32 json_lex_scan(JSON_PARSER *jp, YYSTYPE * yylval)
+
+hpint32 json_process(JSON_PARSER *jp)
+{
+	const unsigned char *i;
+	for(i = jp->yy_last; i < jp->yy_cursor;)
+	{
+		if(*i == '\n')
+		{
+			++(jp->yylineno);
+			jp->yycolumn = 1;
+			++i;
+		}
+		else if(*i == '\r')
+		{
+			++(jp->yylineno);
+			jp->yycolumn = 1;
+			++i;
+			if((i < jp->yy_cursor) && (*i == '\n'))
+			{
+				++i;
+			}
+		}
+		else
+		{
+			++(jp->yycolumn);
+			++i;
+		}
+	}
+	jp->yy_last = jp->yy_cursor;
+}
+
+hpint32 json_lex_scan(JSON_PARSER *jp, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
 	{
 		return 0;
 	}
-	//记录开始匹配时候的位置
+	yylloc->first_line = jp->yylineno;
+	yylloc->first_column = jp->yycolumn;
 	jp->yy_text = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;
@@ -95,7 +127,7 @@ whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
 string_begin	['\"']
 
-<!*> := yyleng = YYCURSOR - jp->yy_text;
+<!*> := yyleng = YYCURSOR - jp->yy_text; json_process(jp);
 
 <INITIAL>{symbols} {
 	return *jp->yy_text;

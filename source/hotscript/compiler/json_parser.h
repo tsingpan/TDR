@@ -39,12 +39,16 @@ typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {
 	enum YYCONDTYPE yy_state;
+	unsigned char *yy_last;
 	unsigned char *yy_cursor;
 	unsigned char *yy_limit;
 	unsigned char *yy_text;
 	unsigned char buff[MAX_BUFF_SIZE];
 	hpuint32 yy_leng;
 	hpuint32 buff_size;
+
+	hpuint32 yylineno;
+	hpuint32 yycolumn;
 
 	hpint32 result;
 	hpuint32 stack_num;
