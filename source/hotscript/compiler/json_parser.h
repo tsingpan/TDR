@@ -26,14 +26,12 @@ typedef struct tagJSON_STACK_NODE
 typedef struct tagJSON_PARSER_STACK_NODE
 {
 	FILE *f;
-	YY_BUFFER_STATE bs;
 }JSON_PARSER_STACK_NODE;
 
 
 typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {
-	yyscan_t scanner;
 	hpint32 result;
 
 

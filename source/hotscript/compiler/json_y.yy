@@ -14,23 +14,6 @@
 #define YYERROR_VERBOSE
 
 
-void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...) 
-{
-	va_list ap;
-	va_start(ap, s);
-
-	if(yylloc->first_line)
-	{
-		fprintf(stderr, "%d.%d-%d.%d: error: ", yylloc->first_line, yylloc->first_column, yylloc->last_line, yylloc->last_column);
-	}
-	vfprintf(stderr, s, ap);
-	printf("\n");
-	va_end(ap);
-
-	return;
-}
-//这里的代码生成在自身的文件中
-#define GET_JSON_PARSER JSON_PARSER *jp = HP_CONTAINER_OF(arg, JSON_PARSER, scanner);
 %}
 %locations
 
@@ -41,7 +24,7 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 
 #define YYMALLOC
 #define YYFREE
-#define YYLEX_PARAM *(yyscan_t*)arg
+#define YYLEX_PARAM jp
 
 #define MAX_STRING_LENGTH 124
 #define MAX_NAME_LENGTH 64
@@ -51,7 +34,7 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 }//code requires end
 
 %define api.pure
-%parse-param { void* arg }
+%parse-param { JSON_PARSER *jp }
 %pure_parser
 
 
@@ -86,21 +69,20 @@ Members:
 Pair:
 	tok_identifier ':' tok_string
 	{
-		GET_JSON_PARSER;
 		hp_writer_begin(jp->writer, &$1);
 		hp_writer_write(jp->writer, &$3);
 		hp_writer_end(jp->writer);
 	}
 |	
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, &$1); }
+	{ hp_writer_begin(jp->writer, &$1); }
 	Object
-	{ GET_JSON_PARSER; hp_writer_end(jp->writer); }
+	{ hp_writer_end(jp->writer); }
 |
 	tok_identifier ':' 
-	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, &$1); } 
+	{ hp_writer_begin(jp->writer, &$1); } 
 	Array
-	{ GET_JSON_PARSER;	hp_writer_end(jp->writer); }
+	{ hp_writer_end(jp->writer); }
 	
 	
 Array:
@@ -123,14 +105,13 @@ Elements:
 Value:
 	tok_string
 	{
-		GET_JSON_PARSER;
 		hp_writer_begin(jp->writer, NULL);
 		hp_writer_write(jp->writer, &$1);
 		hp_writer_end(jp->writer);
 	}
-|	{ GET_JSON_PARSER; hp_writer_begin(jp->writer, NULL); }
+|	{ hp_writer_begin(jp->writer, NULL); }
 	Object
-	{ GET_JSON_PARSER; hp_writer_end(jp->writer);  }
+	{ hp_writer_end(jp->writer);  }
 	
 
 	

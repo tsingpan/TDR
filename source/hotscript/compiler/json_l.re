@@ -3,6 +3,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
 #include "json_y.h"
+#include "json_parser.h"
 
 #define YY_USER_ACTION																	\
 	yylloc->first_line = yylloc->last_line = yylineno;									\
@@ -15,7 +16,6 @@ static void hotscript_reserved_keyword(char* keyword)
 {
 	//yyerror(&yylloc, hotscript_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
 }
-void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
 
 
 
@@ -62,7 +62,7 @@ static size_t Utf32toUtf8(unsigned int codepoint, char * utf8Buf)
     }
 }
 
-int lex_scan(JSON_PARSER *jp)
+hpint32 lex_scan(JSON_PARSER *jp)
 {
 /*!re2c
 newline			("\r"|"\n"|"\r\n")
