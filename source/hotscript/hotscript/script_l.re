@@ -1,30 +1,75 @@
-%{
 #include <stdio.h>
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
 #include "script_y.h"
-
-#define YY_USER_ACTION																	\
-	yylloc->first_line = yylloc->last_line = yylineno;									\
-	yylloc->first_column = yycolumn;													\
-	yylloc->last_column = yycolumn + yyleng - 1;										\
-	yycolumn += yyleng;																	
-		
+#include "hotscript/script_parser.h"
+#include "script_l.h"
+	
 		
 static void hotscript_reserved_keyword(char* keyword)
 {
 	//yyerror(&yylloc, hotscript_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
 }
-void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...);
-%}
+
+#define YYCTYPE   unsigned char
+#define YYFILL(n) 
+#define YYCURSOR  sp->yy_cursor
+#define YYLIMIT   sp->yy_limit
+#define yytext sp->yy_text
+#define yyleng sp->yy_leng
+#define YYMARKER sp->yy_marker
+#define YYGETCONDITION()  sp->yy_state
+#define YYSETCONDITION(s) sp->yy_state = s
+
+#define STATE(name)  yyc##name
+#define BEGIN(state) YYSETCONDITION(STATE(state))
+#define YYSTATE      YYGETCONDITION()
 
 
-%option noyywrap yylineno reentrant nounistd bison-bridge bison-locations
-%x ST_IN_SCRIPTING
-%x ST_INCLUDE
+hpint32 script_process(SCRIPT_PARSER *sp)
+{
+	const unsigned char *i;
+	for(i = sp->yy_last; i < sp->yy_cursor;)
+	{
+		if(*i == '\n')
+		{
+			++(sp->yylineno);
+			sp->yycolumn = 1;
+			++i;
+		}
+		else if(*i == '\r')
+		{
+			++(sp->yylineno);
+			sp->yycolumn = 1;
+			++i;
+			if((i < sp->yy_cursor) && (*i == '\n'))
+			{
+				++i;
+			}
+		}
+		else
+		{
+			++(sp->yycolumn);
+			++i;
+		}
+	}
+	sp->yy_last = sp->yy_cursor;
+}
 
-%option extra-type = "yyscan_t*"
+hpint32 script_lex_scan(SCRIPT_PARSER *sp, YYLTYPE *yylloc, YYSTYPE * yylval)
+{
+restart:
+	if(YYCURSOR >= YYLIMIT)
+	{
+		return 0;
+	}
+	yylloc->first_line = sp->yylineno;
+	yylloc->first_column = sp->yycolumn;
+	sp->yy_text = YYCURSOR;
+/*!re2c
+re2c:yyfill:check = 0;
+
 
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 intconstant		([0-9]+)
@@ -33,100 +78,90 @@ comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			(["@""#""$"\[\]"*"\{\}])
+symbol			([@#$\[\]\*\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
 any_char		((.|"\n"))
-%%
 
-#首先跳过注释
-<ST_IN_SCRIPTING>{comment}				{ /* do nothing */																}
-<ST_IN_SCRIPTING>{sillycomm}			{ /* do nothing */																}
-<ST_IN_SCRIPTING>{multicomm}			{ /* do nothing */																}
-<ST_IN_SCRIPTING>{whitespace}			{ /* do nothing */																}
+<!*> := yyleng = YYCURSOR - sp->yy_text; script_process(sp);
+
+<ST_IN_SCRIPTING>{comment}				{ goto restart;/* do nothing */																}
+<ST_IN_SCRIPTING>{sillycomm}			{ goto restart;/* do nothing */																}
+<ST_IN_SCRIPTING>{multicomm}			{ goto restart;/* do nothing */																}
+<ST_IN_SCRIPTING>{whitespace}			{ goto restart;/* do nothing */																}
 
 
 
-<INITIAL>"<%"								{ BEGIN ST_IN_SCRIPTING;															}
-<ST_IN_SCRIPTING>"%>"						{ BEGIN INITIAL;															}
-<ST_IN_SCRIPTING>{symbol}					{ return yytext[0];															}
+<INITIAL>"<%"								{ BEGIN(ST_IN_SCRIPTING);goto restart;										}
+<ST_IN_SCRIPTING>"%>"						{ BEGIN(INITIAL);goto restart;												}
+<ST_IN_SCRIPTING>{symbol}					{ 
+	return yytext[0];															
+	}
 
-#然后读取关键字
 <INITIAL>{any_char}		     {
-	yylval->text.str[0] = yytext[0];
 	yylval->text.str_len = 1;
-	for(;;)
+	yylval->text.str[0] = yytext[0];
+	while(YYCURSOR < YYLIMIT)
 	{
-		int ch = input(*yyextra);
-		if(ch == EOF)
+		yylval->text.str[yylval->text.str_len] = *YYCURSOR;
+		++YYCURSOR;
+		++(yylval->text.str_len);
+		if(yylval->text.str_len >= 2)
 		{
-			//这里出错了
-			yylval->text.str[yylval->text.str_len] = 0;
-			//yyless(yyleng - 1);
-			break;
-			//yyterminate();
-		}
-		else
-		{
-			yylval->text.str[yylval->text.str_len] = ch;
-			++(yylval->text.str_len);
-
-			if(yylval->text.str_len >= 2)
-			{
-				if((yylval->text.str[yylval->text.str_len - 2] == '<')
-					&& (yylval->text.str[yylval->text.str_len - 1] == '%'))
-				{					
-					yylval->text.str_len -= 2;
-					BEGIN ST_IN_SCRIPTING;
-					break;
-				}
+			if((yylval->text.str[yylval->text.str_len - 2] == '<')
+				&& (yylval->text.str[yylval->text.str_len - 1] == '%'))
+			{					
+				yylval->text.str_len -= 2;
+				BEGIN(ST_IN_SCRIPTING);
+				break;
 			}
 		}
 	}
-
 	return tok_text;
 }
 
-<ST_IN_SCRIPTING>"#include"					{ BEGIN ST_INCLUDE;															}
+<ST_IN_SCRIPTING>"#include"					{ BEGIN(ST_INCLUDE);goto restart;											}
 <ST_INCLUDE>{file_name} {
 	char c;
 	hpuint32 len;
-	for(c = input(*yyextra); c != ';'; c = input(*yyextra))
+	while(*YYCURSOR != ';')
 	{
-		if(c == EOF)
+		++YYCURSOR;
+		if(YYCURSOR >= YYLIMIT)
 		{
-			yyterminate();
+			break;
 		}
 	}
 
-	len = strlen(yytext);
-	if((len <= 2) || (len >= MAX_TOKEN_LENGTH))
+
+	if((yyleng <= 2) || (yyleng >= MAX_TOKEN_LENGTH))
 	{
-		yyterminate();
+		return 0;
 	}
 	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
 	yylval->file_name[len - 2] = 0;
 	//这里切缓存
-	script_open_file(yyextra, yylval->file_name);
-	BEGIN INITIAL; 
+	//script_open_file(yyextra, yylval->file_name);
+	BEGIN(INITIAL);
+	goto restart;
 }
 
 
-<ST_IN_SCRIPTING>{intconstant}			{ yylval->i32 = strtoll(yytext, NULL, 10); return tok_integer;}
-<ST_IN_SCRIPTING>{identifier}			{ strncpy(yylval->identifier, yytext, MAX_TOKEN_LENGTH); return tok_identifier;}
-<<EOF>>	{
-	if(script_close_file(yyextra) == E_HP_NOERROR)
-	{
-		BEGIN ST_IN_SCRIPTING; 
-	}	
-	else
-	{
-		yyterminate();
-	}
+<ST_IN_SCRIPTING>{intconstant}			{
+	char number[128];
+	memcpy(number, yytext, yyleng);
+	number[yyleng] = 0;
+	yylval->i32 = strtoll(number, NULL, 10);
+	return tok_integer;
+}
+<ST_IN_SCRIPTING>{identifier}			{ 
+	memcpy(yylval->identifier, yytext, yyleng);
+	yylval->identifier[yyleng] = 0;
+	return tok_identifier;
 }
 
-#检测保留字
+
 <ST_IN_SCRIPTING>"BEGIN"              { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"END"                { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"__CLASS__"          { hotscript_reserved_keyword(yytext); }
@@ -272,56 +307,55 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>"!="				  { hotscript_reserved_keyword(yytext); }
 
 <ST_IN_SCRIPTING>{literal_begin} {
-  char mark = yytext[0];
-  for(;;)
+  char mark = *yytext;
+  while(YYCURSOR < YYLIMIT)
   {
-    int ch = input(*yyextra);
+    int ch = *YYCURSOR;
     switch (ch) {
-      case EOF:
-        //yyerror("end of file while read string at %d\n", yylineno);
-        exit(1);
-      case '\n':
-        //yyerror("end of line while read string at %d\n", yylineno - 1);
-        exit(1);
       case '\\':
-        ch = input(*yyextra);
-        switch (ch) {
-          case 'r':
-			yylval->literal.str[(yylval->literal.str_len)++] = '\r';
-            continue;
-          case 'n':
-			yylval->literal.str[(yylval->literal.str_len)++] = '\n';
-            continue;
-          case 't':
-			yylval->literal.str[(yylval->literal.str_len)++] = '\t';
-            continue;
-          case '"':
-			yylval->literal.str[(yylval->literal.str_len)++] = '"';
-            continue;
-          case '\'':
-			yylval->literal.str[(yylval->literal.str_len)++] = '\'';
-            continue;
-          case '\\':
-			yylval->literal.str[(yylval->literal.str_len)++] = '\\';
-            continue;
-          default:
-            //yyerror("bad escape character\n");
-            return -1;
+		++YYCURSOR;
+		if(YYCURSOR < YYLIMIT)
+		{
+			ch = *YYCURSOR;
+			switch (ch) {
+			  case 'r':
+				yylval->literal.str[(yylval->literal.str_len)++] = '\r';
+				continue;
+			  case 'n':
+				yylval->literal.str[(yylval->literal.str_len)++] = '\n';
+				continue;
+			  case 't':
+				yylval->literal.str[(yylval->literal.str_len)++] = '\t';
+				continue;
+			  case '"':
+				yylval->literal.str[(yylval->literal.str_len)++] = '"';
+				continue;
+			  case '\'':
+				yylval->literal.str[(yylval->literal.str_len)++] = '\'';
+				continue;
+			  case '\\':
+				yylval->literal.str[(yylval->literal.str_len)++] = '\\';
+				continue;
+			  default:
+				//yyerror("bad escape character\n");
+				return -1;
+			}
         }
         break;
       default:
         if (ch == mark)
         {
 			return tok_literal;
-        } else {
+        }
+		else
+		{
           yylval->literal.str[(yylval->literal.str_len)++] = ch;
         }
     }
   }
 }
 
-#跳过没用的字符
-<ST_IN_SCRIPTING>{newline}			     {/* do nothing */																}
-<ST_IN_SCRIPTING>{any_char}			     {/* reutrn error?*/																}
-
-%%
+<ST_IN_SCRIPTING>{newline}			     {goto restart;/* do nothing */																}
+<ST_IN_SCRIPTING>{any_char}			     {goto restart;/* reutrn error?*/																}
+*/
+}

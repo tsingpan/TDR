@@ -7,20 +7,35 @@
 #include "hotpot/hp_platform.h"
 #include "hotscript/hotobject.h"
 #include "hot_vm.h"
-
 #include "script_y.h"
-#include "script_l.h"
+
 
 #define MAX_INCLUDE_FILE_LEVEL 1024
 typedef struct tagSCRIPT_PARSER_STACK_NODE
 {
 	FILE *f;
-	YY_BUFFER_STATE bs;
+	const char *buff;
+	hpuint32 buff_size;
 }SCRIPT_PARSER_STACK_NODE;
+
+#define MAX_BUFF_SIZE 102400
 typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
 struct tagSCRIPT_PARSER
 {
-	yyscan_t scanner;
+	int yy_state;
+	unsigned char *yy_last;
+	unsigned char *yy_cursor;
+	unsigned char *yy_limit;
+	unsigned char *yy_text;
+	unsigned char *yy_marker;
+	unsigned char buff[MAX_BUFF_SIZE];
+	hpuint32 yy_leng;
+	hpuint32 buff_size;
+
+	hpuint32 yylineno;
+	hpuint32 yycolumn;
+
+
 	hpint32 result;
 	HotOpArr hotoparr;
 
@@ -34,13 +49,6 @@ struct tagSCRIPT_PARSER
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, size_t script_size, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
-hpint32 script_open_str(yyscan_t *super, const char *script, size_t script_size);
-
-hpint32 script_open_file(yyscan_t *super, const char *file_name);
-
-hpint32 script_close_file(yyscan_t *super);
-
-hpint32 script_close_str(yyscan_t *super);
 
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text);

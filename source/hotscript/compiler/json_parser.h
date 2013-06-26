@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include "json_l.h"
+
 
 #include "hotpot/hp_platform.h"
 
@@ -38,7 +38,7 @@ typedef struct tagJSON_PARSER_STACK_NODE
 typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {
-	enum YYCONDTYPE yy_state;
+	int yy_state;
 	unsigned char *yy_last;
 	unsigned char *yy_cursor;
 	unsigned char *yy_limit;

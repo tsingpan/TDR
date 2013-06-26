@@ -1,6 +1,7 @@
 #include "json_parser.h"
 #include "json_y.h"
 #include "hotpot/hp_error.h"
+#include "json_l.h"
 
 hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer)
 {

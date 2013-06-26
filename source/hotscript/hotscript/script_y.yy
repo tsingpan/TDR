@@ -12,26 +12,6 @@
 
 #define YYERROR_VERBOSE
 
-void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...) 
-{
-	va_list ap;
-	va_start(ap, s);
-
-	if(yylloc->first_line)
-	{
-		fprintf(stderr, "%d.%d-%d.%d: error: ", yylloc->first_line, yylloc->first_column, yylloc->last_line, yylloc->last_column);
-	}
-	vfprintf(stderr, s, ap);
-	printf("\n");
-	va_end(ap);
-
-	return;
-}
-//这里的代码生成在自身的文件中
-#define GET_SCRIPT_PARSER SCRIPT_PARSER *xp = HP_CONTAINER_OF(arg, SCRIPT_PARSER, scanner);
-
-
-
 %}
 %locations
 
@@ -41,7 +21,7 @@ void yyerror(const YYLTYPE *yylloc, yyscan_t *yyscan, char *s, ...)
 
 #define YYMALLOC
 #define YYFREE
-#define YYLEX_PARAM *arg
+#define YYLEX_PARAM sp
 #define MAX_TOKEN_LENGTH 1024
 #ifndef _DEF_SNODE
 #define _DEF_SNODE
@@ -63,13 +43,11 @@ typedef struct _SNODE
 	HotOp *op;
 }SNODE;
 #endif//_DEF_SNODE
-
 #define YYSTYPE SNODE
-
 }//code requires end
 
 %define api.pure
-%parse-param { yyscan_t *arg }
+%parse-param { SCRIPT_PARSER *sp }
 %pure_parser
 
 %token tok_include 
@@ -99,40 +77,33 @@ StatementList :
 Statement:
 	tok_literal 
 	{
-		GET_SCRIPT_PARSER;
-		
-		hotscript_do_literal(xp, &$1);
+		hotscript_do_literal(sp, &$1);
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
-		GET_SCRIPT_PARSER;
-		hotscript_do_push(xp, &$1, &$2);
-		hotscript_do_push_index(xp, &$3);
+		hotscript_do_push(sp, &$1, &$2);
+		hotscript_do_push_index(sp, &$3);
 		
-		hotscript_do_echo_trie(xp);
+		hotscript_do_echo_trie(sp);
 		
-		hotscript_do_pop_index(xp, &$3);
-		hotscript_do_pop(xp, &$2);
+		hotscript_do_pop_index(sp, &$3);
+		hotscript_do_pop(sp, &$2);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
 	{
-		GET_SCRIPT_PARSER;
-		hotscript_do_push(xp, &$1, &$2);
-		hotscript_do_push_index(xp, &$3);
+		hotscript_do_push(sp, &$1, &$2);
+		hotscript_do_push_index(sp, &$3);
 	}
 	StatementList
 	'}'
 	{
-		GET_SCRIPT_PARSER;
-		hotscript_do_pop_index(xp, &$3);
-		hotscript_do_pop(xp, &$2);
+		hotscript_do_pop_index(sp, &$3);
+		hotscript_do_pop(sp, &$2);
 	}
 |	tok_text 
 	{
-		GET_SCRIPT_PARSER;
-		
-		hotscript_do_text(xp, &$1);
+		hotscript_do_text(sp, &$1);
 	}
 
 

@@ -4,13 +4,7 @@
 #include "hotpot/hp_error.h"
 #include "json_y.h"
 #include "json_parser.h"
-
-#define YY_USER_ACTION																	\
-	yylloc->first_line = yylloc->last_line = yylineno;									\
-	yylloc->first_column = yycolumn;													\
-	yylloc->last_column = yycolumn + yyleng - 1;										\
-	yycolumn += yyleng;																	
-		
+#include "json_l.h"
 
 static void hotscript_reserved_keyword(char* keyword)
 {
@@ -105,6 +99,8 @@ hpint32 json_process(JSON_PARSER *jp)
 		}
 	}
 	jp->yy_last = jp->yy_cursor;
+
+	return E_HP_NOERROR;
 }
 
 hpint32 json_lex_scan(JSON_PARSER *jp, YYLTYPE *yylloc, YYSTYPE * yylval)
@@ -149,13 +145,16 @@ string_begin	['\"']
   yylval->type = E_HP_STRING;
   yylval->val.str.len = 0;  
   while (YYCURSOR < YYLIMIT)
-  {	
+  {
 	unsigned char ch = *YYCURSOR;
 	++YYCURSOR;
     switch (ch)
     {
       case '\\':
 		++YYCURSOR;
+		if (YYCURSOR >= YYLIMIT) {
+			return 0;
+		}
         switch (*YYCURSOR)
         {
           case '"':
