@@ -25,5 +25,5 @@ set(INCLUDE  ${DIR_HOME}/include)
 set(SOURCE  ${DIR_HOME}/source)
 
 add_subdirectory(source)
-install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN "datrie" EXCLUDE)
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
