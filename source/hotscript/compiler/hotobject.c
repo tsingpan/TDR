@@ -183,14 +183,25 @@ static hpint32 hotobject_reader_begin(HPAbstractReader* super, const HPVar *name
 	const HotObject *new_ob = NULL;
 	int ret;
 	char str_name[1024];
-	if(name == NULL)
+	if(name->type == E_HP_STRING)
 	{
-		strncpy(str_name, hotobject_get_normal_name_const(self), 1024);
+		memcpy(str_name, name->val.str.ptr, name->val.str.len);
+		str_name[name->val.str.len] = TRIE_CHAR_TERM;		
+	}
+	else if(name->type == E_HP_INT32)
+	{
+		if(name->val.i32 >= 0)
+		{
+			snprintf(str_name, 1024, "%d", name->val.i32);
+		}
+		else
+		{
+			strncpy(str_name, hotobject_get_normal_name_const(self), 1024);
+		}
 	}
 	else
 	{
-		strncpy(str_name, name->val.str.ptr, 1024);
-		str_name[name->val.str.len] = TRIE_CHAR_TERM;
+		goto ERROR_RET;
 	}
 
 	ret = trie_retrieve(ob->keys, str_name, &new_ob);

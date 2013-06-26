@@ -311,12 +311,13 @@ any_char		((.|"\n"))
   while(YYCURSOR < YYLIMIT)
   {
     int ch = *YYCURSOR;
+    ++YYCURSOR;    
     switch (ch) {
-      case '\\':
-		++YYCURSOR;
+      case '\\':		
 		if(YYCURSOR < YYLIMIT)
 		{
 			ch = *YYCURSOR;
+			++YYCURSOR;
 			switch (ch) {
 			  case 'r':
 				yylval->literal.str[(yylval->literal.str_len)++] = '\r';
