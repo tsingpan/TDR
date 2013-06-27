@@ -7,8 +7,6 @@
 #define YYFILL(n) 
 #define YYCURSOR  sp->yy_cursor
 #define YYLIMIT   sp->yy_limit
-#define yytext sp->yy_text
-#define yyleng sp->yy_leng
 #define YYMARKER sp->yy_marker
 #define YYGETCONDITION()  sp->yy_state
 #define YYSETCONDITION(s) sp->yy_state = s
@@ -17,19 +15,19 @@
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
+#define yytext sp->yy_text
+#define yyleng sp->yy_leng
 
 typedef struct _SCANNER SCANNER;
 struct _SCANNER
 {
 	int yy_state;
-	const char *yy_last;
-	const char *yy_cursor;
-	const char *yy_limit;
-	const char *yy_text;
-	const char *yy_marker;
-	const char *buff;
-	hpuint32 buff_size;
-
+	const YYCTYPE *yy_last;
+	const YYCTYPE *yy_cursor;
+	const YYCTYPE *yy_limit;
+	const YYCTYPE *yy_text;
+	const YYCTYPE *yy_marker;
+	const YYCTYPE *yy_start;
 	hpuint32 yy_leng;
 
 	hpuint32 yylineno;
@@ -45,20 +43,21 @@ typedef struct _SCANNER_STACK
 {
 	hpuint32 stack_num;
 	SCANNER stack[MAX_SCANNER_STACK_DEEP];
-	char file_name_list[MAX_SCANNER_STACK_DEEP][MAX_FILE_NAME_LENGTH];
+	hpchar file_name_list[MAX_SCANNER_STACK_DEEP][MAX_FILE_NAME_LENGTH];
 	hpuint32 file_name_list_num;
 
-	char buff[MAX_BUFF_SIZE];
-	hpuint32 buff_size;
+	YYCTYPE *buff_limit;
+	YYCTYPE *buff_curr;
+	YYCTYPE buff[MAX_BUFF_SIZE];	
 };
 
-hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size, int state);
+hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state);
 hpint32 scanner_fini(SCANNER *self);
 
 hpint32 scanner_process(SCANNER *sp);
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
-hpint32 scanner_stack_push(SCANNER_STACK *self, const char *str, size_t str_size, int state);
+hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state);
 hpint32 scanner_stack_pop(SCANNER_STACK *self);
 hpint32 scanner_stack_init(SCANNER_STACK *self);
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self);

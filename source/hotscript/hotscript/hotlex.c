@@ -7,6 +7,8 @@
 
 hpint32 scanner_fini(SCANNER *self)
 {
+	self->yy_last = NULL;
+
 	return E_HP_NOERROR;
 }
 
@@ -42,16 +44,14 @@ hpint32 scanner_process(SCANNER *sp)
 	return E_HP_NOERROR;
 }
 
-hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size, int state)
+hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state)
 {
-	self->buff = str;
-	self->buff_size = str_size;
-
-	self->yy_limit = self->buff + self->buff_size;
+	self->yy_start = yy_start;
+	self->yy_limit = yy_limit;
 	self->yy_state = state;
-	self->yy_marker = self->buff;
-	self->yy_last = self->buff;
-	self->yy_cursor = self->buff;	
+	self->yy_marker = self->yy_start;
+	self->yy_last = self->yy_start;
+	self->yy_cursor = self->yy_start;	
 	self->yylineno = 1;
 	self->yycolumn = 1;
 	return E_HP_NOERROR;
@@ -66,10 +66,8 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 {
 	FILE* fin;
 	char c;
-	char *str = self->buff + self->buff_size;
-	size_t str_size = 0;
+	const YYCTYPE* yy_start = self->buff_curr;
 	hpuint32 i;
-
 
 	for(i = 0; i < self->file_name_list_num; ++i)
 		if(strcmp(self->file_name_list[i], file_name) == 0)
@@ -81,20 +79,24 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	++(self->file_name_list_num);
 
 	fin = fopen(file_name, "rb");
-	while((c = fgetc(fin)) != EOF)
+	while((c = (char)fgetc(fin)) != EOF)
 	{
-		str[(str_size)++] = c;
+		if(self->buff_curr == self->buff_limit)
+		{
+			return E_HP_ERROR;
+		}
+		*self->buff_curr = c;
+		++(self->buff_curr);
 	}
 	fclose(fin);
-	self->buff_size += str_size;
 
-	scanner_stack_push(self, str, str_size, state);
+	scanner_stack_push(self, yy_start, self->buff_curr, state);
 	return E_HP_NOERROR;
 }
 
-hpint32 scanner_stack_push(SCANNER_STACK *self, const char *str, size_t str_size, int state)
+hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state)
 {
-	scanner_init(&self->stack[self->stack_num], str, str_size, state);
+	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state);
 	++(self->stack_num);
 
 	return E_HP_NOERROR;
@@ -105,9 +107,9 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 {
 	SCANNER *scanner = scanner_stack_get_scanner(self);
 	
-	if(scanner->buff + scanner->buff_size == self->buff + self->buff_size)
-	{		
-		self->buff_size -= scanner->buff_size;
+	if(scanner->yy_limit == self->buff_curr)
+	{
+		self->buff_curr -= scanner->yy_limit - scanner->yy_start;
 		--(self->file_name_list_num);
 	}
 
@@ -118,9 +120,12 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 
 hpint32 scanner_stack_init(SCANNER_STACK *self)
 {
-	self->buff_size = 0;
+	self->buff_curr = self->buff;
+	self->buff_limit = self->buff + MAX_BUFF_SIZE;
 	self->stack_num = 0;
 	self->file_name_list_num = 0;
+
+	return E_HP_NOERROR;
 }
 
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
