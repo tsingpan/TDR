@@ -25,15 +25,10 @@
 
 #define YYMALLOC
 #define YYFREE
-#define MAX_STRING_LENGTH 124
-#define MAX_NAME_LENGTH 64
-
 #define YYSTYPE HPVar
-
-
 #define YYLEX_PARAM ss
 #define GET_SELF JSON_PARSER *jp = HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack);
-}//code requires end
+}
 
 %define api.pure
 %parse-param { SCANNER_STACK *ss }
