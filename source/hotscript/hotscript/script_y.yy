@@ -1,5 +1,7 @@
 %{
+//必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

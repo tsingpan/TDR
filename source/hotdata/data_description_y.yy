@@ -1,14 +1,6 @@
 %{
+//必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-
-#include "hotpot/hp_platform.h"
-#include "hotpot/hp_error.h"
-
-
-
 
 #define YYERROR_VERBOSE
 
@@ -17,14 +9,18 @@
 
 %code requires
 {
-#include "hotscript/script_parser.h"
-#include "hotscript/hot_vm.h"
 
-#define YYSTYPE SP_NODE
+#include "hotpot/hp_value.h"
+#include "hotscript/hotlex.h"
+
+
+
+
+#define YYSTYPE HPVar
 #define YYMALLOC
 #define YYFREE
 #define YYLEX_PARAM ss
-}//code requires end
+}
 
 %define api.pure
 %parse-param { SCANNER_STACK *ss }
