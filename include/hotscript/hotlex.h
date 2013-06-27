@@ -3,6 +3,21 @@
 
 #include "hotpot/hp_platform.h"
 
+#define YYCTYPE   char
+#define YYFILL(n) 
+#define YYCURSOR  sp->yy_cursor
+#define YYLIMIT   sp->yy_limit
+#define yytext sp->yy_text
+#define yyleng sp->yy_leng
+#define YYMARKER sp->yy_marker
+#define YYGETCONDITION()  sp->yy_state
+#define YYSETCONDITION(s) sp->yy_state = s
+
+#define STATE(name)  yyc##name
+#define BEGIN(state) YYSETCONDITION(STATE(state))
+#define YYSTATE      YYGETCONDITION()
+
+
 typedef struct _SCANNER SCANNER;
 struct _SCANNER
 {
