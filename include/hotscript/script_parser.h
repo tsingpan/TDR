@@ -37,12 +37,15 @@ struct _SCANNER
 
 #define MAX_BUFF_SIZE 10240
 #define MAX_SCANNER_STACK_DEEP 1024
+#define MAX_FILE_NAME_LENGTH 128
 
 typedef struct _SCANNER_STACK SCANNER_STACK;
 typedef struct _SCANNER_STACK
 {
 	hpuint32 stack_num;
 	SCANNER stack[MAX_SCANNER_STACK_DEEP];
+	char file_name_list[MAX_SCANNER_STACK_DEEP][MAX_FILE_NAME_LENGTH];
+	int file_name_list_num;
 
 	char buff[MAX_BUFF_SIZE];
 	hpuint32 buff_size;
