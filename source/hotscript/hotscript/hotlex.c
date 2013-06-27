@@ -100,7 +100,6 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 
 	return E_HP_NOERROR;
 }
-
 hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state)
 {
 	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);

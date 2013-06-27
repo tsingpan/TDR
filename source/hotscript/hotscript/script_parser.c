@@ -184,27 +184,22 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *script_limit, 
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
-	int ret;
-	printf("\n--------------------------------------\n");
-	while(script < script_limit)
-	{
-		putc(*script, stdout);
-		++script;
-	}
-	printf("\n--------------------------------------\n");
+	hpint32 ret;
+
+	
 
 	scanner_stack_init(&self->scanner_stack);
 
 
 	scanner_stack_push(&self->scanner_stack, script, script_limit, yycINITIAL);
-
+	
 
 	hotoparr_init(&self->hotoparr);
 
 	self->reader = reader;
 
 	self->result = E_HP_NOERROR;
-
+	
 	ret = yyscriptparse(self);
 
 	scanner_stack_pop(&self->scanner_stack);

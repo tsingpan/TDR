@@ -58,7 +58,8 @@ any_char		((.|"\n"))
 
 <INITIAL>{any_char}		     {
 	yylval->var.type = E_HP_STRING;
-	yylval->var.val.str.len = 0;
+	
+	yylval->var.val.str.len = 1;
 	yylval->var.val.str.ptr = yytext;
 	while(YYCURSOR < YYLIMIT)
 	{
@@ -67,6 +68,7 @@ any_char		((.|"\n"))
 			if((*(YYCURSOR - 1) == '<')
 				&& (*YYCURSOR == '%'))
 			{
+				--(yylval->var.val.str.len);
 				BEGIN(ST_IN_SCRIPTING);
 				break;
 			}
@@ -250,6 +252,7 @@ any_char		((.|"\n"))
 		if(*YYCURSOR == '\\')
 		{
 			++YYCURSOR;
+			++(yylval->var.val.str.len);
 			if(YYCURSOR < YYLIMIT)
 			{
 				++(yylval->var.val.str.len);
@@ -265,6 +268,7 @@ any_char		((.|"\n"))
 		{
 			if(*YYCURSOR == mark)
 			{
+				++YYCURSOR;
 				break;
 			}
 		}

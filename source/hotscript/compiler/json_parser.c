@@ -5,6 +5,7 @@
 #include "hotscript/script_parser.h"
 #include "hotscript/hotlex.h"
 
+
 hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp)
 {
 	hpint32 ret;
@@ -22,12 +23,11 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
-
-	
 	/*
+	
 	for(;;)
 	{
-		int ret = json_lex_scan(self, &yylloc, &yystype);
+		int ret = yyjsonlex(&yystype, &yylloc, &self->scanner_stack);
 		
 		
 		if((ret == tok_string) || (ret == tok_identifier))
@@ -51,6 +51,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 			exit(1);
 		}
 	}
+	return 0;
 	*/
 	ret = yyjsonparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
@@ -89,8 +90,6 @@ static void json_putc(HotVM *self, char c)
 		*ss->buff_curr = c;
 		++(ss->buff_curr);
 	}
-
-	putc(c, stdout);
 }
 
 extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
@@ -136,18 +135,12 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 			//脚本执行的结果放到ss缓存的最后面
 			yy_start = ss->buff_curr;
+			
 			script_parser_str(jp->sp, script_start, scanner->yy_cursor, jp->reader, ss, json_putc);
-			if(scanner_stack_push(ss, yy_start, ss->buff_limit, yycINITIAL) != E_HP_NOERROR)
+			if(scanner_stack_push(ss, yy_start, ss->buff_curr, yycINITIAL) != E_HP_NOERROR)
 			{
 				break;
-			}
-			/*
-			if(scanner_stack_push_file(&sp->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
-			{
-				sp->result = E_HP_ERROR;
-				return 0;
-			}
-			*/
+			}			
 		}
 		else
 		{
