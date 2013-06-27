@@ -27,9 +27,9 @@ static void hotscript_reserved_keyword(char* keyword)
 #define YYSTATE      YYGETCONDITION()
 
 
-hpint32 script_process(SCRIPT_PARSER *sp)
+hpint32 script_process(SCANNER *sp)
 {
-	const unsigned char *i;
+	const char *i;
 	for(i = sp->yy_last; i < sp->yy_cursor;)
 	{
 		if(*i == '\n')
@@ -55,9 +55,11 @@ hpint32 script_process(SCRIPT_PARSER *sp)
 		}
 	}
 	sp->yy_last = sp->yy_cursor;
+
+	return E_HP_NOERROR;
 }
 
-hpint32 script_lex_scan(SCRIPT_PARSER *sp, YYLTYPE *yylloc, YYSTYPE * yylval)
+hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
@@ -121,31 +123,7 @@ any_char		((.|"\n"))
 	return tok_text;
 }
 
-<ST_IN_SCRIPTING>"#include"					{ BEGIN(ST_INCLUDE);goto restart;											}
-<ST_INCLUDE>{file_name} {
-	char c;
-	hpuint32 len;
-	while(*YYCURSOR != ';')
-	{
-		++YYCURSOR;
-		if(YYCURSOR >= YYLIMIT)
-		{
-			break;
-		}
-	}
-
-
-	if((yyleng <= 2) || (yyleng >= MAX_TOKEN_LENGTH))
-	{
-		return 0;
-	}
-	strncpy(yylval->file_name, yytext + 1, MAX_TOKEN_LENGTH);
-	yylval->file_name[len - 2] = 0;
-	//ÕâÀïÇÐ»º´æ
-	//script_open_file(yyextra, yylval->file_name);
-	BEGIN(INITIAL);
-	goto restart;
-}
+<ST_IN_SCRIPTING>"import"					{ return tok_import;										}
 
 
 <ST_IN_SCRIPTING>{intconstant}			{

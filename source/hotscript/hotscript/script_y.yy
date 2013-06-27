@@ -50,8 +50,7 @@ typedef struct _SNODE
 %parse-param { SCRIPT_PARSER *sp }
 %pure_parser
 
-%token tok_include 
-%token tok_file_name
+%token tok_import
 %token tok_literal
 %token tok_integer
 %token tok_identifier
