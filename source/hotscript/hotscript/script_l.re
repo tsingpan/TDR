@@ -14,16 +14,16 @@ static void hotscript_reserved_keyword(char* keyword)
 }
 
 
-hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval)
+hpint32 script_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
 	{
 		return 0;
 	}
-	yylloc->first_line = sp->yylineno;
-	yylloc->first_column = sp->yycolumn;
-	sp->yy_text = YYCURSOR;
+	yylloc->first_line = self->yylineno;
+	yylloc->first_column = self->yycolumn;
+	yytext = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;
 
@@ -41,7 +41,7 @@ whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
 any_char		((.|"\n"))
 
-<!*> := yyleng = YYCURSOR - sp->yy_text; scanner_process(sp);
+<!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
 
 <ST_IN_SCRIPTING>{comment}				{ goto restart;/* do nothing */																}
 <ST_IN_SCRIPTING>{sillycomm}			{ goto restart;/* do nothing */																}

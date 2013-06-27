@@ -4,9 +4,12 @@
 #include "script_l.h"
 #include <string.h>
 #include "hotscript/hotlex.h"
+#include "hotpot/hp_platform.h"
 
-hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
+hpint32 hotscript_do_text(SCANNER_STACK *super, const SNODE *text)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
+
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
 	op->op0.type = E_HP_STRING;
@@ -16,8 +19,10 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const SNODE *text)
+hpint32 hotscript_do_literal(SCANNER_STACK *super, const SNODE *text)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
+
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
 	op->op0.type = E_HP_STRING;
@@ -27,8 +32,9 @@ hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const SNODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, SNODE *name)
+hpint32 hotscript_do_push(SCANNER_STACK *super, const SNODE *prefix, SNODE *name)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_PUSH;
 	op->op0.type = E_HP_CHAR;
@@ -40,8 +46,9 @@ hpint32 hotscript_do_push(SCRIPT_PARSER *self, const SNODE *prefix, SNODE *name)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, SNODE *index)
+hpint32 hotscript_do_push_index(SCANNER_STACK *super, SNODE *index)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	if(index->i32 != -2)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -54,8 +61,9 @@ hpint32 hotscript_do_push_index(SCRIPT_PARSER *self, SNODE *index)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, SNODE *index)
+hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SNODE *index)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	if(index->i32 != -2)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -73,14 +81,13 @@ hpint32 hotscript_do_pop_index(SCRIPT_PARSER *self, SNODE *index)
 		index->op->op1.val.ui32 = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 
-	
-	
-
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop(SCRIPT_PARSER *self, SNODE *id)
+hpint32 hotscript_do_pop(SCANNER_STACK *super, SNODE *id)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
+
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_POP;
 	id->op->op2.type = E_HP_UINT32;
@@ -89,8 +96,9 @@ hpint32 hotscript_do_pop(SCRIPT_PARSER *self, SNODE *id)
 }
 
 
-hpint32 hotscript_do_echo_trie(SCRIPT_PARSER *self)
+hpint32 hotscript_do_echo_trie(SCANNER_STACK *super)
 {
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO_TRIE;
 	return E_HP_NOERROR;
@@ -115,7 +123,7 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 
 
 
-extern hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval);
+extern hpint32 script_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
 	SCRIPT_PARSER *sp = HP_CONTAINER_OF(ss, SCRIPT_PARSER, scanner_stack);

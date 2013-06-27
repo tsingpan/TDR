@@ -6,10 +6,10 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
-
-
 #include "json_parser.h"
 #include "hotobject.h"
+
+#include "hotscript/hotlex.h"
 
 #define YYERROR_VERBOSE
 
@@ -25,17 +25,18 @@
 
 #define YYMALLOC
 #define YYFREE
-#define YYLEX_PARAM jp
-
 #define MAX_STRING_LENGTH 124
 #define MAX_NAME_LENGTH 64
 
 #define YYSTYPE HPVar
 
+
+#define YYLEX_PARAM ss
+#define GET_SELF JSON_PARSER *jp = HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack);
 }//code requires end
 
 %define api.pure
-%parse-param { JSON_PARSER *jp }
+%parse-param { SCANNER_STACK *ss }
 %pure_parser
 
 
@@ -70,20 +71,22 @@ Members:
 Pair:
 	tok_identifier ':' tok_string
 	{
+		GET_SELF;
+
 		hp_writer_begin(jp->writer, &$1);
 		hp_writer_write(jp->writer, &$3);
 		hp_writer_end(jp->writer);
 	}
 |	
 	tok_identifier ':' 
-	{ hp_writer_begin(jp->writer, &$1); }
+	{ GET_SELF; hp_writer_begin(jp->writer, &$1); }
 	Object
-	{ hp_writer_end(jp->writer); }
+	{ GET_SELF; hp_writer_end(jp->writer); }
 |
 	tok_identifier ':' 
-	{ hp_writer_begin(jp->writer, &$1); } 
+	{ GET_SELF; hp_writer_begin(jp->writer, &$1); } 
 	Array
-	{ hp_writer_end(jp->writer); }
+	{ GET_SELF; hp_writer_end(jp->writer); }
 	
 	
 Array:
@@ -106,13 +109,14 @@ Elements:
 Value:
 	tok_string
 	{
+		GET_SELF;
 		hp_writer_begin(jp->writer, NULL);
 		hp_writer_write(jp->writer, &$1);
 		hp_writer_end(jp->writer);
 	}
-|	{ hp_writer_begin(jp->writer, NULL); }
+|	{ GET_SELF; hp_writer_begin(jp->writer, NULL); }
 	Object
-	{ hp_writer_end(jp->writer);  }
+	{ GET_SELF; hp_writer_end(jp->writer);  }
 	
 
 	

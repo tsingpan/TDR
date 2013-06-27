@@ -3,6 +3,8 @@
 #include "hotpot/hp_error.h"
 #include "json_l.h"
 
+#include "hotscript/hotlex.h"
+
 hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer)
 {
 	hpint32 ret;
@@ -15,19 +17,11 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->result = HP_INVALID_ERROR_CODE;
 
 	self->writer = writer;
+	scanner_stack_init(&self->scanner_stack);
+	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
-	self->buff_size = 0;
-	self->yy_state = yycINITIAL;
-	fin = fopen(file_name, "rb");
-	while((c = fgetc(fin)) != EOF)
-	{
-		self->buff[(self->buff_size)++] = c;
-	}
-	self->yy_last = self->buff;
-	self->yy_cursor = self->buff + 0;
-	self->yy_limit = self->buff + self->buff_size;
-	self->yylineno = 1;
-	self->yycolumn = 1;
+
+	
 	/*
 	for(;;)
 	{
@@ -56,7 +50,8 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 		}
 	}
 	*/
-	ret = yyjsonparse(self);
+	ret = yyjsonparse(&self->scanner_stack);
+	scanner_stack_pop(&self->scanner_stack);
 	if(ret == 0)
 	{
 		self->result = E_HP_NOERROR;
@@ -67,9 +62,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 }
 
 
-extern hpint32 json_lex_scan(JSON_PARSER *jp, YYLTYPE *yylloc, YYSTYPE * yylval);
-
-void yyjsonerror(const YYLTYPE *yylloc, JSON_PARSER *jp, char *s, ...) 
+void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...) 
 {
 	va_list ap;
 	va_start(ap, s);
@@ -84,12 +77,14 @@ void yyjsonerror(const YYLTYPE *yylloc, JSON_PARSER *jp, char *s, ...)
 
 	return;
 }
-
-int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , JSON_PARSER *jp)
+extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
+int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *jp)
 {
-	int ret = json_lex_scan(jp, yylloc_param, yylval_param);
-	yylloc_param->last_line = jp->yylineno;
-	yylloc_param->last_column = jp->yycolumn;
+	SCANNER *scanner = scanner_stack_get_scanner(jp);	
+
+	int ret = json_lex_scan(scanner, yylloc_param, yylval_param);
+	yylloc_param->last_line = scanner->yylineno;
+	yylloc_param->last_column = scanner->yycolumn;
 
 	return ret;
 }

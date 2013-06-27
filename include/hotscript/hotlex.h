@@ -5,18 +5,18 @@
 
 #define YYCTYPE   char
 #define YYFILL(n) 
-#define YYCURSOR  sp->yy_cursor
-#define YYLIMIT   sp->yy_limit
-#define YYMARKER sp->yy_marker
-#define YYGETCONDITION()  sp->yy_state
-#define YYSETCONDITION(s) sp->yy_state = s
+#define YYCURSOR  self->yy_cursor
+#define YYLIMIT   self->yy_limit
+#define YYMARKER self->yy_marker
+#define YYGETCONDITION()  self->yy_state
+#define YYSETCONDITION(s) self->yy_state = s
 
 #define STATE(name)  yyc##name
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
-#define yytext sp->yy_text
-#define yyleng sp->yy_leng
+#define yytext self->yy_text
+#define yyleng self->yy_leng
 
 typedef struct _SCANNER SCANNER;
 struct _SCANNER

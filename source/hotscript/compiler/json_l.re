@@ -5,6 +5,7 @@
 #include "json_y.h"
 #include "json_parser.h"
 #include "json_l.h"
+#include "hotscript/hotlex.h"
 
 static void hotscript_reserved_keyword(char* keyword)
 {
@@ -55,64 +56,18 @@ static size_t Utf32toUtf8(unsigned int codepoint, char * utf8Buf)
         return 2;
     }
 }
+#include "hotscript/hotlex.h"
 
-#define YYCTYPE   unsigned char
-#define YYFILL(n) 
-#define YYCURSOR  jp->yy_cursor
-#define YYLIMIT   jp->yy_limit
-#define yytext jp->yy_text
-#define yyleng jp->yy_leng
-
-#define YYGETCONDITION()  jp->yy_state
-#define YYSETCONDITION(s) jp->yy_state = s
-
-#define STATE(name)  yyc##name
-#define BEGIN(state) YYSETCONDITION(STATE(state))
-#define YYSTATE      YYGETCONDITION()
-
-
-hpint32 json_process(JSON_PARSER *jp)
-{
-	const unsigned char *i;
-	for(i = jp->yy_last; i < jp->yy_cursor;)
-	{
-		if(*i == '\n')
-		{
-			++(jp->yylineno);
-			jp->yycolumn = 1;
-			++i;
-		}
-		else if(*i == '\r')
-		{
-			++(jp->yylineno);
-			jp->yycolumn = 1;
-			++i;
-			if((i < jp->yy_cursor) && (*i == '\n'))
-			{
-				++i;
-			}
-		}
-		else
-		{
-			++(jp->yycolumn);
-			++i;
-		}
-	}
-	jp->yy_last = jp->yy_cursor;
-
-	return E_HP_NOERROR;
-}
-
-hpint32 json_lex_scan(JSON_PARSER *jp, YYLTYPE *yylloc, YYSTYPE * yylval)
+hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
 	{
 		return 0;
 	}
-	yylloc->first_line = jp->yylineno;
-	yylloc->first_column = jp->yycolumn;
-	jp->yy_text = YYCURSOR;
+	yylloc->first_line = self->yylineno;
+	yylloc->first_column = self->yycolumn;
+	yytext = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;
 
@@ -123,22 +78,22 @@ whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
 string_begin	['\"']
 
-<!*> := yyleng = YYCURSOR - jp->yy_text; json_process(jp);
+<!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
 
 <INITIAL>{symbols} {
-	return *jp->yy_text;
+	return *yytext;
 }
 
 <INITIAL>{identifier}	{
 	yylval->type = E_HP_STRING;
-	yylval->val.str.ptr = jp->yy_text;
+	yylval->val.str.ptr = yytext;
 	yylval->val.str.len = yyleng;
 	return tok_identifier;
 }
 	
 <INITIAL>{string_begin} {
-  char mark = *jp->yy_text;
-  //YYCURSOR只比yy_text大1哦~
+  char mark = *yytext;
+  //YYCURSOR只比yytext大1哦~
 
   //最大字符串的限制
   yylval->val.str.ptr = malloc(1024);
