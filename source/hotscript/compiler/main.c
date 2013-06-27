@@ -30,7 +30,7 @@ int main()
 	obj = hotobject_new();
 	hotobject_get_writer(&writer, obj);
 	hotobject_get_reader(&reader, obj);
-	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super) == 0)
+	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super, &sp) == 0)
 	{
 		printf("input succeed\n");
 	}

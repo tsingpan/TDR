@@ -57,23 +57,22 @@ any_char		((.|"\n"))
 	}
 
 <INITIAL>{any_char}		     {
-	yylval->text.str_len = 1;
-	yylval->text.str[0] = yytext[0];
+	yylval->var.type = E_HP_STRING;
+	yylval->var.val.str.len = 1;
+	yylval->var.val.str.ptr = yytext;
 	while(YYCURSOR < YYLIMIT)
-	{
-		yylval->text.str[yylval->text.str_len] = *YYCURSOR;
-		++YYCURSOR;
-		++(yylval->text.str_len);
-		if(yylval->text.str_len >= 2)
+	{		
+		if(YYCURSOR - yytext >= 2)
 		{
-			if((yylval->text.str[yylval->text.str_len - 2] == '<')
-				&& (yylval->text.str[yylval->text.str_len - 1] == '%'))
-			{					
-				yylval->text.str_len -= 2;
+			if((*(YYCURSOR - 1) == '<')
+				&& (*YYCURSOR == '%'))
+			{
 				BEGIN(ST_IN_SCRIPTING);
 				break;
 			}
 		}
+		++(yylval->var.val.str.len);
+		++YYCURSOR;
 	}
 	return tok_text;
 }
@@ -85,12 +84,14 @@ any_char		((.|"\n"))
 	char number[128];
 	memcpy(number, yytext, yyleng);
 	number[yyleng] = 0;
-	yylval->i32 = strtoll(number, NULL, 10);
+	yylval->var.type = E_HP_INT32;
+	yylval->var.val.i32 = strtoll(number, NULL, 10);
 	return tok_integer;
 }
 <ST_IN_SCRIPTING>{identifier}			{ 
-	memcpy(yylval->identifier, yytext, yyleng);
-	yylval->identifier[yyleng] = 0;
+	yylval->var.type = E_HP_STRING;
+	yylval->var.val.str.ptr = yytext;
+	yylval->var.val.str.len = yyleng;
 	return tok_identifier;
 }
 
@@ -240,53 +241,21 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>"!="				  { hotscript_reserved_keyword(yytext); }
 
 <ST_IN_SCRIPTING>{literal_begin} {
-  char mark = *yytext;
-  while(YYCURSOR < YYLIMIT)
-  {
-    int ch = *YYCURSOR;
-    ++YYCURSOR;    
-    switch (ch) {
-      case '\\':		
-		if(YYCURSOR < YYLIMIT)
+	char mark = *yytext;
+	++YYCURSOR;
+	yylval->var.type = E_HP_STRING;
+	yylval->var.val.str.len = 0;
+	yylval->var.val.str.ptr = YYCURSOR;
+	while(YYCURSOR < YYLIMIT)
+	{
+		if(*YYCURSOR == mark)
 		{
-			ch = *YYCURSOR;
-			++YYCURSOR;
-			switch (ch) {
-			  case 'r':
-				yylval->literal.str[(yylval->literal.str_len)++] = '\r';
-				continue;
-			  case 'n':
-				yylval->literal.str[(yylval->literal.str_len)++] = '\n';
-				continue;
-			  case 't':
-				yylval->literal.str[(yylval->literal.str_len)++] = '\t';
-				continue;
-			  case '"':
-				yylval->literal.str[(yylval->literal.str_len)++] = '"';
-				continue;
-			  case '\'':
-				yylval->literal.str[(yylval->literal.str_len)++] = '\'';
-				continue;
-			  case '\\':
-				yylval->literal.str[(yylval->literal.str_len)++] = '\\';
-				continue;
-			  default:
-				//yyerror("bad escape character\n");
-				return -1;
-			}
-        }
-        break;
-      default:
-        if (ch == mark)
-        {
-			return tok_literal;
-        }
-		else
-		{
-          yylval->literal.str[(yylval->literal.str_len)++] = ch;
-        }
-    }
-  }
+			break;
+		}
+		++(yylval->var.val.str.len);
+		++YYCURSOR;
+	}
+	return tok_literal;
 }
 
 <ST_IN_SCRIPTING>{newline}			     {goto restart;/* do nothing */																}

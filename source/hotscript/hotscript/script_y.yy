@@ -8,7 +8,7 @@
 #include "hotpot/hp_error.h"
 
 
-#include "hotscript/script_parser.h"
+
 
 #define YYERROR_VERBOSE
 
@@ -17,32 +17,12 @@
 
 %code requires
 {
+#include "hotscript/script_parser.h"
 #include "hotscript/hot_vm.h"
-#define MAX_TOKEN_LENGTH 1024
-#ifndef _DEF_SNODE
-#define _DEF_SNODE
-typedef struct _ST_STRING
-{
-	char str[MAX_TOKEN_LENGTH];
-	hpuint32 str_len;
-}ST_STRING;
-typedef struct _ST_STRING ST_STRING;
 
-typedef struct _SNODE
-{
-	ST_STRING literal;
-	char file_name[MAX_TOKEN_LENGTH];
-	char identifier[MAX_TOKEN_LENGTH];
-	ST_STRING text;
-	char prefix;
-	hpint32 i32;
-	HotOp *op;
-}SNODE;
-#endif//_DEF_SNODE
-
+#define YYSTYPE SP_NODE
 #define YYMALLOC
 #define YYFREE
-#define YYSTYPE SNODE
 #define YYLEX_PARAM ss
 }//code requires end
 
@@ -109,29 +89,35 @@ Statement:
 ArrayIndex :
 	'[' tok_integer ']'
 	{
-		$$.i32 = $2.i32;	//指定下表
+		$$.var.type = E_HP_INT32;
+		$$.var.val.i32 = $2.var.val.i32;	//指定下标
 	}
 |	'[' '*' ']'
 	{
-		$$.i32 = -1;		//按次序展开元素， 直到不存在
+		$$.var.type = E_HP_INT32;
+		$$.var.val.i32 = -1;		//按次序展开元素， 直到不存在
 	}
 |
 	{
-		$$.i32 = -2;		//默认为第一个元素
+		$$.var.type = E_HP_INT32;
+		$$.var.val.i32 = -2;		//默认为第一个元素
 	}
 
 Prefix:
 	'@'
 	{
-		$$.prefix = '@';//局部变量
+		$$.var.type = E_HP_CHAR;
+		$$.var.val.c = '@';//局部变量
 	}
 |	'#'
 	{
-		$$.prefix = '#';//全局变量
+		$$.var.type = E_HP_CHAR;
+		$$.var.val.c = '#';//全局变量
 	}
 |	'$'
 	{
-		$$.prefix = '$';//搜索所有堆栈
+		$$.var.type = E_HP_CHAR;
+		$$.var.val.c = '$';//搜索所有堆栈
 	}
 
 

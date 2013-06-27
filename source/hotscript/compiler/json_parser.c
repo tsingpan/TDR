@@ -2,9 +2,10 @@
 #include "json_y.h"
 #include "hotpot/hp_error.h"
 #include "json_l.h"
-
+#include "hotscript/script_parser.h"
 #include "hotscript/hotlex.h"
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader)
+
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp)
 {
 	hpint32 ret;
 	hpint64 data;
@@ -78,24 +79,63 @@ void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 	return;
 }
 
+static void json_putc(HotVM *self, char c)
+{
+}
+
 extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
-	JSON_PARSER *jp = HP_CONTAINER_OF(jp, JSON_PARSER, scanner_stack);
+	JSON_PARSER *jp = HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack);
 	int ret = 0;
 
+	
 	for(;;)
 	{
 		SCANNER *scanner = scanner_stack_get_scanner(ss);
-
-		ret = json_lex_scan(scanner, yylloc_param, yylval_param);
-		if(ret == tok_script_begin)
-		{
-
-		}
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
-		break;
+		ret = json_lex_scan(scanner, yylloc_param, yylval_param);
+		if(ret == 0)
+		{
+			if(scanner_stack_get_num(&jp->scanner_stack) <= 1)
+			{
+				break;
+			}
+			scanner_stack_pop(&jp->scanner_stack);
+		}
+		else if(ret == tok_script_begin)
+		{
+			//这里好玩了~
+			const YYCTYPE * script_start = scanner->yy_cursor - 2;
+
+			while(scanner->yy_cursor < scanner->yy_limit)
+			{
+				if((scanner->yy_cursor - script_start >= 4)
+					&& (*(scanner->yy_cursor - 1) == '%') && (*scanner->yy_cursor == '>'))
+				{
+					break;
+				}
+				else
+				{
+					++(scanner->yy_cursor);
+				}
+			}
+
+			//脚本执行的结果放到ss缓存的最后面
+			script_parser_str(jp->sp, script_start, scanner->yy_cursor, jp->reader, ss, json_putc);
+			/*
+			if(scanner_stack_push_file(&sp->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+			{
+				sp->result = E_HP_ERROR;
+				return 0;
+			}
+			*/
+		}
+		else
+		{
+			break;
+		}		
 	}
 
 	return ret;

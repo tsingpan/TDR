@@ -2,74 +2,74 @@
 #include "hotpot/hp_reader.h"
 #include "hotpot/hp_error.h"
 #include "script_l.h"
+#include "script_y.h"
 #include <string.h>
 #include "hotscript/hotlex.h"
 #include "hotpot/hp_platform.h"
 
-hpint32 hotscript_do_text(SCANNER_STACK *super, const SNODE *text)
+hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
 	op->op0.type = E_HP_STRING;
-	op->op0.val.str.len = text->text.str_len;
-	op->op0.val.str.ptr = (char*)malloc(op->op0.val.str.len);
-	memcpy(op->op0.val.str.ptr, text->text.str, op->op0.val.str.len);
+	op->op0.val.str.len = text->var.val.str.len;
+	op->op0.val.str.ptr = text->var.val.str.ptr;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_literal(SCANNER_STACK *super, const SNODE *text)
+hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
 	op->op0.type = E_HP_STRING;
-	op->op0.val.str.len = text->literal.str_len;
-	op->op0.val.str.ptr = (char*)malloc(op->op0.val.str.len);
-	memcpy(op->op0.val.str.ptr, text->literal.str, op->op0.val.str.len);
+	op->op0.val.str.len = text->var.val.str.len;
+	op->op0.val.str.ptr = text->var.val.str.ptr;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push(SCANNER_STACK *super, const SNODE *prefix, SNODE *name)
+hpint32 hotscript_do_push(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_PUSH;
 	op->op0.type = E_HP_CHAR;
-	op->op0.val.c = prefix->prefix;
+	op->op0.val.c = prefix->var.val.c;
 	op->op1.type = E_HP_STRING;
-	op->op1.val.str.ptr = strdup(name->identifier);
-	op->op1.val.str.len = strlen(name->identifier) + 1;
+	op->op1.val.str.ptr = name->var.val.str.ptr;
+	op->op1.val.str.len = name->var.val.str.len;
+
 	name->op = op;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push_index(SCANNER_STACK *super, SNODE *index)
+hpint32 hotscript_do_push_index(SCANNER_STACK *super, SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	if(index->i32 != -2)
+	if(index->var.val.i32 != -2)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_PUSH_INDEX;
 		op->op0.type = E_HP_INT32;
-		op->op0.val.i32 = index->i32;
+		op->op0.val.i32 = index->var.val.i32;
 
 		index->op = op;
 	}
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SNODE *index)
+hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	if(index->i32 != -2)
+	if(index->var.val.i32 != -2)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->op = HOT_POP;
 
-		if(index->i32 == -1)
+		if(index->var.val.i32 == -1)
 		{
 			HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 			op->op = HOT_JMP;
@@ -84,7 +84,7 @@ hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SNODE *index)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop(SCANNER_STACK *super, SNODE *id)
+hpint32 hotscript_do_pop(SCANNER_STACK *super, SP_NODE *id)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
@@ -131,10 +131,10 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 
 	for(;;)
 	{
-		SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);
-		ret = script_lex_scan(scanner, yylloc_param, yylval_param);
+		SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);		
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
+		ret = script_lex_scan(scanner, yylloc_param, yylval_param);
 		if(ret == 0)
 		{
 			if(scanner_stack_get_num(&sp->scanner_stack) <= 1)
@@ -147,7 +147,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 		{
 			char file_name[1024];
 			size_t len = 0;
-			for(;;)
+			while(scanner->yy_cursor < scanner->yy_limit)
 			{
 				if(*scanner->yy_cursor == ';')
 				{
@@ -181,14 +181,37 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 	return ret;
 }
 
+hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *script_limit, 
+						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
+{
+	int ret;
 
+	scanner_stack_init(&self->scanner_stack);
+
+
+	scanner_stack_push(&self->scanner_stack, script, script_limit, yycINITIAL);
+
+
+	hotoparr_init(&self->hotoparr);
+
+	self->reader = reader;
+
+	self->result = E_HP_NOERROR;
+
+	ret = yyscriptparse(self);
+
+	scanner_stack_pop(&self->scanner_stack);
+
+	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
+
+	return self->result;
+}
 
 extern int yyscriptparse (SCRIPT_PARSER *sp);
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	hpint32 ret;
 
-	SNODE snode;
 	YYLTYPE yylloc;
 
 	

@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-
+#include "hotscript/script_parser.h"
 
 #include "hotpot/hp_platform.h"
 
@@ -42,6 +42,7 @@ typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {
 	SCANNER_STACK scanner_stack;
+	SCRIPT_PARSER *sp;
 
 	hpint32 result;
 	hpuint32 stack_num;
@@ -50,7 +51,7 @@ struct tagJSON_PARSER
 	HPAbstractReader *reader;
 };
 
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader);
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp);
 
 #endif//_H_XML_PARSER
 
