@@ -43,11 +43,11 @@ typedef struct _SNODE
 #define YYMALLOC
 #define YYFREE
 #define YYSTYPE SNODE
-#define YYLEX_PARAM sp
+#define YYLEX_PARAM ss
 }//code requires end
 
 %define api.pure
-%parse-param { SCANNER_STACK *sp }
+%parse-param { SCANNER_STACK *ss }
 %pure_parser
 
 %token tok_import
@@ -76,33 +76,33 @@ StatementList :
 Statement:
 	tok_literal 
 	{
-		hotscript_do_literal(sp, &$1);
+		hotscript_do_literal(ss, &$1);
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
-		hotscript_do_push(sp, &$1, &$2);
-		hotscript_do_push_index(sp, &$3);
+		hotscript_do_push(ss, &$1, &$2);
+		hotscript_do_push_index(ss, &$3);
 		
-		hotscript_do_echo_trie(sp);
+		hotscript_do_echo_trie(ss);
 		
-		hotscript_do_pop_index(sp, &$3);
-		hotscript_do_pop(sp, &$2);
+		hotscript_do_pop_index(ss, &$3);
+		hotscript_do_pop(ss, &$2);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
 	{
-		hotscript_do_push(sp, &$1, &$2);
-		hotscript_do_push_index(sp, &$3);
+		hotscript_do_push(ss, &$1, &$2);
+		hotscript_do_push_index(ss, &$3);
 	}
 	StatementList
 	'}'
 	{
-		hotscript_do_pop_index(sp, &$3);
-		hotscript_do_pop(sp, &$2);
+		hotscript_do_pop_index(ss, &$3);
+		hotscript_do_pop(ss, &$2);
 	}
 |	tok_text 
 	{
-		hotscript_do_text(sp, &$1);
+		hotscript_do_text(ss, &$1);
 	}
 
 

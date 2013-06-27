@@ -41,7 +41,7 @@
 
 
 
-
+%token tok_script_begin
 %token tok_string
 %token tok_identifier
 

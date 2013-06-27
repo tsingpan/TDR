@@ -78,7 +78,10 @@ whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
 string_begin	['\"']
 
+
 <!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
+
+<*> "<%" { return tok_script_begin; }
 
 <INITIAL>{symbols} {
 	return *yytext;

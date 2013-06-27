@@ -79,13 +79,24 @@ void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 }
 
 extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
-int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *jp)
+int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
-	SCANNER *scanner = scanner_stack_get_scanner(jp);	
+	JSON_PARSER *jp = HP_CONTAINER_OF(jp, JSON_PARSER, scanner_stack);
+	int ret = 0;
 
-	int ret = json_lex_scan(scanner, yylloc_param, yylval_param);
-	yylloc_param->last_line = scanner->yylineno;
-	yylloc_param->last_column = scanner->yycolumn;
+	for(;;)
+	{
+		SCANNER *scanner = scanner_stack_get_scanner(ss);
+
+		ret = json_lex_scan(scanner, yylloc_param, yylval_param);
+		if(ret == tok_script_begin)
+		{
+
+		}
+		yylloc_param->last_line = scanner->yylineno;
+		yylloc_param->last_column = scanner->yycolumn;
+		break;
+	}
 
 	return ret;
 }
