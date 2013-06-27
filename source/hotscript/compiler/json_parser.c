@@ -4,8 +4,7 @@
 #include "json_l.h"
 
 #include "hotscript/hotlex.h"
-
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer)
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader)
 {
 	hpint32 ret;
 	hpint64 data;
@@ -17,6 +16,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->result = HP_INVALID_ERROR_CODE;
 
 	self->writer = writer;
+	self->reader = reader;
 	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
@@ -77,6 +77,7 @@ void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 
 	return;
 }
+
 extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *jp)
 {

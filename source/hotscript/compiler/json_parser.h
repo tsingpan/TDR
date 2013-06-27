@@ -12,6 +12,8 @@
 
 #include "hotobject.h"
 #include "hotscript/hotlex.h"
+#include "hotpot/hp_reader.h"
+#include "hotpot/hp_writer.h"
 
 
 #define MAX_STACK_DEEP 1024
@@ -45,9 +47,10 @@ struct tagJSON_PARSER
 	hpuint32 stack_num;
 	JSON_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
 	HPAbstractWriter *writer;
+	HPAbstractReader *reader;
 };
 
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer);
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader);
 
 #endif//_H_XML_PARSER
 
