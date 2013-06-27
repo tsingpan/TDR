@@ -7,49 +7,8 @@
 #include "hotpot/hp_platform.h"
 #include "hot_vm.h"
 #include "script_y.h"
+#include "hotscript/hotlex.h"
 
-
-#define MAX_INCLUDE_FILE_LEVEL 1024
-typedef struct tagSCRIPT_PARSER_STACK_NODE
-{
-	FILE *f;
-	const char *buff;
-	hpuint32 buff_size;
-}SCRIPT_PARSER_STACK_NODE;
-
-typedef struct _SCANNER SCANNER;
-struct _SCANNER
-{
-	int yy_state;
-	const char *yy_last;
-	const char *yy_cursor;
-	const char *yy_limit;
-	const char *yy_text;
-	const char *yy_marker;
-	const char *buff;
-	hpuint32 buff_size;
-
-	hpuint32 yy_leng;
-
-	hpuint32 yylineno;
-	hpuint32 yycolumn;
-};
-
-#define MAX_BUFF_SIZE 10240
-#define MAX_SCANNER_STACK_DEEP 1024
-#define MAX_FILE_NAME_LENGTH 128
-
-typedef struct _SCANNER_STACK SCANNER_STACK;
-typedef struct _SCANNER_STACK
-{
-	hpuint32 stack_num;
-	SCANNER stack[MAX_SCANNER_STACK_DEEP];
-	char file_name_list[MAX_SCANNER_STACK_DEEP][MAX_FILE_NAME_LENGTH];
-	int file_name_list_num;
-
-	char buff[MAX_BUFF_SIZE];
-	hpuint32 buff_size;
-};
 
 typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
 struct tagSCRIPT_PARSER

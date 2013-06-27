@@ -3,11 +3,8 @@
 #include "hotpot/hp_error.h"
 #include "script_l.h"
 #include <string.h>
+#include "hotscript/hotlex.h"
 
-hpint32 scanner_fini(SCANNER *self)
-{
-	return E_HP_NOERROR;
-}
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const SNODE *text)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -118,101 +115,6 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 
 
 
-hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size)
-{
-	self->buff = str;
-	self->buff_size = str_size;
-
-	self->yy_limit = self->buff + self->buff_size;
-	self->yy_state = yycINITIAL;
-	self->yy_marker = self->buff;
-	self->yy_last = self->buff;
-	self->yy_cursor = self->buff;	
-	self->yylineno = 1;
-	self->yycolumn = 1;
-	return E_HP_NOERROR;
-}
-
-SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
-{
-	return &self->stack[self->stack_num - 1];
-}
-
-hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name)
-{
-	FILE* fin;
-	char c;
-	char *str = self->buff + self->buff_size;
-	size_t str_size = 0;
-	hpuint32 i;
-
-
-	for(i = 0; i < self->file_name_list_num; ++i)
-		if(strcmp(self->file_name_list[i], file_name) == 0)
-		{
-			return E_HP_ERROR;
-		}
-
-	strncpy(self->file_name_list[self->file_name_list_num], file_name, MAX_FILE_NAME_LENGTH);
-	++(self->file_name_list_num);
-
-	fin = fopen(file_name, "rb");
-	while((c = fgetc(fin)) != EOF)
-	{
-		str[(str_size)++] = c;
-	}
-	fclose(fin);
-	self->buff_size += str_size;
-
-	scanner_stack_push(self, str, str_size);
-	return E_HP_NOERROR;
-}
-
-hpint32 scanner_stack_push(SCANNER_STACK *self, const char *str, size_t str_size)
-{
-	scanner_init(&self->stack[self->stack_num], str, str_size);
-	++(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-
-hpint32 scanner_stack_pop(SCANNER_STACK *self)
-{
-	SCANNER *scanner = scanner_stack_get_scanner(self);
-	
-	if(scanner->buff + scanner->buff_size == self->buff + self->buff_size)
-	{
-		/*
-		int i;
-		printf("---------------------------------------------------------------------\n");		
-		for(i = 0;i < self->buff_size; ++i)
-		{
-			putc(self->buff[i], stdout);
-		}
-		printf("---------------------------------------------------------------------\n");
-		*/
-		self->buff_size -= scanner->buff_size;
-		--(self->file_name_list_num);
-	}
-
-	scanner_fini(scanner);
-	--(self->stack_num);
-	return E_HP_NOERROR;
-}
-
-hpint32 scanner_stack_init(SCANNER_STACK *self)
-{
-	self->buff_size = 0;
-	self->stack_num = 0;
-	self->file_name_list_num = 0;
-}
-
-hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
-{
-	return self->stack_num;
-}
-
 extern hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCRIPT_PARSER *sp)
 {
@@ -254,7 +156,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCRIPT_PARSER *
 			}
 
 			file_name[len] = 0;
-			if(scanner_stack_push_file(&sp->scanner_stack, file_name) != E_HP_NOERROR)
+			if(scanner_stack_push_file(&sp->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 			{
 				sp->result = E_HP_ERROR;
 				return 0;
@@ -285,7 +187,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	scanner_stack_init(&self->scanner_stack);
 
 
-	scanner_stack_push_file(&self->scanner_stack, file_name);
+	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 	
 
 	hotoparr_init(&self->hotoparr);
