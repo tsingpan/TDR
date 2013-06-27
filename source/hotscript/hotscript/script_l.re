@@ -58,10 +58,10 @@ any_char		((.|"\n"))
 
 <INITIAL>{any_char}		     {
 	yylval->var.type = E_HP_STRING;
-	yylval->var.val.str.len = 1;
+	yylval->var.val.str.len = 0;
 	yylval->var.val.str.ptr = yytext;
 	while(YYCURSOR < YYLIMIT)
-	{		
+	{
 		if(YYCURSOR - yytext >= 2)
 		{
 			if((*(YYCURSOR - 1) == '<')
