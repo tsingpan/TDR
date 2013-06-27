@@ -116,26 +116,109 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 	return;
 }
 
+
+
+hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size)
+{
+	self->buff = str;
+	self->buff_size = str_size;
+
+	self->yy_limit = self->buff + self->buff_size;
+	self->yy_state = yycINITIAL;
+	self->yy_marker = self->buff;
+	self->yy_last = self->buff;
+	self->yy_cursor = self->buff;	
+	self->yylineno = 1;
+	self->yycolumn = 1;
+
+	return E_HP_NOERROR;
+}
+
+SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
+{
+	return &self->stack[self->stack_num - 1];
+}
+
+hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name)
+{
+	FILE* fin;
+	char c;
+	char *str = self->buff + self->buff_size;
+	size_t str_size = 0;
+
+	fin = fopen(file_name, "rb");
+	while((c = fgetc(fin)) != EOF)
+	{
+		str[(str_size)++] = c;
+	}
+	fclose(fin);
+	self->buff_size += str_size;
+
+	scanner_stack_push(self, str, str_size);
+	return E_HP_NOERROR;
+}
+
+hpint32 scanner_stack_push(SCANNER_STACK *self, const char *str, size_t str_size)
+{
+	scanner_init(&self->stack[self->stack_num], str, str_size);
+	++(self->stack_num);
+
+	return E_HP_NOERROR;
+}
+
+
+hpint32 scanner_stack_pop(SCANNER_STACK *self)
+{
+	SCANNER *scanner = scanner_stack_get_scanner(self);
+	
+	if(scanner->buff + scanner->buff_size == self->buff + self->buff_size)
+	{
+		/*
+		int i;
+		printf("---------------------------------------------------------------------\n");		
+		for(i = 0;i < self->buff_size; ++i)
+		{
+			putc(self->buff[i], stdout);
+		}
+		printf("---------------------------------------------------------------------\n");
+		*/
+		self->buff_size -= scanner->buff_size;
+	}
+
+	scanner_fini(scanner);
+	--(self->stack_num);
+	return E_HP_NOERROR;
+}
+
+hpint32 scanner_stack_init(SCANNER_STACK *self)
+{
+	self->buff_size = 0;
+	self->stack_num = 0;
+}
+
+hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
+{
+	return self->stack_num;
+}
+
 extern hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCRIPT_PARSER *sp)
 {
 	int ret;
-	
 
 	for(;;)
 	{
-		SCANNER *scanner = &sp->stack[sp->stack_num - 1];
+		SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);
 		ret = script_lex_scan(scanner, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
 		if(ret == 0)
 		{
-			if(sp->stack_num <= 1)
+			if(scanner_stack_get_num(&sp->scanner_stack) <= 1)
 			{
 				break;
 			}
-			scanner_fini(scanner);
-			--(sp->stack_num);
+			scanner_stack_pop(&sp->scanner_stack);
 		}
 		else if(ret == tok_import)
 		{
@@ -159,78 +242,19 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCRIPT_PARSER *
 			}
 
 			file_name[len] = 0;
-			script_push_file(sp, file_name);
+			scanner_stack_push_file(&sp->scanner_stack, file_name);
 		}
 		else
 		{
 			break;
 		}
 	}
-	
+
 
 	return ret;
 }
 
-hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size)
-{
-	self->buff = str;
-	self->buff_size = str_size;
 
-	self->yy_limit = self->buff + self->buff_size;
-	self->yy_state = yycINITIAL;
-	self->yy_marker = self->buff;
-	self->yy_last = self->buff;
-	self->yy_cursor = self->buff;	
-	self->yylineno = 1;
-	self->yycolumn = 1;
-
-	return E_HP_NOERROR;
-}
-
-hpint32 script_push_file(SCRIPT_PARSER *self, const char *file_name)
-{
-	FILE* fin;
-	char c;
-	char *start_ptr = self->buff_ + self->buff_size;
-	size_t size = 0;
-
-	fin = fopen(file_name, "rb");
-	while((c = fgetc(fin)) != EOF)
-	{
-		start_ptr[(size)++] = c;
-	}
-	fclose(fin);
-	self->buff_size += size;
-
-	scanner_init(&self->stack[self->stack_num], start_ptr, size);
-	++(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-hpint32 script_push_str(SCRIPT_PARSER *self, const char *str, size_t str_size)
-{
-	scanner_init(&self->stack[self->stack_num], str, str_size);
-	++(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-
-hpint32 script_pop_file(SCRIPT_PARSER *self)
-{
-	self->buff_size = self->stack[self->stack_num - 1].buff - self->buff_;
-	scanner_fini(&self->stack[self->stack_num - 1]);
-	--(self->stack_num);
-	return E_HP_NOERROR;
-}
-
-hpint32 script_pop_str(SCRIPT_PARSER *self)
-{
-	scanner_fini(&self->stack[self->stack_num - 1]);
-	--(self->stack_num);
-	return E_HP_NOERROR;
-}
 
 extern int yyscriptparse (SCRIPT_PARSER *sp);
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
@@ -240,10 +264,10 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	SNODE snode;
 	YYLTYPE yylloc;
 
-	self->buff_size = 0;
-	self->stack_num = 0;
+	scanner_stack_init(&self->scanner_stack);
 
-	script_push_file(self, file_name);
+
+	scanner_stack_push_file(&self->scanner_stack, file_name);
 	
 
 	hotoparr_init(&self->hotoparr);
@@ -278,7 +302,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	{
 		self->result = E_HP_NOERROR;
 	}
-	script_pop_file(self);
+	scanner_stack_pop(&self->scanner_stack);
 
 	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
 

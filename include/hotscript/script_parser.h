@@ -37,14 +37,21 @@ struct _SCANNER
 
 #define MAX_BUFF_SIZE 10240
 #define MAX_SCANNER_STACK_DEEP 1024
-typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
-struct tagSCRIPT_PARSER
+
+typedef struct _SCANNER_STACK SCANNER_STACK;
+typedef struct _SCANNER_STACK
 {
 	hpuint32 stack_num;
 	SCANNER stack[MAX_SCANNER_STACK_DEEP];
 
-	char buff_[MAX_BUFF_SIZE];
+	char buff[MAX_BUFF_SIZE];
 	hpuint32 buff_size;
+};
+
+typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
+struct tagSCRIPT_PARSER
+{
+	SCANNER_STACK scanner_stack;
 
 	hpint32 result;
 	HotOpArr hotoparr;
