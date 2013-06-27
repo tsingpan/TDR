@@ -18,10 +18,6 @@
 %code requires
 {
 #include "hotscript/hot_vm.h"
-
-#define YYMALLOC
-#define YYFREE
-#define YYLEX_PARAM sp
 #define MAX_TOKEN_LENGTH 1024
 #ifndef _DEF_SNODE
 #define _DEF_SNODE
@@ -43,11 +39,15 @@ typedef struct _SNODE
 	HotOp *op;
 }SNODE;
 #endif//_DEF_SNODE
+
+#define YYMALLOC
+#define YYFREE
 #define YYSTYPE SNODE
+#define YYLEX_PARAM sp
 }//code requires end
 
 %define api.pure
-%parse-param { SCRIPT_PARSER *sp }
+%parse-param { SCANNER_STACK *sp }
 %pure_parser
 
 %token tok_import
