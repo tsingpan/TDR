@@ -16,6 +16,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 
 	self->result = HP_INVALID_ERROR_CODE;
 
+	self->sp = sp;
 	self->writer = writer;
 	self->reader = reader;
 	scanner_stack_init(&self->scanner_stack);
@@ -81,6 +82,15 @@ void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 
 static void json_putc(HotVM *self, char c)
 {
+	SCANNER_STACK *ss = (SCANNER_STACK*)self->user_data;
+
+	if(ss->buff_curr < ss->buff_limit)
+	{
+		*ss->buff_curr = c;
+		++(ss->buff_curr);
+	}
+
+	putc(c, stdout);
 }
 
 extern hpint32 json_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
@@ -108,12 +118,14 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		{
 			//这里好玩了~
 			const YYCTYPE * script_start = scanner->yy_cursor - 2;
+			const char *yy_start;
 
 			while(scanner->yy_cursor < scanner->yy_limit)
 			{
 				if((scanner->yy_cursor - script_start >= 4)
 					&& (*(scanner->yy_cursor - 1) == '%') && (*scanner->yy_cursor == '>'))
 				{
+					++(scanner->yy_cursor);
 					break;
 				}
 				else
@@ -123,7 +135,12 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 			}
 
 			//脚本执行的结果放到ss缓存的最后面
+			yy_start = ss->buff_curr;
 			script_parser_str(jp->sp, script_start, scanner->yy_cursor, jp->reader, ss, json_putc);
+			if(scanner_stack_push(ss, yy_start, ss->buff_limit, yycINITIAL) != E_HP_NOERROR)
+			{
+				break;
+			}
 			/*
 			if(scanner_stack_push_file(&sp->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 			{

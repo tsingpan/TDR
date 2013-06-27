@@ -7,11 +7,12 @@
 #include "hotpot/hp_value.h"
 
 #define HOT_ECHO                               0
-#define HOT_PUSH							   1
-#define HOT_PUSH_INDEX						   2
-#define HOT_POP								   3
-#define HOT_ECHO_TRIE						   4
-#define HOT_JMP								   5
+#define HOT_ECHO_LITERAL                       1			//这玩意要进行转义
+#define HOT_PUSH							   2
+#define HOT_PUSH_INDEX						   3
+#define HOT_POP								   4
+#define HOT_ECHO_TRIE						   5
+#define HOT_JMP								   6
 
 //虚拟机操作数
 typedef struct _HotOperand

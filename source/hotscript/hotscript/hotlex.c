@@ -44,8 +44,16 @@ hpint32 scanner_process(SCANNER *sp)
 	return E_HP_NOERROR;
 }
 
-hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state)
+hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state, const char *file_name)
 {
+	if(file_name)
+	{
+		strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
+	}
+	else
+	{
+		self->file_name[0];
+	}
 	self->yy_start = yy_start;
 	self->yy_limit = yy_limit;
 	self->yy_state = state;
@@ -69,14 +77,11 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	const YYCTYPE* yy_start = self->buff_curr;
 	hpuint32 i;
 
-	for(i = 0; i < self->file_name_list_num; ++i)
-		if(strcmp(self->file_name_list[i], file_name) == 0)
+	for(i = 0; i < self->stack_num; ++i)
+		if(strcmp(self->stack[i].file_name, file_name) == 0)
 		{
 			return E_HP_ERROR;
 		}
-
-	strncpy(self->file_name_list[self->file_name_list_num], file_name, MAX_FILE_NAME_LENGTH);
-	++(self->file_name_list_num);
 
 	fin = fopen(file_name, "rb");
 	while((c = (char)fgetc(fin)) != EOF)
@@ -90,13 +95,15 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	}
 	fclose(fin);
 
-	scanner_stack_push(self, yy_start, self->buff_curr, state);
+	scanner_init(&self->stack[self->stack_num], yy_start, self->buff_curr, state, file_name);
+	++(self->stack_num);
+
 	return E_HP_NOERROR;
 }
 
 hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state)
 {
-	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state);
+	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);
 
 	return E_HP_NOERROR;
@@ -107,10 +114,10 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 {
 	SCANNER *scanner = scanner_stack_get_scanner(self);
 	
+	//如果这个缓存在自身缓存的末尾， 那么移除这个缓存
 	if(scanner->yy_limit == self->buff_curr)
 	{
-		self->buff_curr -= scanner->yy_limit - scanner->yy_start;
-		--(self->file_name_list_num);
+		self->buff_curr -= scanner->yy_limit - scanner->yy_start;		
 	}
 
 	scanner_fini(scanner);
@@ -123,7 +130,6 @@ hpint32 scanner_stack_init(SCANNER_STACK *self)
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_BUFF_SIZE;
 	self->stack_num = 0;
-	self->file_name_list_num = 0;
 
 	return E_HP_NOERROR;
 }

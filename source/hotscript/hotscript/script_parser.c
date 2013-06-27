@@ -24,7 +24,7 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->op = HOT_ECHO;
+	op->op = HOT_ECHO_LITERAL;
 	op->op0.type = E_HP_STRING;
 	op->op0.val.str.len = text->var.val.str.len;
 	op->op0.val.str.ptr = text->var.val.str.ptr;
@@ -185,6 +185,13 @@ hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *s
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	int ret;
+	printf("\n--------------------------------------\n");
+	while(script < script_limit)
+	{
+		putc(*script, stdout);
+		++script;
+	}
+	printf("\n--------------------------------------\n");
 
 	scanner_stack_init(&self->scanner_stack);
 

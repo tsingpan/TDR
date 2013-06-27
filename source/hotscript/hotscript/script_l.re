@@ -242,15 +242,31 @@ any_char		((.|"\n"))
 
 <ST_IN_SCRIPTING>{literal_begin} {
 	char mark = *yytext;
-	++YYCURSOR;
 	yylval->var.type = E_HP_STRING;
 	yylval->var.val.str.len = 0;
 	yylval->var.val.str.ptr = YYCURSOR;
 	while(YYCURSOR < YYLIMIT)
 	{
-		if(*YYCURSOR == mark)
+		if(*YYCURSOR == '\\')
 		{
-			break;
+			++YYCURSOR;
+			if(YYCURSOR < YYLIMIT)
+			{
+				++(yylval->var.val.str.len);
+				++YYCURSOR;
+				continue;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			if(*YYCURSOR == mark)
+			{
+				break;
+			}
 		}
 		++(yylval->var.val.str.len);
 		++YYCURSOR;

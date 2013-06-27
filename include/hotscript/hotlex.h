@@ -18,9 +18,11 @@
 #define yytext self->yy_text
 #define yyleng self->yy_leng
 
+#define MAX_FILE_NAME_LENGTH 128
 typedef struct _SCANNER SCANNER;
 struct _SCANNER
 {
+	char file_name[MAX_FILE_NAME_LENGTH];
 	int yy_state;
 	const YYCTYPE *yy_last;
 	const YYCTYPE *yy_cursor;
@@ -36,22 +38,19 @@ struct _SCANNER
 
 #define MAX_BUFF_SIZE 10240
 #define MAX_SCANNER_STACK_DEEP 1024
-#define MAX_FILE_NAME_LENGTH 128
 
 typedef struct _SCANNER_STACK SCANNER_STACK;
 typedef struct _SCANNER_STACK
 {
 	hpuint32 stack_num;
 	SCANNER stack[MAX_SCANNER_STACK_DEEP];
-	hpchar file_name_list[MAX_SCANNER_STACK_DEEP][MAX_FILE_NAME_LENGTH];
-	hpuint32 file_name_list_num;
 
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
 	YYCTYPE buff[MAX_BUFF_SIZE];	
 };
 
-hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state);
+hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state, const char *file_name);
 hpint32 scanner_fini(SCANNER *self);
 
 hpint32 scanner_process(SCANNER *sp);

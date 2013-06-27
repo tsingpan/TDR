@@ -51,6 +51,50 @@ hpint32 hotvm_execute_once(HotVM *self)
 			++(self->current_op);
 			break;
 		}
+	case HOT_ECHO_LITERAL:
+		{
+			hpuint32 i;			
+			for(i = 0;i < op->op0.val.str.len; ++i)
+			{
+				if(op->op0.val.str.ptr[i] == '\\')
+				{
+					++i;
+					if(i >= op->op0.val.str.len)
+					{
+						break;
+					}					
+					switch (op->op0.val.str.ptr[i])
+					{
+					case 'r':
+						self->uputc(self, '\r');
+						break;
+					case 'n':
+						self->uputc(self, '\n');
+						break;
+					case 't':
+						self->uputc(self, '\t');
+						break;
+					case '"':
+						self->uputc(self, '\"');
+						break;
+					case '\'':
+						self->uputc(self, '\'');
+						break;
+					case '\\':
+						self->uputc(self, '\\');
+						break;
+					default:
+						break;
+					}
+				}
+				else
+				{
+					self->uputc(self, op->op0.val.str.ptr[i]);
+				}
+			}
+			++(self->current_op);
+			break;
+		}
 	case HOT_PUSH:
 		{
 			if(hp_reader_begin(self->reader, &op->op1) != E_HP_NOERROR)
