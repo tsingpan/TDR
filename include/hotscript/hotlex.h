@@ -40,6 +40,7 @@ typedef struct _SCANNER_STACK
 hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size, int state);
 hpint32 scanner_fini(SCANNER *self);
 
+hpint32 scanner_process(SCANNER *sp);
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
 hpint32 scanner_stack_push(SCANNER_STACK *self, const char *str, size_t str_size, int state);

@@ -5,6 +5,7 @@
 #include "script_y.h"
 #include "hotscript/script_parser.h"
 #include "script_l.h"
+#include "hotscript/hotlex.h"
 	
 		
 static void hotscript_reserved_keyword(char* keyword)
@@ -26,38 +27,6 @@ static void hotscript_reserved_keyword(char* keyword)
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
-
-hpint32 script_process(SCANNER *sp)
-{
-	const char *i;
-	for(i = sp->yy_last; i < sp->yy_cursor;)
-	{
-		if(*i == '\n')
-		{
-			++(sp->yylineno);
-			sp->yycolumn = 1;
-			++i;
-		}
-		else if(*i == '\r')
-		{
-			++(sp->yylineno);
-			sp->yycolumn = 1;
-			++i;
-			if((i < sp->yy_cursor) && (*i == '\n'))
-			{
-				++i;
-			}
-		}
-		else
-		{
-			++(sp->yycolumn);
-			++i;
-		}
-	}
-	sp->yy_last = sp->yy_cursor;
-
-	return E_HP_NOERROR;
-}
 
 hpint32 script_lex_scan(SCANNER *sp, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
@@ -86,7 +55,7 @@ whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
 any_char		((.|"\n"))
 
-<!*> := yyleng = YYCURSOR - sp->yy_text; script_process(sp);
+<!*> := yyleng = YYCURSOR - sp->yy_text; scanner_process(sp);
 
 <ST_IN_SCRIPTING>{comment}				{ goto restart;/* do nothing */																}
 <ST_IN_SCRIPTING>{sillycomm}			{ goto restart;/* do nothing */																}

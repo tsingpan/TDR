@@ -10,6 +10,38 @@ hpint32 scanner_fini(SCANNER *self)
 	return E_HP_NOERROR;
 }
 
+hpint32 scanner_process(SCANNER *sp)
+{
+	const char *i;
+	for(i = sp->yy_last; i < sp->yy_cursor;)
+	{
+		if(*i == '\n')
+		{
+			++(sp->yylineno);
+			sp->yycolumn = 1;
+			++i;
+		}
+		else if(*i == '\r')
+		{
+			++(sp->yylineno);
+			sp->yycolumn = 1;
+			++i;
+			if((i < sp->yy_cursor) && (*i == '\n'))
+			{
+				++i;
+			}
+		}
+		else
+		{
+			++(sp->yycolumn);
+			++i;
+		}
+	}
+	sp->yy_last = sp->yy_cursor;
+
+	return E_HP_NOERROR;
+}
+
 hpint32 scanner_init(SCANNER *self, const char *str, const hpint32 str_size, int state)
 {
 	self->buff = str;
