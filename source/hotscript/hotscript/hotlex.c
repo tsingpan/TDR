@@ -112,12 +112,6 @@ hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char
 hpint32 scanner_stack_pop(SCANNER_STACK *self)
 {
 	SCANNER *scanner = scanner_stack_get_scanner(self);
-	
-	//如果这个缓存在自身缓存的末尾， 那么移除这个缓存
-	if(scanner->yy_limit == self->buff_curr)
-	{
-		self->buff_curr -= scanner->yy_limit - scanner->yy_start;		
-	}
 
 	scanner_fini(scanner);
 	--(self->stack_num);

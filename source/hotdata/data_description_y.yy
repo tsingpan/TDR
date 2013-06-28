@@ -34,7 +34,6 @@
 %token tok_if 
 %token tok_type 
 %token tok_integer
-%token tok_package_path 
 %token tok_identifier 
 %token tok_const 
 %token tok_enum 
@@ -67,7 +66,7 @@ DefinitionList :
 	{
 	}
 |	{
-	}
+	};
 
 Definition :
 	Import
@@ -90,27 +89,30 @@ Definition :
 	}
 |   UnixComment
 	{
-	}
+	};
 
 Import : 
-	tok_import tok_package_path
+	tok_import
 	{
-	}
+	};
 
 Const : 
 	tok_const tok_type tok_identifier '=' tok_integer CommaOrSemicolonOptional
 	{
 	}
+|	tok_const tok_type tok_identifier '=' tok_identifier CommaOrSemicolonOptional
+	{
+	};
 	
 Typedef :
 	tok_typedef Type Arguments tok_identifier CommaOrSemicolonOptional
 	{
-	}
+	};
 	
 Enum :
 	tok_enum tok_identifier '{' EnumDefList '}' TypeAnnotations CommaOrSemicolonOptional
 	{	
-    }
+    };
     
 EnumDefList : 
 	EnumDefList EnumDef
@@ -118,24 +120,24 @@ EnumDefList :
 	}
 |
 	{
-	}
+	};
 	
 EnumDef : 
 	tok_identifier '=' tok_integer CommaOrSemicolonOptional UnixComment
 	{
-	}
+	};
     
 
 Union :
 	tok_union tok_identifier  Parameters '{' FieldList '}' TypeAnnotations CommaOrSemicolonOptional
 	{
-	}
+	};
 	
 	
 Struct : 
 	tok_struct tok_identifier Parameters '{' FieldList '}' TypeAnnotations CommaOrSemicolonOptional
 	{
-	}
+	};
 	
 
 	
@@ -145,13 +147,13 @@ FieldList:
 	}
 |
 	{
-	}
+	};
 	
 
 Field : 
 	FieldCondition Type Arguments tok_identifier ';' UnixComment
 	{
-	}
+	};
 	
 
 FieldCondition : 
@@ -173,7 +175,7 @@ FieldCondition :
 	}
 |
 	{
-	}
+	};
 
 FieldExpression :
 	tok_identifier tok_equal tok_identifier
@@ -182,7 +184,7 @@ FieldExpression :
 
 |	tok_identifier '&' tok_identifier
 	{
-	}
+	};
 
 
 
@@ -192,7 +194,7 @@ Type :
 	}
 |	tok_identifier
    	{
-	}
+	};
 
 Parameters :
 	'<' ParameterList '>'
@@ -200,7 +202,7 @@ Parameters :
 	}
 |
 	{
-	}
+	};
 	
 ParameterList:
 	ParameterList Parameter 
@@ -208,13 +210,13 @@ ParameterList:
 	}
 |
 	{
-	}
+	};
 	
 	
 Parameter:
 	Type tok_identifier CommaOrSemicolonOptional
 	{
-	}
+	};
 
 
 
@@ -225,7 +227,7 @@ Arguments:
 	}
 |
 	{
-	}
+	};
 	
 ArgumentList:
 	ArgumentList Argument
@@ -233,7 +235,7 @@ ArgumentList:
 	}
 |
 	{
-	}
+	};
 	
 Argument:
 	tok_identifier CommaOrSemicolonOptional
@@ -246,7 +248,7 @@ UnixComment:
 	}
 |
 	{
-	}
+	};
 
 TypeAnnotations:
   '(' TypeAnnotationList ')'
@@ -254,7 +256,7 @@ TypeAnnotations:
     }
 |
     {
-    }
+    };
 
 TypeAnnotationList:
   TypeAnnotationList TypeAnnotation
@@ -262,7 +264,7 @@ TypeAnnotationList:
     }
 |
     {
-    }
+    };
 
 TypeAnnotation:
 	tok_unique '= ' tok_bool CommaOrSemicolonOptional
@@ -279,7 +281,7 @@ TypeAnnotation:
 |	tok_switch '=' tok_identifier CommaOrSemicolonOptional
 	{
 		
-	}
+	};
 
 
 
@@ -296,6 +298,6 @@ CommaOrSemicolonOptional:
 |
     {
     
-    }
+    };
     
 %%
