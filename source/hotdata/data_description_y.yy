@@ -112,24 +112,24 @@ Import :
 
 
 Const : 
-	tok_const Type tok_identifier '=' tok_int CommaOrSemicolonOptional
+	tok_const Type tok_identifier '=' Value CommaOrSemicolonOptional
 	{
 	}
-| 	tok_const Type tok_identifier '=' tok_hex CommaOrSemicolonOptional
-	{
-	}
-|	tok_const Type tok_identifier '=' tok_identifier CommaOrSemicolonOptional
+
+
+Value :
+	tok_int | tok_hex | tok_identifier | tok_true | tok_false
 	{
 	};
-	
+
 Typedef :
 	tok_typedef Type Arguments tok_identifier CommaOrSemicolonOptional
 	{
 	};
 	
 Enum :
-	tok_enum tok_identifier '{' EnumDefList '}' TypeAnnotations CommaOrSemicolonOptional
-	{	
+	tok_enum TypeAnnotations tok_identifier '{' EnumDefList '}' CommaOrSemicolonOptional
+	{
     };
     
 EnumDefList : 
@@ -141,19 +141,19 @@ EnumDefList :
 	};
 	
 EnumDef : 
-	tok_identifier '=' tok_int CommaOrSemicolonOptional UnixComment
+	tok_identifier '=' Value CommaOrSemicolonOptional UnixComment
 	{
 	};
     
 
 Union :
-	tok_union tok_identifier  Parameters '{' FieldList '}' TypeAnnotations CommaOrSemicolonOptional
+	tok_union TypeAnnotations tok_identifier  Parameters '{' FieldList '}'  CommaOrSemicolonOptional
 	{
 	};
 	
 	
 Struct : 
-	tok_struct tok_identifier Parameters '{' FieldList '}' TypeAnnotations CommaOrSemicolonOptional
+	tok_struct TypeAnnotations tok_identifier Parameters '{' FieldList '}' CommaOrSemicolonOptional
 	{
 	};
 	

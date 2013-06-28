@@ -10,7 +10,7 @@
 
 #include "json_y.h"
 
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
 #include "hotscript/hotlex.h"
 #include "hotpot/hp_reader.h"
 #include "hotpot/hp_writer.h"

@@ -1,4 +1,4 @@
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
 #include "hotpot/hp_platform.h"
 
 #include "datrie/trie.h"
@@ -150,7 +150,7 @@ static hpint32 hotobject_writer_begin(HPAbstractWriter* super, const HPVar *name
 	new_ob = hotobject_new();
 	new_ob->type = E_OBJECT;
 	hotobject_push(self, new_ob);
-	if(!trie_store_if_absent(ob->keys, str_name, new_ob))
+	if(!trie_store(ob->keys, str_name, new_ob))
 	{
 		goto ERROR_RET;
 	}

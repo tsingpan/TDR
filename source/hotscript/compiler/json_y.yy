@@ -9,7 +9,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
 #include "json_parser.h"
-#include "hotobject.h"
+#include "hotscript/hotobject.h"
 
 #include "hotscript/hotlex.h"
 
