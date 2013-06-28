@@ -13,12 +13,12 @@
 #include "hotpot/hp_value.h"
 #include "hotscript/hotlex.h"
 
+#include "hotdata_parser.h"
 
-
-
-#define YYSTYPE HPVar
 #define YYMALLOC
 #define YYFREE
+
+#define YYSTYPE SyntacticNode
 #define YYLEX_PARAM ss
 }
 

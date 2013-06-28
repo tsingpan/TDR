@@ -51,27 +51,27 @@ newline			("\r"|"\n"|"\r\n")
 <*>{newline}			{																				}
 
 <INITIAL>{symbol}				{return yytext[0];																}
-<INITIAL>"union"					{return tok_union;																}
+<INITIAL>"union"				{return tok_union;																}
 <INITIAL>"struct"				{return tok_struct;																}
 <INITIAL>"if"					{return tok_if;																	}
-<INITIAL>"const"					{return tok_const;																}
+<INITIAL>"const"				{return tok_const;																}
 <INITIAL>"enum"					{return tok_enum;																}
-<INITIAL>"case"                  {return tok_case;																}
+<INITIAL>"case"                 {return tok_case;																}
 <INITIAL>"typename"				{return tok_typename;															}
 <INITIAL>"unique"				{return tok_unique;																}
 <INITIAL>"typedef"				{return tok_typedef;															}
 <INITIAL>"true"					{return tok_bool;																}
-<INITIAL>"false"					{return tok_bool;																}
+<INITIAL>"false"				{return tok_bool;																}
 <INITIAL>"lower_bound"			{return tok_lower_bound;														}
 <INITIAL>"upper_bound"			{return tok_upper_bound;														}
 <INITIAL>"switch"				{return tok_switch;																}
 <INITIAL>"vector"				{return tok_type;																}
 <INITIAL>"string"				{return tok_type;																}
 <INITIAL>"int8"					{return tok_type;																}
-<INITIAL>"int16"					{return tok_type;																}
-<INITIAL>"int32"					{return tok_type;																}
-<INITIAL>"int64"					{return tok_type;																}
-<INITIAL>"uint8"					{return tok_type;																}
+<INITIAL>"int16"				{return tok_type;																}
+<INITIAL>"int32"				{return tok_type;																}
+<INITIAL>"int64"				{return tok_type;																}
+<INITIAL>"uint8"				{return tok_type;																}
 <INITIAL>"uint16"				{return tok_type;																}
 <INITIAL>"uint32"				{return tok_type;																}
 <INITIAL>"uint64"				{return tok_type;																}

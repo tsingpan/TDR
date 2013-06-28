@@ -26,7 +26,7 @@
 #define YYMALLOC
 #define YYFREE
 #define YYLEX_PARAM ss
-}//code requires end
+}
 
 %define api.pure
 %parse-param { SCANNER_STACK *ss }

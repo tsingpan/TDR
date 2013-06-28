@@ -6,6 +6,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "hotscript/hotlex.h"
+#include "hotpot/hp_value.h"
+
+//语法节点的值
+typedef struct _SyntacticNode SyntacticNode;
+struct _SyntacticNode
+{
+	HPVar var;
+};
 
 
 typedef struct _DATA_PARSER DATA_PARSER;
