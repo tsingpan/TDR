@@ -16,12 +16,11 @@ typedef enum _HPType
 	E_HP_CHAR			= 8,
 	E_HP_STRING			= 9,
 	E_HP_DOUBLE			= 10,
+	E_HP_BOOL			= 11,
 }HPType;
 
 typedef union _HPValue
-{
-	hpchar c;
-	hpdouble d;
+{	
 	hpint8 i8;
 	hpint16 i16;
 	hpint32 i32;
@@ -30,7 +29,10 @@ typedef union _HPValue
 	hpuint16 ui16;
 	hpuint32 ui32;
 	hpuint64 ui64;
+	hpchar c;
 	hpstring str;
+	hpdouble d;
+	hpbool b;	
 }HPValue;
 
 typedef struct _HPVar

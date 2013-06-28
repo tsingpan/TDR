@@ -1,6 +1,22 @@
 #ifndef _H_HP_PLATFORM_COMMON
 #define _H_HP_PLATFORM_COMMON
 
+
+#ifndef FALSE
+#define FALSE               0
+#endif
+
+#ifndef TRUE
+#define TRUE                1
+#endif
+
+typedef enum _hpbool hpbool;
+enum _hpbool
+{
+	hptrue = TRUE,
+	hpfalse = FALSE,
+};
+
 typedef signed char hpint8;
 typedef signed short int hpint16;
 typedef signed int hpint32;
@@ -14,10 +30,15 @@ typedef double hpdouble;
 
 typedef struct _hpstring
 {
-	char *ptr;
+	const char *ptr;
 	hpuint32 len;
 }hpstring;
 
+
+
+#ifndef NULL
+#define NULL				0
+#endif
 
 #define HP_UINT64_MAX ((((hpuint64)0xffffffffUL) << 32) | 0xffffffffUL)
 #define HP_INT64_MAX  ((((hpint64) 0x7fffffffL) << 32) | 0xffffffffL)
@@ -36,17 +57,6 @@ typedef struct _hpstring
 #define HP_LITTLE_ENDIAN (0x34)
 #define HP_BIG_ENDIAN (0x12)
 
-#ifndef NULL
-#define NULL				0
-#endif
-
-#ifndef FALSE
-#define FALSE               0
-#endif
-
-#ifndef TRUE
-#define TRUE                1
-#endif
 
 #define HP_MAX_ENUM_LENGTH 512
 #define HP_MAX_FILE_PATH_LENGTH 1024

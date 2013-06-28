@@ -99,7 +99,8 @@ string_begin	['\"']
   //YYCURSOR只比yytext大1哦~
 
   //最大字符串的限制
-  yylval->val.str.ptr = malloc(1024);
+  char *str = malloc(1024);
+  yylval->val.str.ptr = str;
   yylval->type = E_HP_STRING;
   yylval->val.str.len = 0;  
   while (YYCURSOR < YYLIMIT)
@@ -116,28 +117,28 @@ string_begin	['\"']
         switch (*YYCURSOR)
         {
           case '"':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '"';
+			str[(yylval->val.str.len)++] = '"';
             continue;
           case '\\':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\\';
+			str[(yylval->val.str.len)++] = '\\';
             continue;
           case '/':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '/';
+			str[(yylval->val.str.len)++] = '/';
             continue;
           case 'b':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\b';
+			str[(yylval->val.str.len)++] = '\b';
             continue;
           case 'f':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\f';
+			str[(yylval->val.str.len)++] = '\f';
             continue;
           case 'n':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\n';
+			str[(yylval->val.str.len)++] = '\n';
             continue;
           case 'r':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\r';
+			str[(yylval->val.str.len)++] = '\r';
             continue;
           case 't':
-			yylval->val.str.ptr[(yylval->val.str.len)++] = '\t';
+			str[(yylval->val.str.len)++] = '\t';
             continue;
 		  case 'u':
 		  {
@@ -166,13 +167,13 @@ string_begin	['\"']
       default:
         if (ch == mark)
         {
-			yylval->val.str.ptr[yylval->val.str.len] = 0;
+			str[yylval->val.str.len] = 0;
 			yylval->type = E_HP_STRING;
 			return tok_string;
         }
         else
         {
-          yylval->val.str.ptr[(yylval->val.str.len)++] = ch;
+          str[(yylval->val.str.len)++] = ch;
         }
     }
   }

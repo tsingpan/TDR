@@ -130,6 +130,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			HPVar var;
 			hpuint32 i;
 			hp_reader_read(self->reader, &var);
+			//这里需要转义
 			for(i = 0;i < var.val.str.len; ++i)
 			{
 				self->uputc(self, var.val.str.ptr[i]);

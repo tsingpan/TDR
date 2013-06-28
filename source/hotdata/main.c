@@ -56,7 +56,14 @@ int main(int argc, char **argv)
 
 	for(i = hp_optind; i < argc; ++i)
 	{
-		data_parser(&dp, argv[i]);
+		if(data_parser(&dp, argv[i]) == E_HP_NOERROR)
+		{
+			printf("succeed\n");
+		}
+		else
+		{
+			printf("failed\n");
+		}
 	}
 	return 0;
 }

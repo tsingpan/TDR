@@ -32,8 +32,8 @@
 %token tok_struct
 %token tok_union 
 %token tok_if 
-%token tok_type 
-%token tok_integer
+%token tok_int
+%token tok_hex
 %token tok_identifier 
 %token tok_const 
 %token tok_enum 
@@ -45,9 +45,23 @@
 %token tok_unique
 %token tok_lower_bound
 %token tok_upper_bound
-%token tok_bool
+%token tok_true
+%token tok_false
 %token tok_typedef
 %token tok_switch
+%token tok_t_int8
+%token tok_t_int16
+%token tok_t_int32
+%token tok_t_int64
+%token tok_t_uint8
+%token tok_t_uint16
+%token tok_t_uint32
+%token tok_t_uint64
+%token tok_t_bool
+%token tok_t_char
+%token tok_t_double
+%token tok_t_string
+%token tok_t_vector
 
 %left '='
 
@@ -96,11 +110,15 @@ Import :
 	{
 	};
 
+
 Const : 
-	tok_const tok_type tok_identifier '=' tok_integer CommaOrSemicolonOptional
+	tok_const Type tok_identifier '=' tok_int CommaOrSemicolonOptional
 	{
 	}
-|	tok_const tok_type tok_identifier '=' tok_identifier CommaOrSemicolonOptional
+| 	tok_const Type tok_identifier '=' tok_hex CommaOrSemicolonOptional
+	{
+	}
+|	tok_const Type tok_identifier '=' tok_identifier CommaOrSemicolonOptional
 	{
 	};
 	
@@ -123,7 +141,7 @@ EnumDefList :
 	};
 	
 EnumDef : 
-	tok_identifier '=' tok_integer CommaOrSemicolonOptional UnixComment
+	tok_identifier '=' tok_int CommaOrSemicolonOptional UnixComment
 	{
 	};
     
@@ -189,7 +207,9 @@ FieldExpression :
 
 
 Type :
-	tok_type
+	tok_t_bool | tok_t_char | tok_t_double | tok_t_string | tok_t_vector
+	| tok_t_int8 | tok_t_int16 | tok_t_int32 | tok_t_int64
+	| tok_t_uint8 | tok_t_uint16 | tok_t_uint32 | tok_t_uint64
 	{
 	}
 |	tok_identifier
@@ -266,8 +286,13 @@ TypeAnnotationList:
     {
     };
 
+Bool:
+	tok_true | tok_false
+	{
+	};
+
 TypeAnnotation:
-	tok_unique '= ' tok_bool CommaOrSemicolonOptional
+	tok_unique '= ' Bool CommaOrSemicolonOptional
     {
     }
 |	tok_lower_bound '=' tok_identifier CommaOrSemicolonOptional

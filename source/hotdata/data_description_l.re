@@ -7,7 +7,7 @@
 #include "hotpot/hp_error.h"
 #include "hotscript/hotlex.h"
 
-		
+#include <errno.h>
 		
 static void ddekit_reserved_keyword(const char* keyword)
 {
@@ -37,19 +37,14 @@ unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
 symbol			([<>{}\(\);,=:&!])
-newline			("\r"|"\n"|"\r\n")
-
-
-<INITIAL>"import" { return tok_import;}
 
 
 
+<*>{comment}			{	goto restart;																}
+<*>{sillycomm}			{	goto restart;																}
+<*>{multicomm}			{	goto restart;																}
 
-<*>{comment}			{ /* do nothing */																}
-<*>{sillycomm}			{ /* do nothing */																}
-<*>{multicomm}			{ /* do nothing */																}
-<*>{newline}			{																				}
-
+<INITIAL>"import"				{return tok_import;																}
 <INITIAL>{symbol}				{return yytext[0];																}
 <INITIAL>"union"				{return tok_union;																}
 <INITIAL>"struct"				{return tok_struct;																}
@@ -60,25 +55,36 @@ newline			("\r"|"\n"|"\r\n")
 <INITIAL>"typename"				{return tok_typename;															}
 <INITIAL>"unique"				{return tok_unique;																}
 <INITIAL>"typedef"				{return tok_typedef;															}
-<INITIAL>"true"					{return tok_bool;																}
-<INITIAL>"false"				{return tok_bool;																}
 <INITIAL>"lower_bound"			{return tok_lower_bound;														}
 <INITIAL>"upper_bound"			{return tok_upper_bound;														}
 <INITIAL>"switch"				{return tok_switch;																}
-<INITIAL>"vector"				{return tok_type;																}
-<INITIAL>"string"				{return tok_type;																}
-<INITIAL>"int8"					{return tok_type;																}
-<INITIAL>"int16"				{return tok_type;																}
-<INITIAL>"int32"				{return tok_type;																}
-<INITIAL>"int64"				{return tok_type;																}
-<INITIAL>"uint8"				{return tok_type;																}
-<INITIAL>"uint16"				{return tok_type;																}
-<INITIAL>"uint32"				{return tok_type;																}
-<INITIAL>"uint64"				{return tok_type;																}
-<INITIAL>"char"					{return tok_type;																}
-<INITIAL>"double"				{return tok_type;																}
+
+<INITIAL>"int8"					{return tok_t_int8;																}
+<INITIAL>"int16"				{return tok_t_int16;															}
+<INITIAL>"int32"				{return tok_t_int32;															}
+<INITIAL>"int64"				{return tok_t_int64;															}
+<INITIAL>"uint8"				{return tok_t_uint8;															}
+<INITIAL>"uint16"				{return tok_t_uint16;															}
+<INITIAL>"uint32"				{return tok_t_uint32;															}
+<INITIAL>"uint64"				{return tok_t_uint64;															}
+<INITIAL>"bool"					{return tok_t_bool;																}
+<INITIAL>"double"				{return tok_t_double;															}
+<INITIAL>"char"					{return tok_t_char;																}
+<INITIAL>"vector"				{return tok_t_vector;															}
+<INITIAL>"string"				{return tok_t_string;															}
 <INITIAL>"=="					{return tok_equal;																}
 <INITIAL>"!="					{return tok_unequal;															}
+
+
+
+
+<INITIAL>"true"					{return tok_true;																}
+<INITIAL>"false"				{return tok_false;																}
+<INITIAL>{hexconstant}			{return tok_hex;																}
+<INITIAL>{intconstant}			{return tok_int;																}
+<INITIAL>{identifier}			{return tok_identifier;															}
+<INITIAL>{unixcomment}			{return tok_unixcomment;														}
+
 
 
 <INITIAL>"BEGIN"              { ddekit_reserved_keyword(yytext); }
@@ -197,13 +203,7 @@ newline			("\r"|"\n"|"\r\n")
 <INITIAL>"byte"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"namespace"          { ddekit_reserved_keyword(yytext); }
 
-
-<INITIAL>{hexconstant}			{return tok_integer;			}
-<INITIAL>{intconstant}			{return tok_integer;			}
-<INITIAL>{identifier}			{return tok_identifier;			}
-<INITIAL>{unixcomment}			{return tok_unixcomment;		}
-
-<*>.					{/* do nothing */																}
+<*>. | '\n'			  { goto restart;					 }
 
 */
 }
