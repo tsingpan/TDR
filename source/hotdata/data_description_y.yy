@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #define YYERROR_VERBOSE
+#define GET_SELF DATA_PARSER *self = HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
 
 %}
 %locations
@@ -114,6 +115,17 @@ Import :
 Const : 
 	tok_const Type tok_identifier '=' Value CommaOrSemicolonOptional
 	{
+	/*
+		HPVar name;
+		GET_SELF;
+		name.type = E_HP_STRING;
+		name.val.str = "const";
+		hp_writer_begin(self->writer, &name);
+		name.val.str = "type";
+		hp_writer_begin(self->writer, &name);
+
+		hp_writer_end(self->writer);
+		*/
 	}
 
 

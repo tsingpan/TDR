@@ -7,9 +7,10 @@
 #include <errno.h>
 #include <string.h>
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name)
+hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer)
 {
 	hpint32 ret;
+	self->writer = writer;
 
 	self->result = E_HP_NOERROR;
 
