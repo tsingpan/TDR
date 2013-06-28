@@ -192,7 +192,7 @@ static hpint32 hotobject_reader_begin(HPAbstractReader* super, const HPVar *name
 	{
 		if(name->val.i32 >= 0)
 		{
-			snprintf(str_name, 1024, "%d", name->val.i32);
+			snprintf(str_name, 1024, "[%d]", name->val.i32);
 		}
 		else
 		{
