@@ -28,7 +28,6 @@ restart:
 /*!re2c
 re2c:yyfill:check = 0;
 
-
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 intconstant		([+-]?[0-9]+)
 hexconstant		("0x"[0-9A-Fa-f]+)
@@ -38,7 +37,7 @@ sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
 symbol			([<>{}\(\);,=:&!])
 
-
+<!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
 
 <*>{comment}			{	goto restart;																}
 <*>{sillycomm}			{	goto restart;																}
