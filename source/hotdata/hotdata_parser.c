@@ -97,9 +97,9 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 		}
 	case tok_identifier:
 		{
-			yylval->var.type = E_HP_STRING;
-			yylval->var.val.str.ptr = yytext;
-			yylval->var.val.str.len = yyleng;
+			yylval->var.type = E_HP_BYTES;
+			yylval->var.val.bytes.ptr = yytext;
+			yylval->var.val.bytes.len = yyleng;
 			break;
 		}
 	}

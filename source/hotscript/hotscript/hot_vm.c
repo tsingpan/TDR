@@ -44,9 +44,9 @@ hpint32 hotvm_execute_once(HotVM *self)
 	case HOT_ECHO:
 		{
 			hpuint32 i;
-			for(i = 0;i < op->op0.val.str.len; ++i)
+			for(i = 0;i < op->op0.val.bytes.len; ++i)
 			{
-				self->uputc(self, op->op0.val.str.ptr[i]);
+				self->uputc(self, op->op0.val.bytes.ptr[i]);
 			}
 			++(self->current_op);
 			break;
@@ -54,16 +54,16 @@ hpint32 hotvm_execute_once(HotVM *self)
 	case HOT_ECHO_LITERAL:
 		{
 			hpuint32 i;			
-			for(i = 0;i < op->op0.val.str.len; ++i)
+			for(i = 0;i < op->op0.val.bytes.len; ++i)
 			{
-				if(op->op0.val.str.ptr[i] == '\\')
+				if(op->op0.val.bytes.ptr[i] == '\\')
 				{
 					++i;
-					if(i >= op->op0.val.str.len)
+					if(i >= op->op0.val.bytes.len)
 					{
 						break;
 					}					
-					switch (op->op0.val.str.ptr[i])
+					switch (op->op0.val.bytes.ptr[i])
 					{
 					case 'r':
 						self->uputc(self, '\r');
@@ -89,7 +89,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 				}
 				else
 				{
-					self->uputc(self, op->op0.val.str.ptr[i]);
+					self->uputc(self, op->op0.val.bytes.ptr[i]);
 				}
 			}
 			++(self->current_op);
@@ -131,9 +131,9 @@ hpint32 hotvm_execute_once(HotVM *self)
 			hpuint32 i;
 			hp_reader_read(self->reader, &var);
 			//这里需要转义
-			for(i = 0;i < var.val.str.len; ++i)
+			for(i = 0;i < var.val.bytes.len; ++i)
 			{
-				self->uputc(self, var.val.str.ptr[i]);
+				self->uputc(self, var.val.bytes.ptr[i]);
 			}
 			++(self->current_op);
 			break;

@@ -57,10 +57,10 @@ any_char		((.|"\n"))
 	}
 
 <INITIAL>{any_char}		     {
-	yylval->var.type = E_HP_STRING;
+	yylval->var.type = E_HP_BYTES;
 	
-	yylval->var.val.str.len = 1;
-	yylval->var.val.str.ptr = yytext;
+	yylval->var.val.bytes.len = 1;
+	yylval->var.val.bytes.ptr = yytext;
 	while(YYCURSOR < YYLIMIT)
 	{
 		if(YYCURSOR - yytext >= 2)
@@ -68,12 +68,12 @@ any_char		((.|"\n"))
 			if((*(YYCURSOR - 1) == '<')
 				&& (*YYCURSOR == '%'))
 			{
-				--(yylval->var.val.str.len);
+				--(yylval->var.val.bytes.len);
 				BEGIN(ST_IN_SCRIPTING);
 				break;
 			}
 		}
-		++(yylval->var.val.str.len);
+		++(yylval->var.val.bytes.len);
 		++YYCURSOR;
 	}
 	return tok_text;
@@ -91,9 +91,9 @@ any_char		((.|"\n"))
 	return tok_integer;
 }
 <ST_IN_SCRIPTING>{identifier}			{ 
-	yylval->var.type = E_HP_STRING;
-	yylval->var.val.str.ptr = yytext;
-	yylval->var.val.str.len = yyleng;
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.ptr = yytext;
+	yylval->var.val.bytes.len = yyleng;
 	return tok_identifier;
 }
 
@@ -244,18 +244,18 @@ any_char		((.|"\n"))
 
 <ST_IN_SCRIPTING>{literal_begin} {
 	char mark = *yytext;
-	yylval->var.type = E_HP_STRING;
-	yylval->var.val.str.len = 0;
-	yylval->var.val.str.ptr = YYCURSOR;
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.len = 0;
+	yylval->var.val.bytes.ptr = YYCURSOR;
 	while(YYCURSOR < YYLIMIT)
 	{
 		if(*YYCURSOR == '\\')
 		{
 			++YYCURSOR;
-			++(yylval->var.val.str.len);
+			++(yylval->var.val.bytes.len);
 			if(YYCURSOR < YYLIMIT)
 			{
-				++(yylval->var.val.str.len);
+				++(yylval->var.val.bytes.len);
 				++YYCURSOR;
 				continue;
 			}
@@ -272,7 +272,7 @@ any_char		((.|"\n"))
 				break;
 			}
 		}
-		++(yylval->var.val.str.len);
+		++(yylval->var.val.bytes.len);
 		++YYCURSOR;
 	}
 	return tok_literal;

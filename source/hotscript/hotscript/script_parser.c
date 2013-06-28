@@ -13,9 +13,9 @@ hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO;
-	op->op0.type = E_HP_STRING;
-	op->op0.val.str.len = text->var.val.str.len;
-	op->op0.val.str.ptr = text->var.val.str.ptr;
+	op->op0.type = E_HP_BYTES;
+	op->op0.val.bytes.len = text->var.val.bytes.len;
+	op->op0.val.bytes.ptr = text->var.val.bytes.ptr;
 	return E_HP_NOERROR;
 }
 
@@ -25,9 +25,9 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->op = HOT_ECHO_LITERAL;
-	op->op0.type = E_HP_STRING;
-	op->op0.val.str.len = text->var.val.str.len;
-	op->op0.val.str.ptr = text->var.val.str.ptr;
+	op->op0.type = E_HP_BYTES;
+	op->op0.val.bytes.len = text->var.val.bytes.len;
+	op->op0.val.bytes.ptr = text->var.val.bytes.ptr;
 	return E_HP_NOERROR;
 }
 
@@ -38,9 +38,9 @@ hpint32 hotscript_do_push(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *
 	op->op = HOT_PUSH;
 	op->op0.type = E_HP_CHAR;
 	op->op0.val.c = prefix->var.val.c;
-	op->op1.type = E_HP_STRING;
-	op->op1.val.str.ptr = name->var.val.str.ptr;
-	op->op1.val.str.len = name->var.val.str.len;
+	op->op1.type = E_HP_BYTES;
+	op->op1.val.bytes.ptr = name->var.val.bytes.ptr;
+	op->op1.val.bytes.len = name->var.val.bytes.len;
 
 	name->op = op;
 	return E_HP_NOERROR;

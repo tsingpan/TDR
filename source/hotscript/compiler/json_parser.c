@@ -34,9 +34,9 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 		{
 			hpuint32 i;
 			printf("%d: ", ret);
-			for(i = 0;i < yystype.val.str.len; ++i)
+			for(i = 0;i < yystype.val.bytes.len; ++i)
 			{
-				putc(yystype.val.str.ptr[i], stdout);
+				putc(yystype.val.bytes.ptr[i], stdout);
 			}			
 			printf("\n");
 		}

@@ -88,9 +88,9 @@ string_begin	['\"']
 }
 
 <INITIAL>{identifier}	{
-	yylval->type = E_HP_STRING;
-	yylval->val.str.ptr = yytext;
-	yylval->val.str.len = yyleng;
+	yylval->type = E_HP_BYTES;
+	yylval->val.bytes.ptr = yytext;
+	yylval->val.bytes.len = yyleng;
 	return tok_identifier;
 }
 	
@@ -100,9 +100,9 @@ string_begin	['\"']
 
   //最大字符串的限制
   char *str = malloc(1024);
-  yylval->val.str.ptr = str;
-  yylval->type = E_HP_STRING;
-  yylval->val.str.len = 0;  
+  yylval->val.bytes.ptr = str;
+  yylval->type = E_HP_BYTES;
+  yylval->val.bytes.len = 0;  
   while (YYCURSOR < YYLIMIT)
   {
 	unsigned char ch = *YYCURSOR;
@@ -117,28 +117,28 @@ string_begin	['\"']
         switch (*YYCURSOR)
         {
           case '"':
-			str[(yylval->val.str.len)++] = '"';
+			str[(yylval->val.bytes.len)++] = '"';
             continue;
           case '\\':
-			str[(yylval->val.str.len)++] = '\\';
+			str[(yylval->val.bytes.len)++] = '\\';
             continue;
           case '/':
-			str[(yylval->val.str.len)++] = '/';
+			str[(yylval->val.bytes.len)++] = '/';
             continue;
           case 'b':
-			str[(yylval->val.str.len)++] = '\b';
+			str[(yylval->val.bytes.len)++] = '\b';
             continue;
           case 'f':
-			str[(yylval->val.str.len)++] = '\f';
+			str[(yylval->val.bytes.len)++] = '\f';
             continue;
           case 'n':
-			str[(yylval->val.str.len)++] = '\n';
+			str[(yylval->val.bytes.len)++] = '\n';
             continue;
           case 'r':
-			str[(yylval->val.str.len)++] = '\r';
+			str[(yylval->val.bytes.len)++] = '\r';
             continue;
           case 't':
-			str[(yylval->val.str.len)++] = '\t';
+			str[(yylval->val.bytes.len)++] = '\t';
             continue;
 		  case 'u':
 		  {
@@ -155,7 +155,7 @@ string_begin	['\"']
 			}
 			//这里要进行错误处理
 			hexToDigit(&d, hex_number);
-			yylval->val.str.len += Utf32toUtf8(d, yylval->val.str.ptr + (yylval->val.str.len));
+			yylval->val.bytes.len += Utf32toUtf8(d, yylval->val.bytes.ptr + (yylval->val.bytes.len));
 			
 			continue;
 		  }
@@ -167,13 +167,13 @@ string_begin	['\"']
       default:
         if (ch == mark)
         {
-			str[yylval->val.str.len] = 0;
-			yylval->type = E_HP_STRING;
+			str[yylval->val.bytes.len] = 0;
+			yylval->type = E_HP_BYTES;
 			return tok_string;
         }
         else
         {
-          str[(yylval->val.str.len)++] = ch;
+          str[(yylval->val.bytes.len)++] = ch;
         }
     }
   }

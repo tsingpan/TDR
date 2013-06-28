@@ -144,8 +144,8 @@ static hpint32 hotobject_writer_begin(HPAbstractWriter* super, const HPVar *name
 	}
 	else
 	{
-		strncpy(str_name, name->val.str.ptr, 1024);
-		str_name[name->val.str.len] = TRIE_CHAR_TERM;
+		strncpy(str_name, name->val.bytes.ptr, 1024);
+		str_name[name->val.bytes.len] = TRIE_CHAR_TERM;
 	}
 	new_ob = hotobject_new();
 	new_ob->type = E_OBJECT;
@@ -183,10 +183,10 @@ static hpint32 hotobject_reader_begin(HPAbstractReader* super, const HPVar *name
 	const HotObject *new_ob = NULL;
 	int ret;
 	char str_name[1024];
-	if(name->type == E_HP_STRING)
+	if(name->type == E_HP_BYTES)
 	{
-		memcpy(str_name, name->val.str.ptr, name->val.str.len);
-		str_name[name->val.str.len] = TRIE_CHAR_TERM;		
+		memcpy(str_name, name->val.bytes.ptr, name->val.bytes.len);
+		str_name[name->val.bytes.len] = TRIE_CHAR_TERM;		
 	}
 	else if(name->type == E_HP_INT32)
 	{
