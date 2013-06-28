@@ -109,7 +109,17 @@ hpint32 hotvm_execute_once(HotVM *self)
 		}
 	case HOT_PUSH_INDEX:
 		{
-			if(hp_reader_begin(self->reader, &op->op0) != E_HP_NOERROR)
+			hpint32 ret;
+			if(op->op0.val.i32 < 0)
+			{
+				ret = hp_reader_begin(self->reader, NULL);
+			}
+			else
+			{
+				ret = hp_reader_begin(self->reader, &op->op0);
+			}
+
+			if(ret != E_HP_NOERROR)
 			{
 				self->current_op = op->op1.val.ui32;
 			}

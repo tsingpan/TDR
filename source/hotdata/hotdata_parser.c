@@ -168,3 +168,11 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 	return ret;
 }
+
+hpint32 dp_on_const(SCANNER_STACK *super, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
+{
+	DATA_PARSER *self = HP_CONTAINER_OF(super, DATA_PARSER, scanner_stack);
+
+
+	return E_HP_NOERROR;
+}

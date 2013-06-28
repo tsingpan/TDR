@@ -115,6 +115,7 @@ Import :
 Const : 
 	tok_const Type tok_identifier '=' Value CommaOrSemicolonOptional
 	{
+		dp_on_const(ss, &$2, &$3, &$5);
 	/*
 		HPVar name;
 		GET_SELF;

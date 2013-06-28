@@ -190,14 +190,7 @@ static hpint32 hotobject_reader_begin(HPAbstractReader* super, const HPVar *name
 	}
 	else if(name->type == E_HP_INT32)
 	{
-		if(name->val.i32 >= 0)
-		{
-			snprintf(str_name, 1024, "[%d]", name->val.i32);
-		}
-		else
-		{
-			strncpy(str_name, hotobject_get_normal_name_const(self), 1024);
-		}
+		snprintf(str_name, 1024, "[%d]", name->val.i32);
 	}
 	else
 	{

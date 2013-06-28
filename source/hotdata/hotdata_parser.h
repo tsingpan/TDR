@@ -28,5 +28,6 @@ struct _DATA_PARSER
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
 
+hpint32 dp_on_const(SCANNER_STACK *super, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
 #endif//_H_XML_PARSER
 
