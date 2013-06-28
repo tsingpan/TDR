@@ -31,11 +31,14 @@ re2c:yyfill:check = 0;
 identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 intconstant		([+-]?[0-9]+)
 hexconstant		("0x"[0-9A-Fa-f]+)
-comment			("//"[^\n]*)
-unixcomment		("#"[^\n]*)
+newline			("\r\n"|"\r"|"\n")
+comment			("//".*{newline})
+unixcomment		("#".*{newline})
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
 symbol			([<>{}\(\);,=:&!])
+anychar			([^])
+
 
 <!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
 
@@ -202,7 +205,7 @@ symbol			([<>{}\(\);,=:&!])
 <INITIAL>"byte"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"namespace"          { ddekit_reserved_keyword(yytext); }
 
-<*>. | '\n'			  { goto restart;					 }
+<*>{anychar}					{ goto restart;					 }
 
 */
 }

@@ -95,6 +95,28 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 			}
 			break;
 		}
+	case tok_unixcomment:
+		{
+			yylval->var.type = E_HP_BYTES;
+			yylval->var.val.bytes.ptr = yytext + 1;
+			yylval->var.val.bytes.len = yyleng - 1;
+			while(yylval->var.val.bytes.len > 0 )
+			{
+				if(yylval->var.val.bytes.ptr[yylval->var.val.bytes.len - 1] == '\r')
+				{
+					--yylval->var.val.bytes.len;
+				}
+				else if(yylval->var.val.bytes.ptr[yylval->var.val.bytes.len - 1] == '\n')
+				{
+					--yylval->var.val.bytes.len;
+				}
+				else
+				{
+					break;
+				}
+			}
+			break;
+		}
 	case tok_identifier:
 		{
 			yylval->var.type = E_HP_BYTES;
