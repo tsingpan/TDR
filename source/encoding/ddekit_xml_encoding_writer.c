@@ -5,145 +5,283 @@
 #include <string.h>
 #include <assert.h>
 
-#define DDEKIT_PRINT_TAB(fout, level) \
+hpint32 ddekit_xml_encoding_writer_init(DDEKIT_XML_ENCODING_WRITER *self, FILE *f)
+{
+	self->dpw.write_struct_begin = ddekit_xml_encoding_write_struct_begin;
+	self->dpw.write_struct_end = ddekit_xml_encoding_write_struct_end;
+	self->dpw.write_vector_begin = ddekit_xml_encoding_write_vector_begin;
+	self->dpw.write_vector_end = ddekit_xml_encoding_write_vector_end;
+	self->dpw.write_field_begin = ddekit_xml_encoding_write_var_begin;
+	self->dpw.write_field_end = ddekit_xml_encoding_write_var_end;
+	self->dpw.write_enum = ddekit_xml_encoding_write_enum;
+	self->dpw.write_hpchar = ddekit_xml_encoding_write_hpchar;
+	self->dpw.write_hpdouble = ddekit_xml_encoding_write_hpdouble;
+	self->dpw.write_hpint8 = ddekit_xml_encoding_write_hpint8;
+	self->dpw.write_hpint16 = ddekit_xml_encoding_write_hpint16;
+	self->dpw.write_hpint32 = ddekit_xml_encoding_write_hpint32;
+	self->dpw.write_hpint64 = ddekit_xml_encoding_write_hpint64;
+	self->dpw.write_hpuint8 = ddekit_xml_encoding_write_hpuint8;
+	self->dpw.write_hpuint16 = ddekit_xml_encoding_write_hpuint16;
+	self->dpw.write_hpuint32 = ddekit_xml_encoding_write_hpuint32;
+	self->dpw.write_hpuint64 = ddekit_xml_encoding_write_hpuint64;
+	
+
+	self->f = f;
+	
+	self->union_level = 0;
+	self->struct_level = 0;
+	self->struct_stack[self->struct_level].in_repeat = FALSE;
+	self->struct_stack[self->struct_level].end_with_zero = FALSE;	
+	
+
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_writer_fini(DDEKIT_XML_ENCODING_WRITER *self)
+{
+	self->dpw.write_struct_begin = NULL;
+	self->dpw.write_struct_end = NULL;
+	self->dpw.write_vector_begin = NULL;
+	self->dpw.write_vector_end = NULL;
+	self->dpw.write_field_begin = NULL;
+	self->dpw.write_field_end = NULL;
+	self->dpw.write_enum = NULL;
+	self->dpw.write_hpchar = NULL;
+	self->dpw.write_hpdouble = NULL;
+	self->dpw.write_hpint8 = NULL;
+	self->dpw.write_hpint16 = NULL;
+	self->dpw.write_hpint32 = NULL;
+	self->dpw.write_hpint64 = NULL;
+	self->dpw.write_hpuint8 = NULL;
+	self->dpw.write_hpuint16 = NULL;
+	self->dpw.write_hpuint32 = NULL;
+	self->dpw.write_hpuint64 = NULL;
+
+	self->f = NULL;
+
+	self->union_level = 0;
+	self->struct_level = 0;
+	self->struct_stack[self->struct_level].in_repeat = FALSE;
+	self->struct_stack[self->struct_level].end_with_zero = FALSE;
+
+	return E_HP_NOERROR;
+}
+
+#define DDEKIT_PRINT_TAB(fout) \
 do\
 {\
 	hpuint32 i;\
-	for(i = 0; i < level; ++i)\
+	for(i = 0; i < self->union_level + self->struct_level; ++i)\
 	{\
 		fprintf(self->f, "\t");\
 	}\
 }while(0)
 
-HP_API hpint32 hp_xml_writer_init(XML_WRITER *self, FILE *fout)
+hpint32 ddekit_xml_encoding_write_struct_begin(DDEKIT_ENCODING_WRITER *super, const char *struct_name)
 {
-	self->f = fout;
-	self->level = 0;
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
 
-	self->super.begin = hp_xml_writer_begin;
-	self->super.write = hp_xml_writer_write;
-	self->super.end = hp_xml_writer_end;
-
+	//根节点
+	if(self->struct_level == 0)
+	{
+		fprintf(self->f, "<%s>\n", struct_name);
+	}
+	++self->struct_level;
+	self->struct_stack[self->struct_level].in_repeat = FALSE;
+	self->struct_stack[self->struct_level].end_with_zero = FALSE;
 
 	return E_HP_NOERROR;
 }
-static void echo_char(FILE *fout, const char val)
+
+hpint32 ddekit_xml_encoding_write_struct_end(DDEKIT_ENCODING_WRITER *super, const char *struct_name)
 {
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+
+	--self->struct_level;
+	//根节点
+	if(self->struct_level == 0)
+	{
+		fprintf(self->f, "</%s>\n", struct_name);	
+	}
+
+	return E_HP_NOERROR;
+}
+
+
+HP_API hpint32 ddekit_xml_encoding_write_vector_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+
+	self->struct_stack[self->struct_level].in_repeat = TRUE;
+	self->struct_stack[self->struct_level].end_with_zero = end_with_zero;
+
+	//对于字符串的数组进行特殊处理
+	if(var_type == 0100)
+	{
+		DDEKIT_PRINT_TAB(self->f);
+		fprintf(self->f, "<%s>", var_name);
+	}
+
+	return E_HP_NOERROR;
+}
+
+HP_API hpint32 ddekit_xml_encoding_write_vector_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+
+	//对于字符串的数组进行特殊处理
+	if(var_type == 0100)
+	{
+		fprintf(self->f, "</%s>\n", var_name);
+	}
+	self->struct_stack[self->struct_level].in_repeat = FALSE;
+	self->struct_stack[self->struct_level].end_with_zero = FALSE;
+	return E_HP_NOERROR;
+}
+
+
+
+hpint32 ddekit_xml_encoding_write_var_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+
+	
+	//对于字符串数组的特殊处理
+	if((!self->struct_stack[self->struct_level].in_repeat) || (var_type != 0100))
+	{
+		DDEKIT_PRINT_TAB(self->f);		
+		fprintf(self->f, "<%s>", var_name);
+		//对于结构体的结尾行开头需要空格
+		if((var_type == 01) || (var_type == 02))
+		{
+			fprintf(self->f, "\n");
+		}
+	}
+	
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_var_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+
+	//对于字符串数组的特殊处理
+	if((!self->struct_stack[self->struct_level].in_repeat) || (var_type != 0100))
+	{
+		//对于结构体的结尾行开头需要空格
+		if((var_type == 01) || (var_type == 02))
+		{
+			DDEKIT_PRINT_TAB(self->f);
+		}
+		fprintf(self->f, "</%s>\n", var_name);
+	}
+
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_enum(DDEKIT_ENCODING_WRITER *super, const hpint32 val, const hpchar *enum_name)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%s", enum_name);
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_hpchar(DDEKIT_ENCODING_WRITER *super, const char val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	//实体引用
 	switch(val)
 	{
+	case '\0':
+		//对于blob数据的处理
+		if(self->struct_stack[self->struct_level].end_with_zero == FALSE)
+		{
+			fprintf(self->f, "%c", '\0');
+		}
+		break;
 	case '<':
-		fprintf(fout, "&lt");
+		fprintf(self->f, "&lt");
 		break;
 	case '>':
-		fprintf(fout, "&gt");
+		fprintf(self->f, "&gt");
 		break;
 	case '&':
-		fprintf(fout, "&amp");
+		fprintf(self->f, "&amp");
 		break;
 	case '\'':
-		fprintf(fout, "&apos");
+		fprintf(self->f, "&apos");
 		break;
 	case '\"':
-		fprintf(fout, "&auot");
+		fprintf(self->f, "&auot");
 		break;
 	default:
-		fprintf(fout, "%c", val);
+		fprintf(self->f, "%c", val);
 		break;
 	}
+	return E_HP_NOERROR;
 }
 
-HP_API hpint32 hp_xml_writer_begin(HPAbstractWriter *super, const HPVar *name)
+hpint32 ddekit_xml_encoding_write_hpdouble(DDEKIT_ENCODING_WRITER *super, const double val)
 {
-	const char *s;
-	hpuint32 i;
-	XML_WRITER *self = HP_CONTAINER_OF(super, XML_WRITER, super);
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%lf", val);
+	return E_HP_NOERROR;
+}
 
-	DDEKIT_PRINT_TAB(self->f, self->level);
-
-	fprintf(self->f, "<");
-	for(s = name->val.str; *s; ++s)
-	{
-		echo_char(self->f, *s);
-	}
-	fprintf(self->f, ">");
+hpint32 ddekit_xml_encoding_write_hpint8(DDEKIT_ENCODING_WRITER *super, const hpint8 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
 	
-	++(self->level);
-}
-
-
-
-HP_API hpint32 hp_xml_writer_write(HPAbstractWriter* super, const HPVar *var)
-{
-	XML_WRITER *self = HP_CONTAINER_OF(super, XML_WRITER, super);
-	DDEKIT_PRINT_TAB(self->f, self->level);
-	switch(var->type)
-	{
-	case E_HP_INT8:
-		fprintf(self->f, "%d", var->val.i8);
-		break;
-	case E_HP_INT16:
-		fprintf(self->f, "%d", var->val.i16);
-		break;
-	case E_HP_INT32:
-		fprintf(self->f, "%d", var->val.i32);
-		break;
-	case E_HP_INT64:
-		fprintf(self->f, "%"PRIi64, var->val.i64);
-		break;
-
-	case E_HP_UINT8:
-		fprintf(self->f, "%u", var->val.ui8);
-		break;
-	case E_HP_UINT16:
-		fprintf(self->f, "%u", var->val.ui16);
-		break;
-	case E_HP_UINT32:
-		fprintf(self->f, "%u", var->val.ui32);
-		break;
-	case E_HP_UINT64:
-		fprintf(self->f, "%"PRIu64, var->val.ui64);
-		break;
-
-	case E_HP_DOUBLE:
-		fprintf(self->f, "%lf", var->val.d);
-		break;
-
-	case E_HP_CHAR:
-		{
-			echo_char(self->f, var->val.c);
-
-			break;
-		}
-	case E_HP_BYTES:
-		{
-			hpuint32 i;
-			for(i = 0;i < var->val.bytes.len; ++i)
-			{
-				echo_char(self->f, var->val.bytes.ptr[i]);
-			}
-			break;
-		}
-	case E_HP_STRING:
-		{
-			const char *s;
-			for(s = var->val.str; *s; ++s)
-			{
-				echo_char(self->f, *s);
-			}
-			break;
-		}
-	}
-
+	fprintf(self->f, "%d", val);
 	return E_HP_NOERROR;
 }
 
-HP_API hpint32 hp_xml_writer_end(HPAbstractWriter *super)
+hpint32 ddekit_xml_encoding_write_hpint16(DDEKIT_ENCODING_WRITER *super, const hpint16 val)
 {
-	const char *s;
-	hpuint32 i;
-	XML_WRITER *self = HP_CONTAINER_OF(super, XML_WRITER, super);
-	--(self->level);
-	fprintf(self->f, "</>\n");
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%d", val);
 	return E_HP_NOERROR;
 }
 
+hpint32 ddekit_xml_encoding_write_hpint32(DDEKIT_ENCODING_WRITER *super, const hpint32 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%d", val);
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_hpint64(DDEKIT_ENCODING_WRITER *super, const hpint64 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%"PRIi64, val);
+	return E_HP_NOERROR;
+}
+
+
+hpint32 ddekit_xml_encoding_write_hpuint8(DDEKIT_ENCODING_WRITER *super, const hpuint8 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%u", val);
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_hpuint16(DDEKIT_ENCODING_WRITER *super, const hpuint16 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%u", val);
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_hpuint32(DDEKIT_ENCODING_WRITER *super, const hpuint32 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%u", val);
+	return E_HP_NOERROR;
+}
+
+hpint32 ddekit_xml_encoding_write_hpuint64(DDEKIT_ENCODING_WRITER *super, const hpuint64 val)
+{
+	DDEKIT_XML_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_XML_ENCODING_WRITER, dpw);
+	fprintf(self->f, "%"PRIu64, val);
+	return E_HP_NOERROR;
+}

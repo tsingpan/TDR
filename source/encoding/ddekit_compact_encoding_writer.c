@@ -9,12 +9,10 @@ hpint32 ddekit_compact_encoding_writer_init(DDEKIT_COMPACT_ENCODING_WRITER *self
 {
 	self->dpw.write_struct_begin = ddekit_compact_encoding_write_struct_begin;
 	self->dpw.write_struct_end = ddekit_compact_encoding_write_struct_end;
-	self->dpw.write_union_begin = ddekit_compact_encoding_write_union_begin;
-	self->dpw.write_union_end = ddekit_compact_encoding_write_union_end;
-	self->dpw.write_repeat_begin = ddekit_compact_encoding_write_repeat_begin;
-	self->dpw.write_repeat_end = ddekit_compact_encoding_write_repeat_end;
-	self->dpw.write_var_begin = ddekit_compact_encoding_write_var_begin;
-	self->dpw.write_var_end = ddekit_compact_encoding_write_var_end;
+	self->dpw.write_vector_begin = ddekit_compact_encoding_write_vector_begin;
+	self->dpw.write_vector_end = ddekit_compact_encoding_write_vector_end;
+	self->dpw.write_field_begin = ddekit_compact_encoding_write_field_begin;
+	self->dpw.write_field_end = ddekit_compact_encoding_write_field_end;
 	self->dpw.write_enum = ddekit_compact_encoding_write_enum;
 	self->dpw.write_hpchar = ddekit_compact_encoding_write_hpchar;
 	self->dpw.write_hpdouble = ddekit_compact_encoding_write_hpdouble;
@@ -39,12 +37,10 @@ hpint32 ddekit_compact_encoding_writer_fini(DDEKIT_COMPACT_ENCODING_WRITER *self
 {
 	self->dpw.write_struct_begin = NULL;
 	self->dpw.write_struct_end = NULL;
-	self->dpw.write_union_begin = NULL;
-	self->dpw.write_union_end = NULL;
-	self->dpw.write_var_begin = NULL;
-	self->dpw.write_var_end = NULL;
-	self->dpw.write_repeat_begin = NULL;
-	self->dpw.write_repeat_end = NULL;
+	self->dpw.write_field_begin = NULL;
+	self->dpw.write_field_end = NULL;
+	self->dpw.write_vector_begin = NULL;
+	self->dpw.write_vector_end = NULL;
 	self->dpw.write_enum = NULL;
 	self->dpw.write_hpchar = NULL;
 	self->dpw.write_hpdouble = NULL;
@@ -79,37 +75,25 @@ hpint32 ddekit_compact_encoding_write_struct_end(DDEKIT_ENCODING_WRITER *super, 
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_write_union_begin(DDEKIT_ENCODING_WRITER *super, const char *union_name)
+hpint32 ddekit_compact_encoding_write_vector_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_write_union_end(DDEKIT_ENCODING_WRITER *super, const char *union_name)
+hpint32 ddekit_compact_encoding_write_vector_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_write_repeat_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_compact_encoding_write_field_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_write_repeat_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
-{
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
-	return E_HP_NOERROR;
-}
-
-hpint32 ddekit_compact_encoding_write_var_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
-{
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
-	return E_HP_NOERROR;
-}
-
-hpint32 ddekit_compact_encoding_write_var_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_compact_encoding_write_field_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;

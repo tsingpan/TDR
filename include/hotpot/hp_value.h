@@ -20,14 +20,6 @@ typedef enum _HPType
 	E_HP_BOOL			= 12,
 }HPType;
 
-typedef struct _hpbytes
-{
-	const char *ptr;
-	hpuint32 len;
-}hpbytes;
-
-typedef const hpchar* hpstring;
-
 typedef union _HPValue
 {
 	hpint8 i8;

@@ -27,6 +27,13 @@ typedef unsigned int hpuint32;
 typedef unsigned long long hpuint64;
 typedef char hpchar;
 typedef double hpdouble;
+typedef struct _hpbytes
+{
+	char *ptr;
+	hpuint32 len;
+}hpbytes;
+
+typedef hpchar* hpstring;
 
 
 #ifndef NULL

@@ -37,17 +37,13 @@ HP_API hpint32 ddekit_xml_encoding_read_struct_begin(DDEKIT_ENCODING_READER *sup
 
 HP_API hpint32 ddekit_xml_encoding_read_struct_end(DDEKIT_ENCODING_READER *super, const char *struct_name);
 
-HP_API hpint32 ddekit_xml_encoding_read_union_begin(DDEKIT_ENCODING_READER *super, const char *union_name);
+HP_API hpint32 ddekit_xml_encoding_read_vector_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
 
-HP_API hpint32 ddekit_xml_encoding_read_union_end(DDEKIT_ENCODING_READER *super, const char *union_name);
+HP_API hpint32 ddekit_xml_encoding_read_vector_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
 
-HP_API hpint32 ddekit_xml_encoding_read_repeat_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_xml_encoding_read_field_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type);
 
-HP_API hpint32 ddekit_xml_encoding_read_repeat_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
-
-HP_API hpint32 ddekit_xml_encoding_read_var_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type);
-
-HP_API hpint32 ddekit_xml_encoding_read_var_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type);
+HP_API hpint32 ddekit_xml_encoding_read_field_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type);
 
 HP_API hpint32 ddekit_xml_encoding_read_enum(DDEKIT_ENCODING_READER *super, const hpint32 *val, hpchar *enum_name, hpuint32 *enum_name_length);
 

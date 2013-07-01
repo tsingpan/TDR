@@ -32,7 +32,6 @@ char g_gen_c_hotpot_output_path[HP_MAX_FILE_PATH_LENGTH];
 
 DATA_PARSER dp;
 
-XML_WRITER xml_writer;
 int main(int argc, char **argv)
 {
 	int i;
@@ -58,10 +57,9 @@ int main(int argc, char **argv)
 	}
 
 
-	hp_xml_writer_init(&xml_writer, stdout);
 	for(i = hp_optind; i < argc; ++i)
 	{
-		if(data_parser(&dp, argv[i], &xml_writer.super) == E_HP_NOERROR)
+		if(data_parser(&dp, argv[i], NULL) == E_HP_NOERROR)
 		{
 			printf("succeed\n");
 		}

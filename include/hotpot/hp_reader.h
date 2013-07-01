@@ -23,6 +23,17 @@ struct _HPAbstractReader
 
 	HPReaderStackNode stack[READER_STACK_DEEP];
 	hpuint32 stack_num;
+
+	//
+
+	hpint32 (*read_object_begin)(HPAbstractReader *self, const hpstring name);
+	hpint32 (*read_object_end)(HPAbstractReader *self, const hpstring name);
+
+	hpint32 (*read_field_begin)(HPAbstractReader *self, const hpstring name);
+	hpint32 (*read_field_end)(HPAbstractReader *self, const hpstring name);
+
+	hpint32 (*read_vector_begin)(HPAbstractReader *self, const hpstring name);
+	hpint32 (*read_vector_end)(HPAbstractReader *self, const hpstring name);
 };
 
 hpint32 hp_reader_init(HPAbstractReader *self);

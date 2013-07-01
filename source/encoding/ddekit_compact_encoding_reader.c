@@ -9,12 +9,10 @@ hpint32 ddekit_compact_encoding_reader_init(DDEKIT_COMPACT_ENCODING_READER *self
 {
 	self->dpr.read_struct_begin = ddekit_compact_encoding_read_struct_begin;
 	self->dpr.read_struct_end = ddekit_compact_encoding_read_struct_end;
-	self->dpr.read_union_begin = ddekit_compact_encoding_read_union_begin;
-	self->dpr.read_union_end = ddekit_compact_encoding_read_union_end;
-	self->dpr.read_repeat_begin = ddekit_compact_encoding_read_repeat_begin;
-	self->dpr.read_repeat_end = ddekit_compact_encoding_read_repeat_end;
-	self->dpr.read_var_begin = ddekit_compact_encoding_read_var_begin;
-	self->dpr.read_var_end = ddekit_compact_encoding_read_var_end;
+	self->dpr.read_repeat_begin = ddekit_compact_encoding_read_vector_begin;
+	self->dpr.read_repeat_end = ddekit_compact_encoding_read_vector_end;
+	self->dpr.read_field_begin = ddekit_compact_encoding_read_field_begin;
+	self->dpr.read_field_end = ddekit_compact_encoding_read_field_end;
 	self->dpr.read_enum = ddekit_compact_encoding_read_enum;
 	self->dpr.read_hpchar = ddekit_compact_encoding_read_hpchar;
 	self->dpr.read_hpdouble = ddekit_compact_encoding_read_hpdouble;
@@ -40,12 +38,10 @@ hpint32 ddekit_compact_encoding_reader_fini(DDEKIT_COMPACT_ENCODING_READER *self
 {
 	self->dpr.read_struct_begin = NULL;
 	self->dpr.read_struct_end = NULL;
-	self->dpr.read_union_begin = NULL;
-	self->dpr.read_union_end = NULL;
 	self->dpr.read_repeat_begin = NULL;
 	self->dpr.read_repeat_end = NULL;
-	self->dpr.read_var_begin = NULL;
-	self->dpr.read_var_end = NULL;
+	self->dpr.read_field_begin = NULL;
+	self->dpr.read_field_end = NULL;
 	self->dpr.read_enum = NULL;
 	self->dpr.read_hpchar = NULL;
 	self->dpr.read_hpdouble = NULL;
@@ -81,37 +77,25 @@ hpint32 ddekit_compact_encoding_read_struct_end(DDEKIT_ENCODING_READER *super, c
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_union_begin(DDEKIT_ENCODING_READER *super, const char *union_name)
+hpint32 ddekit_compact_encoding_read_vector_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_union_end(DDEKIT_ENCODING_READER *super, const char *union_name)
+hpint32 ddekit_compact_encoding_read_vector_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_repeat_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_compact_encoding_read_field_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_repeat_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
-{
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
-	return E_HP_NOERROR;
-}
-
-hpint32 ddekit_compact_encoding_read_var_begin(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type)
-{
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
-	return E_HP_NOERROR;
-}
-
-hpint32 ddekit_compact_encoding_read_var_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_compact_encoding_read_field_end(DDEKIT_ENCODING_READER *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
