@@ -26,7 +26,8 @@ struct tagDDEKIT_ENCODING_READER
 	hpint32 (*read_hpuint32)(DDEKIT_ENCODING_READER *self, hpuint32 *val);
 	hpint32 (*read_hpuint64)(DDEKIT_ENCODING_READER *self, hpuint64 *val);
 
-	hpint32 (*read_enum)(DDEKIT_ENCODING_READER *self, hpint32 *val, hpchar *enum_name, hpuint32 *enum_name_length);
+	hpint32 (*read_enum)(DDEKIT_ENCODING_READER *self, hpint32 *val);
+	hpint32 (*read_enum_name)(DDEKIT_ENCODING_READER *self, hpchar *enum_name, hpuint32 *enum_name_length);
 	hpint32 (*read_hpchar)(DDEKIT_ENCODING_READER *self, hpchar *val);
 	hpint32 (*read_hpdouble)(DDEKIT_ENCODING_READER *self, hpdouble *val);
 	hpint32 (*read_hpstring)(DDEKIT_ENCODING_READER *self, hpchar* str);

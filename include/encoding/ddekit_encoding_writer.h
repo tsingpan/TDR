@@ -29,7 +29,8 @@ struct tagDDEKIT_ENCODING_WRITER
 
 	hpint32 (*write_hpchar)(DDEKIT_ENCODING_WRITER *self, const hpchar val);	
 	hpint32 (*write_hpdouble)(DDEKIT_ENCODING_WRITER *self, const hpdouble val);
-	hpint32 (*write_enum)(DDEKIT_ENCODING_WRITER *self, const hpint32 val, const hpchar *enum_name);
+	hpint32 (*write_enum)(DDEKIT_ENCODING_WRITER *self);
+	hpint32 (*write_enum_name)(DDEKIT_ENCODING_WRITER *self, const hpint32 val, const hpchar *enum_name);
 	hpint32 (*write_hpstring)(DDEKIT_ENCODING_WRITER *self, const hpchar* str);
 	hpint32 (*write_bytes)(DDEKIT_ENCODING_WRITER *self, const hpchar* buff, const hpuint32 buff_size);
 };
