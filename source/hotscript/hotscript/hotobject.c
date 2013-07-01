@@ -8,20 +8,6 @@
 
 #include <string.h>
 
-typedef enum _HotObjectType
-{
-	E_OBJECT,
-	E_VAR,
-}HotObjectType;
-
-struct _HotObject
-{
-	HotObjectType type;
-
-	HPVar var;
-
-	Trie* keys;
-};
 
 
 
@@ -47,7 +33,7 @@ static Bool hotobject_visitor(const AlphaChar  *key, TrieData          key_data,
 {
 	HotObject *next = key_data;
 
-	
+
 	hotobject_free(next);
 
 	return TRUE;
@@ -70,66 +56,6 @@ void hotobject_free(HotObject* self)
 
 	trie_free(self->keys);
 }
-
-
-static HotObject *hotobject_get(HotObjectWriter* self)
-{
-	return self->stack[self->stack_num - 1].ho;
-}
-
-static hpint32 hotobject_push(HotObjectWriter* self, HotObject *ho)
-{
-	self->stack[self->stack_num].ho = ho;
-	self->stack[self->stack_num].count = 0;
-	++(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-static const HotObject *hotobject_get_const(HotObjectReader* self)
-{
-	return self->stack[self->stack_num - 1].ho;
-}
-
-static hpint32 hotobject_push_const(HotObjectReader* self, const HotObject *ho)
-{
-	self->stack[self->stack_num].ho = ho;
-	self->stack[self->stack_num].count = 0;
-	++(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-static const char* hotobject_get_normal_name(HotObjectWriter *self)
-{
-	snprintf(self->name, HOTOBJECT_MAX_NAME_LENGTH, "[%u]", self->stack[self->stack_num - 1].count);
-	++(self->stack[self->stack_num - 1].count);
-
-	return self->name;
-}
-
-static const char* hotobject_get_normal_name_const(HotObjectReader *self)
-{
-	snprintf(self->name, HOTOBJECT_MAX_NAME_LENGTH, "[%u]", self->stack[self->stack_num - 1].count);
-	++(self->stack[self->stack_num - 1].count);
-
-	return self->name;
-}
-
-static hpint32 hotobject_pop(HotObjectWriter *self)
-{
-	--(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
-static hpint32 hotobject_pop_const(HotObjectReader *self)
-{
-	--(self->stack_num);
-
-	return E_HP_NOERROR;
-}
-
 
 
 static hpint32 hotobject_writer_begin(HPAbstractWriter* super, const HPVar *name)

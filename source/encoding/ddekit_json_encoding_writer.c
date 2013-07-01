@@ -54,110 +54,110 @@ hpint32 ddekit_json_encoding_writer_fini(DDEKIT_JSON_ENCODING_WRITER *self)
 }
 
 
-hpint32 ddekit_json_encoding_write_struct_begin(DDEKIT_ENCODING_WRITER *super, const char *struct_name)
+hpint32 ddekit_json_encoding_write_struct_begin(HPAbstractWriter *super, const char *struct_name)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_struct_end(DDEKIT_ENCODING_WRITER *super, const char *struct_name)
+hpint32 ddekit_json_encoding_write_struct_end(HPAbstractWriter *super, const char *struct_name)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_vector_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_json_encoding_write_vector_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_vector_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_json_encoding_write_vector_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_field_begin(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_field_end(DDEKIT_ENCODING_WRITER *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-HP_API hpint32 ddekit_json_encoding_write_enum(DDEKIT_ENCODING_WRITER *super, const hpint32 val)
+HP_API hpint32 ddekit_json_encoding_write_enum(HPAbstractWriter *super, const hpint32 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-HP_API hpint32 ddekit_json_encoding_write_enum_name(DDEKIT_ENCODING_WRITER *super, const hpchar *enum_name)
+HP_API hpint32 ddekit_json_encoding_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpchar(DDEKIT_ENCODING_WRITER *super, const char val)
+hpint32 ddekit_json_encoding_write_hpchar(HPAbstractWriter *super, const char val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpdouble(DDEKIT_ENCODING_WRITER *super, const double val)
+hpint32 ddekit_json_encoding_write_hpdouble(HPAbstractWriter *super, const double val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpint8(DDEKIT_ENCODING_WRITER *super, const hpint8 val)
+hpint32 ddekit_json_encoding_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpint16(DDEKIT_ENCODING_WRITER *super, const hpint16 val)
+hpint32 ddekit_json_encoding_write_hpint16(HPAbstractWriter *super, const hpint16 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpint32(DDEKIT_ENCODING_WRITER *super, const hpint32 val)
+hpint32 ddekit_json_encoding_write_hpint32(HPAbstractWriter *super, const hpint32 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpint64(DDEKIT_ENCODING_WRITER *super, const hpint64 val)
+hpint32 ddekit_json_encoding_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 
-hpint32 ddekit_json_encoding_write_hpuint8(DDEKIT_ENCODING_WRITER *super, const hpuint8 val)
+hpint32 ddekit_json_encoding_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpuint16(DDEKIT_ENCODING_WRITER *super, const hpuint16 val)
+hpint32 ddekit_json_encoding_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpuint32(DDEKIT_ENCODING_WRITER *super, const hpuint32 val)
+hpint32 ddekit_json_encoding_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_hpuint64(DDEKIT_ENCODING_WRITER *super, const hpuint64 val)
+hpint32 ddekit_json_encoding_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
 	DDEKIT_JSON_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_WRITER, dpw);
 	return E_HP_NOERROR;
