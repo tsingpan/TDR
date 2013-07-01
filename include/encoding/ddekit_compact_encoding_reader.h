@@ -2,7 +2,7 @@
 #define _H_DDEKIT_COMPACT_ENCODING_READER
 
 #include "hotpot/hp_platform.h"
-#include "encoding/ddekit_encoding_reader.h"
+#include "hotpot/hp_reader.h"
 
 typedef struct tagDDEKIT_COMPACT_ENCODING_READER
 {

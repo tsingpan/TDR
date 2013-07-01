@@ -6,7 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "hotdata_parser.h"
-#include "encoding/ddekit_xml_encoding_writer.h"
 
 
 const char* const short_options = "?h:i:c:";

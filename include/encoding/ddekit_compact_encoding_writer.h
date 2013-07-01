@@ -2,7 +2,7 @@
 #define _H_DDEKIT_COMPACT_ENCODING_WRITER
 
 #include "hotpot/hp_platform.h"
-#include "encoding/ddekit_encoding_writer.h"
+#include "hotpot/hp_writer.h"
 
 typedef struct tagDDEKIT_COMPACT_ENCODING_WRITER
 {
