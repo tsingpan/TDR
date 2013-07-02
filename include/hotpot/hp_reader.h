@@ -10,8 +10,8 @@ struct _HPAbstractReader
 {
 	hpint32 (*read_struct_begin)(HPAbstractReader *self, const char *struct_name);
 	hpint32 (*read_struct_end)(HPAbstractReader *self, const char *struct_name);
-	hpint32 (*read_repeat_begin)(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
-	hpint32 (*read_repeat_end)(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+	hpint32 (*read_vector_begin)(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+	hpint32 (*read_vector_end)(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
 	hpint32 (*read_field_begin)(HPAbstractReader *self, const char *var_name, hpint32 var_type);
 	hpint32 (*read_field_end)(HPAbstractReader *self, const char *var_name, hpint32 var_type);
 
@@ -28,8 +28,8 @@ struct _HPAbstractReader
 	hpint32 (*read_enum_name)(HPAbstractReader *self, hpchar *enum_name, hpuint32 *enum_name_length);
 	hpint32 (*read_hpchar)(HPAbstractReader *self, hpchar *val);
 	hpint32 (*read_hpdouble)(HPAbstractReader *self, hpdouble *val);
-	hpint32 (*read_hpstring)(HPAbstractReader *self, hpchar* str);
-	hpint32 (*read_bytes)(HPAbstractReader *self, hpchar* buff, const hpuint32 buff_size);
+	hpint32 (*read_hpstring)(HPAbstractReader *self, hpchar* str, hpuint32 *str_length);
+	hpint32 (*read_bytes)(HPAbstractReader *self, hpchar* buff, hpuint32 *buff_size);
 };
 
 #endif //_H_HP_READR

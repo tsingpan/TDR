@@ -10,8 +10,8 @@ hpint32 ddekit_json_encoding_reader_init(DDEKIT_JSON_ENCODING_READER *self, cons
 {
 	self->dpr.read_struct_begin = ddekit_json_encoding_read_struct_begin;
 	self->dpr.read_struct_end = ddekit_json_encoding_read_struct_end;
-	self->dpr.read_repeat_begin = ddekit_json_encoding_read_vector_begin;
-	self->dpr.read_repeat_end = ddekit_json_encoding_read_vector_end;
+	self->dpr.read_vector_begin = ddekit_json_encoding_read_vector_begin;
+	self->dpr.read_vector_end = ddekit_json_encoding_read_vector_end;
 	self->dpr.read_field_begin = ddekit_json_encoding_read_field_begin;
 	self->dpr.read_field_end = ddekit_json_encoding_read_field_end;
 	self->dpr.read_enum = ddekit_json_encoding_read_enum;
@@ -36,8 +36,8 @@ hpint32 ddekit_json_encoding_reader_fini(DDEKIT_JSON_ENCODING_READER *self)
 {
 	self->dpr.read_struct_begin = NULL;
 	self->dpr.read_struct_end = NULL;
-	self->dpr.read_repeat_begin = NULL;
-	self->dpr.read_repeat_end = NULL;
+	self->dpr.read_vector_begin = NULL;
+	self->dpr.read_vector_end = NULL;
 	self->dpr.read_field_begin = NULL;
 	self->dpr.read_field_end = NULL;
 	self->dpr.read_enum = NULL;

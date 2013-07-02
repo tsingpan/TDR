@@ -26,7 +26,7 @@ hpint32 hotobject_write_struct_begin(HPAbstractWriter *super, const char *struct
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_struct_end(HPAbstractWriter *self, const char *struct_name)
+hpint32 hotobject_write_struct_end(HPAbstractWriter *super, const char *struct_name)
 {
 	return E_HP_NOERROR;
 }
@@ -80,13 +80,20 @@ hpint32 write_hpint8(HPAbstractWriter *super, const hpint8 val)
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
 
+	//根据下标找一个位置
 	if(ob->type ==  E_ARRAY)
 	{
-		//根据下标找一个位置
+	
+		++(self->stack[self->stack_num - 1].count);
+	}
+	//本身就是这个数据
+	else if(ob->type == E_UNKNOW)
+	{
+
 	}
 	else
 	{
-
+		exit (1);
 	}
 	return E_HP_NOERROR;
 }

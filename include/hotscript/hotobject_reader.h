@@ -25,7 +25,7 @@ struct _HotObjectReader
 	char name[HOTOBJECT_MAX_NAME_LENGTH];
 };
 
-hpint32 hotobject_get_reader(HotObjectReader* self, const HotObject *hotobject);
+hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject);
 
 #endif//_H_HOT_OBJECT_READER
 
