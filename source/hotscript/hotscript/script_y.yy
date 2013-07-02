@@ -66,25 +66,14 @@ Statement:
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
-		hotscript_do_push(ss, &$1, &$2);
-		hotscript_do_push_index(ss, &$3);
-		
-		hotscript_do_echo_trie(ss);
-		
-		hotscript_do_pop_index(ss, &$3);
-		hotscript_do_pop(ss, &$2);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
 	{
-		hotscript_do_push(ss, &$1, &$2);
-		hotscript_do_push_index(ss, &$3);
 	}
 	StatementList
 	'}'
 	{
-		hotscript_do_pop_index(ss, &$3);
-		hotscript_do_pop(ss, &$2);
 	}
 |	tok_text 
 	{

@@ -70,20 +70,20 @@ Pair:
 	{
 		GET_SELF;
 
-		hp_writer_begin(jp->writer, &$1);
-		hp_writer_write(jp->writer, &$3);
-		hp_writer_end(jp->writer);
+		//hp_writer_begin(jp->writer, &$1);
+		//hp_writer_write(jp->writer, &$3);
+		//hp_writer_end(jp->writer);
 	}
 |	
 	tok_identifier ':' 
-	{ GET_SELF; hp_writer_begin(jp->writer, &$1); }
+	{ GET_SELF;  }
 	Object
-	{ GET_SELF; hp_writer_end(jp->writer); }
+	{ GET_SELF; }
 |
 	tok_identifier ':' 
-	{ GET_SELF; hp_writer_begin(jp->writer, &$1); } 
+	{ GET_SELF;  } 
 	Array
-	{ GET_SELF; hp_writer_end(jp->writer); }
+	{ GET_SELF;  }
 	
 	
 Array:
@@ -107,13 +107,13 @@ Value:
 	tok_string
 	{
 		GET_SELF;
-		hp_writer_begin(jp->writer, NULL);
-		hp_writer_write(jp->writer, &$1);
-		hp_writer_end(jp->writer);
+		//hp_writer_begin(jp->writer, NULL);
+		//hp_writer_write(jp->writer, &$1);
+		//hp_writer_end(jp->writer);
 	}
-|	{ GET_SELF; hp_writer_begin(jp->writer, NULL); }
+|	{ GET_SELF; }
 	Object
-	{ GET_SELF; hp_writer_end(jp->writer);  }
+	{ GET_SELF;  }
 	
 
 	

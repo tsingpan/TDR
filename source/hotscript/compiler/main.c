@@ -4,6 +4,8 @@
 #include <string.h>
 #include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
+#include "hotscript/hotobject_reader.h"
+#include "hotscript/hotobject_writer.h"
 
 JSON_PARSER xp;
 SCRIPT_PARSER sp;
@@ -29,8 +31,8 @@ int main()
 
 	
 	obj = hotobject_new();
-	hotobject_get_writer(&writer, obj);
-	hotobject_get_reader(&reader, obj);
+	hotobject_writer_init(&writer, obj);
+	hotobject_reader_init(&reader, obj);
 	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super, &sp) == 0)
 	{
 		printf("input succeed\n");
@@ -41,7 +43,7 @@ int main()
 		return 1;
 	}
 	
-	hotobject_get_reader(&reader, obj);
+	hotobject_reader_init(&reader, obj);
 	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{
 		printf("output succeed\n");

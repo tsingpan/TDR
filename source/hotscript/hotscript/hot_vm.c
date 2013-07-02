@@ -97,11 +97,11 @@ hpint32 hotvm_execute_once(HotVM *self)
 		}
 	case HOT_PUSH:
 		{
-			if(hp_reader_begin(self->reader, &op->op1) != E_HP_NOERROR)
+			//if(hp_reader_begin(self->reader, &op->op1) != E_HP_NOERROR)
 			{
 				self->current_op = op->op2.val.ui32;
 			}
-			else
+			//else
 			{
 				++(self->current_op);
 			}
@@ -112,11 +112,11 @@ hpint32 hotvm_execute_once(HotVM *self)
 			hpint32 ret;
 			if(op->op0.val.i32 < 0)
 			{
-				ret = hp_reader_begin(self->reader, NULL);
+				//ret = hp_reader_begin(self->reader, NULL);
 			}
 			else
 			{
-				ret = hp_reader_begin(self->reader, &op->op0);
+				//ret = hp_reader_begin(self->reader, &op->op0);
 			}
 
 			if(ret != E_HP_NOERROR)
@@ -131,7 +131,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 		}
 	case HOT_POP:
 		{
-			hp_reader_end(self->reader);
+			//hp_reader_end(self->reader);
 			++(self->current_op);
 			break;
 		}
@@ -139,7 +139,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 		{
 			HPVar var;
 			hpuint32 i;
-			hp_reader_read(self->reader, &var);
+			//hp_reader_read(self->reader, &var);
 			//这里需要转义
 			for(i = 0;i < var.val.bytes.len; ++i)
 			{
