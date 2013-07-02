@@ -58,7 +58,7 @@ hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name,
 }
 
 
-hpint32 hotobject_write_vector_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 hotobject_write_vector_begin(HPAbstractWriter *super)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
@@ -68,7 +68,7 @@ hpint32 hotobject_write_vector_begin(HPAbstractWriter *super, const char *var_na
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_vector_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 hotobject_write_vector_end(HPAbstractWriter *super)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 

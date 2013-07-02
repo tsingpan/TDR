@@ -60,7 +60,7 @@ hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, 
 }
 
 
-hpint32 hotobject_read_vector_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 hotobject_read_vector_begin(HPAbstractReader *super)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = hotobject_get(self);
@@ -69,7 +69,7 @@ hpint32 hotobject_read_vector_begin(HPAbstractReader *super, const char *var_nam
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_read_vector_end(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 hotobject_read_vector_end(HPAbstractReader *super)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 

@@ -7,6 +7,17 @@
 #include "hotscript/hotlex.h"
 #include "hotpot/hp_platform.h"
 
+
+hpint32 hotscript_do_struct_begin(SCANNER_STACK *super)
+{
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_struct_end(SCANNER_STACK *super)
+{
+	return E_HP_NOERROR;
+}
+
 hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);

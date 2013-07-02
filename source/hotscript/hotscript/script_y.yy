@@ -43,8 +43,12 @@
 %%
 
 Script :
+	{
+		hotscript_do_struct_begin(ss);
+	}
 	StatementList
 	{
+		hotscript_do_struct_end(ss);
 	}
 
 StatementList :
