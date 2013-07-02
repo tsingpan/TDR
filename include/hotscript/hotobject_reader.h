@@ -13,7 +13,7 @@ typedef struct _HotObjectReader HotObjectReader;
 typedef struct _HotObjectConstStackNode
 {
 	const HotObject *ho;
-	hpuint32 count;	
+	hpuint32 current_index;	
 }HotObjectConstStackNode;
 
 struct _HotObjectReader

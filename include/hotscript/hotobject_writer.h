@@ -15,7 +15,7 @@ typedef struct _HotObjectWriter HotObjectWriter;
 typedef struct _HotObjectStackNode
 {
 	HotObject *ho;
-	hpuint32 count;	
+	hpuint32 current_index;	
 }HotObjectStackNode;
 
 struct _HotObjectWriter

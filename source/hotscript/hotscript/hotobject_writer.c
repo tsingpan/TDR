@@ -63,7 +63,7 @@ hpint32 hotobject_write_vector_begin(HPAbstractWriter *super, const char *var_na
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
 	ob->type = E_ARRAY;
-	self->stack[self->stack_num - 1].count = 0;
+	self->stack[self->stack_num - 1].current_index = 0;
 
 	return E_HP_NOERROR;
 }
@@ -75,26 +75,52 @@ hpint32 hotobject_write_vector_end(HPAbstractWriter *super, const char *var_name
 	return E_HP_NOERROR;
 }
 
-hpint32 write_hpint8(HPAbstractWriter *super, const hpint8 val)
+static HotObject* get_current_ob(HotObjectWriter *self)
 {
-	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
-
 	//根据下标找一个位置
 	if(ob->type ==  E_ARRAY)
 	{
-	
-		++(self->stack[self->stack_num - 1].count);
+		HotObject *new_ob = hotobject_new();
+		char str[1024];
+		hpuint32 str_len = 0;
+		hpint32 count = self->stack[self->stack_num - 1].current_index;
+		while(count > 0)
+		{
+			str[str_len++] = count % 10;
+			count/=10;
+		}
+		str[str_len++] = TRIE_CHAR_TERM;
+		
+
+		new_ob->type = E_UNKNOW;
+		hotobject_push(self, new_ob);
+		if(!trie_store(ob->keys, str, new_ob))
+		{
+			//free ob~~
+			goto ERROR_RET;
+		}
+		return new_ob;
 	}
 	//本身就是这个数据
 	else if(ob->type == E_UNKNOW)
 	{
+		return ob;
+	}
 
-	}
-	else
-	{
-		exit (1);
-	}
+ERROR_RET:
+	return NULL;
+}
+
+hpint32 write_hpint8(HPAbstractWriter *super, const hpint8 val)
+{
+	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = get_current_ob(self);
+	ob->type = E_VAR;
+	ob->var.type = E_HP_INT8;
+	ob->var.val.i8 = val;
+	++self->stack[self->stack_num - 1].current_index;
+
 	return E_HP_NOERROR;
 }
 

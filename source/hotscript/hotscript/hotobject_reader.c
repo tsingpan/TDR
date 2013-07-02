@@ -21,8 +21,7 @@ static hpint32 hotobject_push(HotObjectReader *self, const HotObject *ho)
 hpint32 hotobject_read_struct_begin(HPAbstractReader *super, const char *struct_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	HotObject *ob = hotobject_get(self);
-	ob->type = E_OBJECT;
+	const HotObject *ob = hotobject_get(self);
 
 	return E_HP_NOERROR;
 }
@@ -35,8 +34,8 @@ hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_na
 hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	HotObject *ob = hotobject_get(self);
-	HotObject *new_ob = hotobject_new();
+	const HotObject *ob = hotobject_get(self);
+	const HotObject *new_ob;
 	hpint32 ret;
 
 
@@ -64,9 +63,8 @@ hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, 
 hpint32 hotobject_read_vector_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	HotObject *ob = hotobject_get(self);
-	ob->type = E_ARRAY;
-	self->stack[self->stack_num - 1].count = 0;
+	const HotObject *ob = hotobject_get(self);
+	self->stack[self->stack_num - 1].current_index = 0;
 
 	return E_HP_NOERROR;
 }
@@ -78,42 +76,47 @@ hpint32 hotobject_read_vector_end(HPAbstractReader *super, const char *var_name,
 	return E_HP_NOERROR;
 }
 
-//寻找下标为index的元素位置
-static const HotObject* search_index(HotObjectReader *self, hpuint32 index)
+static const HotObject* get_current_ob(HotObjectReader *self)
 {
-	return NULL;
-}
-
-hpint32 read_hpint8(HPAbstractReader *super, hpint8 *val)
-{
-	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = hotobject_get(self);
-	const HotObject *target = NULL;
-
 	//根据下标找一个位置
 	if(ob->type ==  E_ARRAY)
 	{
-		target = search_index(self, self->stack[self->stack_num - 1].count);		
-
-		if(target != NULL)
+		HotObject *new_ob;
+		char str[1024];
+		hpuint32 str_len = 0;
+		hpint32 count = self->stack[self->stack_num - 1].current_index;
+		while(count > 0)
 		{
-			*val = target->var.val.i8;
+			str[str_len++] = count % 10;
+			count/=10;
 		}
-		++(self->stack[self->stack_num - 1].count);
+		str[str_len++] = TRIE_CHAR_TERM;
+
+
+		if(!trie_retrieve(ob->keys, str, &new_ob))
+		{
+			//free ob~~
+			goto ERROR_RET;
+		}
+		return new_ob;
 	}
 	//本身就是这个数据
 	else if(ob->type == E_UNKNOW)
 	{
-		target = ob;
-		if(target != NULL)
-		{
-			*val = target->var.val.i8;
-		}		
+		return ob;
 	}
-	else
-	{
-		exit (1);
-	}
+
+ERROR_RET:
+	return NULL;
+}
+hpint32 read_hpint8(HPAbstractReader *super, hpint8 *val)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	const HotObject *ob = get_current_ob(self);
+	*val = ob->var.val.i8;
+	++self->stack[self->stack_num - 1].current_index;
+
 	return E_HP_NOERROR;
 }
 
