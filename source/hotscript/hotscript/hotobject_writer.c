@@ -31,7 +31,7 @@ hpint32 hotobject_write_struct_end(HPAbstractWriter *super, const char *struct_n
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
+hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
@@ -49,7 +49,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
+hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	--(self->stack_num);
@@ -112,7 +112,7 @@ ERROR_RET:
 	return NULL;
 }
 
-hpint32 write_hpint8(HPAbstractWriter *super, const hpint8 val)
+static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);

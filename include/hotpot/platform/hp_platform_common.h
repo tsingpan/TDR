@@ -13,8 +13,8 @@
 typedef enum _hpbool hpbool;
 enum _hpbool
 {
-	hptrue = TRUE,
-	hpfalse = FALSE,
+	hptrue = 1,
+	hpfalse = 0,
 };
 
 typedef signed char hpint8;

@@ -29,6 +29,7 @@ hpint32 ddekit_json_encoding_reader_init(DDEKIT_JSON_ENCODING_READER *self, cons
 
 
 
+
 	return E_HP_NOERROR;
 }
 
@@ -69,13 +70,13 @@ hpint32 ddekit_json_encoding_read_struct_end(HPAbstractReader *super, const char
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_read_vector_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_json_encoding_read_vector_begin(HPAbstractReader *super)
 {
 	DDEKIT_JSON_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_read_vector_end(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_json_encoding_read_vector_end(HPAbstractReader *super)
 {
 	DDEKIT_JSON_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_JSON_ENCODING_READER, dpr);
 	return E_HP_NOERROR;

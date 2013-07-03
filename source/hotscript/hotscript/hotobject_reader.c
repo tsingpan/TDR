@@ -31,7 +31,7 @@ hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_na
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type)
+hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = hotobject_get(self);
@@ -51,7 +51,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, hpint32 var_type)
+hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	--(self->stack_num);
@@ -110,7 +110,7 @@ static const HotObject* get_current_ob(HotObjectReader *self)
 ERROR_RET:
 	return NULL;
 }
-hpint32 read_hpint8(HPAbstractReader *super, hpint8 *val)
+static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = get_current_ob(self);

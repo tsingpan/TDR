@@ -9,8 +9,8 @@
 //如果不包含stdlib.h strtoll会出错
 #include <stdlib.h>
 
-#define strtoll(begin_ptr, end_ptr, length) _strtoi64(begin_ptr, end_ptr, length)
-#define strtoull(begin_ptr, end_ptr, length) _strtoui64(begin_ptr, end_ptr, length)
+#define strtoll(begin_ptr, end_ptr, radix) _strtoi64(begin_ptr, end_ptr, radix)
+#define strtoull(begin_ptr, end_ptr, radix) _strtoui64(begin_ptr, end_ptr, radix)
 #define snprintf _snprintf
 
 #define PRIu64 "I64u"

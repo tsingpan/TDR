@@ -30,6 +30,7 @@
 #define YYSTYPE HPVar
 #define YYLEX_PARAM ss
 #define GET_SELF JSON_PARSER *jp = HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack);
+#define YYJSON_WRITER HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack)->writer
 }
 
 %define api.pure
@@ -52,65 +53,73 @@
 %%
 
 Object:
-	'{' '}'
-	{
-	}
-|	'{' Members '}'
-	{
-	};
-
+	'{' { write_struct_begin(YYJSON_WRITER, NULL); }
+	'}' { write_struct_end(YYJSON_WRITER, NULL); }
+|	
+	'{' { write_struct_begin(YYJSON_WRITER, NULL); }
+	Members
+	'}' { write_struct_end(YYJSON_WRITER, NULL); }
+;
 
 Members:
 	Pair
 	{
 	}
-|	Pair ',' Members
-	{
-	};
+|
+	Members
+	',' { write_semicolon(YYJSON_WRITER); }
+	Pair
+;
 	
 	
 Pair:
-	tok_string ':' Value
-	{
-	}
+	tok_string { write_field_begin(YYJSON_WRITER, $1.val.bytes.ptr, $1.val.bytes.len); }
+	':'
+	Value { write_field_end(YYJSON_WRITER, $1.val.bytes.ptr, $1.val.bytes.len); }
 	
 	
 Array:
-	'[' Elements ']'
-	{
-	}
+	'[' { write_vector_begin(YYJSON_WRITER); }
+	Elements
+	']' { write_vector_end(YYJSON_WRITER); }
 
 Elements:
 	Value
 	{
-	
 	}
 |
 	Value ',' Elements
 	{
-			
 	}
 	
 	
 Value:
 	tok_string
 	{
+		write_bytes(YYJSON_WRITER, $1.val.bytes.ptr, $1.val.bytes.len);
 	}
 |	tok_integer
 	{
+		write_hpint64(YYJSON_WRITER, $1.val.i64);
 	}
 |	tok_double
 	{
+		write_hpdouble(YYJSON_WRITER, $1.val.d);
 	}
 |	Object
-	{
-	}
 |	Array
-	{
-	}
 |	tok_true
+	{
+		write_hpbool(YYJSON_WRITER, hptrue);
+	}
 |	tok_false
+	{
+		write_hpbool(YYJSON_WRITER, hpfalse);
+	}
 |	tok_null
+	{
+		write_null(YYJSON_WRITER);
+	}
 	
 
 	

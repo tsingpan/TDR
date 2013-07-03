@@ -6,12 +6,15 @@
 #include "hotscript/hot_vm.h"
 #include "hotscript/hotobject_reader.h"
 #include "hotscript/hotobject_writer.h"
+#include "encoding/ddekit_json_encoding_writer.h"
+#include <stdio.h>
 
 JSON_PARSER xp;
 SCRIPT_PARSER sp;
 HotObject *obj;
 HotObjectReader reader;
 HotObjectWriter writer;
+JSON_WRITER json_writer;
 
 
 HotObject *ho;
@@ -33,7 +36,9 @@ int main()
 	obj = hotobject_new();
 	hotobject_writer_init(&writer, obj);
 	hotobject_reader_init(&reader, obj);
-	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super, &sp) == 0)
+
+	ddekit_json_encoding_writer_init(&json_writer, stdout);
+	if(json_parser(&xp, "d:/1.json", &json_writer.super, &reader.super, &sp) == 0)
 	{
 		printf("input succeed\n");
 	}
@@ -42,7 +47,7 @@ int main()
 		printf("input failed\n");
 		return 1;
 	}
-	
+	return 0;
 	hotobject_reader_init(&reader, obj);
 	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{

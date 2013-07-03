@@ -38,22 +38,22 @@ hpint32 read_vector_end(HPAbstractReader *self)
 	return self->read_vector_end(self);
 }
 
-hpint32 read_field_begin(HPAbstractReader *self, const char *var_name, hpint32 var_type)
+hpint32 read_field_begin(HPAbstractReader *self, const char *var_name, hpuint32 len)
 {
 	if(self->read_field_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_field_begin(self, var_name, var_type);
+	return self->read_field_begin(self, var_name, len);
 }
 
-hpint32 read_field_end(HPAbstractReader *self, const char *var_name, hpint32 var_type)
+hpint32 read_field_end(HPAbstractReader *self, const char *var_name, hpuint32 len)
 {
 	if(self->read_field_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_field_end(self, var_name, var_type);
+	return self->read_field_end(self, var_name, len);
 }
 
 hpint32 read_hpint8(HPAbstractReader *self, hpint8 *val)
@@ -180,4 +180,22 @@ hpint32 read_bytes(HPAbstractReader *self, hpchar* buff, hpuint32 *buff_size)
 		return E_HP_NOERROR;
 	}
 	return self->read_bytes(self, buff, buff_size);
+}
+
+hpint32 read_bool(HPAbstractReader *self, hpbool *val)
+{
+	if(self->read_hpbool == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->read_hpbool(self, val);
+}
+
+hpint32 read_null(HPAbstractReader *self)
+{
+	if(self->read_null == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->read_null(self);
 }

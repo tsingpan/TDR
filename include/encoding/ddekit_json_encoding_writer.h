@@ -4,30 +4,33 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_writer.h"
 
-typedef struct tagDDEKIT_JSON_ENCODING_WRITER
+#include <stdio.h>
+
+typedef struct _JSON_WRITER
 {
-	HPAbstractWriter dpw;
+	HPAbstractWriter super;
 
-}DDEKIT_JSON_ENCODING_WRITER;
+	FILE *f;
+}JSON_WRITER;
 
-HP_API hpint32 ddekit_json_encoding_writer_init(DDEKIT_JSON_ENCODING_WRITER *self, void *addr, hpuint32 size);
+HP_API hpint32 ddekit_json_encoding_writer_init(JSON_WRITER *self, FILE *f);
 
-HP_API hpint32 ddekit_json_encoding_writer_fini(DDEKIT_JSON_ENCODING_WRITER *self);
+HP_API hpint32 ddekit_json_encoding_writer_fini(JSON_WRITER *self);
 
 //virtual functions
 HP_API hpint32 ddekit_json_encoding_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
 
 HP_API hpint32 ddekit_json_encoding_write_struct_end(HPAbstractWriter *self, const char *struct_name);
 
-HP_API hpint32 ddekit_json_encoding_write_vector_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_json_encoding_write_vector_begin(HPAbstractWriter *self);
 
-HP_API hpint32 ddekit_json_encoding_write_vector_end(HPAbstractWriter *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_json_encoding_write_vector_end(HPAbstractWriter *self);
 
-HP_API hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *self, const char *var_name, hpuint32 len);
 
-HP_API hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len);
 
-HP_API hpint32 ddekit_json_encoding_write_enum(HPAbstractWriter *super, const hpint32 val);
+HP_API hpint32 ddekit_json_encoding_write_enum(HPAbstractWriter *super, const int val);
 
 HP_API hpint32 ddekit_json_encoding_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
 
@@ -50,5 +53,15 @@ HP_API hpint32 ddekit_json_encoding_write_hpuint16(HPAbstractWriter *super, cons
 HP_API hpint32 ddekit_json_encoding_write_hpuint32(HPAbstractWriter *super, const hpuint32 val);
 
 HP_API hpint32 ddekit_json_encoding_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
+
+HP_API hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* buff, const hpuint32 buff_size);
+
+HP_API hpint32 ddekit_json_encoding_write_string(HPAbstractWriter *self, const hpchar* str);
+
+HP_API hpint32 ddekit_json_encoding_write_hpbool(HPAbstractWriter *self, const hpbool val);
+
+HP_API hpint32 ddekit_json_encoding_write_null(HPAbstractWriter *self);
+
+HP_API hpint32 ddekit_json_encoding_write_semicolon(HPAbstractWriter *super);
 
 #endif//_H_DDEKIT_JSON_ENCODING_WRITER

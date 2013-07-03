@@ -37,22 +37,22 @@ hpint32 write_vector_end(HPAbstractWriter *self)
 	return self->write_vector_end(self);
 }
 
-hpint32 write_field_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type)
+hpint32 write_field_begin(HPAbstractWriter *self, const char *var_name, hpuint32 len)
 {
 	if(self->write_field_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_field_begin(self, var_name, var_type);
+	return self->write_field_begin(self, var_name, len);
 }
 
-hpint32 write_field_end(HPAbstractWriter *self, const char *var_name, hpint32 var_type)
+hpint32 write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len)
 {
 	if(self->write_field_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_field_end(self, var_name, var_type);
+	return self->write_field_end(self, var_name, len);
 }
 
 hpint32 write_hpint8(HPAbstractWriter *self, const hpint8 val)
@@ -145,13 +145,13 @@ hpint32 write_hpdouble(HPAbstractWriter *self, const hpdouble val)
 	return self->write_hpdouble(self, val);
 }
 
-hpint32 write_enum(HPAbstractWriter *self)
+hpint32 write_enum(HPAbstractWriter *self, const int val)
 {
 	if(self->write_enum == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_enum(self);
+	return self->write_enum(self, val);
 }
 
 hpint32 write_enum_name(HPAbstractWriter *self, const hpint32 val, const hpchar *enum_name)
@@ -181,3 +181,29 @@ hpint32 write_bytes(HPAbstractWriter *self, const hpchar* buff, const hpuint32 b
 	return self->write_bytes(self, buff, buff_size);
 }
 
+hpint32 write_hpbool(HPAbstractWriter *self, const hpbool val)
+{
+	if(self->write_hpbool == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_hpbool(self, val);
+}
+
+hpint32 write_null(HPAbstractWriter *self)
+{
+	if(self->write_null == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_null(self);
+}
+
+hpint32 write_semicolon(HPAbstractWriter *self)
+{
+	if(self->write_semicolon == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_semicolon(self);
+}
