@@ -1,5 +1,7 @@
 #include "hotscript/hotobject_reader.h"
 
+#include "hotpot/hp_platform.h"
+
 #include "hotpot/hp_error.h"
 
 
@@ -110,12 +112,62 @@ static const HotObject* get_current_ob(HotObjectReader *self)
 ERROR_RET:
 	return NULL;
 }
+
 static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = get_current_ob(self);
 	*val = ob->var.val.i8;
 	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+static hpint32 hotobject_read_double(HPAbstractReader *super, hpdouble *val)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	HotObject *ob = get_current_ob(self);
+	*val = ob->var.val.d;
+	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+static hpint32 hotobject_read_hpint64(HPAbstractReader *super, hpint64 *val)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	HotObject *ob = get_current_ob(self);
+	*val = ob->var.val.i64;
+	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotobject_read_bytes(HPAbstractReader *super, hpbytes *bytes)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	HotObject *ob = get_current_ob(self);
+	bytes->ptr = ob->var.val.bytes.ptr;
+	bytes->len = ob->var.val.bytes.len;
+	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotobject_read_type(HPAbstractReader *super, HPType *type)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	HotObject *ob = get_current_ob(self);
+	*type = ob->var.type;
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotobject_read_hpbool(HPAbstractReader *super, hpbool *val)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	HotObject *ob = get_current_ob(self);
+	*val = ob->var.val.b;
 
 	return E_HP_NOERROR;
 }

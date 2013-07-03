@@ -175,6 +175,7 @@ HP_API hpint32 ddekit_json_encoding_write_enum_name(HPAbstractWriter *super, con
 hpint32 ddekit_json_encoding_write_hpchar(HPAbstractWriter *super, const char val)
 {
 	JSON_WRITER *self = HP_CONTAINER_OF(super, JSON_WRITER, super);
+	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_write_hpdouble(HPAbstractWriter *super, const double val)
@@ -242,7 +243,7 @@ hpint32 ddekit_json_encoding_write_hpuint64(HPAbstractWriter *super, const hpuin
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* buff, const hpuint32 buff_size)
+hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
 {
 	JSON_WRITER *self = HP_CONTAINER_OF(super, JSON_WRITER, super);
 	hpuint32 i;
@@ -251,8 +252,8 @@ hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* 
 		printf_tab(self);
 	}
 	fputc('"', self->f);
-	for(i = 0;i < buff_size; ++i)
-		switch (buff[i])
+	for(i = 0;i < bytes.len; ++i)
+		switch (bytes.ptr[i])
 		{
 			case '"':
 				fputc('\\', self->f);
@@ -288,7 +289,7 @@ hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* 
 				continue;					
 			default:
 				{
-					fputc(buff[i], self->f);
+					fputc(bytes.ptr[i], self->f);
 				}
 		}
 	fputc('"', self->f);

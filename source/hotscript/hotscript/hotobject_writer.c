@@ -113,11 +113,39 @@ static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
-	ob->var.type = E_HP_INT8;
 	ob->var.val.i8 = val;
 	++self->stack[self->stack_num - 1].current_index;
 
 	return E_HP_NOERROR;
+}
+
+static hpint32 hotobject_write_double(HPAbstractWriter *super, const hpdouble val)
+{
+	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = get_current_ob(self);
+	ob->var.val.d = val;
+	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+static hpint32 hotobject_write_hpint64(HPAbstractWriter *super, const hpint64 val)
+{
+	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = get_current_ob(self);
+	ob->var.val.i64 = val;
+	++self->stack[self->stack_num - 1].current_index;
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpchar* buff, const hpuint32 buff_size)
+{
+	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = get_current_ob(self);
+	ob->var.val.bytes.ptr = (char*)malloc(buff_size);
+	ob->var.val.bytes.len = buff_size;
+	++self->stack[self->stack_num - 1].current_index;
 }
 
 hpint32 hotobject_write_type(HPAbstractWriter *super, const HPType type)
@@ -125,6 +153,13 @@ hpint32 hotobject_write_type(HPAbstractWriter *super, const HPType type)
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
 	ob->var.type = type;
+}
+
+hpint32 hotobject_write_hpbool(HPAbstractWriter *super, const hpbool val)
+{
+	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = get_current_ob(self);
+	ob->var.val.b = val;
 }
 
 hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject)

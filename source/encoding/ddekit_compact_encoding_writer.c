@@ -99,7 +99,7 @@ hpint32 ddekit_compact_encoding_write_field_end(HPAbstractWriter *super, const c
 	return E_HP_NOERROR;
 }
 
-HP_API hpint32 ddekit_compact_encoding_write_enum(HPAbstractWriter *super, const hpint32 val, const hpchar *enum_name)
+HP_API hpint32 ddekit_compact_encoding_write_enum(HPAbstractWriter *super, const hpint32 val)
 {
 	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);

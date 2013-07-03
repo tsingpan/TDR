@@ -22,9 +22,9 @@ HP_API hpint32 ddekit_compact_encoding_write_struct_begin(HPAbstractWriter *self
 
 HP_API hpint32 ddekit_compact_encoding_write_struct_end(HPAbstractWriter *self, const char *struct_name);
 
-HP_API hpint32 ddekit_compact_encoding_write_vector_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_compact_encoding_write_vector_begin(HPAbstractWriter *self);
 
-HP_API hpint32 ddekit_compact_encoding_write_vector_end(HPAbstractWriter *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_compact_encoding_write_vector_end(HPAbstractWriter *self);
 
 HP_API hpint32 ddekit_compact_encoding_write_field_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type);
 

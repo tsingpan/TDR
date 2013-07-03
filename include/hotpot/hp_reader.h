@@ -59,7 +59,7 @@ hpint32 read_enum_name(HPAbstractReader *self, hpchar *enum_name, hpuint32 *enum
 hpint32 read_hpchar(HPAbstractReader *self, hpchar *val);
 hpint32 read_hpdouble(HPAbstractReader *self, hpdouble *val);
 hpint32 read_hpstring(HPAbstractReader *self, hpchar* str, hpuint32 *str_length);
-hpint32 read_bytes(HPAbstractReader *self, hpchar* buff, hpuint32 *buff_size);
+hpint32 read_bytes(HPAbstractReader *self, hpbytes *bytes);
 hpint32 read_hpbool(HPAbstractReader *self, hpbool *val);
 hpint32 read_null(HPAbstractReader *self);
 hpint32 read_semicolon(HPAbstractReader *self);

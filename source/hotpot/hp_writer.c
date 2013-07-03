@@ -172,13 +172,13 @@ hpint32 write_hpstring(HPAbstractWriter *self, const hpchar* str)
 	return self->write_hpstring(self, str);
 }
 
-hpint32 write_bytes(HPAbstractWriter *self, const hpchar* buff, const hpuint32 buff_size)
+hpint32 write_bytes(HPAbstractWriter *self, const hpbytes bytes)
 {
 	if(self->write_bytes == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_bytes(self, buff, buff_size);
+	return self->write_bytes(self, bytes);
 }
 
 hpint32 write_hpbool(HPAbstractWriter *self, const hpbool val)

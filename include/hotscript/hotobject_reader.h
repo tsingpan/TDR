@@ -1,6 +1,8 @@
 #ifndef _H_HOT_OBJECT_READER
 #define _H_HOT_OBJECT_READER
 
+#include "hotpot/hp_platform.h"
+
 #include "hotscript/hotobject.h"
 #include "hotpot/hp_reader.h"
 

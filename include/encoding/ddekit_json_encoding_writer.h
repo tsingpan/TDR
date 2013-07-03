@@ -11,7 +11,7 @@
 typedef struct _JSON_WRITER
 {
 	HPAbstractWriter super;
-	int count;
+	hpuint32 count;
 	hpbool need_tab;
 	FILE *f;
 }JSON_WRITER;
@@ -57,7 +57,7 @@ HP_API hpint32 ddekit_json_encoding_write_hpuint32(HPAbstractWriter *super, cons
 
 HP_API hpint32 ddekit_json_encoding_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
-HP_API hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* buff, const hpuint32 buff_size);
+HP_API hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpbytes bytes);
 
 HP_API hpint32 ddekit_json_encoding_write_string(HPAbstractWriter *self, const hpchar* str);
 
