@@ -41,6 +41,11 @@
 %token tok_script_begin
 %token tok_string
 %token tok_identifier
+%token tok_double
+%token tok_integer
+%token tok_true
+%token tok_false
+%token tok_null
 
 
 %start Object
@@ -66,24 +71,9 @@ Members:
 	
 	
 Pair:
-	tok_identifier ':' tok_string
+	tok_string ':' Value
 	{
-		GET_SELF;
-
-		//hp_writer_begin(jp->writer, &$1);
-		//hp_writer_write(jp->writer, &$3);
-		//hp_writer_end(jp->writer);
 	}
-|	
-	tok_identifier ':' 
-	{ GET_SELF;  }
-	Object
-	{ GET_SELF; }
-|
-	tok_identifier ':' 
-	{ GET_SELF;  } 
-	Array
-	{ GET_SELF;  }
 	
 	
 Array:
@@ -106,14 +96,22 @@ Elements:
 Value:
 	tok_string
 	{
-		GET_SELF;
-		//hp_writer_begin(jp->writer, NULL);
-		//hp_writer_write(jp->writer, &$1);
-		//hp_writer_end(jp->writer);
 	}
-|	{ GET_SELF; }
-	Object
-	{ GET_SELF;  }
+|	tok_integer
+	{
+	}
+|	tok_double
+	{
+	}
+|	Object
+	{
+	}
+|	Array
+	{
+	}
+|	tok_true
+|	tok_false
+|	tok_null
 	
 
 	

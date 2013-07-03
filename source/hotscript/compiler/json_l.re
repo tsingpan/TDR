@@ -77,6 +77,10 @@ identifier		[a-zA-Z_][a-zA-Z_0-9]*
 whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
 string_begin	['\"']
+intconstant		([+-]?[0-9]+)
+LNUM			[0-9]+
+DNUM			([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
+EXPONENT_DNUM	(({LNUM}|{DNUM})[eE][+-]?{LNUM})
 
 
 <!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
@@ -92,6 +96,35 @@ string_begin	['\"']
 	yylval->val.bytes.ptr = yytext;
 	yylval->val.bytes.len = yyleng;
 	return tok_identifier;
+}
+
+<INITIAL>{DNUM}|{EXPONENT_DNUM}
+{	
+	//这里有问题
+	yylval->type = E_HP_BYTES;
+	yylval->val.bytes.ptr = yytext;
+	yylval->val.bytes.len = yyleng;
+	return tok_double;
+}
+
+<INITIAL>{intconstant}
+{
+	return tok_integer;
+}
+
+<INITIAL>"true"
+{
+	return tok_true;
+}
+
+<INITIAL>"false"
+{
+	return tok_false;
+}
+
+<INITIAL>"null"
+{
+	return tok_null;
 }
 	
 <INITIAL>{string_begin} {
