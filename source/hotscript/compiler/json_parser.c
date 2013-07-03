@@ -217,35 +217,10 @@ static hpint32 get_token_yylval(JSON_PARSER *jp, int token, YYSTYPE * yylval)
 						continue;
 					case 't':
 						hpstring_append(&str, &str_len, &str_size, '\t');
-						continue;
-					case 'u':
-						{
-							char hex_number[5];
-							char utf8_buff[5];
-							size_t utf8_length;
-							unsigned int i;
-							unsigned int d;
-							for(i = 0;i < 4; ++i)
-							{
-								++YYCURSOR;
-								if (YYCURSOR >= YYLIMIT) {
-									goto ERROR_RET;
-								}
-								hex_number[i] = *YYCURSOR;
-							}
-							//这里要进行错误处理
-							hexToDigit(&d, hex_number);
-							utf8_length = Utf32toUtf8(d, utf8_buff);
-							for(i = 0;i < utf8_length; ++i)
-							{
-								hpstring_append(&str, &str_len, &str_size, utf8_buff[i]);
-							}
-
-							continue;
-						}
+						continue;					
 					default:
 						{
-							printf("error\n");
+							//printf("error\n");
 							//yyerror("bad escape character\n");							
 							goto ERROR_RET;
 						}
@@ -254,7 +229,7 @@ static hpint32 get_token_yylval(JSON_PARSER *jp, int token, YYSTYPE * yylval)
 				else
 				{
 					if (ch == mark)
-					{						
+					{
 						yylval->type = E_HP_BYTES;
 						yylval->val.bytes.ptr = str;
 						yylval->val.bytes.len = str_len;

@@ -88,7 +88,9 @@ Elements:
 	{
 	}
 |
-	Value ',' Elements
+	Value
+	',' { write_semicolon(YYJSON_WRITER); }
+	Elements
 	{
 	}
 	

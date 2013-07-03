@@ -199,12 +199,48 @@ hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpchar* 
 {
 	JSON_WRITER *self = HP_CONTAINER_OF(super, JSON_WRITER, super);
 	hpuint32 i;
-	//这里需要转义
+	fputc('"', self->f);
 	for(i = 0;i < buff_size; ++i)
-	{
-		fputc(buff[i], self->f);
-	}
-
+		switch (buff[i])
+		{
+			case '"':
+				fputc('\\', self->f);
+				fputc('"', self->f);
+				continue;
+			case '\\':
+				fputc('\\', self->f);
+				fputc('\\', self->f);
+				continue;
+			case '/':
+				fputc('\\', self->f);
+				fputc('/', self->f);
+				continue;
+			case '\b':
+				fputc('\\', self->f);
+				fputc('b', self->f);
+				continue;
+			case '\f':
+				fputc('\\', self->f);
+				fputc('f', self->f);
+				continue;
+			case '\n':
+				fputc('\\', self->f);
+				fputc('n', self->f);
+				continue;
+			case '\r':
+				fputc('\\', self->f);
+				fputc('r', self->f);
+				continue;
+			case '\t':
+				fputc('\\', self->f);
+				fputc('t', self->f);
+				continue;					
+			default:
+				{
+					fputc(buff[i], self->f);
+				}
+		}
+	fputc('"', self->f);
 	return E_HP_NOERROR;
 }
 
