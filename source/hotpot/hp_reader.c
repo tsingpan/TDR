@@ -199,3 +199,21 @@ hpint32 read_null(HPAbstractReader *self)
 	}
 	return self->read_null(self);
 }
+
+hpint32 read_semicolon(HPAbstractReader *self)
+{
+	if(self->read_semicolon == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->read_semicolon(self);
+}
+
+hpint32 read_type(HPAbstractReader *self, HPType *type)
+{
+	if(self->read_type == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->read_type(self, type);
+}

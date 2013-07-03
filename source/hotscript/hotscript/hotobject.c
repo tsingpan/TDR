@@ -25,7 +25,6 @@ HotObject* hotobject_new()
 	self->keys = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
-	self->type = E_OBJECT;
 	return self;
 }
 
@@ -43,15 +42,9 @@ void hotobject_free(HotObject* self)
 {
 	HotObject* next;
 
-	if(self->type == E_VAR)
+	while(trie_enumerate(self->keys, hotobject_visitor, self) == FALSE)
 	{
-	}
-	else
-	{
-		while(trie_enumerate(self->keys, hotobject_visitor, self) == FALSE)
-		{
 
-		}
 	}
 
 	trie_free(self->keys);

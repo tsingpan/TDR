@@ -7,18 +7,8 @@
 #include "hotpot/hp_value.h"
 
 
-typedef enum _HotObjectType
-{
-	E_UNKNOW,
-	E_ARRAY,
-	E_OBJECT,
-	E_VAR,
-}HotObjectType;
-
 struct _HotObject
 {
-	HotObjectType type;
-
 	HPVar var;
 
 	Trie* keys;

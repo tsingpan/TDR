@@ -33,7 +33,8 @@ struct _HPAbstractWriter
 	hpint32 (*write_hpbool)(HPAbstractWriter *self, const hpbool val);
 	hpint32 (*write_null)(HPAbstractWriter *self);
 
-	hpint32 (*write_semicolon)(HPAbstractWriter *self);	
+	hpint32 (*write_semicolon)(HPAbstractWriter *self);
+	hpint32 (*write_type)(HPAbstractWriter *self, const HPType type);
 };
 
 
@@ -62,6 +63,7 @@ hpint32 write_bytes(HPAbstractWriter *self, const hpchar* buff, const hpuint32 b
 hpint32 write_hpbool(HPAbstractWriter *self, const hpbool val);
 hpint32 write_null(HPAbstractWriter *self);
 hpint32 write_semicolon(HPAbstractWriter *self);
+hpint32 write_type(HPAbstractWriter *self, const HPType type);
 
 #endif //_H_HP_WRITER
 

@@ -31,7 +31,7 @@ hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_na
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name)
+hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = hotobject_get(self);
@@ -51,7 +51,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name)
+hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	--(self->stack_num);
@@ -80,7 +80,7 @@ static const HotObject* get_current_ob(HotObjectReader *self)
 {
 	const HotObject *ob = hotobject_get(self);
 	//根据下标找一个位置
-	if(ob->type ==  E_ARRAY)
+	if(ob->var.type ==  E_HP_VECTOR)
 	{
 		HotObject *new_ob;
 		char str[1024];
@@ -102,7 +102,7 @@ static const HotObject* get_current_ob(HotObjectReader *self)
 		return new_ob;
 	}
 	//本身就是这个数据
-	else if(ob->type == E_UNKNOW)
+	else
 	{
 		return ob;
 	}

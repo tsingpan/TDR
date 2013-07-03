@@ -19,6 +19,8 @@ typedef enum _HPType
 	E_HP_DOUBLE			= 11,
 	E_HP_BOOL			= 12,
 	E_HP_NULL			= 13,
+	E_HP_VECTOR			= 14,
+	E_HP_STRUCT			= 15,
 }HPType;
 
 typedef union _HPValue

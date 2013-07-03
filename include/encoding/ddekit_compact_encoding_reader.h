@@ -24,15 +24,15 @@ HP_API hpint32 ddekit_compact_encoding_read_struct_begin(HPAbstractReader *self,
 
 HP_API hpint32 ddekit_compact_encoding_read_struct_end(HPAbstractReader *self, const char *struct_name);
 
-HP_API hpint32 ddekit_compact_encoding_read_vector_begin(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_compact_encoding_read_vector_begin(HPAbstractReader *self);
 
-HP_API hpint32 ddekit_compact_encoding_read_vector_end(HPAbstractReader *self, const char *var_name, hpint32 var_type, hpint32 end_with_zero);
+HP_API hpint32 ddekit_compact_encoding_read_vector_end(HPAbstractReader *self);
 
-HP_API hpint32 ddekit_compact_encoding_read_field_begin(HPAbstractReader *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 ddekit_compact_encoding_read_field_begin(HPAbstractReader *self, const char *var_name, hpuint32 len);
 
-HP_API hpint32 ddekit_compact_encoding_read_field_end(HPAbstractReader *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 ddekit_compact_encoding_read_field_end(HPAbstractReader *self, const char *var_name, hpuint32 len);
 
-HP_API hpint32 ddekit_compact_encoding_read_enum(HPAbstractReader *super, hpint32 *val, hpchar *enum_name, hpuint32 *enum_name_length);
+HP_API hpint32 ddekit_compact_encoding_read_enum(HPAbstractReader *super, hpint32 *val);
 
 HP_API hpint32 ddekit_compact_encoding_read_hpchar(HPAbstractReader *super, char *val);
 

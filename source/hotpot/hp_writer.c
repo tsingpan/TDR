@@ -207,3 +207,12 @@ hpint32 write_semicolon(HPAbstractWriter *self)
 	}
 	return self->write_semicolon(self);
 }
+
+hpint32 write_type(HPAbstractWriter *self, const HPType type)
+{
+	if(self->write_type == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_type(self, type);
+}

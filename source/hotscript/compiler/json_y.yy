@@ -98,28 +98,34 @@ Elements:
 Value:
 	tok_string
 	{
+		write_type(YYJSON_WRITER, E_HP_STRING);
 		write_bytes(YYJSON_WRITER, $1.val.bytes.ptr, $1.val.bytes.len);
 	}
 |	tok_integer
 	{
+		write_type(YYJSON_WRITER, E_HP_INT64);
 		write_hpint64(YYJSON_WRITER, $1.val.i64);
 	}
 |	tok_double
 	{
+		write_type(YYJSON_WRITER, E_HP_DOUBLE);
 		write_hpdouble(YYJSON_WRITER, $1.val.d);
 	}
-|	Object
-|	Array
+|	{ write_type(YYJSON_WRITER, E_HP_STRUCT); } Object
+|	{ write_type(YYJSON_WRITER, E_HP_VECTOR); } Array	
 |	tok_true
 	{
+		write_type(YYJSON_WRITER, E_HP_BOOL);
 		write_hpbool(YYJSON_WRITER, hptrue);
 	}
 |	tok_false
 	{
+		write_type(YYJSON_WRITER, E_HP_BOOL);
 		write_hpbool(YYJSON_WRITER, hpfalse);
 	}
 |	tok_null
 	{
+		write_type(YYJSON_WRITER, E_HP_NULL);
 		write_null(YYJSON_WRITER);
 	}
 	

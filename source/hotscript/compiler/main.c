@@ -7,6 +7,7 @@
 #include "hotscript/hotobject_reader.h"
 #include "hotscript/hotobject_writer.h"
 #include "encoding/ddekit_json_encoding_writer.h"
+#include "encoding/ddekit_json_encoding_reader.h"
 #include <stdio.h>
 
 JSON_PARSER xp;
@@ -15,6 +16,7 @@ HotObject *obj;
 HotObjectReader reader;
 HotObjectWriter writer;
 JSON_WRITER json_writer;
+JSON_READER json_reader;
 
 
 HotObject *ho;

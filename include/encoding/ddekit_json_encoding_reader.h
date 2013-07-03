@@ -4,17 +4,17 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_reader.h"
 
-typedef struct tagDDEKIT_JSON_ENCODING_READER
+typedef struct _JSON_READER
 {
-	HPAbstractReader dpr;
+	HPAbstractReader super;
 
 
-}DDEKIT_JSON_ENCODING_READER;
+}JSON_READER;
 
 
-HP_API hpint32 ddekit_json_encoding_reader_init(DDEKIT_JSON_ENCODING_READER *self, const void *addr, hpuint32 size);
+HP_API hpint32 ddekit_json_encoding_reader_init(JSON_READER *self, const void *addr, hpuint32 size);
 
-HP_API hpint32 ddekit_json_encoding_reader_fini(DDEKIT_JSON_ENCODING_READER *self);
+HP_API hpint32 ddekit_json_encoding_reader_fini(JSON_READER *self);
 
 //virtual public functions
 

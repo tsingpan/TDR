@@ -28,7 +28,7 @@ hpint32 ddekit_compact_encoding_reader_init(DDEKIT_COMPACT_ENCODING_READER *self
 
 
 
-	self->addr = addr;
+	self->addr = (const char*)addr;
 	self->size = size;
 	self->offset = 0;
 
@@ -78,31 +78,31 @@ hpint32 ddekit_compact_encoding_read_struct_end(HPAbstractReader *super, const c
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_vector_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_compact_encoding_read_vector_begin(HPAbstractReader *super)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_vector_end(HPAbstractReader *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
+hpint32 ddekit_compact_encoding_read_vector_end(HPAbstractReader *super)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_field_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_compact_encoding_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_field_end(HPAbstractReader *super, const char *var_name, hpint32 var_type)
+hpint32 ddekit_compact_encoding_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_read_enum(HPAbstractReader *super, hpint32 *val, hpchar *enum_name, hpuint32 *enum_name_length)
+hpint32 ddekit_compact_encoding_read_enum(HPAbstractReader *super, hpint32 *val)
 {
 	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
 	hpuint32 res;
