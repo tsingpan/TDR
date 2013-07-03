@@ -73,7 +73,6 @@ re2c:yyfill:check = 0;
 
 
 newline			("\r"|"\n"|"\r\n")
-identifier		[a-zA-Z_][a-zA-Z_0-9]*
 whitespace		[ \t\r\n]*
 symbols			[,:\[\]\{\}]
 string_begin	['\"']
@@ -89,13 +88,6 @@ EXPONENT_DNUM	(({LNUM}|{DNUM})[eE][+-]?{LNUM})
 
 <INITIAL>{symbols} {
 	return *yytext;
-}
-
-<INITIAL>{identifier}	{
-	yylval->type = E_HP_BYTES;
-	yylval->val.bytes.ptr = yytext;
-	yylval->val.bytes.len = yyleng;
-	return tok_identifier;
 }
 
 <INITIAL>{DNUM}|{EXPONENT_DNUM}

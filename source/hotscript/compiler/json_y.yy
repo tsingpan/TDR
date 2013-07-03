@@ -40,7 +40,6 @@
 
 %token tok_script_begin
 %token tok_string
-%token tok_identifier
 %token tok_double
 %token tok_integer
 %token tok_true
