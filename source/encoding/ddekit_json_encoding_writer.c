@@ -72,7 +72,10 @@ static void printf_tab(JSON_WRITER *self)
 	hpuint32 i;
 	for(i = 0;i < self->count + self->count; ++i)
 	{
-		fputc('\t', self->f);
+		fputc(' ', self->f);
+		fputc(' ', self->f);
+		fputc(' ', self->f);
+		fputc(' ', self->f);
 	}
 }
 
