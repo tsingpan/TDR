@@ -6,10 +6,13 @@
 
 #include <stdio.h>
 
+
+#define MAX_VECTOR_DEEP 1024
 typedef struct _JSON_WRITER
 {
 	HPAbstractWriter super;
-
+	int count;
+	hpbool need_tab;
 	FILE *f;
 }JSON_WRITER;
 
