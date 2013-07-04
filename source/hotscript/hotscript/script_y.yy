@@ -54,6 +54,11 @@ StatementList :
 	}
 	
 Statement:
+	tok_text 
+	{
+		hotscript_do_text(ss, &$1);
+	}
+|
 	tok_literal 
 	{
 		hotscript_do_literal(ss, &$1);
@@ -81,10 +86,6 @@ Statement:
 	{
 		hotscript_do_vector_end(ss, &$3);
 		hotscript_do_field_end(ss, &$2);
-	}
-|	tok_text 
-	{
-		hotscript_do_text(ss, &$1);
 	}
 
 
