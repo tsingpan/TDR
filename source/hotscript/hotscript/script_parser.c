@@ -261,3 +261,8 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	return self->result;
 }
+
+hpint32 hotscript_do_jmp(SCANNER_STACK *super)
+{
+	return E_HP_NOERROR;
+}

@@ -52,6 +52,8 @@ hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *index);
 
 hpint32 hotscript_do_field(SCANNER_STACK *super);
 
+hpint32 hotscript_do_jmp(SCANNER_STACK *super);
+
 
 #endif//_H_SCRIPT_PARSER
 

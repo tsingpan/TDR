@@ -70,9 +70,10 @@ Statement:
 		hotscript_do_vector_seek(ss, &$3);
 
 		hotscript_do_echo_field(ss);
-		
-		hotscript_do_vector_end(ss, &$3);
-		hotscript_do_field_end(ss, &$2);
+
+		hotscript_do_jmp(ss);//如果echo失败了， 那么跳到jmp的下一行		
+		hotscript_do_vector_end(ss, &$3);//如果vector begin失败了， 那么跳到下一行
+		hotscript_do_field_end(ss, &$2);//如果field begin失败了， 那么跳到下一行
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
@@ -84,6 +85,7 @@ Statement:
 	StatementList
 	'}'
 	{
+		hotscript_do_jmp(ss);
 		hotscript_do_vector_end(ss, &$3);
 		hotscript_do_field_end(ss, &$2);
 	}
