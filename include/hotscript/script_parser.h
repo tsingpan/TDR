@@ -11,6 +11,7 @@
 typedef struct _SP_NODE
 {
 	INDEX_TYPE it;
+	SEARCH_STRATEGY search_strategy;
 	HPVar var;
 
 	//以下几个玩意记录需要回溯处理的指令

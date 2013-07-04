@@ -32,6 +32,13 @@ typedef enum _INDEX_TYPE
 	E_INDEX_NULL	= 3,
 }INDEX_TYPE;
 
+typedef enum _SEARCH_STRATEGY
+{
+	E_GLOBAL		= 0,
+	E_LOCAL			= 1,
+	E_STACK			= 2,
+}SEARCH_STRATEGY;
+
 typedef struct _HOT_FIELD_BEGIN_ARG
 {	
 	char filed_search_strategy;

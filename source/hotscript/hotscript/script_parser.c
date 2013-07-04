@@ -115,7 +115,7 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const S
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_FIELD_BEGIN;
-	op->arg.field_begin_arg.filed_search_strategy = prefix->var.val.c;
+	op->arg.field_begin_arg.filed_search_strategy = prefix->search_strategy;
 	op->arg.field_begin_arg.name = name->var.val.bytes;
 
 	current->field_begin = op;

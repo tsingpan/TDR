@@ -110,18 +110,15 @@ ArrayIndex :
 Prefix:
 	'@'
 	{
-		$$.var.type = E_HP_CHAR;
-		$$.var.val.c = '@';//局部变量
+		$$.search_strategy = E_GLOBAL;
 	}
 |	'#'
 	{
-		$$.var.type = E_HP_CHAR;
-		$$.var.val.c = '#';//全局变量
+		$$.search_strategy = E_LOCAL;
 	}
 |	'$'
 	{
-		$$.var.type = E_HP_CHAR;
-		$$.var.val.c = '$';//搜索所有堆栈
+		$$.search_strategy = E_STACK;
 	}
 
 
