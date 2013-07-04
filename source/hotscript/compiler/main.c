@@ -49,7 +49,6 @@ int main()
 		printf("input failed\n");
 		return 1;
 	}
-	return 0;
 	hotobject_reader_init(&reader, obj);
 	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
 	{
