@@ -37,6 +37,8 @@ struct _HPAbstractReader
 	hpint32 (*read_semicolon)(HPAbstractReader *self);
 
 	hpint32 (*read_type)(HPAbstractReader *self, HPType *type);
+
+	hpint32 (*reader_seek)(HPAbstractReader *self, hpuint32 index);
 };
 
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name);
@@ -64,6 +66,7 @@ hpint32 read_hpbool(HPAbstractReader *self, hpbool *val);
 hpint32 read_null(HPAbstractReader *self);
 hpint32 read_semicolon(HPAbstractReader *self);
 hpint32 read_type(HPAbstractReader *self, HPType *type);
+hpint32 reader_seek(HPAbstractReader *self, hpuint32 index);
 
 #endif //_H_HP_READR
 

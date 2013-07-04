@@ -113,6 +113,13 @@ ERROR_RET:
 	return NULL;
 }
 
+static hpint32 hotobject_seek(HPAbstractReader *super, hpuint32 index)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	self->stack[self->stack_num - 1].current_index = index;
+	return NULL;
+}
+
 static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);

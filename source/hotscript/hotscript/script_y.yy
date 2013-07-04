@@ -43,13 +43,7 @@
 %%
 
 Script :
-	{
-		hotscript_do_struct_begin(ss);
-	}
 	StatementList
-	{
-		hotscript_do_struct_end(ss);
-	}
 
 StatementList :
 	StatementList Statement
@@ -66,25 +60,27 @@ Statement:
 	}
 |	Prefix tok_identifier ArrayIndex
 	{
-		hotscript_do_push(ss, &$1, &$2);
-		hotscript_do_push_index(ss, &$3);
+		hotscript_do_field_begin(ss, &$1, &$2);
+		hotscript_do_vector_begin(ss, &$3);
+		hotscript_do_vector_seek(ss, &$3);
+
+		hotscript_do_echo_field(ss);
 		
-		hotscript_do_echo_trie(ss);
-		
-		hotscript_do_pop_index(ss, &$3);
-		hotscript_do_pop(ss, &$2);
+		hotscript_do_vector_end(ss, &$3);
+		hotscript_do_field_end(ss, &$2);
 	}
 |	Prefix tok_identifier ArrayIndex
 	'{'
 	{
-		hotscript_do_push(ss, &$1, &$2);
-		hotscript_do_push_index(ss, &$3);
+		hotscript_do_field_begin(ss, &$1, &$2);
+		hotscript_do_vector_begin(ss, &$3);
+		hotscript_do_vector_seek(ss, &$3);
 	}
 	StatementList
 	'}'
 	{
-		hotscript_do_pop_index(ss, &$3);
-		hotscript_do_pop(ss, &$2);
+		hotscript_do_vector_end(ss, &$3);
+		hotscript_do_field_end(ss, &$2);
 	}
 |	tok_text 
 	{
@@ -95,18 +91,17 @@ Statement:
 ArrayIndex :
 	'[' tok_integer ']'
 	{
-		$$.var.type = E_HP_INT32;
-		$$.var.val.i32 = $2.var.val.i32;	//指定下标
+		$$.it = E_INDEX_GIVEN;
+		$$.var.type = E_HP_UINT32;
+		$$.var.val.ui32 = (hpuint32)$2.var.val.i64;	//指定下标， 超过int32肿么办？
 	}
 |	'[' '*' ']'
 	{
-		$$.var.type = E_HP_INT32;
-		$$.var.val.i32 = -1;		//按次序展开元素， 直到不存在
+		$$.it = E_INDEX_ALL;						//按次序展开元素， 直到不存在
 	}
 |
 	{
-		$$.var.type = E_HP_INT32;
-		$$.var.val.i32 = -2;		//默认为第一个元素
+		$$.it = E_INDEX_NULL;						//默认为第一个元素
 	}
 
 Prefix:

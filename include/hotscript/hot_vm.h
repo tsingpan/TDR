@@ -6,26 +6,83 @@
 #include "hotpot/hp_reader.h"
 #include "hotpot/hp_value.h"
 
-#define HOT_ECHO                               0
-#define HOT_ECHO_LITERAL                       1			//这玩意要进行转义
-#define HOT_PUSH							   2
-#define HOT_PUSH_INDEX						   3
-#define HOT_POP								   4
-#define HOT_ECHO_TRIE						   5
-#define HOT_JMP								   6
-
-//虚拟机操作数
-typedef struct _HotOperand
+typedef enum _HOTSCRIPT_INSTRUCT
 {
-	hpint32 num;
-	const char *str;
-	hpuint32 str_len;
-}HotOperand;
+	HOT_ECHO                               = 0,
+	HOT_ECHO_LITERAL                       = 1,//即将取消
+	HOT_FIELD_BEGIN						   = 2,
+	HOT_FIELD_END						   = 3,
+	HOT_VECTOR_BEGIN					   = 4,
+	HOT_VECTOR_END						   = 5,
+	HOT_VECTOR_SEEK						   = 6,
+	HOT_ECHO_FIELD						   = 7,
+	HOT_JMP								   = 8,
+}HOTSCRIPT_INSTRUCT;
 
+typedef struct _HOT_ECHO_ARG
+{
+	hpuint32 lineno;
+}HOT_ECHO_ARG;
+
+typedef struct _HOT_ECHO_LITERAL_ARG
+{
+	hpuint32 lineno;
+}HOT_ECHO_LITERAL_ARG;
+
+typedef struct _HOT_FIELD_BEGIN_ARG
+{
+	hpuint32 lineno;
+}HOT_FIELD_BEGIN_ARG;
+
+typedef struct _HOT_FIELD_END_ARG
+{
+	hpuint32 lineno;
+}HOT_FIELD_END_ARG;
+
+typedef struct _HOT_VECTOR_BEGIN_ARG
+{
+	hpuint32 lineno;
+}HOT_VECTOR_BEGIN_ARG;
+
+typedef struct _HOT_VECTOR_END_ARG
+{
+	hpuint32 lineno;
+}HOT_VECTOR_END_ARG;
+
+typedef struct _HOT_VECTOR_SEEK_ARG
+{
+	hpuint32 lineno;
+}HOT_VECTOR_SEEK_ARG;
+
+typedef struct _HOT_ECHO_FIELD_ARG
+{
+	hpuint32 lineno;
+}HOT_ECHO_FIELD_ARG;
+
+typedef struct _HOT_JMP_ARG
+{
+	hpuint32 lineno;
+}HOT_JMP_ARG;
+
+typedef union _HOTSCRIPT_ARGUMENT
+{
+	HOT_ECHO_ARG	echo_arg;
+	HOT_ECHO_LITERAL_ARG literal_arg;
+	HOT_FIELD_BEGIN_ARG field_begin_arg;
+	HOT_FIELD_END_ARG field_end_arg;
+	HOT_VECTOR_BEGIN_ARG vector_begin_arg;
+	HOT_VECTOR_SEEK_ARG vector_seek_arg;
+	HOT_VECTOR_END_ARG vector_end_arg;
+	HOT_ECHO_FIELD_ARG echo_field_arg;
+	HOT_JMP_ARG jmp_arg;
+}HOTSCRIPT_ARGUMENT;
 
 //虚拟机指令
 typedef struct _HotOp
 {
+	HOTSCRIPT_INSTRUCT instruct;
+	HOTSCRIPT_ARGUMENT arg;
+	//以下即将取消
 	hpint32 op;
 	HPVar op0;
 	HPVar op1;

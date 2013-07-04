@@ -8,16 +8,6 @@
 #include "hotpot/hp_platform.h"
 
 
-hpint32 hotscript_do_struct_begin(SCANNER_STACK *super)
-{
-	return E_HP_NOERROR;
-}
-
-hpint32 hotscript_do_struct_end(SCANNER_STACK *super)
-{
-	return E_HP_NOERROR;
-}
-
 hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
@@ -42,11 +32,11 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name)
+hpint32 hotscript_do_field_begin(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->op = HOT_PUSH;
+	op->op = HOT_FIELD_BEGIN;
 	op->op0.type = E_HP_CHAR;
 	op->op0.val.c = prefix->var.val.c;
 	op->op1.type = E_HP_BYTES;
@@ -57,61 +47,72 @@ hpint32 hotscript_do_push(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_push_index(SCANNER_STACK *super, SP_NODE *index)
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	if(index->var.val.i32 != -2)
+
+	if(index->it == E_INDEX_GIVEN)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-		op->op = HOT_PUSH_INDEX;
-		op->op0.type = E_HP_INT32;
-		op->op0.val.i32 = index->var.val.i32;
-
+		op->op = HOT_VECTOR_BEGIN;
 		index->op = op;
 	}
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SP_NODE *index)
+hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	if(index->var.val.i32 != -2)
+
+	if(index->it == E_INDEX_GIVEN)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-		op->op = HOT_POP;
-
-		if(index->var.val.i32 == -1)
-		{
-			HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-			op->op = HOT_JMP;
-			op->op0.type = E_HP_UINT32;
-			op->op0.val.ui32 = index->op->lineno;
-		}
-
-		op->op1.type = E_HP_UINT32;
-		index->op->op1.val.ui32 = hotoparr_get_next_op_number(&self->hotoparr);
+		op->op = HOT_VECTOR_SEEK;
+		op->op0.type = E_HP_INT32;
+		op->op0.val.i32 = index->var.val.i32;
 	}
 
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_pop(SCANNER_STACK *super, SP_NODE *id)
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *index)
+{
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
+	HotOp *op = NULL;
+
+	if(index->it = E_INDEX_ALL)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->op = HOT_JMP;
+		op->op0.type = E_HP_UINT32;
+		op->op0.val.ui32 = index->op->lineno;
+	}
+
+	op = hotoparr_get_next_op(&self->hotoparr);
+	op->op = HOT_VECTOR_END;
+	op->op1.type = E_HP_UINT32;
+	index->op->op1.val.ui32 = hotoparr_get_next_op_number(&self->hotoparr);
+
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *id)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->op = HOT_POP;
+	op->op = HOT_FIELD_END;
 	id->op->op2.type = E_HP_UINT32;
 	id->op->op2.val.ui32 = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
 }
 
 
-hpint32 hotscript_do_echo_trie(SCANNER_STACK *super)
+hpint32 hotscript_do_echo_field(SCANNER_STACK *super)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->op = HOT_ECHO_TRIE;
+	op->op = HOT_ECHO_FIELD;
 	return E_HP_NOERROR;
 }
 

@@ -8,8 +8,15 @@
 #include "hot_vm.h"
 #include "hotscript/hotlex.h"
 
+typedef enum _INDEX_TYPE
+{
+	E_INDEX_GIVEN	= 0,
+	E_INDEX_ALL		= 1,
+	E_INDEX_NULL	= 3,
+}INDEX_TYPE;
 typedef struct _SP_NODE
 {
+	INDEX_TYPE it;
 	HPVar var;
 	HotOp *op;
 }SP_NODE;
@@ -35,23 +42,21 @@ hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *s
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
 
-hpint32 hotscript_do_struct_begin(SCANNER_STACK *super);
-
-hpint32 hotscript_do_struct_end(SCANNER_STACK *super);
-
 hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text);
 
 hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text);
 
-hpint32 hotscript_do_push(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name);
+hpint32 hotscript_do_field_begin(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name);
 
-hpint32 hotscript_do_push_index(SCANNER_STACK *super, SP_NODE *index);
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *id);
 
-hpint32 hotscript_do_pop_index(SCANNER_STACK *super, SP_NODE *index);
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, const SP_NODE *index);
 
-hpint32 hotscript_do_pop(SCANNER_STACK *super, SP_NODE *id);
+hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *index);
 
-hpint32 hotscript_do_echo_trie(SCANNER_STACK *super);
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *index);
+
+hpint32 hotscript_do_field(SCANNER_STACK *super);
 
 
 #endif//_H_SCRIPT_PARSER

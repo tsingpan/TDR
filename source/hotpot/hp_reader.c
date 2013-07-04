@@ -217,3 +217,13 @@ hpint32 read_type(HPAbstractReader *self, HPType *type)
 	}
 	return self->read_type(self, type);
 }
+
+hpint32 reader_seek(HPAbstractReader *self, hpuint32 index)
+{
+	if(self->reader_seek != NULL)
+	{
+		return E_HP_NOERROR;
+	}
+
+	return self->reader_seek(self, index);
+}

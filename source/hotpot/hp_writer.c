@@ -216,3 +216,12 @@ hpint32 write_type(HPAbstractWriter *self, const HPType type)
 	}
 	return self->write_type(self, type);
 }
+
+hpint32 writer_seek(HPAbstractWriter *self, hpuint32 index)
+{
+	if(self->writer_seek == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->writer_seek(self, index);
+}

@@ -95,7 +95,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			++(self->current_op);
 			break;
 		}
-	case HOT_PUSH:
+	case HOT_FIELD_BEGIN:
 		{
 			//if(hp_reader_begin(self->reader, &op->op1) != E_HP_NOERROR)
 			{
@@ -107,7 +107,7 @@ hpint32 hotvm_execute_once(HotVM *self)
 			}
 			break;
 		}
-	case HOT_PUSH_INDEX:
+	case HOT_VECTOR_BEGIN:
 		{
 			hpint32 ret;
 			if(op->op0.val.i32 < 0)
@@ -129,13 +129,13 @@ hpint32 hotvm_execute_once(HotVM *self)
 			}
 			break;
 		}
-	case HOT_POP:
+	case HOT_VECTOR_END:
 		{
 			//hp_reader_end(self->reader);
 			++(self->current_op);
 			break;
 		}
-	case HOT_ECHO_TRIE:
+	case HOT_ECHO_FIELD:
 		{
 			HPVar var;
 			hpuint32 i;

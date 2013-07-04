@@ -86,11 +86,11 @@ any_char		((.|"\n"))
 	char number[128];
 	memcpy(number, yytext, yyleng);
 	number[yyleng] = 0;
-	yylval->var.type = E_HP_INT32;
-	yylval->var.val.i32 = strtoll(number, NULL, 10);
+	yylval->var.type = E_HP_INT64;
+	yylval->var.val.i64 = strtoll(number, NULL, 10);
 	return tok_integer;
 }
-<ST_IN_SCRIPTING>{identifier}			{ 
+<ST_IN_SCRIPTING>{identifier}			{
 	yylval->var.type = E_HP_BYTES;
 	yylval->var.val.bytes.ptr = yytext;
 	yylval->var.val.bytes.len = yyleng;
