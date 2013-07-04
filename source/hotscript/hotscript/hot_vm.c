@@ -39,6 +39,72 @@ static void normal_putc(HotVM *self, char c)
 	fputc(c, stdout);
 }
 
+
+hpint32 hotvm_echo(HotVM *self, const HotOp* op)
+{
+	hpuint32 i;
+	for(i = 0; i < op->arg.echo_arg.bytes.len; ++i)
+	{
+		self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
+	}
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_vector_seek(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
+{
+	++(self->current_op);
+	return E_HP_NOERROR;
+}
+
 hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	self->reader = reader;
@@ -54,6 +120,17 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	{
 		self->uputc = uputc;
 	}
+
+	self->op_handler[HOT_ECHO] = hotvm_echo;
+	self->op_handler[HOT_FIELD_BEGIN] = hotvm_field_begin;
+	self->op_handler[HOT_FIELD_END] = hotvm_field_end;
+	self->op_handler[HOT_VECTOR_BEGIN] = hotvm_vector_begin;
+	self->op_handler[HOT_VECTOR_END] = hotvm_vector_end;
+	self->op_handler[HOT_VECTOR_SET_INDEX] = hotvm_vector_set_index;
+	self->op_handler[HOT_VECTOR_INC_INDEX] = hotvm_vector_inc_index;
+	self->op_handler[HOT_VECTOR_SEEK] = hotvm_vector_seek;
+	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
+	self->op_handler[HOT_JMP] = hotvm_jmp;
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{

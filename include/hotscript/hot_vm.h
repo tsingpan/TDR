@@ -105,7 +105,7 @@ typedef struct _HotVM HotVM;
 typedef void (*vm_user_putc)(HotVM *self, char c);
 
 #define MAX_FUNCTION_STACK_DEEP 1024
-typedef void (*hotvm_execute_func)(HotVM *self, const HotOp* op);
+typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 struct _HotVM
 {
 	const HotOpArr *hotoparr;
