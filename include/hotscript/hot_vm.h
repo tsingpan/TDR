@@ -18,6 +18,7 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_VECTOR_SEEK						   = 8,
 	HOT_ECHO_FIELD						   = 9,
 	HOT_JMP								   = 10,
+	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 
 typedef struct _HOT_ECHO_ARG
@@ -104,6 +105,7 @@ typedef struct _HotVM HotVM;
 typedef void (*vm_user_putc)(HotVM *self, char c);
 
 #define MAX_FUNCTION_STACK_DEEP 1024
+typedef void (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 struct _HotVM
 {
 	const HotOpArr *hotoparr;
@@ -115,7 +117,11 @@ struct _HotVM
 	vm_user_putc uputc;
 
 	HPAbstractReader *reader;
+
+	hotvm_execute_func op_handler[HOT_MAX];
+
 };
+
 
 hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 

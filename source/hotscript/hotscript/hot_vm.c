@@ -34,58 +34,6 @@ hpuint32 hotoparr_get_next_op_number(HotOpArr *self)
 	return self->next_oparr;
 }
 
-
-
-hpint32 hotvm_execute_once(HotVM *self)
-{
-	const HotOp *op = &self->hotoparr->oparr[self->current_op];
-	switch(op->instruct)
-	{
-	case HOT_ECHO:
-		{
-			hpuint32 i;
-			for(i = 0;i < op->arg.echo_arg.bytes.len; ++i)
-			{
-				self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
-			}
-			++(self->current_op);
-			break;
-		}
-	case HOT_FIELD_BEGIN:
-		{
-			++(self->current_op);
-			break;
-		}
-	case HOT_VECTOR_BEGIN:
-		{
-			++(self->current_op);
-			break;
-		}
-	case HOT_VECTOR_END:
-		{
-			++(self->current_op);
-			break;
-		}
-	case HOT_ECHO_FIELD:
-		{
-			++(self->current_op);
-			break;
-		}
-	case HOT_JMP:
-		{
-			//£¤%¡­¡­&*£¨£©¡£¡£
-			++(self->current_op);
-			break;
-		}
-	default:
-		{
-			exit(1);
-		}
-	}
-
-	return E_HP_NOERROR;
-}
-
 static void normal_putc(HotVM *self, char c)
 {
 	fputc(c, stdout);
@@ -109,7 +57,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{
-		hotvm_execute_once(self);		
+		self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]);
 	}
 
 	return E_HP_NOERROR;
