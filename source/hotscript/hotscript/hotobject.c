@@ -25,6 +25,7 @@ HotObject* hotobject_new()
 	self->keys = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
+	self->var.type = E_HP_NULL;
 	return self;
 }
 

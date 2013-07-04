@@ -29,7 +29,7 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_field_begin(SCANNER_STACK *super, const SP_NODE *prefix, SP_NODE *name)
+hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *prefix, const SP_NODE *name)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
@@ -37,11 +37,10 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, const SP_NODE *prefix, SP
 	op->arg.field_begin_arg.filed_search_strategy = prefix->var.val.c;
 	op->arg.field_begin_arg.name = name->var.val.bytes;
 
-	name->op = op;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *index)
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
@@ -53,7 +52,7 @@ hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *index)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, const SP_NODE *index)
+hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
@@ -67,12 +66,12 @@ hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, const SP_NODE *index)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *index)
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
 
-	if(index->it = E_INDEX_ALL)
+	if(index->it == E_INDEX_ALL)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_JMP;
@@ -85,7 +84,7 @@ hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *index)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *id)
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *id)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
@@ -96,7 +95,7 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *id)
 }
 
 
-hpint32 hotscript_do_echo_field(SCANNER_STACK *super)
+hpint32 hotscript_do_echo_field(SCANNER_STACK *super, SP_NODE *current)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);

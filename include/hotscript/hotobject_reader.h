@@ -15,7 +15,8 @@ typedef struct _HotObjectReader HotObjectReader;
 typedef struct _HotObjectConstStackNode
 {
 	const HotObject *ho;
-	hpuint32 current_index;	
+	hpuint32 current_index;
+	const HotObject *current_ho;
 }HotObjectConstStackNode;
 
 struct _HotObjectReader
@@ -27,6 +28,7 @@ struct _HotObjectReader
 	char name[HOTOBJECT_MAX_NAME_LENGTH];
 };
 
+hpint32 hotobject_reader_seek(HPAbstractReader *super, hpuint32 index);
 hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject);
 
 #endif//_H_HOT_OBJECT_READER
