@@ -9,29 +9,32 @@
 typedef enum _HOTSCRIPT_INSTRUCT
 {
 	HOT_ECHO                               = 0,
-	HOT_ECHO_LITERAL                       = 1,//即将取消
-	HOT_FIELD_BEGIN						   = 2,
-	HOT_FIELD_END						   = 3,
-	HOT_VECTOR_BEGIN					   = 4,
-	HOT_VECTOR_END						   = 5,
-	HOT_VECTOR_SEEK						   = 6,
-	HOT_ECHO_FIELD						   = 7,
-	HOT_JMP								   = 8,
+	HOT_FIELD_BEGIN						   = 1,
+	HOT_FIELD_END						   = 2,
+	HOT_VECTOR_BEGIN					   = 3,
+	HOT_VECTOR_END						   = 4,
+	HOT_VECTOR_SEEK						   = 5,
+	HOT_ECHO_FIELD						   = 6,
+	HOT_JMP								   = 7,
 }HOTSCRIPT_INSTRUCT;
 
 typedef struct _HOT_ECHO_ARG
 {
-	hpuint32 lineno;
+	hpbytes bytes;
 }HOT_ECHO_ARG;
 
-typedef struct _HOT_ECHO_LITERAL_ARG
+typedef enum _INDEX_TYPE
 {
-	hpuint32 lineno;
-}HOT_ECHO_LITERAL_ARG;
+	E_INDEX_GIVEN	= 0,
+	E_INDEX_ALL		= 1,
+	E_INDEX_NULL	= 3,
+}INDEX_TYPE;
 
 typedef struct _HOT_FIELD_BEGIN_ARG
 {
 	hpuint32 lineno;
+	char filed_search_strategy;
+	hpbytes name;
 }HOT_FIELD_BEGIN_ARG;
 
 typedef struct _HOT_FIELD_END_ARG
@@ -51,7 +54,7 @@ typedef struct _HOT_VECTOR_END_ARG
 
 typedef struct _HOT_VECTOR_SEEK_ARG
 {
-	hpuint32 lineno;
+	hpuint32 pos;
 }HOT_VECTOR_SEEK_ARG;
 
 typedef struct _HOT_ECHO_FIELD_ARG
@@ -67,7 +70,6 @@ typedef struct _HOT_JMP_ARG
 typedef union _HOTSCRIPT_ARGUMENT
 {
 	HOT_ECHO_ARG	echo_arg;
-	HOT_ECHO_LITERAL_ARG literal_arg;
 	HOT_FIELD_BEGIN_ARG field_begin_arg;
 	HOT_FIELD_END_ARG field_end_arg;
 	HOT_VECTOR_BEGIN_ARG vector_begin_arg;
@@ -82,12 +84,6 @@ typedef struct _HotOp
 {
 	HOTSCRIPT_INSTRUCT instruct;
 	HOTSCRIPT_ARGUMENT arg;
-	//以下即将取消
-	hpint32 op;
-	HPVar op0;
-	HPVar op1;
-	HPVar op2;
-	hpuint32 lineno;
 }HotOp;
 
 typedef struct _HotOpArr

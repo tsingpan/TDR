@@ -8,12 +8,6 @@
 #include "hot_vm.h"
 #include "hotscript/hotlex.h"
 
-typedef enum _INDEX_TYPE
-{
-	E_INDEX_GIVEN	= 0,
-	E_INDEX_ALL		= 1,
-	E_INDEX_NULL	= 3,
-}INDEX_TYPE;
 typedef struct _SP_NODE
 {
 	INDEX_TYPE it;
