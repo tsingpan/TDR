@@ -305,7 +305,7 @@ Bool:
 	};
 
 TypeAnnotation:
-	tok_unique '= ' Bool CommaOrSemicolonOptional
+	tok_unique '=' Bool CommaOrSemicolonOptional
     {
     }
 |	tok_lower_bound '=' tok_identifier CommaOrSemicolonOptional

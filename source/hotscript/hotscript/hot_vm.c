@@ -24,6 +24,7 @@ HotOp *hotoparr_get_next_op(HotOpArr *self)
 	}
 
 	ptr = &self->oparr[self->next_oparr];
+	ptr->lineno = self->next_oparr;
 	++(self->next_oparr);
 	return ptr;
 }

@@ -13,9 +13,11 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_FIELD_END						   = 2,
 	HOT_VECTOR_BEGIN					   = 3,
 	HOT_VECTOR_END						   = 4,
-	HOT_VECTOR_SEEK						   = 5,
-	HOT_ECHO_FIELD						   = 6,
-	HOT_JMP								   = 7,
+	HOT_VECTOR_SET_INDEX				   = 6,
+	HOT_VECTOR_INC_INDEX				   = 7,
+	HOT_VECTOR_SEEK						   = 8,
+	HOT_ECHO_FIELD						   = 9,
+	HOT_JMP								   = 10,
 }HOTSCRIPT_INSTRUCT;
 
 typedef struct _HOT_ECHO_ARG
@@ -31,10 +33,10 @@ typedef enum _INDEX_TYPE
 }INDEX_TYPE;
 
 typedef struct _HOT_FIELD_BEGIN_ARG
-{
-	hpuint32 lineno;
+{	
 	char filed_search_strategy;
 	hpbytes name;
+	hpuint32 failed_jmp_lineno;
 }HOT_FIELD_BEGIN_ARG;
 
 typedef struct _HOT_FIELD_END_ARG
@@ -44,7 +46,7 @@ typedef struct _HOT_FIELD_END_ARG
 
 typedef struct _HOT_VECTOR_BEGIN_ARG
 {
-	hpuint32 lineno;
+	hpuint32 failed_jmp_lineno;
 }HOT_VECTOR_BEGIN_ARG;
 
 typedef struct _HOT_VECTOR_END_ARG
@@ -52,9 +54,14 @@ typedef struct _HOT_VECTOR_END_ARG
 	hpuint32 lineno;
 }HOT_VECTOR_END_ARG;
 
+typedef struct _HOT_VECTOR_SET_INDEX_ARG
+{
+	hpuint32 index;
+}HOT_VECTOR_SET_INDEX_ARG;
+
 typedef struct _HOT_VECTOR_SEEK_ARG
 {
-	hpuint32 pos;
+	hpuint32 failed_jmp_lineno;
 }HOT_VECTOR_SEEK_ARG;
 
 typedef struct _HOT_ECHO_FIELD_ARG
@@ -73,6 +80,7 @@ typedef union _HOTSCRIPT_ARGUMENT
 	HOT_FIELD_BEGIN_ARG field_begin_arg;
 	HOT_FIELD_END_ARG field_end_arg;
 	HOT_VECTOR_BEGIN_ARG vector_begin_arg;
+	HOT_VECTOR_SET_INDEX_ARG vector_set_index_arg;
 	HOT_VECTOR_SEEK_ARG vector_seek_arg;
 	HOT_VECTOR_END_ARG vector_end_arg;
 	HOT_ECHO_FIELD_ARG echo_field_arg;
@@ -84,6 +92,7 @@ typedef struct _HotOp
 {
 	HOTSCRIPT_INSTRUCT instruct;
 	HOTSCRIPT_ARGUMENT arg;
+	hpuint32 lineno;
 }HotOp;
 
 typedef struct _HotOpArr

@@ -47,18 +47,21 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text);
 
 hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *prefix, const SP_NODE *name);
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *id);
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current);
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current);
 
 hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current);
 
 hpint32 hotscript_do_field(SCANNER_STACK *super, SP_NODE *current);
 
 hpint32 hotscript_do_jmp(SCANNER_STACK *super, SP_NODE *current);
 
+hpint32 hotscript_do_echo_field(SCANNER_STACK *super);
 
 #endif//_H_SCRIPT_PARSER
 
