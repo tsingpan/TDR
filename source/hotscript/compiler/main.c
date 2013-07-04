@@ -40,7 +40,7 @@ int main()
 	hotobject_reader_init(&reader, obj);
 
 	ddekit_json_encoding_writer_init(&json_writer, stdout);
-	if(json_parser(&xp, "d:/1.json", &json_writer.super, &reader.super, &sp) == 0)
+	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super, &sp) == 0)
 	{
 		printf("input succeed\n");
 	}

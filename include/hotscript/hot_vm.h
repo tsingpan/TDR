@@ -119,7 +119,9 @@ struct _HotVM
 	HPAbstractReader *reader;
 
 	hotvm_execute_func op_handler[HOT_MAX];
-
+	
+	hpuint32 stack[MAX_FUNCTION_STACK_DEEP];
+	hpuint32 stack_num;
 };
 
 

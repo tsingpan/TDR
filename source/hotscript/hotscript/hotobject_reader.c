@@ -38,9 +38,15 @@ hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name
 	const HotObject *ob = hotobject_get(self);
 	const HotObject *new_ob;
 	hpint32 ret;
+	char name[1024];
+	hpuint32 i;
+	for(i = 0; i < len; ++i)
+	{
+		name[i] = var_name[i];
+	}
+	name[i] = 0;
 
-
-	ret = trie_retrieve(ob->keys, var_name, &new_ob);
+	ret = trie_retrieve(ob->keys, name, &new_ob);
 	if(!ret)
 	{
 		goto ERROR_RET;
@@ -97,14 +103,6 @@ static const HotObject* get_current_ob(HotObjectReader *self)
 
 ERROR_RET:
 	return NULL;
-}
-
-static hpint32 hotobject_seek(HPAbstractReader *super, hpuint32 index)
-{
-	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	self->stack[self->stack_num - 1].current_index = index;
-	//这个id是否存在？
-	return E_HP_NOERROR;
 }
 
 static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
@@ -182,11 +180,11 @@ hpint32 hotobject_reader_seek(HPAbstractReader *super, hpuint32 index)
 	self->stack[self->stack_num - 1].current_index = index;
 
 	count = index;
-	while(count > 0)
+	do
 	{
-		str[str_len++] = count % 10;
+		str[str_len++] = '0' + count % 10;
 		count/=10;
-	}
+	}while(count > 0);
 	str[str_len++] = TRIE_CHAR_TERM;
 
 
@@ -214,7 +212,13 @@ hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject)
 	self->super.read_vector_end = hotobject_read_vector_end;
 	self->super.read_field_begin = hotobject_read_field_begin;
 	self->super.read_field_end = hotobject_read_field_end;
-	self->super.read_hpint8 = read_hpint8;
+
+	self->super.read_type = hotobject_read_type;
+	self->super.reader_seek = hotobject_reader_seek;
+	self->super.read_bytes = hotobject_read_bytes;
+	self->super.read_hpdouble = hotobject_read_double;
+	self->super.read_hpint64 = hotobject_read_hpint64;
+	self->super.read_hpbool = hotobject_read_hpbool;
 
 	return E_HP_NOERROR;
 }

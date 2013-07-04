@@ -42,9 +42,16 @@ hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_nam
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
 	HotObject *new_ob = hotobject_new();
+	char name[1024];
+	hpuint32 i;
+	for(i = 0; i < len; ++i)
+	{
+		name[i] = var_name[i];
+	}
+	name[i] = 0;
 
 	hotobject_push(self, new_ob);
-	if(!trie_store(ob->keys, var_name, new_ob))
+	if(!trie_store(ob->keys, name, new_ob))
 	{
 		goto ERROR_RET;
 	}
@@ -111,6 +118,7 @@ hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpchar* buff, const
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
 	ob->var.val.bytes.ptr = (char*)malloc(buff_size);
+	memcpy(ob->var.val.bytes.ptr, buff, buff_size);
 	ob->var.val.bytes.len = buff_size;
 	++(self->stack[self->stack_num - 1].current_index);
 	return E_HP_NOERROR;
@@ -150,11 +158,11 @@ hpint32 hotobject_writer_seek(HPAbstractWriter *super, hpuint32 index)
 	self->stack[self->stack_num - 1].current_index = index;
 
 	count = index;
-	while(count > 0)
+	do
 	{
-		str[str_len++] = count % 10;
+		str[str_len++] = '0' + count % 10;
 		count/=10;
-	}
+	}while(count > 0);
 	str[str_len++] = TRIE_CHAR_TERM;
 
 
@@ -184,6 +192,12 @@ hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject)
 	self->super.write_vector_end = hotobject_write_vector_end;
 	self->super.write_field_begin = hotobject_write_field_begin;
 	self->super.write_field_end = hotobject_write_field_end;
+	self->super.write_type = hotobject_write_type;
+	self->super.writer_seek = hotobject_writer_seek;
+	self->super.write_bytes = hotobject_write_bytes;
+	self->super.write_hpdouble = hotobject_write_double;
+	self->super.write_hpint64 = hotobject_write_hpint64;
+	self->super.write_hpbool = hotobject_write_hpbool;
 
 	return E_HP_NOERROR;
 }

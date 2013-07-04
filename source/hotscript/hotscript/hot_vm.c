@@ -53,36 +53,49 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 {
+	read_field_begin(self->reader, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len);
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
+	read_field_end(self->reader, NULL, 0);
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 {
+	self->stack[self->stack_num - 1] = 0;
+	++(self->stack_num);
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 {
+	--(self->stack_num);
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 {
+	self->stack[self->stack_num - 1] = op->arg.vector_set_index_arg.index;
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 {
+	++(self->stack[self->stack_num - 1]);
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
@@ -95,6 +108,23 @@ hpint32 hotvm_vector_seek(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 {
+	HPType type;
+	read_type(self->reader, &type);
+	switch(type)
+	{
+	case E_HP_BYTES:
+		{
+			hpuint32 i;
+			hpbytes bytes;
+			read_bytes(self->reader, &bytes);
+			for(i = 0;i <bytes.len; ++i)
+			{
+				self->uputc(self, bytes.ptr[i]);
+			}
+			break;
+		}
+	}
+
 	++(self->current_op);
 	return E_HP_NOERROR;
 }
@@ -111,6 +141,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->hotoparr = hotoparr;
 	self->current_op = 0;
 	self->user_data = user_data;
+	self->stack_num = 0;
 
 	if(uputc == NULL)
 	{

@@ -98,7 +98,7 @@ Elements:
 Value:
 	tok_string
 	{
-		write_type(YYJSON_WRITER, E_HP_STRING);
+		write_type(YYJSON_WRITER, E_HP_BYTES);
 		write_bytes(YYJSON_WRITER, $1.val.bytes);
 	}
 |	tok_integer
