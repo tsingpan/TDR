@@ -15,10 +15,11 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_VECTOR_END						   = 4,
 	HOT_VECTOR_SET_INDEX				   = 5,
 	HOT_VECTOR_INC_INDEX				   = 6,
-	HOT_VECTOR_SEEK						   = 7,
-	HOT_ECHO_FIELD						   = 8,
-	HOT_JMP								   = 9,
-	HOT_ECHO_LITERAL                       = 10,
+	HOT_VECTOR_ITEM_BEGIN				   = 7,
+	HOT_VECTOR_ITEM_END					   = 8,
+	HOT_ECHO_FIELD						   = 9,
+	HOT_JMP								   = 10,
+	HOT_ECHO_LITERAL                       = 11,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 

@@ -217,11 +217,20 @@ hpint32 write_type(HPAbstractWriter *self, const HPType type)
 	return self->write_type(self, type);
 }
 
-hpint32 writer_seek(HPAbstractWriter *self, hpuint32 index)
+hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index)
 {
-	if(self->writer_seek == NULL)
+	if(self->write_vector_item_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->writer_seek(self, index);
+	return self->write_vector_item_begin(self, index);
+}
+
+hpint32 write_vector_item_end(HPAbstractWriter *self, hpuint32 index)
+{
+	if(self->write_vector_item_end == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_vector_item_end(self, index);
 }

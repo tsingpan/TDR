@@ -14,6 +14,8 @@ struct _HPAbstractReader
 	hpint32 (*read_vector_end)(HPAbstractReader *self);
 	hpint32 (*read_field_begin)(HPAbstractReader *self, const char *var_name, hpuint32 len);
 	hpint32 (*read_field_end)(HPAbstractReader *self, const char *var_name, hpuint32 len);
+	hpint32 (*read_vector_item_begin)(HPAbstractReader *self, hpuint32 index);
+	hpint32 (*read_vector_item_end)(HPAbstractReader *self, hpuint32 index);
 
 	hpint32 (*read_hpint8)(HPAbstractReader *self, hpint8 *val);
 	hpint32 (*read_hpint16)(HPAbstractReader *self, hpint16 *val);
@@ -38,7 +40,7 @@ struct _HPAbstractReader
 
 	hpint32 (*read_type)(HPAbstractReader *self, HPType *type);
 
-	hpint32 (*reader_seek)(HPAbstractReader *self, hpuint32 index);
+	
 };
 
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name);
@@ -66,7 +68,8 @@ hpint32 read_hpbool(HPAbstractReader *self, hpbool *val);
 hpint32 read_null(HPAbstractReader *self);
 hpint32 read_semicolon(HPAbstractReader *self);
 hpint32 read_type(HPAbstractReader *self, HPType *type);
-hpint32 reader_seek(HPAbstractReader *self, hpuint32 index);
+hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index);
+hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index);
 
 #endif //_H_HP_READR
 

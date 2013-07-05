@@ -73,7 +73,7 @@ hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const S
 	}
 
 	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_VECTOR_SEEK;
+	op->instruct = HOT_VECTOR_ITEM_BEGIN;
 	current->vector_seek = op;
 
 	op = hotoparr_get_next_op(&self->hotoparr);

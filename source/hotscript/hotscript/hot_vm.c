@@ -175,7 +175,7 @@ hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_vector_seek(HotVM *self, const HotOp* op)
 {
-	if(reader_seek(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
+	if(read_vector_item_begin(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
 		self->current_op = op->arg.vector_seek_arg.failed_jmp_lineno;
 	}
@@ -297,7 +297,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_VECTOR_END] = hotvm_vector_end;
 	self->op_handler[HOT_VECTOR_SET_INDEX] = hotvm_vector_set_index;
 	self->op_handler[HOT_VECTOR_INC_INDEX] = hotvm_vector_inc_index;
-	self->op_handler[HOT_VECTOR_SEEK] = hotvm_vector_seek;
+	self->op_handler[HOT_VECTOR_ITEM_BEGIN] = hotvm_vector_seek;
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
