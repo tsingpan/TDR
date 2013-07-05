@@ -197,6 +197,9 @@ static hpint32 get_token_yylval(JSON_PARSER *jp, int token, YYSTYPE * yylval)
 					case '"':
 						hpstring_append(&str, &str_len, &str_size, '"');
 						continue;
+					case '\'':
+						hpstring_append(&str, &str_len, &str_size, '\'');
+						continue;
 					case '\\':
 						hpstring_append(&str, &str_len, &str_size, '\\');
 						continue;

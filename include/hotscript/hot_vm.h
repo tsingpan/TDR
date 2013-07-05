@@ -7,7 +7,7 @@
 #include "hotpot/hp_value.h"
 
 typedef enum _HOTSCRIPT_INSTRUCT
-{
+{	
 	HOT_ECHO                               = 0,
 	HOT_FIELD_BEGIN						   = 1,
 	HOT_FIELD_END						   = 2,
@@ -18,6 +18,7 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_VECTOR_SEEK						   = 7,
 	HOT_ECHO_FIELD						   = 8,
 	HOT_JMP								   = 9,
+	HOT_ECHO_LITERAL                       = 10,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 

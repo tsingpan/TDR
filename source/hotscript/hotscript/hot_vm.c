@@ -51,6 +51,61 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 	return E_HP_NOERROR;
 }
 
+hpint32 hotvm_echo_literal(HotVM *self, const HotOp* op)
+{
+	hpuint32 i;
+	for(i = 0; i < op->arg.echo_arg.bytes.len; ++i)
+	{
+		if(op->arg.echo_arg.bytes.ptr[i] == '\\')
+		{
+			++i;
+			if(!(i < op->arg.echo_arg.bytes.len))
+			{
+				break;
+			}
+			switch(op->arg.echo_arg.bytes.ptr[i])
+			{
+			case '"':
+				self->uputc(self, '"');
+				break;
+			case '\'':
+				self->uputc(self, '\'');
+				break;
+			case '\\':
+				self->uputc(self, '\\');
+				break;
+			case '/':
+				self->uputc(self, '/');
+				break;
+			case 'b':
+				self->uputc(self, '\b');
+				break;
+			case 'f':
+				self->uputc(self, '\f');
+				break;
+			case 'n':
+				self->uputc(self, '\n');
+				break;
+			case 'r':
+				self->uputc(self, '\r');
+				break;
+			case 't':
+				self->uputc(self, '\t');
+				break;
+			default:
+				goto ERROR_RET;
+			}
+		}
+		else
+		{
+			self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
+		}
+	}
+	++(self->current_op);
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}
 hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 {
 	//todo filed_search_strategy
@@ -188,6 +243,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_VECTOR_SEEK] = hotvm_vector_seek;
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
+	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{

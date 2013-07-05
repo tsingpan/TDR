@@ -23,7 +23,7 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_ECHO;
+	op->instruct = HOT_ECHO_LITERAL;
 	op->arg.echo_arg.bytes = text->var.val.bytes;
 
 	return E_HP_NOERROR;
