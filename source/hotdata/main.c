@@ -2,6 +2,8 @@
 #include "hotpot/hp_error.h"
 #include "globals.h"
 
+#include "encoding/ddekit_json_encoding_writer.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -31,10 +33,14 @@ char g_gen_c_hotpot_output_path[HP_MAX_FILE_PATH_LENGTH];
 
 DATA_PARSER dp;
 
+JSON_WRITER jw;
+
 int main(int argc, char **argv)
 {
 	int i;
 	int oc;	
+
+	ddekit_json_encoding_writer_init(&jw, stdout);
 
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
@@ -58,7 +64,7 @@ int main(int argc, char **argv)
 
 	for(i = hp_optind; i < argc; ++i)
 	{
-		if(data_parser(&dp, argv[i], NULL) == E_HP_NOERROR)
+		if(data_parser(&dp, argv[i], &jw) == E_HP_NOERROR)
 		{
 			printf("succeed\n");
 		}

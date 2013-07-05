@@ -298,6 +298,10 @@ hpint32 ddekit_json_encoding_write_bytes(HPAbstractWriter *super, const hpbytes 
 
 hpint32 ddekit_json_encoding_write_string(HPAbstractWriter *super, const hpchar* str)
 {
+	hpbytes bytes;
+	bytes.ptr = str;
+	bytes.len = strlen(str);
+	ddekit_json_encoding_write_bytes(super, bytes);
 	return E_HP_NOERROR;
 }
 

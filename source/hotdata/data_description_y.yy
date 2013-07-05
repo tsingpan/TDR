@@ -4,6 +4,7 @@
 
 #define YYERROR_VERBOSE
 #define GET_SELF DATA_PARSER *self = HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
+#define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
 
 %}
 %locations
@@ -72,9 +73,9 @@
 %%
 
 Document :
+	{ write_vector_begin(GET_WRITER); }
 	DefinitionList
-	{
-	};
+	{ write_vector_end(GET_WRITER); };
 
 DefinitionList :
 	DefinitionList Definition 
@@ -84,12 +85,12 @@ DefinitionList :
 	};
 
 Definition :
-	Import
-	{
-	} 
-|	Const
-	{
-	}
+	{write_struct_begin(GET_WRITER, NULL);}
+	Import	
+	{write_struct_end(GET_WRITER, NULL);}	 
+|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "const", strlen("const")); }
+	Const
+	{write_field_end(GET_WRITER, "const", strlen("const"));write_struct_end(GET_WRITER, NULL); write_semicolon(GET_WRITER);} 
 |	Typedef
 	{
 	}
@@ -113,26 +114,54 @@ Import :
 
 
 Const : 
-	tok_const Type tok_identifier '=' Value CommaOrSemicolonOptional
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_const Type tok_identifier 
 	{
-		dp_on_const(ss, &$2, &$3, &$5);
-	/*
-		HPVar name;
-		GET_SELF;
-		name.type = E_HP_STRING;
-		name.val.str = "const";
-		hp_writer_begin(self->writer, &name);
-		name.val.str = "type";
-		hp_writer_begin(self->writer, &name);
-
-		hp_writer_end(self->writer);
-		*/
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+	}
+	'='
+	{
+		write_semicolon(GET_WRITER);
+	}
+	Value
+	CommaOrSemicolonOptional
+	{
+		write_struct_end(GET_WRITER, NULL);
 	}
 
 
 Value :
-	tok_int | tok_hex | tok_identifier | tok_true | tok_false
+	tok_int
 	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_hpint64(GET_WRITER, $1.var.val.i64);
+		write_field_end(GET_WRITER, "value", strlen("value"));
+	}
+|	tok_hex
+	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_hpint64(GET_WRITER, $1.var.val.i64);
+		write_field_end(GET_WRITER, "value", strlen("value"));
+	}
+|	tok_identifier
+	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "value", strlen("value"));
+	}
+|	tok_true
+	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_hpstring(GET_WRITER, "true");
+		write_field_end(GET_WRITER, "value", strlen("value"));
+	}
+|	tok_false
+	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_hpstring(GET_WRITER, "false");
+		write_field_end(GET_WRITER, "value", strlen("value"));
 	};
 
 Typedef :
