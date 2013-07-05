@@ -53,9 +53,17 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 {
-	read_field_begin(self->reader, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len);
+	//todo filed_search_strategy
+	if(read_field_begin(self->reader, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len) != E_HP_NOERROR)
+	{
+		self->current_op = op->arg.field_begin_arg.failed_jmp_lineno;
+	}
+	else
+	{
+		++(self->current_op);
+	}
 
-	++(self->current_op);
+	
 	return E_HP_NOERROR;
 }
 
@@ -69,15 +77,25 @@ hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 {
-	self->stack[self->stack_num - 1] = 0;
+	self->stack[self->stack_num] = 0;
 	++(self->stack_num);
 
-	++(self->current_op);
+	if(read_vector_begin(self->reader) != E_HP_NOERROR)
+	{
+		self->current_op = op->arg.vector_begin_arg.failed_jmp_lineno;
+	}
+	else
+	{
+		++(self->current_op);
+	}
+
+	
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 {
+	read_vector_end(self->reader);
 	--(self->stack_num);
 
 	++(self->current_op);
@@ -102,7 +120,14 @@ hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_vector_seek(HotVM *self, const HotOp* op)
 {
-	++(self->current_op);
+	if(reader_seek(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
+	{
+		self->current_op = op->arg.vector_seek_arg.failed_jmp_lineno;
+	}
+	else
+	{
+		++(self->current_op);
+	}
 	return E_HP_NOERROR;
 }
 
@@ -131,7 +156,8 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 {
-	++(self->current_op);
+	self->current_op = op->arg.jmp_arg.lineno;
+
 	return E_HP_NOERROR;
 }
 

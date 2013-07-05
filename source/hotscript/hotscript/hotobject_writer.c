@@ -165,7 +165,11 @@ hpint32 hotobject_writer_seek(HPAbstractWriter *super, hpuint32 index)
 	}while(count > 0);
 	str[str_len++] = TRIE_CHAR_TERM;
 
-
+	//fix bug~
+	/*
+	trie_store(ob->keys, "[0]", 1);
+	trie_retrieve(ob->keys, "[1]", &new_ob);
+*/
 	if(!trie_retrieve(ob->keys, str, &new_ob))
 	{
 		new_ob = hotobject_new();

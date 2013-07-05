@@ -13,11 +13,11 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_FIELD_END						   = 2,
 	HOT_VECTOR_BEGIN					   = 3,
 	HOT_VECTOR_END						   = 4,
-	HOT_VECTOR_SET_INDEX				   = 6,
-	HOT_VECTOR_INC_INDEX				   = 7,
-	HOT_VECTOR_SEEK						   = 8,
-	HOT_ECHO_FIELD						   = 9,
-	HOT_JMP								   = 10,
+	HOT_VECTOR_SET_INDEX				   = 5,
+	HOT_VECTOR_INC_INDEX				   = 6,
+	HOT_VECTOR_SEEK						   = 7,
+	HOT_ECHO_FIELD						   = 8,
+	HOT_JMP								   = 9,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 

@@ -17,13 +17,13 @@ HotObject* hotobject_new()
 	AlphaMap *alpha_map = NULL;
 
 	alpha_map = alpha_map_new();
-	/*
+	
 	alpha_map_add_range(alpha_map, 'a', 'z');
 	alpha_map_add_range(alpha_map, 'A', 'Z');
 	alpha_map_add_range(alpha_map, '0', '9');
 	alpha_map_add_range(alpha_map, '_', '_');
-	*/
-	alpha_map_add_range(alpha_map, 0, 0xff);
+	
+	//alpha_map_add_range(alpha_map, 0, 0xff);
 	self->keys = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
