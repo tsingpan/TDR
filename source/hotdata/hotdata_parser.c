@@ -49,7 +49,8 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 	SCANNER_STACK *ss = &dp->scanner_stack;
-
+	yylval->ori_text.ptr = yytext;
+	yylval->ori_text.len = yyleng;
 
 	switch(token)
 	{

@@ -78,34 +78,41 @@ Document :
 	{ write_vector_end(GET_WRITER); };
 
 DefinitionList :
-	DefinitionList Definition 
+	DefinitionList 
+	{write_semicolon(GET_WRITER);}
+	Definition 
+|	Definition 
 	{
-	}
-|	{
 	};
 
 Definition :
 	{write_struct_begin(GET_WRITER, NULL);}
 	Import	
 	{write_struct_end(GET_WRITER, NULL);}	 
+
 |	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "const", strlen("const")); }
 	Const
-	{write_field_end(GET_WRITER, "const", strlen("const"));write_struct_end(GET_WRITER, NULL); write_semicolon(GET_WRITER);} 
-|	Typedef
-	{
-	}
-|	Struct
-	{
-	}
-|	Union
-	{
-	}
-|	Enum
-	{
-	}
-|   UnixComment
-	{
-	};
+	{write_field_end(GET_WRITER, "const", strlen("const"));write_struct_end(GET_WRITER, NULL);} 
+
+|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "typedef", strlen("typedef")); }
+	Typedef
+	{write_field_end(GET_WRITER, "typedef", strlen("typedef"));write_struct_end(GET_WRITER, NULL); } 
+
+|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "struct", strlen("struct")); }
+	Struct
+	{write_field_end(GET_WRITER, "struct", strlen("struct"));write_struct_end(GET_WRITER, NULL);} 
+
+|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "union", strlen("union")); }
+	Union
+	{write_field_end(GET_WRITER, "union", strlen("union"));write_struct_end(GET_WRITER, NULL);} 
+
+|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "enum", strlen("enum")); }
+	Enum
+	{write_field_end(GET_WRITER, "enum", strlen("enum"));write_struct_end(GET_WRITER, NULL);} 
+
+|   {write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "comment", strlen("comment")); }
+	UnixComment
+	{write_field_end(GET_WRITER, "comment", strlen("comment"));write_struct_end(GET_WRITER, NULL);} ;
 
 Import : 
 	tok_import
@@ -138,30 +145,54 @@ Value :
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpint64(GET_WRITER, $1.var.val.i64);
 		write_field_end(GET_WRITER, "value", strlen("value"));
+
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "text", strlen("value"));
+		write_bytes(GET_WRITER, $1.ori_text);
+		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_hex
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpint64(GET_WRITER, $1.var.val.i64);
 		write_field_end(GET_WRITER, "value", strlen("value"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "text", strlen("value"));
+		write_bytes(GET_WRITER, $1.ori_text);
+		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "value", strlen("value"));
+
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "text", strlen("value"));
+		write_bytes(GET_WRITER, $1.ori_text);
+		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_true
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "true");
 		write_field_end(GET_WRITER, "value", strlen("value"));
+
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "text", strlen("value"));
+		write_bytes(GET_WRITER, $1.ori_text);
+		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_false
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "false");
 		write_field_end(GET_WRITER, "value", strlen("value"));
+
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "text", strlen("value"));
+		write_bytes(GET_WRITER, $1.ori_text);
+		write_field_end(GET_WRITER, "text", strlen("value"));
 	};
 
 Typedef :
@@ -170,22 +201,36 @@ Typedef :
 	};
 	
 Enum :
-	tok_enum TypeAnnotations tok_identifier '{' EnumDefList '}' CommaOrSemicolonOptional
-	{
-    };
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_enum TypeAnnotations tok_identifier 
+	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
+	EnumDefList 
+	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
+	CommaOrSemicolonOptional
+	{write_struct_end(GET_WRITER, NULL);};
     
 EnumDefList : 
-	EnumDefList EnumDef
+	EnumDefList {write_semicolon(GET_WRITER);} EnumDef
 	{
 	}
-|
+|	EnumDef
 	{
 	};
 	
 EnumDef : 
-	tok_identifier '=' Value CommaOrSemicolonOptional UnixComment
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_identifier 
 	{
-	};
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+	}
+	'='
+	{
+		write_semicolon(GET_WRITER);
+	}
+	Value CommaOrSemicolonOptional UnixComment
+	{write_struct_end(GET_WRITER, NULL);};
     
 
 Union :
