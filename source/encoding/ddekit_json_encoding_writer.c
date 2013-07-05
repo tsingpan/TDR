@@ -37,7 +37,8 @@ hpint32 ddekit_json_encoding_writer_init(JSON_WRITER *self, FILE *f)
 	self->super.write_hpbool = ddekit_json_encoding_write_hpbool;
 	self->super.write_null = ddekit_json_encoding_write_null;
 	self->super.write_semicolon = ddekit_json_encoding_write_semicolon;
-	
+	self->super.write_vector_item_begin = ddekit_json_encoding_write_vector_item_begin;
+
 	
 
 	return E_HP_NOERROR;
@@ -341,5 +342,11 @@ HP_API hpint32 ddekit_json_encoding_write_semicolon(HPAbstractWriter *super)
 	JSON_WRITER *self = HP_CONTAINER_OF(super, JSON_WRITER, super);
 	fprintf(self->f, ",");
 	fputc('\n', self->f);
+	return E_HP_NOERROR;
+}
+
+HP_API hpint32 ddekit_json_encoding_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
+{
+	JSON_WRITER *self = HP_CONTAINER_OF(super, JSON_WRITER, super);
 	return E_HP_NOERROR;
 }

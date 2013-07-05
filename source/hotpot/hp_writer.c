@@ -33,6 +33,7 @@ hpint32 write_vector_begin(HPAbstractWriter *self)
 
 hpint32 write_vector_end(HPAbstractWriter *self)
 {
+	--(self->stack_num);
 	if(self->write_vector_end == NULL)
 	{
 		return E_HP_NOERROR;

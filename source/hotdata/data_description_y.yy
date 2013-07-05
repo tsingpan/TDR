@@ -73,9 +73,17 @@
 %%
 
 Document :
-	{ write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "DefinitionList", strlen("DefinitionList")); write_vector_begin(GET_WRITER); }
+	{
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
+		write_vector_begin(GET_WRITER);
+	}
 	DefinitionList
-	{ write_vector_end(GET_WRITER); write_field_end(GET_WRITER, "DefinitionList", strlen("DefinitionList")); write_struct_end(GET_WRITER, NULL);};
+	{
+		write_vector_end(GET_WRITER);
+		write_field_end(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
+		write_struct_end(GET_WRITER, NULL);
+	};
 
 DefinitionList :
 	DefinitionList 
@@ -291,17 +299,16 @@ Struct :
 	
 FieldList: 
 	FieldList {write_semicolon(GET_WRITER);}
-	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
-	Field
-	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));}
+	Field	
 |	
-	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
 	Field
-	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 	
 
 Field : 
-	{write_struct_begin(GET_WRITER, NULL);}
+	{
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_begin(GET_WRITER, NULL);
+	}
 	FieldCondition 
 	Type {write_semicolon(GET_WRITER);}
 	Arguments 
@@ -312,7 +319,11 @@ Field :
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	';' UnixComment
-	{write_struct_end(GET_WRITER, NULL);};
+	{
+		write_struct_end(GET_WRITER, NULL);
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+	};
+
 	
 
 FieldCondition : 
@@ -448,17 +459,16 @@ Parameters :
 	
 ParameterList:
 	ParameterList {write_semicolon(GET_WRITER);} 
-	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
 	Parameter 
-	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));}
 |	
-	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
 	Parameter
-	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 	
 	
 Parameter:
-	{write_struct_begin(GET_WRITER, NULL);}
+	{
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_begin(GET_WRITER, NULL);
+	}
 	Type {write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
@@ -467,7 +477,10 @@ Parameter:
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	CommaOrSemicolonOptional
-	{write_struct_end(GET_WRITER, NULL);};
+	{
+		write_struct_end(GET_WRITER, NULL);
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+	};
 
 
 

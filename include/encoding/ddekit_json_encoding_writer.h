@@ -67,4 +67,7 @@ HP_API hpint32 ddekit_json_encoding_write_null(HPAbstractWriter *self);
 
 HP_API hpint32 ddekit_json_encoding_write_semicolon(HPAbstractWriter *super);
 
+HP_API hpint32 ddekit_json_encoding_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
+
+
 #endif//_H_DDEKIT_JSON_ENCODING_WRITER

@@ -34,6 +34,7 @@ hpint32 read_vector_begin(HPAbstractReader *self)
 
 hpint32 read_vector_end(HPAbstractReader *self)
 {
+	--(self->stack_num);
 	if(self->read_vector_end == NULL)
 	{
 		return E_HP_NOERROR;
