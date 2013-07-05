@@ -22,6 +22,7 @@ static HotObject* get_current_ob(HotObjectWriter *self)
 	HotObject *ob = hotobject_get(self);
 	if(ob->var.type ==  E_HP_VECTOR)
 	{
+		printf("error %d %d\n", self->stack[self->stack_num - 1].current_index, self->stack_num);
 		if(hotobject_writer_seek(&self->super, self->stack[self->stack_num - 1].current_index) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;

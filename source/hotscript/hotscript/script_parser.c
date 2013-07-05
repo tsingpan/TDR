@@ -31,15 +31,22 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 
 
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current)
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = NULL;
+	if(index->it == E_INDEX_NULL)
+	{
+		goto ERROR_RET;
+	}
+	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_BEGIN;
 
 	current->vector_begin = op;
 
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
@@ -86,7 +93,6 @@ hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, con
 	{
 		goto ERROR_RET;
 	}
-
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_JMP;
 	op->arg.jmp_arg.lineno = current->vector_seek->lineno;
@@ -98,16 +104,21 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current)
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
-	
+	if(index->it == E_INDEX_NULL)
+	{
+		goto ERROR_RET;
+	}
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_END;
 
 	current->vector_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *prefix, const SP_NODE *name)

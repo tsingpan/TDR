@@ -304,7 +304,8 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{
-		self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]);
+		printf("line :%d %d\n", self->current_op, self->stack[self->stack_num  -1]);
+		self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]);		
 	}
 
 	return E_HP_NOERROR;

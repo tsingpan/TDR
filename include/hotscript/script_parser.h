@@ -50,13 +50,13 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const S
 
 hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current);
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current);
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
 hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
 hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current);
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
 hpint32 hotscript_do_field(SCANNER_STACK *super, SP_NODE *current);
 
