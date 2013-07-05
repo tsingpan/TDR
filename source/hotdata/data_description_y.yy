@@ -183,9 +183,18 @@ Value :
 	};
 
 Typedef :
-	tok_typedef Type Arguments tok_identifier CommaOrSemicolonOptional
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_typedef Type 
+	{write_semicolon(GET_WRITER);}
+	Arguments
+	tok_identifier
 	{
-	};
+		write_field_begin(GET_WRITER, "new_type", strlen("new_type"));
+		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_field_end(GET_WRITER, "new_type", strlen("new_type"));
+	}
+	CommaOrSemicolonOptional
+	{write_struct_end(GET_WRITER, NULL);};
 	
 Enum :
 	{write_struct_begin(GET_WRITER, NULL);}
