@@ -172,6 +172,7 @@ hpint32 hotobject_reader_seek(HPAbstractReader *super, hpuint32 index)
 	hpint32 count;
 	if(ob->var.type != E_HP_VECTOR)
 	{
+		printf("error %d\n", ob->var.type);
 		goto ERROR_RET;
 	}
 

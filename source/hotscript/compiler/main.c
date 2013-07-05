@@ -40,7 +40,7 @@ int main()
 	hotobject_reader_init(&reader, obj);
 
 	ddekit_json_encoding_writer_init(&json_writer, stdout);
-	if(json_parser(&xp, "d:/1.json", &writer.super, &reader.super, &sp) == 0)
+	if(json_parser(&xp, "d:/ttt.json", &writer.super, &reader.super, &sp) == 0)
 	{
 		printf("input succeed\n");
 	}
@@ -50,7 +50,7 @@ int main()
 		return 1;
 	}
 	hotobject_reader_init(&reader, obj);
-	if(script_parser(&sp, "d:/2.xml", &reader.super, NULL, NULL) == 0)
+	if(script_parser(&sp, "d:/c_hotpot_types", &reader.super, NULL, NULL) == 0)
 	{
 		printf("output succeed\n");
 	}

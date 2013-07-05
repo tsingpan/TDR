@@ -74,7 +74,9 @@ hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name,
 hpint32 hotobject_write_vector_begin(HPAbstractWriter *super)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
+	HotObject *ob = hotobject_get(self);
 	self->stack[self->stack_num - 1].current_index = 0;
+	ob->var.type = E_HP_VECTOR;
 
 	return E_HP_NOERROR;
 }
@@ -90,6 +92,7 @@ static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
+	ob->var.type = E_HP_INT8;
 	ob->var.val.i8 = val;
 	++(self->stack[self->stack_num - 1].current_index);
 	return E_HP_NOERROR;
@@ -99,6 +102,7 @@ static hpint32 hotobject_write_double(HPAbstractWriter *super, const hpdouble va
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
+	ob->var.type = E_HP_DOUBLE;
 	ob->var.val.d = val;
 	++(self->stack[self->stack_num - 1].current_index);
 	return E_HP_NOERROR;
@@ -108,6 +112,7 @@ static hpint32 hotobject_write_hpint64(HPAbstractWriter *super, const hpint64 va
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
+	ob->var.type = E_HP_INT64;
 	ob->var.val.i64 = val;
 	++(self->stack[self->stack_num - 1].current_index);
 	return E_HP_NOERROR;
@@ -117,6 +122,7 @@ hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpchar* buff, const
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
+	ob->var.type = E_HP_BYTES;
 	ob->var.val.bytes.ptr = (char*)malloc(buff_size);
 	memcpy(ob->var.val.bytes.ptr, buff, buff_size);
 	ob->var.val.bytes.len = buff_size;
@@ -137,6 +143,7 @@ hpint32 hotobject_write_hpbool(HPAbstractWriter *super, const hpbool val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = get_current_ob(self);
+	ob->var.type = E_HP_BOOL;
 	ob->var.val.b = val;
 	++(self->stack[self->stack_num - 1].current_index);
 	return E_HP_NOERROR;

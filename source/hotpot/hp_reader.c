@@ -182,7 +182,7 @@ hpint32 read_bytes(HPAbstractReader *self, hpchar* buff, hpuint32 *buff_size)
 	return self->read_bytes(self, buff, buff_size);
 }
 
-hpint32 read_bool(HPAbstractReader *self, hpbool *val)
+hpint32 read_hpbool(HPAbstractReader *self, hpbool *val)
 {
 	if(self->read_hpbool == NULL)
 	{

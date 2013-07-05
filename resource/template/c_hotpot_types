@@ -1,0 +1,12 @@
+<%
+	$DefinitionList[*]
+	{
+			$const
+			{
+%>
+#define <% $name %> <% $value %>
+<%
+			}
+	
+	}
+%>

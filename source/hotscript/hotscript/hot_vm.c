@@ -203,6 +203,63 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 			}
 			break;
 		}
+	case E_HP_INT64:
+		{
+			const char *i;
+			hpint64 i64;
+			char number[1024];
+			read_hpint64(self->reader, &i64);
+			snprintf(number, 1024, "%lld", i64);
+
+			for(i = number; *i; ++i)
+			{
+				self->uputc(self, *i);
+			}
+			break;
+		}
+	case E_HP_DOUBLE:
+		{
+			const char *i;
+			hpdouble d;
+			char number[1024];
+			read_hpdouble(self->reader, &d);
+			snprintf(number, 1024, "%lf", d);
+
+			for(i = number; *i; ++i)
+			{
+				self->uputc(self, *i);
+			}
+			break;
+		}
+	case E_HP_BOOL:
+		{
+			const char *i;
+			hpbool b;
+			char number[1024];
+			read_hpbool(self->reader, &b);
+			if(b)
+			{
+				snprintf(number, 1024, "hptrue");
+			}
+			else
+			{
+				snprintf(number, 1024, "hpfalse");
+			}
+			
+
+			for(i = number; *i; ++i)
+			{
+				self->uputc(self, *i);
+			}
+			break;
+		}
+	case E_HP_NULL:
+		{
+			self->uputc(self, 'n');
+			self->uputc(self, 'u');
+			self->uputc(self, 'l');
+			self->uputc(self, 'l');
+		}
 	}
 
 	++(self->current_op);

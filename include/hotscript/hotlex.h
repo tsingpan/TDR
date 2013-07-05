@@ -36,7 +36,7 @@ struct _SCANNER
 	hpuint32 yycolumn;
 };
 
-#define MAX_BUFF_SIZE 10240
+#define MAX_BUFF_SIZE 1000000
 #define MAX_SCANNER_STACK_DEEP 1024
 
 typedef struct _SCANNER_STACK SCANNER_STACK;
