@@ -14,7 +14,6 @@ typedef struct _SyntacticNode SyntacticNode;
 struct _SyntacticNode
 {
 	HPVar var;
-	hpbytes ori_text;
 };
 
 

@@ -49,8 +49,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 	SCANNER_STACK *ss = &dp->scanner_stack;
-	yylval->ori_text.ptr = yytext;
-	yylval->ori_text.len = yyleng;
+
 
 	switch(token)
 	{
@@ -84,10 +83,20 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 			break;
 		}
 	case tok_int:
+		{
+			errno = 0;
+			yylval->var.type = E_HP_INT64;
+			yylval->var.val.i64 = strtoll(yytext+2, NULL, 10);
+			if (errno == ERANGE)
+			{
+				dp->result = E_HP_ERROR;
+				goto ERROR_RET;
+			}
+			break;
+		}
 	case tok_hex:
 		{
 			errno = 0;
-			
 			yylval->var.type = E_HP_INT64;
 			yylval->var.val.i64 = strtoll(yytext+2, NULL, 16);
 			if (errno == ERANGE)

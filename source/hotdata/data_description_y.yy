@@ -73,9 +73,9 @@
 %%
 
 Document :
-	{ write_vector_begin(GET_WRITER); }
+	{ write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "DefinitionList", strlen("DefinitionList")); write_vector_begin(GET_WRITER); }
 	DefinitionList
-	{ write_vector_end(GET_WRITER); };
+	{ write_vector_end(GET_WRITER); write_field_end(GET_WRITER, "DefinitionList", strlen("DefinitionList")); write_struct_end(GET_WRITER, NULL);};
 
 DefinitionList :
 	DefinitionList 
@@ -122,10 +122,12 @@ Import :
 
 Const : 
 	{write_struct_begin(GET_WRITER, NULL);}
-	tok_const Type tok_identifier 
+	tok_const 
+	Type {write_semicolon(GET_WRITER);}
+	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_bytes(GET_WRITER, $5.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	'='
@@ -147,9 +149,9 @@ Value :
 		write_field_end(GET_WRITER, "value", strlen("value"));
 
 		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "text", strlen("value"));
-		write_bytes(GET_WRITER, $1.ori_text);
-		write_field_end(GET_WRITER, "text", strlen("value"));
+		write_field_begin(GET_WRITER, "base", strlen("base"));
+		write_hpint64(GET_WRITER, 10);
+		write_field_end(GET_WRITER, "base", strlen("base"));
 	}
 |	tok_hex
 	{
@@ -157,42 +159,27 @@ Value :
 		write_hpint64(GET_WRITER, $1.var.val.i64);
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "text", strlen("value"));
-		write_bytes(GET_WRITER, $1.ori_text);
-		write_field_end(GET_WRITER, "text", strlen("value"));
+		write_field_begin(GET_WRITER, "base", strlen("base"));
+		write_hpint64(GET_WRITER, 16);
+		write_field_end(GET_WRITER, "base", strlen("base"));
 	}
 |	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "value", strlen("value"));
-
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "text", strlen("value"));
-		write_bytes(GET_WRITER, $1.ori_text);
-		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_true
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "true");
 		write_field_end(GET_WRITER, "value", strlen("value"));
-
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "text", strlen("value"));
-		write_bytes(GET_WRITER, $1.ori_text);
-		write_field_end(GET_WRITER, "text", strlen("value"));
 	}
 |	tok_false
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "false");
 		write_field_end(GET_WRITER, "value", strlen("value"));
-
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "text", strlen("value"));
-		write_bytes(GET_WRITER, $1.ori_text);
-		write_field_end(GET_WRITER, "text", strlen("value"));
 	};
 
 Typedef :
@@ -222,7 +209,7 @@ EnumDef :
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $2.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	'='
@@ -234,31 +221,57 @@ EnumDef :
     
 
 Union :
-	tok_union TypeAnnotations tok_identifier  Parameters '{' FieldList '}'  CommaOrSemicolonOptional
-	{
-	};
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_union 
+	TypeAnnotations	
+	tok_identifier 
+	{write_field_begin(GET_WRITER, "Parameters", strlen("Parameters")); }
+	Parameters
+	{write_field_end(GET_WRITER, "Parameters", strlen("Parameters")); write_semicolon(GET_WRITER);}
+	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
+	FieldList 
+	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
+	CommaOrSemicolonOptional
+	{write_struct_end(GET_WRITER, NULL);};
 	
 	
 Struct : 
-	tok_struct TypeAnnotations tok_identifier Parameters '{' FieldList '}' CommaOrSemicolonOptional
-	{
-	};
+	{write_struct_begin(GET_WRITER, NULL);}
+	tok_struct TypeAnnotations tok_identifier
+	{write_field_begin(GET_WRITER, "Parameters", strlen("Parameters")); }
+	Parameters
+	{write_field_end(GET_WRITER, "Parameters", strlen("Parameters")); write_semicolon(GET_WRITER);}
+	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
+	FieldList
+	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
+	CommaOrSemicolonOptional
+	{write_struct_end(GET_WRITER, NULL);};
 	
 
 	
 FieldList: 
-	FieldList Field
+	FieldList {write_semicolon(GET_WRITER);}
+	Field
 	{
 	}
-|
+|	Field
 	{
 	};
 	
 
 Field : 
-	FieldCondition Type Arguments tok_identifier ';' UnixComment
+	{write_struct_begin(GET_WRITER, NULL);}
+	FieldCondition 
+	Type {write_semicolon(GET_WRITER);}
+	Arguments 
+	tok_identifier
 	{
-	};
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+	}
+	';' UnixComment
+	{write_struct_end(GET_WRITER, NULL);};
 	
 
 FieldCondition : 
@@ -294,36 +307,124 @@ FieldExpression :
 
 
 Type :
-	tok_t_bool | tok_t_char | tok_t_double | tok_t_string | tok_t_vector
-	| tok_t_int8 | tok_t_int16 | tok_t_int32 | tok_t_int64
-	| tok_t_uint8 | tok_t_uint16 | tok_t_uint32 | tok_t_uint64
+	tok_t_bool
 	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "bool");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_char
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "char");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_double
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "double");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_string
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "string");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_vector
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "vector");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_int8
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "int8");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_int16
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "int16");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_int32
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "int32");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_int64
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "int64");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_uint8 
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "uint8");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_uint16 
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "uint16");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_uint32 
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "uint32");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+|	tok_t_uint64
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "uint64");
+		write_field_end(GET_WRITER, "type", strlen("type"));
 	}
 |	tok_identifier
    	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "type", strlen("type"));
 	};
 
 Parameters :
-	'<' ParameterList '>'
+	'<' 
+	{write_vector_begin(GET_WRITER);}
+	ParameterList
+	{write_vector_end(GET_WRITER);}
+	'>'
 	{
 	}
 |
 	{
+		write_null(GET_WRITER);
 	};
 	
 ParameterList:
-	ParameterList Parameter 
+	ParameterList {write_semicolon(GET_WRITER);} Parameter 
 	{
 	}
-|
+|	Parameter
 	{
 	};
 	
 	
 Parameter:
-	Type tok_identifier CommaOrSemicolonOptional
+	{write_struct_begin(GET_WRITER, NULL);}
+	Type {write_semicolon(GET_WRITER);}
+	tok_identifier
 	{
-	};
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+	}
+	CommaOrSemicolonOptional
+	{write_struct_end(GET_WRITER, NULL);};
 
 
 
@@ -350,11 +451,17 @@ Argument:
 	}
 
 UnixComment:
+	{write_struct_begin(GET_WRITER, NULL)}
 	tok_unixcomment
 	{
+		write_field_begin(GET_WRITER, "text", strlen("text"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "text", strlen("text"));
+		write_struct_end(GET_WRITER, NULL);
 	}
 |
 	{
+		
 	};
 
 TypeAnnotations:
