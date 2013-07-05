@@ -198,7 +198,14 @@ Typedef :
 	
 Enum :
 	{write_struct_begin(GET_WRITER, NULL);}
-	tok_enum TypeAnnotations tok_identifier 
+	tok_enum TypeAnnotations
+	tok_identifier
+	{
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+		write_semicolon(GET_WRITER);
+	}
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
 	EnumDefList 
 	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
@@ -234,7 +241,14 @@ Union :
 	tok_union 
 	TypeAnnotations	
 	tok_identifier 
-	{write_field_begin(GET_WRITER, "Parameters", strlen("Parameters")); }
+	{
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+		write_semicolon(GET_WRITER);
+
+		write_field_begin(GET_WRITER, "Parameters", strlen("Parameters"));
+	}
 	Parameters
 	{write_field_end(GET_WRITER, "Parameters", strlen("Parameters")); write_semicolon(GET_WRITER);}
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
@@ -246,8 +260,16 @@ Union :
 	
 Struct : 
 	{write_struct_begin(GET_WRITER, NULL);}
-	tok_struct TypeAnnotations tok_identifier
-	{write_field_begin(GET_WRITER, "Parameters", strlen("Parameters")); }
+	tok_struct TypeAnnotations
+	tok_identifier
+	{
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+		write_semicolon(GET_WRITER);
+
+		write_field_begin(GET_WRITER, "Parameters", strlen("Parameters"));
+	}
 	Parameters
 	{write_field_end(GET_WRITER, "Parameters", strlen("Parameters")); write_semicolon(GET_WRITER);}
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
@@ -464,7 +486,7 @@ UnixComment:
 	tok_unixcomment
 	{
 		write_field_begin(GET_WRITER, "text", strlen("text"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $2.var.val.bytes);
 		write_field_end(GET_WRITER, "text", strlen("text"));
 		write_struct_end(GET_WRITER, NULL);
 	}

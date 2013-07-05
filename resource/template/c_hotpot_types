@@ -1,12 +1,37 @@
 <%
 	$DefinitionList[*]
 	{
+			$comment
+			{
+%>
+//<% $text %>
+<%
+			}
+
 			$const
 			{
 %>
+#ifndef _DEF_<% $name %>
 #define <% $name %> <% $value %>
+#endif//_DEF_<% $name %>
 <%
 			}
-	
+
+			$enum
+			{
+%>
+typedef enum _<% $name %>
+{
+<%
+				$list[*]
+				{
+%>
+	<% $name %> = <% $value %> ,
+<%				}
+%>
+}<% $name %>
+<%
+			}
 	}
 %>
+
