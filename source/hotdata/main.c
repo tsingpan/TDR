@@ -39,8 +39,9 @@ int main(int argc, char **argv)
 {
 	int i;
 	int oc;	
-
-	ddekit_json_encoding_writer_init(&jw, stdout);
+	FILE *fout;
+	fout = fopen("d:/ast_base.out", "w");
+	ddekit_json_encoding_writer_init(&jw, fout);
 
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
@@ -73,5 +74,6 @@ int main(int argc, char **argv)
 			printf("failed\n");
 		}
 	}
+	fclose(fout);
 	return 0;
 }
