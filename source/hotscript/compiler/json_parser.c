@@ -20,7 +20,6 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->sp = sp;
 	self->writer = writer;
 	self->reader = reader;
-	self->vector_stack_num = 0;
 	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
@@ -317,33 +316,4 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	}
 
 	return ret;
-}
-
-hpint32 jp_vector_begin(JSON_PARSER *self)
-{
-	self->vector_stack[self->vector_stack_num] = 0;
-	++(self->vector_stack_num);
-	return E_HP_NOERROR;
-}
-
-hpint32 jp_vector_item_begin(JSON_PARSER *self)
-{
-	return E_HP_NOERROR;
-}
-
-hpuint32 jp_vector_get_index(JSON_PARSER *self)
-{
-	return self->vector_stack[self->vector_stack_num - 1];
-}
-
-hpint32 jp_vector_item_end(JSON_PARSER *self)
-{
-	++(self->vector_stack[self->vector_stack_num - 1]);
-	return E_HP_NOERROR;
-}
-
-hpint32 jp_vector_end(JSON_PARSER *self)
-{
-	--(self->vector_stack_num);
-	return E_HP_NOERROR;
 }

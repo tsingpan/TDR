@@ -22,6 +22,9 @@ hpint32 read_struct_end(HPAbstractReader *self, const char *struct_name)
 
 hpint32 read_vector_begin(HPAbstractReader *self)
 {
+	++(self->stack_num);
+	self->stack[self->stack_num - 1] = 0;
+
 	if(self->read_vector_begin == NULL)
 	{
 		return E_HP_NOERROR;
@@ -173,13 +176,13 @@ hpint32 read_hpstring(HPAbstractReader *self, hpchar* str, hpuint32 *str_length)
 	return self->read_hpstring(self, str, str_length);
 }
 
-hpint32 read_bytes(HPAbstractReader *self, hpchar* buff, hpuint32 *buff_size)
+hpint32 read_bytes(HPAbstractReader *self, hpbytes *bytes)
 {
 	if(self->read_bytes == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_bytes(self, buff, buff_size);
+	return self->read_bytes(self, bytes);
 }
 
 hpint32 read_hpbool(HPAbstractReader *self, hpbool *val)
@@ -220,6 +223,7 @@ hpint32 read_type(HPAbstractReader *self, HPType *type)
 
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 {
+	self->stack[self->stack_num - 1] = index;
 	if(self->read_vector_item_begin == NULL)
 	{
 		return E_HP_NOERROR;
@@ -230,10 +234,16 @@ hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index)
 {
+	self->stack[self->stack_num - 1] = index + 1;
 	if(self->read_vector_item_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
 
 	return self->read_vector_item_end(self, index);
+}
+
+hpuint32 reader_get_index(HPAbstractReader *self)
+{
+	return self->stack[self->stack_num - 1];
 }

@@ -79,11 +79,18 @@ Document :
 
 DefinitionList :
 	DefinitionList 
-	{write_semicolon(GET_WRITER);}
-	Definition 
-|	Definition 
 	{
-	};
+		write_semicolon(GET_WRITER);
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+	}
+	Definition 
+	{
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+	}
+|	
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	Definition 
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 
 Definition :
 	{write_struct_begin(GET_WRITER, NULL);}
@@ -213,12 +220,14 @@ Enum :
 	{write_struct_end(GET_WRITER, NULL);};
     
 EnumDefList : 
-	EnumDefList {write_semicolon(GET_WRITER);} EnumDef
-	{
-	}
-|	EnumDef
-	{
-	};
+	EnumDefList {write_semicolon(GET_WRITER);} 
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	EnumDef
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));}
+|	
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	EnumDef
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 	
 EnumDef : 
 	{write_struct_begin(GET_WRITER, NULL);}
@@ -282,12 +291,13 @@ Struct :
 	
 FieldList: 
 	FieldList {write_semicolon(GET_WRITER);}
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
 	Field
-	{
-	}
-|	Field
-	{
-	};
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));}
+|	
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	Field
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 	
 
 Field : 
@@ -437,12 +447,14 @@ Parameters :
 	};
 	
 ParameterList:
-	ParameterList {write_semicolon(GET_WRITER);} Parameter 
-	{
-	}
-|	Parameter
-	{
-	};
+	ParameterList {write_semicolon(GET_WRITER);} 
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	Parameter 
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));}
+|	
+	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	Parameter
+	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
 	
 	
 Parameter:

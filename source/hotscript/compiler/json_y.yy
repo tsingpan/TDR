@@ -80,20 +80,20 @@ Pair:
 	
 	
 Array:
-	'[' { jp_vector_begin(YYSELF); write_vector_begin(YYJSON_WRITER); }
+	'[' { write_vector_begin(YYJSON_WRITER); }
 	Elements
-	']' { write_vector_end(YYJSON_WRITER); jp_vector_end(YYSELF); }
+	']' { write_vector_end(YYJSON_WRITER); }
 
 Elements:
 	Elements
 	',' { write_semicolon(YYJSON_WRITER); }
-	{jp_vector_item_begin(YYSELF); write_vector_item_begin(YYJSON_WRITER, jp_vector_get_index(YYSELF)); }
+	{write_vector_item_begin(YYJSON_WRITER, writer_get_index(YYJSON_WRITER)); }
 	Value
-	{write_vector_item_end(YYJSON_WRITER, jp_vector_get_index(YYSELF)); jp_vector_item_end(YYSELF); }
+	{write_vector_item_end(YYJSON_WRITER, writer_get_index(YYJSON_WRITER)); }
 |	
-	{jp_vector_item_begin(YYSELF); write_vector_item_begin(YYJSON_WRITER, jp_vector_get_index(YYSELF));}
+	{write_vector_item_begin(YYJSON_WRITER, writer_get_index(YYJSON_WRITER));}
 	Value
-	{write_vector_item_end(YYJSON_WRITER, jp_vector_get_index(YYSELF)); jp_vector_item_end(YYSELF); }
+	{write_vector_item_end(YYJSON_WRITER, writer_get_index(YYJSON_WRITER));}
 	
 Value:
 	tok_string

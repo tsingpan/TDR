@@ -31,7 +31,6 @@ typedef struct tagJSON_STACK_NODE
 
 
 #define MAX_INCLUDE_FILE_LEVEL 1024
-#define MAX_VECTOR_LEVEL 1024
 typedef struct tagJSON_PARSER_STACK_NODE
 {
 	FILE *f;
@@ -49,19 +48,11 @@ struct tagJSON_PARSER
 	hpuint32 stack_num;
 	JSON_PARSER_STACK_NODE stack[MAX_INCLUDE_FILE_LEVEL];
 
-	hpuint32 vector_stack_num;
-	hpuint32 vector_stack[MAX_VECTOR_LEVEL];
 	HPAbstractWriter *writer;
 	HPAbstractReader *reader;
 };
 
 hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp);
-
-hpint32 jp_vector_begin(JSON_PARSER *self);
-hpint32 jp_vector_item_begin(JSON_PARSER *self);
-hpuint32 jp_vector_get_index(JSON_PARSER *self);
-hpint32 jp_vector_item_end(JSON_PARSER *self);
-hpint32 jp_vector_end(JSON_PARSER *self);
 
 #endif//_H_XML_PARSER
 

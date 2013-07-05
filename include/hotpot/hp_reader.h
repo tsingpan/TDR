@@ -5,7 +5,7 @@
 #include "hotpot/hp_value.h"
 
 typedef struct _HPAbstractReader HPAbstractReader;
-
+#define MAX_VECTOR_DEEP 1024
 struct _HPAbstractReader
 {
 	hpint32 (*read_struct_begin)(HPAbstractReader *self, const char *struct_name);
@@ -40,7 +40,8 @@ struct _HPAbstractReader
 
 	hpint32 (*read_type)(HPAbstractReader *self, HPType *type);
 
-	
+	hpuint32 stack[MAX_VECTOR_DEEP];
+	hpuint32 stack_num;
 };
 
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name);
@@ -70,6 +71,6 @@ hpint32 read_semicolon(HPAbstractReader *self);
 hpint32 read_type(HPAbstractReader *self, HPType *type);
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index);
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index);
-
+hpuint32 reader_get_index(HPAbstractReader *self);
 #endif //_H_HP_READR
 
