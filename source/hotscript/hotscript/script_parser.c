@@ -49,7 +49,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
+hpint32 hotscript_do_vector_item_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
@@ -59,22 +59,20 @@ hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const S
 		goto ERROR_RET;
 	}
 
+	op = hotoparr_get_next_op(&self->hotoparr);
+	op->instruct = HOT_VECTOR_SET_INDEX;
 	if(index->it == E_INDEX_GIVEN)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
-		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = index->var.val.ui32;
 	}
 	else if(index->it == E_INDEX_ALL)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
-		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = 0;		
 	}
 
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_ITEM_BEGIN;
-	current->vector_seek = op;
+	current->vector_item_begin = op;
 
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_INC_INDEX;
@@ -84,7 +82,26 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
+hpint32 hotscript_do_vector_item_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
+{
+	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
+	HotOp *op = NULL;
+
+	if(index->it == E_INDEX_NULL)
+	{
+		goto ERROR_RET;
+	}
+
+	op = hotoparr_get_next_op(&self->hotoparr);
+	op->instruct = HOT_VECTOR_ITEM_END;
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+
+}
+
+hpint32 hotscript_do_vector_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
@@ -95,9 +112,9 @@ hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, con
 	}
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_JMP;
-	op->arg.jmp_arg.lineno = current->vector_seek->lineno;
+	op->arg.jmp_arg.lineno = current->vector_item_begin->lineno;
 
-	current->vector_seek->arg.vector_seek_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+	current->vector_item_begin->arg.vector_seek_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 
 	return E_HP_NOERROR;
 ERROR_RET:

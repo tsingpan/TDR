@@ -4,6 +4,8 @@
 #include "hotscript/hotobject.h"
 #include "datrie/trie.h"
 
+#include <string.h>
+
 static HotObject *hotobject_get(HotObjectWriter *self)
 {
 	return self->stack[self->stack_num - 1].ho;
@@ -12,36 +14,15 @@ static HotObject *hotobject_get(HotObjectWriter *self)
 static hpint32 hotobject_push(HotObjectWriter *self, HotObject *ho)
 {
 	self->stack[self->stack_num].ho = ho;
-	self->stack[self->stack_num].in_struct = hpfalse;
 	++(self->stack_num);
 
 	return E_HP_NOERROR;
 }
 
-static HotObject* get_current_ob(HotObjectWriter *self)
-{
-	HotObject *ob = hotobject_get(self);
-	if(ob->var.type ==  E_HP_VECTOR)
-	{
-		if(hotobject_write_vector_item_begin(&self->super, self->stack[self->stack_num - 1].current_index) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-		return self->stack[self->stack_num - 1].current_ho;
-	}
-	else
-	{
-		return ob;
-	}
-
-ERROR_RET:
-	return NULL;
-}
-
 hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_name, hpuint32 len)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	HotObject *new_ob = hotobject_new();
 	char name[1024];
 	hpuint32 i;
@@ -65,15 +46,7 @@ ERROR_RET:
 hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name, hpuint32 len)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = NULL;
 	--(self->stack_num);
-	ob = hotobject_get(self);
-	
-
-	if((ob->var.type ==  E_HP_VECTOR) && (!self->stack[self->stack_num - 1].in_struct))
-	{
-		++(self->stack[self->stack_num - 1].current_index);
-	}
 	return E_HP_NOERROR;
 }
 
@@ -82,7 +55,6 @@ hpint32 hotobject_write_vector_begin(HPAbstractWriter *super)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
-	self->stack[self->stack_num - 1].current_index = 0;
 	ob->var.type = E_HP_VECTOR;
 
 	return E_HP_NOERROR;
@@ -98,7 +70,7 @@ hpint32 hotobject_write_vector_end(HPAbstractWriter *super)
 static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = E_HP_INT8;
 	ob->var.val.i8 = val;
 	return E_HP_NOERROR;
@@ -107,7 +79,7 @@ static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 static hpint32 hotobject_write_double(HPAbstractWriter *super, const hpdouble val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = E_HP_DOUBLE;
 	ob->var.val.d = val;
 	return E_HP_NOERROR;
@@ -116,27 +88,27 @@ static hpint32 hotobject_write_double(HPAbstractWriter *super, const hpdouble va
 static hpint32 hotobject_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = E_HP_INT64;
 	ob->var.val.i64 = val;
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpchar* buff, const hpuint32 buff_size)
+hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = E_HP_BYTES;
-	ob->var.val.bytes.ptr = (char*)malloc(buff_size);
-	memcpy(ob->var.val.bytes.ptr, buff, buff_size);
-	ob->var.val.bytes.len = buff_size;
+	ob->var.val.bytes.ptr = (char*)malloc(bytes.len);
+	memcpy(ob->var.val.bytes.ptr, bytes.ptr, bytes.len);
+	ob->var.val.bytes.len = bytes.len;
 	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_write_type(HPAbstractWriter *super, const HPType type)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = type;
 
 	return E_HP_NOERROR;
@@ -145,7 +117,7 @@ hpint32 hotobject_write_type(HPAbstractWriter *super, const HPType type)
 hpint32 hotobject_write_hpbool(HPAbstractWriter *super, const hpbool val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = get_current_ob(self);
+	HotObject *ob = hotobject_get(self);
 	ob->var.type = E_HP_BOOL;
 	ob->var.val.b = val;
 	return E_HP_NOERROR;
@@ -153,18 +125,9 @@ hpint32 hotobject_write_hpbool(HPAbstractWriter *super, const hpbool val)
 
 hpint32 hotobject_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
 {
-	HotObject *new_ob = NULL;
 	char str[1024];
 	hpuint32 str_len = 0;
-	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = hotobject_get(self);
 	hpint32 count;
-	if(ob->var.type != E_HP_VECTOR)
-	{
-		goto ERROR_RET;
-	}
-
-	self->stack[self->stack_num - 1].current_index = index;
 
 	count = index;
 	do
@@ -172,50 +135,35 @@ hpint32 hotobject_write_vector_item_begin(HPAbstractWriter *super, hpuint32 inde
 		str[str_len++] = '0' + count % 10;
 		count/=10;
 	}while(count > 0);
-	str[str_len++] = TRIE_CHAR_TERM;
 
-	//fix bug~
-	/*
-	trie_store(ob->keys, "[0]", 1);
-	trie_retrieve(ob->keys, "[1]", &new_ob);
-*/
-	if(!trie_retrieve(ob->keys, str, &new_ob))
-	{
-		new_ob = hotobject_new();
-		if(!trie_store(ob->keys, str, new_ob))
-		{
-			//free ob~~
-			goto ERROR_RET;
-		}
-	}
-	self->stack[self->stack_num - 1].current_ho = new_ob;
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
+	return hotobject_write_field_begin(super, str, str_len);
 }
 
 hpint32 hotobject_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
 {
-	return E_HP_NOERROR;
+	char str[1024];
+	hpuint32 str_len = 0;
+	hpint32 count;
+
+	count = index;
+	do
+	{
+		str[str_len++] = '0' + count % 10;
+		count/=10;
+	}while(count > 0);
+
+	return hotobject_write_field_end(super, str, str_len);
 }
 
 hpint32 hotobject_write_struct_begin(HPAbstractWriter *super, const char *struct_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	self->stack[self->stack_num - 1].in_struct = hptrue;
 	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_write_struct_end(HPAbstractWriter *super, const char *struct_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = hotobject_get(self);
-	if(ob->var.type ==  E_HP_VECTOR)
-	{
-		++(self->stack[self->stack_num - 1].current_index);
-	}
-	self->stack[self->stack_num - 1].in_struct = hpfalse;
 	return E_HP_NOERROR;
 }
 

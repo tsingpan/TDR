@@ -30,7 +30,8 @@
 #define YYSTYPE HPVar
 #define YYLEX_PARAM ss
 #define GET_SELF JSON_PARSER *jp = HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack);
-#define YYJSON_WRITER HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack)->writer
+#define YYSELF HP_CONTAINER_OF(ss, JSON_PARSER, scanner_stack)
+#define YYJSON_WRITER YYSELF->writer
 }
 
 %define api.pure
@@ -79,21 +80,20 @@ Pair:
 	
 	
 Array:
-	'[' { write_vector_begin(YYJSON_WRITER); }
+	'[' { jp_vector_begin(YYSELF); write_vector_begin(YYJSON_WRITER); }
 	Elements
-	']' { write_vector_end(YYJSON_WRITER); }
+	']' { write_vector_end(YYJSON_WRITER); jp_vector_end(YYSELF); }
 
 Elements:
-	Value
-	{
-	}
-|
-	Value
-	',' { write_semicolon(YYJSON_WRITER); }
 	Elements
-	{
-	}
-	
+	',' { write_semicolon(YYJSON_WRITER); }
+	{jp_vector_item_begin(YYSELF); write_vector_item_begin(YYJSON_WRITER, jp_vector_get_index(YYSELF)); }
+	Value
+	{write_vector_item_end(YYJSON_WRITER, jp_vector_get_index(YYSELF)); jp_vector_item_end(YYSELF); }
+|	
+	{jp_vector_item_begin(YYSELF); write_vector_item_begin(YYJSON_WRITER, jp_vector_get_index(YYSELF));}
+	Value
+	{write_vector_item_end(YYJSON_WRITER, jp_vector_get_index(YYSELF)); jp_vector_item_end(YYSELF); }
 	
 Value:
 	tok_string

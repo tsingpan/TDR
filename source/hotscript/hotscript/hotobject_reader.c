@@ -23,46 +23,19 @@ static hpint32 hotobject_push(HotObjectReader *self, const HotObject *ho)
 hpint32 hotobject_read_struct_begin(HPAbstractReader *super, const char *struct_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	self->stack[self->stack_num - 1].in_struct = hptrue;
 	return E_HP_NOERROR;
 }
 
 hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = hotobject_get(self);
-	if(ob->var.type ==  E_HP_VECTOR)
-	{
-		++(self->stack[self->stack_num - 1].current_index);
-	}
-	self->stack[self->stack_num - 1].in_struct = hpfalse;
 	return E_HP_NOERROR;
 }
-static const HotObject* get_current_ob(HotObjectReader *self)
-{
-	const HotObject *ob = hotobject_get(self);
-	//根据下标找一个位置
-	if(ob->var.type ==  E_HP_VECTOR)
-	{
-		if(hotobject_read_vector_begin(&self->super, self->stack[self->stack_num - 1].current_index) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-		return self->stack[self->stack_num - 1].current_ho;
-	}
-	//本身就是这个数据
-	else
-	{
-		return ob;
-	}
 
-ERROR_RET:
-	return NULL;
-}
 hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	const HotObject *new_ob;
 	hpint32 ret;
 	char name[1024];
@@ -88,15 +61,7 @@ ERROR_RET:
 hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = NULL;
 	--(self->stack_num);
-	ob = hotobject_get(self);
-
-
-	if((ob->var.type ==  E_HP_VECTOR) && (!self->stack[self->stack_num - 1].in_struct))
-	{
-		++(self->stack[self->stack_num - 1].current_index);
-	}
 	return E_HP_NOERROR;
 }
 
@@ -105,7 +70,6 @@ hpint32 hotobject_read_vector_begin(HPAbstractReader *super)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *ob = hotobject_get(self);
-	self->stack[self->stack_num - 1].current_index = 0;
 
 	return E_HP_NOERROR;
 }
@@ -120,7 +84,7 @@ hpint32 hotobject_read_vector_end(HPAbstractReader *super)
 static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	*val = ob->var.val.i8;
 
 	return E_HP_NOERROR;
@@ -129,7 +93,7 @@ static hpint32 hotobject_read_hpint8(HPAbstractReader *super, hpint8 *val)
 static hpint32 hotobject_read_double(HPAbstractReader *super, hpdouble *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	*val = ob->var.val.d;
 
 	return E_HP_NOERROR;
@@ -138,7 +102,7 @@ static hpint32 hotobject_read_double(HPAbstractReader *super, hpdouble *val)
 static hpint32 hotobject_read_hpint64(HPAbstractReader *super, hpint64 *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	*val = ob->var.val.i64;
 
 	return E_HP_NOERROR;
@@ -147,7 +111,7 @@ static hpint32 hotobject_read_hpint64(HPAbstractReader *super, hpint64 *val)
 hpint32 hotobject_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	bytes->ptr = ob->var.val.bytes.ptr;
 	bytes->len = ob->var.val.bytes.len;
 
@@ -157,7 +121,7 @@ hpint32 hotobject_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 hpint32 hotobject_read_type(HPAbstractReader *super, HPType *type)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	*type = ob->var.type;
 
 	return E_HP_NOERROR;
@@ -166,7 +130,7 @@ hpint32 hotobject_read_type(HPAbstractReader *super, HPType *type)
 hpint32 hotobject_read_hpbool(HPAbstractReader *super, hpbool *val)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = get_current_ob(self);
+	const HotObject *ob = hotobject_get(self);
 	*val = ob->var.val.b;
 
 	return E_HP_NOERROR;
@@ -174,19 +138,9 @@ hpint32 hotobject_read_hpbool(HPAbstractReader *super, hpbool *val)
 
 hpint32 hotobject_read_vector_item_begin(HPAbstractReader *super, hpuint32 index)
 {
-	HotObject *new_ob = NULL;
 	char str[1024];
 	hpuint32 str_len = 0;
-	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = hotobject_get(self);
 	hpint32 count;
-	if(ob->var.type != E_HP_VECTOR)
-	{
-		printf("error %d\n", ob->var.type);
-		goto ERROR_RET;
-	}
-
-	self->stack[self->stack_num - 1].current_index = index;
 
 	count = index;
 	do
@@ -194,23 +148,22 @@ hpint32 hotobject_read_vector_item_begin(HPAbstractReader *super, hpuint32 index
 		str[str_len++] = '0' + count % 10;
 		count/=10;
 	}while(count > 0);
-	str[str_len++] = TRIE_CHAR_TERM;
-
-
-	if(!trie_retrieve(ob->keys, str, &new_ob))
-	{
-		goto ERROR_RET;
-	}
-	self->stack[self->stack_num - 1].current_ho = new_ob;
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
+	return hotobject_read_field_begin(super, str, str_len);
 }
 
 hpint32 hotobject_read_vector_item_end(HPAbstractReader *super, hpuint32 index)
 {
-	return E_HP_NOERROR;
+	char str[1024];
+	hpuint32 str_len = 0;
+	hpint32 count;
+
+	count = index;
+	do
+	{
+		str[str_len++] = '0' + count % 10;
+		count/=10;
+	}while(count > 0);
+	return hotobject_read_field_end(super, str, str_len);
 }
 
 

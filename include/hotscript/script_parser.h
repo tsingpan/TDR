@@ -17,7 +17,7 @@ typedef struct _SP_NODE
 	//以下几个玩意记录需要回溯处理的指令
 	HotOp *field_begin;
 	HotOp *vector_begin;
-	HotOp *vector_seek;
+	HotOp *vector_item_begin;
 	HotOp *echo_field;	
 }SP_NODE;
 
@@ -52,15 +52,15 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current);
 
 hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
-hpint32 hotscript_do_vector_seek(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_item_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
-hpint32 hotscript_do_vector_seek_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_item_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+
+hpint32 hotscript_do_vector_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
 hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
 
 hpint32 hotscript_do_field(SCANNER_STACK *super, SP_NODE *current);
-
-hpint32 hotscript_do_jmp(SCANNER_STACK *super, SP_NODE *current);
 
 hpint32 hotscript_do_echo_field(SCANNER_STACK *super);
 

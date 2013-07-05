@@ -15,9 +15,6 @@ typedef struct _HotObjectReader HotObjectReader;
 typedef struct _HotObjectConstStackNode
 {
 	const HotObject *ho;
-	hpuint32 current_index;
-	const HotObject *current_ho;
-	hpbool in_struct;
 }HotObjectConstStackNode;
 
 struct _HotObjectReader
