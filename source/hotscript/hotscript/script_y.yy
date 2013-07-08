@@ -47,7 +47,7 @@ Script :
 
 StatementList :
 	StatementList Statement
-|	Statement
+|	Statement;
 	
 Statement:
 	tok_text {hotscript_do_text(ss, &$1);}
@@ -61,6 +61,7 @@ Statement:
 |	Identifier {hotscript_do_field_begin(ss, &$1);}
 	'{' StatementList '}'
 	{hotscript_do_field_end(ss, &$1);}
+|	{};
 
 Identifier :
 	tok_identifier {$$ = $1;$$.token = tok_identifier; }

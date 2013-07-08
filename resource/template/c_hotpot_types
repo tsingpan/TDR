@@ -10,6 +10,7 @@
 <%
 			}
 
+
 			$const
 			{
 %>
@@ -75,7 +76,13 @@ typedef union _<% $name %>
 }<% $name %>
 <%
 			}
-
+		
+			$typedef
+			{
+%>
+typedef <% $type ' ' $new_type %>;
+<%
+			}
 		}
 	]
 %>

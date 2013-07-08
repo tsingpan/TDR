@@ -1,7 +1,8 @@
 #include "hotscript/hot_vm.h"
-#include "stdio.h"
-
 #include "hotpot/hp_error.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 #define NORMAL_OP_SIZE 128
 
 
@@ -20,7 +21,7 @@ HotOp *hotoparr_get_next_op(HotOpArr *self)
 	if(self->next_oparr >= self->oparr_size)
 	{
 		self->oparr_size *= 2;
-		self->oparr = (HotOp*)realloc(self->oparr, self->oparr_size);
+		self->oparr = (HotOp*)realloc(self->oparr, sizeof(HotOp) *self->oparr_size);
 	}
 
 	ptr = &self->oparr[self->next_oparr];
@@ -111,6 +112,8 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 	//todo filed_search_strategy
 	if(read_field_begin(self->reader, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len) != E_HP_NOERROR)
 	{
+		hpuint32 i;
+		
 		self->current_op = op->arg.field_begin_arg.failed_jmp_lineno;
 	}
 	else

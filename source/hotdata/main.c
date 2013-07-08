@@ -74,6 +74,7 @@ int main(int argc, char **argv)
 		hotobject_writer_init(&writer, obj);
 		hotobject_reader_init(&reader, obj);
 		data_parser(&dp, argv[i], &jw.super);
+		fclose(fout);
 
 		if(data_parser(&dp, argv[i], &writer.super) == E_HP_NOERROR)
 		{
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 		{
 			printf("failed\n");
 		}
-		fclose(fout);
+		
 		hotobject_free(obj);
 	}
 	//fclose(fout);

@@ -14,10 +14,10 @@ typedef struct _SP_NODE
 	HPVar var;
 
 	//以下几个玩意记录需要回溯处理的指令
-	HotOp *field_begin;
-	HotOp *vector_begin;
-	HotOp *vector_item_begin;
-	HotOp *echo_field;	
+	hpuint32 field_begin_index;
+	hpuint32 vector_begin_index;
+	hpuint32 vector_item_begin_index;
+	hpuint32 echo_field_index;	
 }SP_NODE;
 
 

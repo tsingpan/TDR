@@ -37,7 +37,7 @@ hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier)
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_BEGIN;
 
-	identifier->vector_begin = op;
+	identifier->vector_begin_index = op->lineno;
 
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -51,7 +51,7 @@ hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_END;
 
-	identifier->vector_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -66,7 +66,7 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_BEGIN;
 		op->arg.field_begin_arg.name = identifier->var.val.bytes;
-		identifier->field_begin = op;
+		identifier->field_begin_index = op->lineno;
 	}
 	else if(identifier->token == tok_integer)
 	{
@@ -74,10 +74,9 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
 
-		printf("vector item begin\n");
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
-		identifier->vector_item_begin = NULL;
+		identifier->vector_item_begin_index = op->lineno;
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
@@ -88,8 +87,7 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 		
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
-
-		identifier->vector_item_begin = op;		
+		identifier->vector_item_begin_index = op->lineno;		
 	}
 	
 
@@ -105,12 +103,13 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_END;
-		identifier->field_begin->arg.field_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+		self->hotoparr.oparr[identifier->field_begin_index].arg.field_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_integer)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_END;
+		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
@@ -122,8 +121,10 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_JMP;
-		op->arg.jmp_arg.lineno = identifier->vector_item_begin->lineno;
-		identifier->vector_item_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+		op->arg.jmp_arg.lineno = self->hotoparr.oparr[identifier->vector_item_begin_index].lineno;
+
+
+		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 
 	}
 	return E_HP_NOERROR;
