@@ -35,7 +35,7 @@ comment			("//"[^\n]*)
 unixcomment		("#"[^\n]*)
 sillycomm		("/*""*"*"*/")
 multicomm		("/*"[^*]"/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/")
-symbol			([@#$\[\]\*\{\}])
+symbol			([\[\]\*\{\}])
 newline			("\r"|"\n"|"\r\n")
 whitespace		([ \n\r\t]+)
 literal_begin	(['\"])
@@ -82,19 +82,25 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>"import"					{ return tok_import;										}
 
 
-<ST_IN_SCRIPTING>{intconstant}			{
-	char number[128];
-	memcpy(number, yytext, yyleng);
-	number[yyleng] = 0;
-	yylval->var.type = E_HP_INT64;
-	yylval->var.val.i64 = strtoll(number, NULL, 10);
-	return tok_integer;
-}
-<ST_IN_SCRIPTING>{identifier}			{
+<ST_IN_SCRIPTING>'$'{identifier}{
 	yylval->var.type = E_HP_BYTES;
 	yylval->var.val.bytes.ptr = yytext;
 	yylval->var.val.bytes.len = yyleng;
 	return tok_identifier;
+}
+
+<ST_IN_SCRIPTING>'$'{intconstant}{
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.ptr = yytext;
+	yylval->var.val.bytes.len = yyleng;
+	return tok_integer;
+}
+
+<ST_IN_SCRIPTING>'$''*'{
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.ptr = yytext;
+	yylval->var.val.bytes.len = yyleng;
+	return tok_auto_integer;
 }
 
 

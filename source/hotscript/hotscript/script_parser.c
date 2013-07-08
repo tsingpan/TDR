@@ -188,6 +188,21 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 	return;
 }
 
+static hpint32 get_token_yylval(SCRIPT_PARSER *sp, int token, YYSTYPE * yylval)
+{
+	SCANNER *self = scanner_stack_get_scanner(&sp->scanner_stack);
+	switch(token)
+	{
+	case tok_text:
+		hotscript_do_text(&sp->scanner_stack, yylval);
+		break;
+	case tok_literal:
+		hotscript_do_literal(&sp->scanner_stack, yylval);
+		break;
+	}
+	return E_HP_NOERROR;
+}
+
 
 extern hpint32 script_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
@@ -240,6 +255,12 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 		}
 		else
 		{
+			if(get_token_yylval(sp, ret, yylval_param) != E_HP_NOERROR)
+			{
+				sp->result = E_HP_ERROR;
+				ret = -1;
+				break;
+			}
 			break;
 		}
 	}
@@ -282,7 +303,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	hpint32 ret;
 
 	YYLTYPE yylloc;
-
+	SP_NODE snode;
 	
 
 	scanner_stack_init(&self->scanner_stack);
@@ -296,30 +317,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	self->reader = reader;
 
 	self->result = E_HP_NOERROR;
-	/*
-	for(;;)
-	{
-		int i;
-		int ret = yyscriptlex(&snode, &yylloc, self);
-		printf("%d ", ret);
-		printf("\n---------------------------------------------------------\n");
-		for(i = 0; i < snode.text.str_len; ++i)
-		{
-			putc(snode.text.str[i], stdout);
-		}
-		printf("\n---------------------------------------------------------\n");
-
-		if(ret == 0)
-		{
-			break;
-		}
-		else
-		{
-			printf("%c\n", (char)ret);
-		}
-	}	
-	exit(1);
-	*/
+	
 	ret = yyscriptparse(self);
 
 	scanner_stack_pop(&self->scanner_stack);

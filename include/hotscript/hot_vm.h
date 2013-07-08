@@ -37,9 +37,8 @@ typedef enum _INDEX_TYPE
 
 typedef enum _SEARCH_STRATEGY
 {
-	E_GLOBAL		= 0,
-	E_LOCAL			= 1,
-	E_STACK			= 2,
+	E_STACK					= 2,
+	E_STACK_STACK			= 3,//词法分析也要回溯
 }SEARCH_STRATEGY;
 
 typedef struct _HOT_FIELD_BEGIN_ARG

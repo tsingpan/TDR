@@ -35,11 +35,11 @@
 %token tok_import
 %token tok_literal
 %token tok_integer
+%token tok_auto_integer
 %token tok_identifier
 %token tok_text
 
 %start Script
-
 %%
 
 Script :
@@ -47,81 +47,18 @@ Script :
 
 StatementList :
 	StatementList Statement
-	{
-	}
-|
-	{
-	}
+|	Statement
 	
 Statement:
-	tok_text 
-	{
-		hotscript_do_text(ss, &$1);
-	}
-|
-	tok_literal 
-	{
-		hotscript_do_literal(ss, &$1);
-	}
-|	Prefix tok_identifier ArrayIndex
-	{
-		hotscript_do_field_begin(ss, &$1, &$1, &$2);
-		hotscript_do_vector_begin(ss, &$1, &$3);
-		hotscript_do_vector_item_begin(ss, &$1, &$3);
+	tok_text
+|	tok_literal 
+|	Identifier
+|	Identifier '[' StatementList ']'
+|	Identifier '{' StatementList '}'
 
-		hotscript_do_echo_field(ss);
-
-		hotscript_do_vector_item_end(ss, &$1, &$3);
-		hotscript_do_vector_jmp(ss, &$1, &$3);//如果echo失败了， 那么跳到jmp的下一行		
-		hotscript_do_vector_end(ss, &$1, &$3);//如果vector begin失败了， 那么跳到下一行
-		hotscript_do_field_end(ss, &$1);//如果field begin失败了， 那么跳到下一行
-	}
-|	Prefix tok_identifier ArrayIndex
-	'{'
-	{
-		hotscript_do_field_begin(ss, &$1, &$1, &$2);
-		hotscript_do_vector_begin(ss, &$1, &$3);
-		hotscript_do_vector_item_begin(ss, &$1, &$3);
-	}
-	StatementList
-	'}'
-	{
-		hotscript_do_vector_item_end(ss, &$1, &$3);
-		hotscript_do_vector_jmp(ss, &$1, &$3);
-		hotscript_do_vector_end(ss, &$1, &$3);
-		hotscript_do_field_end(ss, &$1);
-	}
-
-
-ArrayIndex :
-	'[' tok_integer ']'
-	{
-		$$.it = E_INDEX_GIVEN;
-		$$.var.type = E_HP_UINT32;
-		$$.var.val.ui32 = (hpuint32)$2.var.val.i64;	//指定下标， 超过int32肿么办？
-	}
-|	'[' '*' ']'
-	{
-		$$.it = E_INDEX_ALL;						//按次序展开元素， 直到不存在
-	}
-|
-	{
-		$$.it = E_INDEX_NULL;						//默认为第一个元素
-	}
-
-Prefix:
-	'@'
-	{
-		$$.search_strategy = E_GLOBAL;
-	}
-|	'#'
-	{
-		$$.search_strategy = E_LOCAL;
-	}
-|	'$'
-	{
-		$$.search_strategy = E_STACK;
-	}
-
+Identifier :
+	tok_identifier
+|	tok_integer
+|	tok_auto_integer
 
 %%
