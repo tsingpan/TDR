@@ -33,7 +33,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 %>
 void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 {
-	switch(<% $TypeAnnotations{$*{$switch}} %>)
+	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
 <%				$list
 				[

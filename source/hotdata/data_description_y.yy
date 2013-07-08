@@ -645,9 +645,13 @@ TypeAnnotation:
 	}
 |	tok_switch '=' tok_identifier CommaOrSemicolonOptional
 	{
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "switch", strlen("switch"));
 		write_bytes(GET_WRITER, $3.var.val.bytes);
 		write_field_end(GET_WRITER, "switch", strlen("switch"));		
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_end(GET_WRITER, NULL);
 	};
 
 
