@@ -9,6 +9,7 @@
 //<% $text %>
 <%
 			}
+
 			$struct
 			{
 %>
@@ -23,6 +24,27 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 					}
 				]
 %>
+}
+<%
+			}
+
+	$union
+			{
+%>
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
+{
+	switch(<% $TypeAnnotations{$*{$switch}} %>)
+	{
+<%				$list
+				[
+					$*
+					{
+%>
+	write_<% $type %>(<% $name %>);<%
+					}
+				]
+%>
+	}
 }
 <%
 			}

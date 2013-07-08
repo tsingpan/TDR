@@ -213,7 +213,10 @@ Typedef :
 	
 Enum :
 	{write_struct_begin(GET_WRITER, NULL);}
-	tok_enum TypeAnnotations
+	tok_enum
+	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
+	TypeAnnotations
+	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
@@ -256,11 +259,13 @@ EnumDef :
 Union :
 	{write_struct_begin(GET_WRITER, NULL);}
 	tok_union 
+	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations	
+	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_bytes(GET_WRITER, $6.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -277,11 +282,14 @@ Union :
 	
 Struct : 
 	{write_struct_begin(GET_WRITER, NULL);}
-	tok_struct TypeAnnotations
+	tok_struct
+	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
+	TypeAnnotations
+	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_bytes(GET_WRITER, $6.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -308,14 +316,17 @@ Field :
 	{
 		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_begin(GET_WRITER, NULL);
+		
+		write_field_begin(GET_WRITER, "condition", strlen("condition"));		
 	}
 	FieldCondition 
+	{	write_field_end(GET_WRITER, "condition", strlen("condition"));	write_semicolon(GET_WRITER);}
 	Type {write_semicolon(GET_WRITER);}
 	Arguments 
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_bytes(GET_WRITER, $7.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	';' UnixComment
@@ -324,36 +335,105 @@ Field :
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 	};
 
-	
-
-FieldCondition : 
-	tok_if '(' FieldExpression ')'
+FieldCondition:
 	{
-		
+		write_struct_begin(GET_WRITER, NULL);
 	}
-|	tok_if '!' '(' FieldExpression ')'
+	Condition
 	{
-		
-	}
-|	tok_case tok_identifier ':'
-	{
-		
-	}
-|	tok_if '(' tok_identifier tok_unequal tok_identifier ')'
-	{
-		
+		write_struct_end(GET_WRITER, NULL);
 	}
 |
 	{
+		write_null(GET_WRITER);
 	};
+
+Condition : 
+	tok_if 	'(' FieldExpression	')'	
+|	tok_if
+	'!'
+	{
+		write_field_begin(GET_WRITER, "negation", strlen("negation"));
+		write_hpbool(GET_WRITER, hptrue);
+		write_field_end(GET_WRITER, "negation", strlen("negation"));
+		write_semicolon(GET_WRITER);
+	}
+	 '(' FieldExpression ')'
+|	tok_if '(' tok_identifier tok_unequal tok_identifier ')'
+	{
+		write_field_begin(GET_WRITER, "negation", strlen("negation"));
+		write_hpbool(GET_WRITER, hptrue);
+		write_field_end(GET_WRITER, "negation", strlen("negation"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "expression", strlen("expression"));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "operator", strlen("operator"));
+		write_hpstring(GET_WRITER, "==");
+		write_field_end(GET_WRITER, "operator", strlen("operator"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "op1", strlen("op1"));
+		write_bytes(GET_WRITER, $5.var.val.bytes);
+		write_field_end(GET_WRITER, "op1", strlen("op1"));
+		write_struct_end(GET_WRITER, NULL);
+		write_field_end(GET_WRITER, "expression", strlen("expression"));		
+	}
+|	tok_case tok_identifier ':'
+	{
+		write_field_begin(GET_WRITER, "expression", strlen("expression"));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "operator", strlen("operator"));
+		write_hpstring(GET_WRITER, "case");
+		write_field_end(GET_WRITER, "operator", strlen("operator"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_bytes(GET_WRITER, $2.var.val.bytes);
+		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_struct_end(GET_WRITER, NULL);
+		write_field_end(GET_WRITER, "expression", strlen("expression"));	
+	};
+
 
 FieldExpression :
 	tok_identifier tok_equal tok_identifier
 	{
+		write_field_begin(GET_WRITER, "expression", strlen("expression"));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "operator", strlen("operator"));
+		write_hpstring(GET_WRITER, "==");
+		write_field_end(GET_WRITER, "operator", strlen("operator"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "op1", strlen("op1"));
+		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_field_end(GET_WRITER, "op1", strlen("op1"));
+		write_struct_end(GET_WRITER, NULL);
+		write_field_end(GET_WRITER, "expression", strlen("expression"));		
 	}
 
 |	tok_identifier '&' tok_identifier
 	{
+		write_field_begin(GET_WRITER, "expression", strlen("expression"));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "operator", strlen("operator"));
+		write_hpstring(GET_WRITER, "&");
+		write_field_end(GET_WRITER, "operator", strlen("operator"));
+		write_semicolon(GET_WRITER);
+		write_field_begin(GET_WRITER, "op1", strlen("op1"));
+		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_field_end(GET_WRITER, "op1", strlen("op1"));
+		write_struct_end(GET_WRITER, NULL);
+		write_field_end(GET_WRITER, "expression", strlen("expression"));		
 	};
 
 
@@ -504,10 +584,10 @@ ArgumentList:
 Argument:
 	tok_identifier CommaOrSemicolonOptional
 	{
-	}
+	};
 
 UnixComment:
-	{write_struct_begin(GET_WRITER, NULL)}
+	{write_struct_begin(GET_WRITER, NULL);}
 	tok_unixcomment
 	{
 		write_field_begin(GET_WRITER, "text", strlen("text"));
@@ -521,11 +601,21 @@ UnixComment:
 	};
 
 TypeAnnotations:
-  '(' TypeAnnotationList ')'
-    {
-    }
+  '(' {write_vector_begin(GET_WRITER);}
+	 TypeAnnotationList ')'
+    {write_vector_end(GET_WRITER);}
 |
     {
+		//这里放一个默认值
+		write_vector_begin(GET_WRITER);
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "switch", strlen("switch"));
+		write_hpstring(GET_WRITER, "selector");
+		write_field_end(GET_WRITER, "switch", strlen("switch"));		
+		write_struct_end(GET_WRITER, NULL);
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		write_vector_end(GET_WRITER);
     };
 
 TypeAnnotationList:
@@ -555,7 +645,9 @@ TypeAnnotation:
 	}
 |	tok_switch '=' tok_identifier CommaOrSemicolonOptional
 	{
-		
+		write_field_begin(GET_WRITER, "switch", strlen("switch"));
+		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_field_end(GET_WRITER, "switch", strlen("switch"));		
 	};
 
 

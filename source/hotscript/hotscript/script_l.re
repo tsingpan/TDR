@@ -8,7 +8,7 @@
 #include "hotscript/hotlex.h"
 	
 		
-static void hotscript_reserved_keyword(char* keyword)
+static void hotscript_reserved_keyword(const char* keyword)
 {
 	
 	exit(1);
