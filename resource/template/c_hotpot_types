@@ -1,3 +1,5 @@
+#ifndef _H_<% $file %>
+#define _H_<% $file %>
 <%
 	$DefinitionList
 	[
@@ -31,8 +33,7 @@ typedef enum _<% $name %>
 					$*
 					{
 %>
-	<% $name %> = <% $value %> ,
-<%					}
+	<% $name %> = <% $value %> ,<%	}
 				]
 %>
 }<% $name %>
@@ -49,8 +50,7 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<% $type ' ' $name ';' %>
-<%
+	<% $type ' ' $name ';' 
 					}
 				]
 %>
@@ -68,8 +68,7 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<% $type ' ' $name ';' %>
-<%
+	<% $type ' ' $name ';'
 					}
 				]
 %>
@@ -86,4 +85,4 @@ typedef <% $type ' ' $new_type %>;
 		}
 	]
 %>
-
+#endif//_H_<% $file %>

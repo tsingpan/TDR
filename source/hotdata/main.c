@@ -68,6 +68,9 @@ int main(int argc, char **argv)
 		HotObjectReader reader;
 		HotObjectWriter writer;
 		SCRIPT_PARSER sp;
+		char file_tag[1024];
+		hpuint32 file_tag_len;
+		hpuint32 j;
 		fout = fopen("d:/ast_base.out", "w");
 		ddekit_json_encoding_writer_init(&jw, fout);
 
@@ -75,6 +78,29 @@ int main(int argc, char **argv)
 		hotobject_reader_init(&reader, obj);
 		data_parser(&dp, argv[i], &jw.super);
 		fclose(fout);
+
+		file_tag_len = strlen(argv[i]);
+		write_field_begin(&writer.super, "file", strlen("file"));
+		for(j = 0;j < file_tag_len; ++j)
+		{
+			char ch = argv[i][j];
+			if(
+				((ch >= 'a') && (ch <= 'z'))
+				||((ch >= 'A') && (ch <= 'Z'))
+				||((ch >= '0') && (ch <= '9'))
+				||(ch == '_')
+				)
+			{
+				file_tag[j] = ch;
+			}
+			else
+			{
+				file_tag[j] = '_';
+			}
+			
+		}
+		write_hpstring(&writer.super, file_tag);
+		write_field_end(&writer.super, "file", strlen("file"));
 
 		if(data_parser(&dp, argv[i], &writer.super) == E_HP_NOERROR)
 		{
