@@ -1,5 +1,5 @@
-#ifndef _H_<% $file %>
-#define _H_<% $file %>
+#ifndef _H_<% $file_tag %>
+#define _H_<% $file_tag %>
 <%
 	$DefinitionList
 	[
@@ -85,4 +85,4 @@ typedef <% $type ' ' $new_type %>;
 		}
 	]
 %>
-#endif//_H_<% $file %>
+#endif//_H_<% $file_tag %>

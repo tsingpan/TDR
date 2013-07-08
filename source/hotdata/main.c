@@ -79,8 +79,7 @@ int main(int argc, char **argv)
 		data_parser(&dp, argv[i], &jw.super);
 		fclose(fout);
 
-		file_tag_len = strlen(argv[i]);
-		write_field_begin(&writer.super, "file", strlen("file"));
+		file_tag_len = strlen(argv[i]);		
 		for(j = 0;j < file_tag_len; ++j)
 		{
 			char ch = argv[i][j];
@@ -99,7 +98,11 @@ int main(int argc, char **argv)
 			}
 			
 		}
+		write_field_begin(&writer.super, "file_tag", strlen("file_tag"));
 		write_hpstring(&writer.super, file_tag);
+		write_field_end(&writer.super, "file_tag", strlen("file_tag"));
+		write_field_begin(&writer.super, "file", strlen("file"));
+		write_hpstring(&writer.super, argv[i]);
 		write_field_end(&writer.super, "file", strlen("file"));
 
 		if(data_parser(&dp, argv[i], &writer.super) == E_HP_NOERROR)
