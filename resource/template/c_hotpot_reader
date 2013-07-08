@@ -31,7 +31,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 	$union
 			{
 %>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data, hpint32 <% $TypeAnnotations[$*{$switch}] %>)
 {
 	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
@@ -40,7 +40,9 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 					$*
 					{
 %>
-	write_<% $type %>(<% $name %>);<%
+		case <% $condition{$expression{$op0}}%>:
+			write_<% $type %>(<% $name %>);
+			break;<%
 					}
 				]
 %>
