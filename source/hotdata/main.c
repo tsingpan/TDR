@@ -36,6 +36,11 @@ DATA_PARSER dp;
 JSON_WRITER jw;
 
 char file_name[HP_MAX_FILE_PATH_LENGTH];
+HotObjectReader reader;
+HotObjectWriter writer;
+SCRIPT_PARSER sp;
+char file_tag[1024];
+hpuint32 file_tag_len;
 
 int main(int argc, char **argv)
 {
@@ -65,11 +70,7 @@ int main(int argc, char **argv)
 	for(i = hp_optind; i < argc; ++i)
 	{
 		HotObject *obj = hotobject_new();
-		HotObjectReader reader;
-		HotObjectWriter writer;
-		SCRIPT_PARSER sp;
-		char file_tag[1024];
-		hpuint32 file_tag_len;
+		
 		hpuint32 j;
 		fout = fopen("d:/ast_base.out", "w");
 		ddekit_json_encoding_writer_init(&jw, fout);
