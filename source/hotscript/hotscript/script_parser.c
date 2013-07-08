@@ -29,136 +29,103 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	return E_HP_NOERROR;
 }
 
-
-
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
-	if(index->it == E_INDEX_NULL)
-	{
-		goto ERROR_RET;
-	}
+	
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_BEGIN;
 
-	current->vector_begin = op;
+	identifier->vector_begin = op;
 
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_vector_item_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
-
-	if(index->it == E_INDEX_NULL)
-	{
-		goto ERROR_RET;
-	}
-
-	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_VECTOR_SET_INDEX;
-	if(index->it == E_INDEX_GIVEN)
-	{
-		op->arg.vector_set_index_arg.index = index->var.val.ui32;
-	}
-	else if(index->it == E_INDEX_ALL)
-	{
-		op->arg.vector_set_index_arg.index = 0;		
-	}
-
-	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_VECTOR_ITEM_BEGIN;
-	current->vector_item_begin = op;
-
-	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_VECTOR_INC_INDEX;
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-}
-
-hpint32 hotscript_do_vector_item_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
-{
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	HotOp *op = NULL;
-
-	if(index->it == E_INDEX_NULL)
-	{
-		goto ERROR_RET;
-	}
-
-	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_VECTOR_ITEM_END;
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-
-}
-
-hpint32 hotscript_do_vector_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
-{
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	HotOp *op = NULL;
-
-	if(index->it != E_INDEX_ALL)
-	{
-		goto ERROR_RET;
-	}
-	op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_JMP;
-	op->arg.jmp_arg.lineno = current->vector_item_begin->lineno;
-
-	current->vector_item_begin->arg.vector_seek_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-}
-
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index)
-{
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	HotOp *op = NULL;
-	if(index->it == E_INDEX_NULL)
-	{
-		goto ERROR_RET;
-	}
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_END;
 
-	current->vector_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+	identifier->vector_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
 }
-
-hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *prefix, const SP_NODE *name)
+hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_FIELD_BEGIN;
-	op->arg.field_begin_arg.filed_search_strategy = prefix->search_strategy;
-	op->arg.field_begin_arg.name = name->var.val.bytes;
+	HotOp *op = NULL;
 
-	current->field_begin = op;
+	if(identifier->token == tok_identifier)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_FIELD_BEGIN;
+		op->arg.field_begin_arg.name = identifier->var.val.bytes;
+		identifier->field_begin = op;
+	}
+	else if(identifier->token == tok_integer)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_SET_INDEX;
+		op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
+
+		printf("vector item begin\n");
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_ITEM_BEGIN;
+		identifier->vector_item_begin = NULL;
+	}
+	else if(identifier->token == tok_auto_integer)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_SET_INDEX;
+		op->arg.vector_set_index_arg.index = 0;
+
+		
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_ITEM_BEGIN;
+
+		identifier->vector_item_begin = op;		
+	}
+	
 
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current)
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 {
 	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
-	op->instruct = HOT_FIELD_END;
+	HotOp *op = NULL;
+	if(identifier->token == tok_identifier)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_FIELD_END;
+		identifier->field_begin->arg.field_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+	}
+	else if(identifier->token == tok_integer)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_ITEM_END;
+	}
+	else if(identifier->token == tok_auto_integer)
+	{
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_ITEM_END;
 
-	current->field_begin->arg.field_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_VECTOR_INC_INDEX;
+
+		op = hotoparr_get_next_op(&self->hotoparr);
+		op->instruct = HOT_JMP;
+		op->arg.jmp_arg.lineno = identifier->vector_item_begin->lineno;
+		identifier->vector_item_begin->arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+
+	}
 	return E_HP_NOERROR;
 }
 
@@ -191,15 +158,6 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 static hpint32 get_token_yylval(SCRIPT_PARSER *sp, int token, YYSTYPE * yylval)
 {
 	SCANNER *self = scanner_stack_get_scanner(&sp->scanner_stack);
-	switch(token)
-	{
-	case tok_text:
-		hotscript_do_text(&sp->scanner_stack, yylval);
-		break;
-	case tok_literal:
-		hotscript_do_literal(&sp->scanner_stack, yylval);
-		break;
-	}
 	return E_HP_NOERROR;
 }
 

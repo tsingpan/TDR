@@ -50,15 +50,21 @@ StatementList :
 |	Statement
 	
 Statement:
-	tok_text
-|	tok_literal 
-|	Identifier
-|	Identifier '[' StatementList ']'
-|	Identifier '{' StatementList '}'
+	tok_text {hotscript_do_text(ss, &$1);}
+|	tok_literal {hotscript_do_literal(ss, &$1);}
+|	Identifier {hotscript_do_field_begin(ss, &$1); hotscript_do_echo_field(ss); hotscript_do_field_end(ss, &$1);}
+|	Identifier {hotscript_do_field_begin(ss, &$1);}
+	'[' {hotscript_do_vector_begin(ss, &$1);}
+	StatementList
+	']' {hotscript_do_vector_end(ss, &$1);}
+	{hotscript_do_field_end(ss, &$1);}
+|	Identifier {hotscript_do_field_begin(ss, &$1);}
+	'{' StatementList '}'
+	{hotscript_do_field_end(ss, &$1);}
 
 Identifier :
-	tok_identifier
-|	tok_integer
-|	tok_auto_integer
+	tok_identifier {$$ = $1;$$.token = tok_identifier; }
+|	tok_integer{$$ = $1;$$.token = tok_integer; }
+|	tok_auto_integer{$$ = $1;$$.token = tok_auto_integer; }
 
 %%

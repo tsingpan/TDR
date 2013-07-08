@@ -7,7 +7,7 @@
 #include "hotpot/hp_value.h"
 
 typedef enum _HOTSCRIPT_INSTRUCT
-{	
+{
 	HOT_ECHO                               = 0,
 	HOT_FIELD_BEGIN						   = 1,
 	HOT_FIELD_END						   = 2,
@@ -28,22 +28,8 @@ typedef struct _HOT_ECHO_ARG
 	hpbytes bytes;
 }HOT_ECHO_ARG;
 
-typedef enum _INDEX_TYPE
-{
-	E_INDEX_GIVEN	= 0,
-	E_INDEX_ALL		= 1,
-	E_INDEX_NULL	= 3,
-}INDEX_TYPE;
-
-typedef enum _SEARCH_STRATEGY
-{
-	E_STACK					= 2,
-	E_STACK_STACK			= 3,//词法分析也要回溯
-}SEARCH_STRATEGY;
-
 typedef struct _HOT_FIELD_BEGIN_ARG
 {	
-	SEARCH_STRATEGY filed_search_strategy;
 	hpbytes name;
 	hpuint32 failed_jmp_lineno;
 }HOT_FIELD_BEGIN_ARG;
@@ -61,7 +47,7 @@ typedef struct _HOT_VECTOR_SET_INDEX_ARG
 typedef struct _HOT_VECTOR_SEEK_ARG
 {
 	hpuint32 failed_jmp_lineno;
-}HOT_VECTOR_SEEK_ARG;
+}HOT_VECTOR_ITEM_BEGIN_ARG;
 
 typedef struct _HOT_JMP_ARG
 {
@@ -74,7 +60,7 @@ typedef union _HOTSCRIPT_ARGUMENT
 	HOT_FIELD_BEGIN_ARG field_begin_arg;
 	HOT_VECTOR_BEGIN_ARG vector_begin_arg;
 	HOT_VECTOR_SET_INDEX_ARG vector_set_index_arg;
-	HOT_VECTOR_SEEK_ARG vector_seek_arg;
+	HOT_VECTOR_ITEM_BEGIN_ARG vector_item_begin_arg;
 	HOT_JMP_ARG jmp_arg;
 }HOTSCRIPT_ARGUMENT;
 

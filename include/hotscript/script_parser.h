@@ -10,8 +10,7 @@
 
 typedef struct _SP_NODE
 {
-	INDEX_TYPE it;
-	SEARCH_STRATEGY search_strategy;
+	int token;
 	HPVar var;
 
 	//以下几个玩意记录需要回溯处理的指令
@@ -46,19 +45,13 @@ hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text);
 
 hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text);
 
-hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *prefix, const SP_NODE *name);
+hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier);
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *current);
+hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_item_begin(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
-
-hpint32 hotscript_do_vector_item_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
-
-hpint32 hotscript_do_vector_jmp(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
-
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *current, const SP_NODE *index);
+hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier);
 
 hpint32 hotscript_do_field(SCANNER_STACK *super, SP_NODE *current);
 

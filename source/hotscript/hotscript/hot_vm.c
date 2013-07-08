@@ -177,7 +177,7 @@ hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 {
 	if(read_vector_item_begin(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.vector_seek_arg.failed_jmp_lineno;
+		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
@@ -190,7 +190,7 @@ hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 {
 	if(read_vector_item_end(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.vector_seek_arg.failed_jmp_lineno;
+		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{

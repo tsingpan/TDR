@@ -84,22 +84,21 @@ any_char		((.|"\n"))
 
 <ST_IN_SCRIPTING>'$'{identifier}{
 	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.ptr = yytext;
-	yylval->var.val.bytes.len = yyleng;
+	yylval->var.val.bytes.ptr = yytext + 1;
+	yylval->var.val.bytes.len = yyleng - 1;
 	return tok_identifier;
 }
 
 <ST_IN_SCRIPTING>'$'{intconstant}{
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.ptr = yytext;
-	yylval->var.val.bytes.len = yyleng;
+	char number[128];
+	memcpy(number, yytext, yyleng);
+	number[yyleng] = 0;
+	yylval->var.type = E_HP_UINT32;
+	yylval->var.val.ui32 = strtoul(number, NULL, 10);
 	return tok_integer;
 }
 
-<ST_IN_SCRIPTING>'$''*'{
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.ptr = yytext;
-	yylval->var.val.bytes.len = yyleng;
+<ST_IN_SCRIPTING>'$''*'{	
 	return tok_auto_integer;
 }
 
