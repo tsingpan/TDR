@@ -35,7 +35,6 @@ hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_na
 hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = hotobject_get(self);
 	const HotObject *new_ob;
 	hpint32 ret;
 	char name[1024];
@@ -45,6 +44,38 @@ hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name
 		name[i] = var_name[i];
 	}
 	name[i] = 0;
+	for(i = self->stack_num; i > 0; --i)
+	{
+		ret = trie_retrieve(self->stack[i - 1].ho->keys, name, &new_ob);
+		if(ret)
+		{
+			hotobject_push(self, new_ob);
+			return E_HP_NOERROR;
+		}
+	}
+	
+ERROR_RET:
+	return E_HP_ERROR;
+}
+
+hpint32 hotobject_read_vector_item_begin(HPAbstractReader *super, hpuint32 index)
+{
+	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
+	const HotObject *ob = hotobject_get(self);	
+	hpint32 count;	
+	const HotObject *new_ob;
+	hpint32 ret;
+	char name[1024];	
+	hpuint32 len = 0;
+
+	count = index;
+	len = 0;	
+	do
+	{
+		name[len++] = '0' + count % 10;
+		count/=10;
+	}while(count > 0);
+	name[len] = 0;
 
 	ret = trie_retrieve(ob->keys, name, &new_ob);
 	if(!ret)
@@ -69,7 +100,6 @@ hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, 
 hpint32 hotobject_read_vector_begin(HPAbstractReader *super)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
-	const HotObject *ob = hotobject_get(self);
 
 	return E_HP_NOERROR;
 }
@@ -134,21 +164,6 @@ hpint32 hotobject_read_hpbool(HPAbstractReader *super, hpbool *val)
 	*val = ob->var.val.b;
 
 	return E_HP_NOERROR;
-}
-
-hpint32 hotobject_read_vector_item_begin(HPAbstractReader *super, hpuint32 index)
-{
-	char str[1024];
-	hpuint32 str_len = 0;
-	hpint32 count;
-
-	count = index;
-	do
-	{
-		str[str_len++] = '0' + count % 10;
-		count/=10;
-	}while(count > 0);
-	return hotobject_read_field_begin(super, str, str_len);
 }
 
 hpint32 hotobject_read_vector_item_end(HPAbstractReader *super, hpuint32 index)

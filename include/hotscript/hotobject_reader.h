@@ -26,7 +26,6 @@ struct _HotObjectReader
 	char name[HOTOBJECT_MAX_NAME_LENGTH];
 };
 
-hpint32 hotobject_read_vector_item_begin(HPAbstractReader *super, hpuint32 index);
 hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject);
 
 #endif//_H_HOT_OBJECT_READER
