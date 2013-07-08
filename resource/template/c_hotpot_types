@@ -1,6 +1,7 @@
 <%
-	$DefinitionList[*]
-	{
+	$DefinitionList
+	[
+		$*{
 			$comment
 			{
 %>
@@ -23,15 +24,18 @@
 typedef enum _<% $name %>
 {
 <%
-				$list[*]
-				{
+				$list
+				[
+					$*{
 %>
 	<% $name %> = <% $value %> ,
-<%				}
+<%					}
+				]
 %>
 }<% $name %>
 <%
 			}
-	}
+		}
+	]
 %>
 
