@@ -11,6 +11,8 @@
 		
 static void ddekit_reserved_keyword(const char* keyword)
 {
+	printf("error\n");
+	exit(1);
 	//yyerror(&yylloc, ddekit_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
 }
 

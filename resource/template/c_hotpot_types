@@ -1,7 +1,8 @@
 <%
 	$DefinitionList
 	[
-		$*{
+		$*
+		{
 			$comment
 			{
 %>
@@ -26,13 +27,33 @@ typedef enum _<% $name %>
 <%
 				$list
 				[
-					$*{
+					$*
+					{
 %>
 	<% $name %> = <% $value %> ,
 <%					}
 				]
 %>
 }<% $name %>
+<%
+			}
+
+			$struct
+			{
+%>
+typedef struct <% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<% $type ' ' $name ';' %>
+<%
+					}
+				]
+%>
+}
 <%
 			}
 		}

@@ -67,15 +67,6 @@ hpint32 hotobject_write_vector_end(HPAbstractWriter *super)
 	return E_HP_NOERROR;
 }
 
-static hpint32 hotobject_write_hpint8(HPAbstractWriter *super, const hpint8 val)
-{
-	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = hotobject_get(self);
-	ob->var.type = E_HP_INT8;
-	ob->var.val.i8 = val;
-	return E_HP_NOERROR;
-}
-
 static hpint32 hotobject_write_double(HPAbstractWriter *super, const hpdouble val)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
@@ -105,13 +96,12 @@ hpint32 hotobject_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_type(HPAbstractWriter *super, const HPType type)
+hpint32 hotobject_write_hpstring(HPAbstractWriter *super, const hpstring str)
 {
-	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
-	HotObject *ob = hotobject_get(self);
-	ob->var.type = type;
-
-	return E_HP_NOERROR;
+	hpbytes bytes;
+	bytes.ptr = str;
+	bytes.len = strlen(str);
+	return hotobject_write_bytes(super, bytes);
 }
 
 hpint32 hotobject_write_hpbool(HPAbstractWriter *super, const hpbool val)
@@ -179,10 +169,10 @@ hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject)
 	self->super.write_vector_end = hotobject_write_vector_end;
 	self->super.write_field_begin = hotobject_write_field_begin;
 	self->super.write_field_end = hotobject_write_field_end;
-	self->super.write_type = hotobject_write_type;
 	self->super.write_vector_item_begin = hotobject_write_vector_item_begin;
 	self->super.write_vector_item_end = hotobject_write_vector_item_end;
 	self->super.write_bytes = hotobject_write_bytes;
+	self->super.write_hpstring = hotobject_write_hpstring;
 	self->super.write_hpdouble = hotobject_write_double;
 	self->super.write_hpint64 = hotobject_write_hpint64;
 	self->super.write_hpbool = hotobject_write_hpbool;

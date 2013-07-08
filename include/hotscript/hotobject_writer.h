@@ -27,7 +27,5 @@ struct _HotObjectWriter
 
 hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject);
 
-hpint32 hotobject_write_vector_item_begin(HPAbstractWriter *self, hpuint32 index);
-
 #endif//_H_HOT_OBJECT_WRITER
 

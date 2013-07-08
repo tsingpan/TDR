@@ -10,6 +10,8 @@
 		
 static void hotscript_reserved_keyword(char* keyword)
 {
+	
+	exit(1);
 	//yyerror(&yylloc, hotscript_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
 }
 
@@ -102,6 +104,41 @@ any_char		((.|"\n"))
 	return tok_auto_integer;
 }
 
+<ST_IN_SCRIPTING>{literal_begin} {
+	char mark = *yytext;
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.len = 0;
+	yylval->var.val.bytes.ptr = YYCURSOR;
+	while(YYCURSOR < YYLIMIT)
+	{
+		if(*YYCURSOR == '\\')
+		{
+			++YYCURSOR;
+			++(yylval->var.val.bytes.len);
+			if(YYCURSOR < YYLIMIT)
+			{
+				++(yylval->var.val.bytes.len);
+				++YYCURSOR;
+				continue;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			if(*YYCURSOR == mark)
+			{
+				++YYCURSOR;
+				break;
+			}
+		}
+		++(yylval->var.val.bytes.len);
+		++YYCURSOR;
+	}
+	return tok_literal;
+}
 
 <ST_IN_SCRIPTING>"BEGIN"              { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"END"                { hotscript_reserved_keyword(yytext); }
@@ -246,42 +283,6 @@ any_char		((.|"\n"))
 <ST_IN_SCRIPTING>"double"			  { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"=="				  { hotscript_reserved_keyword(yytext); }
 <ST_IN_SCRIPTING>"!="				  { hotscript_reserved_keyword(yytext); }
-
-<ST_IN_SCRIPTING>{literal_begin} {
-	char mark = *yytext;
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.len = 0;
-	yylval->var.val.bytes.ptr = YYCURSOR;
-	while(YYCURSOR < YYLIMIT)
-	{
-		if(*YYCURSOR == '\\')
-		{
-			++YYCURSOR;
-			++(yylval->var.val.bytes.len);
-			if(YYCURSOR < YYLIMIT)
-			{
-				++(yylval->var.val.bytes.len);
-				++YYCURSOR;
-				continue;
-			}
-			else
-			{
-				break;
-			}
-		}
-		else
-		{
-			if(*YYCURSOR == mark)
-			{
-				++YYCURSOR;
-				break;
-			}
-		}
-		++(yylval->var.val.bytes.len);
-		++YYCURSOR;
-	}
-	return tok_literal;
-}
 
 <ST_IN_SCRIPTING>{newline}			     {goto restart;/* do nothing */																}
 <ST_IN_SCRIPTING>{any_char}			     {goto restart;/* reutrn error?*/																}
