@@ -1,0 +1,54 @@
+#ifndef _H_<% $file_tag %>
+#define _H_<% $file_tag %>
+<%
+	$DefinitionList
+	[
+		$*
+		{
+			$comment
+			{
+%>
+//<% $text %>
+<%
+			}
+
+			$struct
+			{
+%>
+typedef struct _<% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<% $type ' ' $name ';' 
+					}
+				]
+%>
+}<% $name %>
+<%
+			}
+
+			$union
+			{
+%>
+typedef union _<% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<% $type ' ' $name ';'
+					}
+				]
+%>
+}<% $name %>
+<%
+			}
+		
+		}
+	]
+%>
+#endif//_H_<% $file_tag %>
