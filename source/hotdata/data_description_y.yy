@@ -220,7 +220,7 @@ Enum :
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_bytes(GET_WRITER, $6.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 	}
@@ -439,7 +439,36 @@ FieldExpression :
 
 
 Type :
-	tok_t_bool
+	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_begin(GET_WRITER, NULL);}
+	SimpleType
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));}
+	
+|	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_begin(GET_WRITER, NULL);}
+	ContainerType
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));}
+	
+|	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_begin(GET_WRITER, NULL);}
+	ObjectType
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));};
+
+ObjectType:
+	tok_identifier
+   	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	};
+
+ContainerType:
+	tok_t_vector
+	{
+		write_field_begin(GET_WRITER, "type", strlen("type"));
+		write_hpstring(GET_WRITER, "vector");
+		write_field_end(GET_WRITER, "type", strlen("type"));
+	}
+	
+SimpleType:
+		tok_t_bool
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "bool");
@@ -461,12 +490,6 @@ Type :
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "string");
-		write_field_end(GET_WRITER, "type", strlen("type"));
-	}
-|	tok_t_vector
-	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "vector");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 	}
 |	tok_t_int8
@@ -515,12 +538,6 @@ Type :
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint64");
-		write_field_end(GET_WRITER, "type", strlen("type"));
-	}
-|	tok_identifier
-   	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "type", strlen("type"));
 	};
 

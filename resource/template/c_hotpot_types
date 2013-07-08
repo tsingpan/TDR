@@ -50,7 +50,7 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<% $type ' ' $name ';' 
+	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%> <%$name%>;<%
 					}
 				]
 %>
@@ -68,7 +68,7 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<% $type ' ' $name ';'
+	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%> <% $name%>;<%
 					}
 				]
 %>

@@ -20,7 +20,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 					$*
 					{
 %>
-	write_<% $type %>(<% $name %>);<%
+	write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%>(<% $name %>);<%
 					}
 				]
 %>
@@ -41,7 +41,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data, hpint32 <% $
 					{
 %>
 		case <% $condition{$expression{$op0}}%>:
-			write_<% $type %>(<% $name %>);
+			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%>(<% $name %>);
 			break;<%
 					}
 				]
