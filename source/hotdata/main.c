@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
 		hotobject_writer_init(&writer, obj);
 		hotobject_reader_init(&reader, obj);
-		//data_parser(&dp, argv[i], &jw.super);
+		data_parser(&dp, argv[i], &jw.super);
 
 		if(data_parser(&dp, argv[i], &writer.super) == E_HP_NOERROR)
 		{

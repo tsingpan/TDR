@@ -41,7 +41,7 @@ typedef enum _<% $name %>
 			$struct
 			{
 %>
-typedef struct <% $name %>
+typedef struct _<% $name %>
 {
 <%				$list
 				[
@@ -53,9 +53,29 @@ typedef struct <% $name %>
 					}
 				]
 %>
-}
+}<% $name %>
 <%
 			}
+
+			$union
+			{
+%>
+typedef union _<% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<% $type ' ' $name ';' %>
+<%
+					}
+				]
+%>
+}<% $name %>
+<%
+			}
+
 		}
 	]
 %>
