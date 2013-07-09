@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "hotdata_parser.h"
+#include "hotprotocol/hp_xml_writer.h"
 
 
 const char* const short_options = "?h:i:t:";
@@ -34,6 +35,7 @@ typedef void (*FUNC) (const char*, const char*);
 
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
+HP_XML_WRITER xml_writer;
 
 char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
@@ -47,6 +49,7 @@ int main(int argc, char **argv)
 	int i;
 	int oc;		
 	FILE *fout;
+	FILE *fout_xml;
 	
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
@@ -75,10 +78,16 @@ int main(int argc, char **argv)
 		fout = fopen("d:/ast_base.out", "w");
 		ddekit_json_encoding_writer_init(&jw, fout);
 
+		fout_xml = fopen("d:/ast_base.xml", "w");
+		xml_writer_init(&xml_writer, fout_xml);
+
 		hotobject_writer_init(&writer, obj);
 		hotobject_reader_init(&reader, obj);
 		data_parser(&dp, argv[i], &jw.super);
 		fclose(fout);
+
+		data_parser(&dp, argv[i], &xml_writer.super);
+		fclose(fout_xml);
 
 		file_tag_len = strlen(argv[i]);		
 		for(j = 0;j < file_tag_len; ++j)

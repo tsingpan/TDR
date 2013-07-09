@@ -12,8 +12,8 @@ typedef struct _HP_XML_WRITER
 {
 	HPAbstractWriter super;
 	hpuint32 count;
-	hpbool need_tab;
 	FILE *f;
+	hpbool need_tab;
 }HP_XML_WRITER;
 
 HP_API hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f);
@@ -33,29 +33,12 @@ HP_API hpint32 xml_write_field_begin(HPAbstractWriter *self, const char *var_nam
 
 HP_API hpint32 xml_write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len);
 
-HP_API hpint32 xml_write_enum(HPAbstractWriter *super, const int val);
-
 HP_API hpint32 xml_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
-
-HP_API hpint32 xml_write_hpchar(HPAbstractWriter *super, const char val);
 
 HP_API hpint32 xml_write_hpdouble(HPAbstractWriter *super, const double val);
 
-HP_API hpint32 xml_write_hpint8(HPAbstractWriter *super, const hpint8 val);
-
-HP_API hpint32 xml_write_hpint16(HPAbstractWriter *super, const hpint16 val);
-
-HP_API hpint32 xml_write_hpint32(HPAbstractWriter *super, const hpint32 val);
 
 HP_API hpint32 xml_write_hpint64(HPAbstractWriter *super, const hpint64 val);
-
-HP_API hpint32 xml_write_hpuint8(HPAbstractWriter *super, const hpuint8 val);
-
-HP_API hpint32 xml_write_hpuint16(HPAbstractWriter *super, const hpuint16 val);
-
-HP_API hpint32 xml_write_hpuint32(HPAbstractWriter *super, const hpuint32 val);
-
-HP_API hpint32 xml_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
 HP_API hpint32 xml_write_bytes(HPAbstractWriter *super, const hpbytes bytes);
 
@@ -69,5 +52,6 @@ HP_API hpint32 xml_write_semicolon(HPAbstractWriter *super);
 
 HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
 
+HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
 
 #endif//_H_DDEKIT_JSON_ENCODING_WRITER
