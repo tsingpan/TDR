@@ -101,7 +101,9 @@ any_char		((.|"\n"))
 }
 
 <ST_IN_SCRIPTING>'$''*'{
-	return tok_all_integer;
+	yylval->var.type = E_HP_UINT32;
+	yylval->var.val.ui32 = 0;
+	return tok_auto_integer;
 }
 
 <ST_IN_SCRIPTING>'$'{intconstant}'+'{
