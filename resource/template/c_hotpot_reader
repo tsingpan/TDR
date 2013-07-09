@@ -19,14 +19,22 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 				[
 					$*
 					{
-%>
-	write_<%$Type
+						$Type{$ContainerType{$vector
+						{%>
+	for(i = 0; i < 10; ++i)
+	{
+<%						}}}%>	
+	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }}%><%$Type{$ContainerType{$vector{'\t'}}}%>write_<%$Type
 	{
 		$SimpleType{$type}
 		$ObjectType{$type}
 		$ContainerType{$vector{$Arguments[$0{$name}]}}
 	}
 %>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]} $ContainerType{$vector{$Arguments[$2+{',' $name}]}}}%>);<%
+						$Type{$ContainerType{$vector
+						{%>
+	}
+<%						}}}
 					}
 				]
 %>
