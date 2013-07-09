@@ -1,4 +1,4 @@
-#include "hotpot/hp_writer.h"
+#include "hotprotocol/hp_abstract_writer.h"
 #include "hotpot/hp_error.h"
 
 hpint32 write_struct_begin(HPAbstractWriter *self, const char *struct_name)

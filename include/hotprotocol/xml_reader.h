@@ -2,7 +2,7 @@
 #define _H_XML_READER
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_reader.h"
+#include "hotprotocol/hp_abstract_reader.h"
 
 typedef struct _XML_READER
 {

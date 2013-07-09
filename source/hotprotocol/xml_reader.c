@@ -1,7 +1,7 @@
 #include "hotprotocol/xml_reader.h"
 #include "hotpot/hp_error.h"
 #include "hotpot/hp_number.h"
-#include "hotpot/hp_reader.h"
+#include "hotprotocol/hp_abstract_reader.h"
 
 #include <string.h>
 #include <assert.h>

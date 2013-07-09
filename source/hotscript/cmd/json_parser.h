@@ -12,8 +12,8 @@
 
 #include "hotscript/hotobject.h"
 #include "hotscript/hotlex.h"
-#include "hotpot/hp_reader.h"
-#include "hotpot/hp_writer.h"
+#include "hotprotocol/hp_abstract_reader.h"
+#include "hotprotocol/hp_abstract_writer.h"
 
 
 #define MAX_STACK_DEEP 1024

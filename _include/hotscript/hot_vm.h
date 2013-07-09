@@ -3,7 +3,7 @@
 
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_reader.h"
+#include "hotprotocol/hp_abstract_reader.h"
 #include "hotpot/hp_value.h"
 
 typedef enum _HOTSCRIPT_INSTRUCT

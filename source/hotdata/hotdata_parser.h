@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "hotscript/hotlex.h"
 #include "hotpot/hp_value.h"
-#include "hotpot/hp_writer.h"
+#include "hotprotocol/hp_abstract_writer.h"
 
 //语法节点的值
 typedef struct _SyntacticNode SyntacticNode;

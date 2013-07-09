@@ -3,7 +3,7 @@
 
 #include "hotscript/hotobject.h"
 
-#include "hotpot/hp_writer.h"
+#include "hotprotocol/hp_abstract_writer.h"
 
 
 #ifndef _DEC_HOTOBJECTITERATORA

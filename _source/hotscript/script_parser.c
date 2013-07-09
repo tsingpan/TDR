@@ -1,5 +1,5 @@
 #include "hotscript/script_parser.h"
-#include "hotpot/hp_reader.h"
+#include "hotprotocol/hp_abstract_reader.h"
 #include "hotpot/hp_error.h"
 #include "script_l.h"
 #include "script_y.h"

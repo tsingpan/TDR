@@ -4,7 +4,7 @@
 #include "hotpot/hp_platform.h"
 
 #include "hotscript/hotobject.h"
-#include "hotpot/hp_reader.h"
+#include "hotprotocol/hp_abstract_reader.h"
 
 #ifndef _DEC_HOTOBJECTCONSTITERATORA
 #define _DEC_HOTOBJECTCONSTITERATORA

@@ -1,7 +1,7 @@
 #include "hotprotocol/ddekit_json_encoding_writer.h"
 #include "hotpot/hp_error.h"
 #include "hotpot/hp_number.h"
-#include "hotpot/hp_writer.h"
+#include "hotprotocol/hp_abstract_writer.h"
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
