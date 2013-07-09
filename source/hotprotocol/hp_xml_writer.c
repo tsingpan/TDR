@@ -170,38 +170,21 @@ hpint32 xml_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
 	for(i = 0;i < bytes.len; ++i)
 		switch (bytes.ptr[i])
 		{
-			case '"':
-				fputc('\\', self->f);
-				fputc('"', self->f);
+			case '<':
+				fprintf(self->f, "&lt");
 				continue;
-			case '\\':
-				fputc('\\', self->f);
-				fputc('\\', self->f);
+			case '>':
+				fprintf(self->f, "&gt");
 				continue;
-			case '/':
-				fputc('\\', self->f);
-				fputc('/', self->f);
+			case '&':
+				fprintf(self->f, "&amp");
 				continue;
-			case '\b':
-				fputc('\\', self->f);
-				fputc('b', self->f);
+			case '\'':
+				fprintf(self->f, "&apos");
 				continue;
-			case '\f':
-				fputc('\\', self->f);
-				fputc('f', self->f);
-				continue;
-			case '\n':
-				fputc('\\', self->f);
-				fputc('n', self->f);
-				continue;
-			case '\r':
-				fputc('\\', self->f);
-				fputc('r', self->f);
-				continue;
-			case '\t':
-				fputc('\\', self->f);
-				fputc('t', self->f);
-				continue;					
+			case '\"':
+				fprintf(self->f, "&quot");
+				continue;						
 			default:
 				{
 					fputc(bytes.ptr[i], self->f);

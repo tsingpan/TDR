@@ -3,16 +3,19 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
+#include <stdio.h>
 
 typedef struct _HP_XML_READER
 {
 	HPAbstractReader super;
 
-
+	hpuint32 count;
+	FILE *f;
+	hpbool need_tab;
 }HP_XML_READER;
 
 
-HP_API hpint32 xml_reader_init(HP_XML_READER *self, const void *addr, hpuint32 size);
+HP_API hpint32 xml_reader_init(HP_XML_READER *self, FILE *f);
 
 HP_API hpint32 xml_reader_fini(HP_XML_READER *self);
 
@@ -53,5 +56,12 @@ HP_API hpint32 xml_read_hpuint16(HPAbstractReader *super, hpuint16 *val);
 HP_API hpint32 xml_read_hpuint32(HPAbstractReader *super, hpuint32 *val);
 
 HP_API hpint32 xml_read_hpuint64(HPAbstractReader *super, hpuint64 *val);
+
+
+HP_API hpint32 xml_read_vector_item_end(HPAbstractReader *super, hpuint32 index);
+
+HP_API hpint32 xml_read_vector_item_begin(HPAbstractReader *super, hpuint32 index);
+HP_API hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val);
+HP_API hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes);
 
 #endif//_H_XML_READER
