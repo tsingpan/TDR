@@ -1,2 +1,2 @@
-add_subdirectory(compiler)
-add_subdirectory(php_hotscript)
+add_subdirectory(cmd)
+add_subdirectory(php)
