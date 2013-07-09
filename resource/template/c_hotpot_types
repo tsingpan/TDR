@@ -79,7 +79,7 @@ typedef union _<% $name %>
 			$typedef
 			{
 %>
-typedef <% $type ' ' $new_type %>;
+typedef <%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$new_type%>;
 <%
 			}
 		}

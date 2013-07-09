@@ -226,7 +226,7 @@ Enum :
 	}
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
 	EnumDefList 
-	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
+	'}' {write_vector_end(GET_WRITER); write_field_end(GET_WRITER, "list", strlen("list")); }
 	CommaOrSemicolonOptional
 	{write_struct_end(GET_WRITER, NULL);};
     

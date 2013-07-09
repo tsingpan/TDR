@@ -12,8 +12,6 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->count = 0;
 	self->need_tab = hpfalse;
 
-	self->super.write_struct_begin = xml_write_struct_begin;
-	self->super.write_struct_end = xml_write_struct_end;
 	self->super.write_vector_begin = xml_write_vector_begin;
 	self->super.write_vector_end = xml_write_vector_end;
 	self->super.write_field_begin = xml_write_field_begin;
@@ -66,34 +64,17 @@ static void printf_tab(HP_XML_WRITER *self)
 	}
 }
 
-hpint32 xml_write_struct_begin(HPAbstractWriter *super, const char *struct_name)
-{
-	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);	
-
-	return E_HP_NOERROR;
-}
-
-hpint32 xml_write_struct_end(HPAbstractWriter *super, const char *struct_name)
-{
-	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);	
-
-	
-	return E_HP_NOERROR;
-}
-
 hpint32 xml_write_vector_begin(HPAbstractWriter *super)
 {
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);	
-	
-	
+	++self->count;
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_write_vector_end(HPAbstractWriter *super)
 {
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
-	
-
+	--self->count;
 	
 	return E_HP_NOERROR;
 }
@@ -138,6 +119,22 @@ hpint32 xml_write_field_end(HPAbstractWriter *super, const char *var_name, hpuin
 	fputc('>', self->f);
 	//fputc('\n', self->f);
 	return E_HP_NOERROR;
+}
+
+HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
+{
+	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
+	char str[1024];
+	snprintf(str, 1024, "[%d]", index);
+	return xml_write_field_begin(super, str, strlen(str));
+}
+
+HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
+{
+	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
+	char str[1024];
+	snprintf(str, 1024, "[%d]", index);
+	return xml_write_field_end(super, str, strlen(str));
 }
 
 HP_API hpint32 xml_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name)
@@ -218,8 +215,7 @@ hpint32 xml_write_string(HPAbstractWriter *super, const hpchar* str)
 	hpbytes bytes;
 	bytes.ptr = str;
 	bytes.len = strlen(str);
-	xml_write_bytes(super, bytes);
-	return E_HP_NOERROR;
+	return xml_write_bytes(super, bytes);
 }
 
 hpint32 xml_write_hpbool(HPAbstractWriter *super, const hpbool val)
@@ -239,22 +235,3 @@ hpint32 xml_write_hpbool(HPAbstractWriter *super, const hpbool val)
 	return E_HP_NOERROR;
 }
 
-
-HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
-{
-	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
-	//printf_tab(self);
-	++(self->count);
-	
-	return E_HP_NOERROR;
-}
-
-HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
-{
-	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
-	
-	--(self->count);
-	//printf_tab(self);
-
-	return E_HP_NOERROR;
-}

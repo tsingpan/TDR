@@ -21,10 +21,6 @@ HP_API hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f);
 HP_API hpint32 xml_writer_fini(HP_XML_WRITER *self);
 
 //virtual functions
-HP_API hpint32 xml_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
-
-HP_API hpint32 xml_write_struct_end(HPAbstractWriter *self, const char *struct_name);
-
 HP_API hpint32 xml_write_vector_begin(HPAbstractWriter *self);
 
 HP_API hpint32 xml_write_vector_end(HPAbstractWriter *self);
