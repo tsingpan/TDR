@@ -26,7 +26,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 		$ObjectType{$type}
 		$ContainerType{$vector{$Arguments[$0{$name}]}}
 	}
-%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}}%>);<%
+%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]} $ContainerType{$vector{$Arguments[$2+{',' $name}]}}}%>);<%
 					}
 				]
 %>

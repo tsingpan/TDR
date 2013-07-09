@@ -35,6 +35,7 @@
 %token tok_import
 %token tok_literal
 %token tok_integer
+%token tok_all_integer
 %token tok_auto_integer
 %token tok_identifier
 %token tok_text
@@ -66,6 +67,7 @@ Statement:
 Identifier :
 	tok_identifier {$$ = $1;$$.token = tok_identifier; }
 |	tok_integer{$$ = $1;$$.token = tok_integer; }
+|	tok_all_integer{$$ = $1;$$.token = tok_all_integer; }
 |	tok_auto_integer{$$ = $1;$$.token = tok_auto_integer; }
 
 %%

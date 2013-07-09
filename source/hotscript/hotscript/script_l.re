@@ -100,7 +100,16 @@ any_char		((.|"\n"))
 	return tok_integer;
 }
 
-<ST_IN_SCRIPTING>'$''*'{	
+<ST_IN_SCRIPTING>'$''*'{
+	return tok_all_integer;
+}
+
+<ST_IN_SCRIPTING>'$'{intconstant}'+'{
+	char number[128];
+	memcpy(number, yytext + 1, yyleng - 2);
+	number[yyleng] = 0;
+	yylval->var.type = E_HP_UINT32;
+	yylval->var.val.ui32 = strtoul(number, NULL, 10);
 	return tok_auto_integer;
 }
 

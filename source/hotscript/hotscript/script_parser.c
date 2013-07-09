@@ -78,19 +78,24 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
 		identifier->vector_item_begin_index = op->lineno;
 	}
-	else if(identifier->token == tok_auto_integer)
+	else if((identifier->token == tok_all_integer) || (identifier->token == tok_auto_integer))
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
-		op->arg.vector_set_index_arg.index = 0;
-
+		if(identifier->token == tok_auto_integer)
+		{
+			op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
+		}
+		else
+		{
+			op->arg.vector_set_index_arg.index = 0;
+		}
 		
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
 		identifier->vector_item_begin_index = op->lineno;		
 	}
 	
-
 	return E_HP_NOERROR;
 }
 
@@ -111,7 +116,7 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 		op->instruct = HOT_VECTOR_ITEM_END;
 		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
-	else if(identifier->token == tok_auto_integer)
+	else if((identifier->token == tok_all_integer) || (identifier->token == tok_auto_integer))
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_END;
@@ -125,7 +130,6 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 
 
 		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
-
 	}
 	return E_HP_NOERROR;
 }
