@@ -9,6 +9,7 @@
 typedef enum _LanguageStringID
 {
 	E_SID_NOERROR = E_HP_NOERROR,
+	E_SID_ERROR = E_HP_ERROR,
 }LanguageStringID;
 
 typedef struct _LanguageString

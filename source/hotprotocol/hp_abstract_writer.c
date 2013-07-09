@@ -158,13 +158,13 @@ hpint32 write_enum(HPAbstractWriter *self, const int val)
 	return self->write_enum(self, val);
 }
 
-hpint32 write_enum_name(HPAbstractWriter *self, const hpint32 val, const hpchar *enum_name)
+hpint32 write_enum_name(HPAbstractWriter *self, const hpchar *enum_name)
 {
 	if(self->write_enum_name == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_enum_name(self, val, enum_name);
+	return self->write_enum_name(self, enum_name);
 }
 
 hpint32 write_hpstring(HPAbstractWriter *self, const hpchar* str)

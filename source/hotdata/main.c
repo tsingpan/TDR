@@ -13,7 +13,12 @@
 #include <ctype.h>
 #include "hotdata_parser.h"
 #include "hotprotocol/hp_xml_writer.h"
+#include "hotprotocol/hp_xml_reader.h"
 
+#include "language/language_types.h"
+#include "language/language_reader.h"
+
+LanguageLib language_lib;
 
 const char* const short_options = "?h:i:t:";
 
@@ -36,6 +41,7 @@ typedef void (*FUNC) (const char*, const char*);
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
 HP_XML_WRITER xml_writer;
+HP_XML_READER xml_reader;
 
 char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
@@ -50,7 +56,15 @@ int main(int argc, char **argv)
 	int oc;		
 	FILE *fout;
 	FILE *fout_xml;
-	
+	FILE *fin_xml;
+	int ret;
+
+	fin_xml = fopen("D:\\HotPot\\resource\\language\\simplified_chinese.xml", "r");
+
+	xml_reader_init(&xml_reader, fin_xml);
+	ret = read_LanguageLib(&xml_reader.super, &language_lib);
+
+	fclose(fin_xml);
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
 	{

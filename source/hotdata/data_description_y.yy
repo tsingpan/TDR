@@ -74,7 +74,7 @@
 
 Document :
 	{
-		write_struct_begin(GET_WRITER, NULL);
+		write_struct_begin(GET_WRITER, "Document");
 		write_field_begin(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
 		write_vector_begin(GET_WRITER);
 	}
@@ -82,7 +82,7 @@ Document :
 	{
 		write_vector_end(GET_WRITER);
 		write_field_end(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
-		write_struct_end(GET_WRITER, NULL);
+		write_struct_end(GET_WRITER, "Document");
 	};
 
 DefinitionList :

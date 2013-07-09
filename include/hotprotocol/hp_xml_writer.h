@@ -50,4 +50,8 @@ HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 ind
 
 HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
 
+hpint32 xml_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
+
+hpint32 xml_write_struct_end(HPAbstractWriter *self, const char *struct_name);
+
 #endif//_H_DDEKIT_JSON_ENCODING_WRITER
