@@ -387,13 +387,17 @@ Condition :
 	{
 		write_field_begin(GET_WRITER, "expression", strlen("expression"));
 		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_hpstring(GET_WRITER, "switch");
+		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "operator", strlen("operator"));
-		write_hpstring(GET_WRITER, "case");
+		write_hpstring(GET_WRITER, "==");
 		write_field_end(GET_WRITER, "operator", strlen("operator"));
 		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "op0", strlen("op0"));
+		write_field_begin(GET_WRITER, "op1", strlen("op1"));
 		write_bytes(GET_WRITER, $2.var.val.bytes);
-		write_field_end(GET_WRITER, "op0", strlen("op0"));
+		write_field_end(GET_WRITER, "op1", strlen("op1"));
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "expression", strlen("expression"));	
 	};

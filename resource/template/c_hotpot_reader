@@ -54,7 +54,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 					$*
 					{
 %>
-		case <% $condition{$expression{$op0}}%>:
+		case <% $condition{$expression{$op1}}%>:
 			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}}%>);
 			break;<%
 					}
