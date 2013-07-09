@@ -1,10 +1,9 @@
-<Language>
-	<ListNum>10</ListNum>
-	<List>
+<LanguageLib>
+	<str_num>10</str_num>
+	<str>
 		<[0]>
-			<No>0</No>
-			<ID>E_HP_NOERROR</ID>
-			<String>没有错误</String>
+			<sid>E_SID_NOERROR</sid>
+			<str>没有错误</str>
 		</[0]>
-	<List>
-</Language>
+	<str>
+</LanguageLib>

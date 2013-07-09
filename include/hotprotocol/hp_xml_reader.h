@@ -61,7 +61,9 @@ HP_API hpint32 xml_read_hpuint64(HPAbstractReader *super, hpuint64 *val);
 HP_API hpint32 xml_read_vector_item_end(HPAbstractReader *super, hpuint32 index);
 
 HP_API hpint32 xml_read_vector_item_begin(HPAbstractReader *super, hpuint32 index);
+
 HP_API hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val);
+
 HP_API hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes);
 
 #endif//_H_XML_READER

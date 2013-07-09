@@ -1,0 +1,5 @@
+#ifndef _H_LANGUAGE_READER
+#define _H_LANGUAGE_READER
+
+
+#endif//_H_LANGUAGE_READER
