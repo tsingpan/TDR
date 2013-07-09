@@ -1,4 +1,4 @@
-#include "hotprotocol/ddekit_compact_encoding_writer.h"
+#include "hotprotocol/hp_compact_writer.h"
 #include "hotpot/hp_error.h"
 #include "hotpot/hp_number.h"
 #include "hotprotocol/hp_abstract_writer.h"

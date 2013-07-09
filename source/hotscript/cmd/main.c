@@ -6,8 +6,8 @@
 #include "hotscript/hot_vm.h"
 #include "hotscript/hotobject_reader.h"
 #include "hotscript/hotobject_writer.h"
-#include "hotprotocol/ddekit_json_encoding_writer.h"
-#include "hotprotocol/ddekit_json_encoding_reader.h"
+#include "hotprotocol/hp_json_writer.h"
+#include "hotprotocol/hp_json_reader.h"
 #include <stdio.h>
 
 JSON_PARSER xp;
