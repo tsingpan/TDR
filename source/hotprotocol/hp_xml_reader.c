@@ -171,40 +171,59 @@ hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	hpuint32 i;
-	self->need_tab = hpfalse;/*
-	for(i = 0;i < bytes.len; ++i)
-		switch (bytes.ptr[i])
-	{
-		case '<':
-			fprintf(self->f, "&lt");
-			continue;
-		case '>':
-			fprintf(self->f, "&gt");
-			continue;
-		case '&':
-			fprintf(self->f, "&amp");
-			continue;
-		case '\'':
-			fprintf(self->f, "&apos");
-			continue;
-		case '\"':
-			fprintf(self->f, "&quot");
-			continue;						
-		default:
-			{
-				fputc(bytes.ptr[i], self->f);
-			}
-	}
-	*/
-	return E_HP_NOERROR;
-}
+	hpuint32 len = 0;
 
-hpint32 xml_read_string(HPAbstractReader *super, hpchar* str)
-{
-	hpbytes bytes;
-	bytes.ptr = str;
-	bytes.len = strlen(str);
-	return xml_read_bytes(super, &bytes);
+	self->need_tab = hpfalse;
+	for(;;)
+	{
+		char c = fgetc(self->f);
+		if(c == '<')
+		{
+			ungetc('<', self->f);
+			break;
+		}
+		//实体引用
+		else if(c == '&')
+		{
+			char c2 = fgetc(self->f);
+			if(c2 == 'l')
+			{
+				//&lt
+				fgetc(self->f);
+				bytes->ptr[len++] = '<';
+			}
+			else if(c2 == 'g')
+			{
+				//&gt
+				bytes->ptr[len++] = '>';
+			}
+			else
+			{
+				char c3 = fgetc(self->f);
+				if(c3 == 'm')
+				{
+					//&amp
+					bytes->ptr[len++] = '&';
+				}
+				else if(c3 == 'p')
+				{
+					//&apos
+					bytes->ptr[len++] = '\'';
+				}
+				else if(c3 == 'u')
+				{
+					//&auot
+					bytes->ptr[len++] = '\"';
+				}
+			}
+		}
+		else
+		{
+			bytes->ptr[len++] = c;
+		}
+	}
+	
+	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val)
