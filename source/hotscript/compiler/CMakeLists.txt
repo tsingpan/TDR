@@ -33,4 +33,4 @@ SET_TARGET_PROPERTIES(HotScriptCompiler PROPERTIES OUTPUT_NAME hs)
 
 INSTALL(TARGETS HotScriptCompiler RUNTIME DESTINATION ${BINARY_PATH})
 
-TARGET_LINK_LIBRARIES(HotScriptCompiler HotScript DATrie HotPot Encoding)
+TARGET_LINK_LIBRARIES(HotScriptCompiler HotScript DATrie HotPot HotProtocol)

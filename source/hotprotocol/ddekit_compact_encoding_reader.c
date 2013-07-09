@@ -1,4 +1,4 @@
-#include "encoding/ddekit_compact_encoding_reader.h"
+#include "hotprotocol/ddekit_compact_encoding_reader.h"
 #include "hotpot/hp_error.h"
 #include "hotpot/hp_number.h"
 #include "hotpot/hp_reader.h"

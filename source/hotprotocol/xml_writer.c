@@ -1,4 +1,4 @@
-#include "encoding/xml_writer.h"
+#include "hotprotocol/xml_writer.h"
 #include "hotpot/hp_error.h"
 #include "hotpot/hp_number.h"
 #include "hotpot/hp_writer.h"
