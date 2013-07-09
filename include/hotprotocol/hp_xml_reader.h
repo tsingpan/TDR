@@ -66,4 +66,6 @@ HP_API hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val);
 
 HP_API hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes);
 
+HP_API hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len);
+
 #endif//_H_XML_READER

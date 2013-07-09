@@ -25,7 +25,7 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_hpbool = xml_read_hpbool;
 	self->super.read_vector_item_begin = xml_read_vector_item_begin;
 	self->super.read_vector_item_end= xml_read_vector_item_end;
-
+	self->super.read_hpstring = xml_read_string;
 
 
 	return E_HP_NOERROR;
@@ -171,7 +171,6 @@ hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	hpuint32 i;
-	hpuint32 len = 0;
 
 	self->need_tab = hpfalse;
 	for(;;)
@@ -190,12 +189,12 @@ hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 			{
 				//&lt
 				fgetc(self->f);
-				bytes->ptr[len++] = '<';
+				bytes->ptr[(bytes->len)++] = '<';
 			}
 			else if(c2 == 'g')
 			{
 				//&gt
-				bytes->ptr[len++] = '>';
+				bytes->ptr[(bytes->len)++] = '>';
 			}
 			else
 			{
@@ -203,23 +202,23 @@ hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes)
 				if(c3 == 'm')
 				{
 					//&amp
-					bytes->ptr[len++] = '&';
+					bytes->ptr[(bytes->len)++] = '&';
 				}
 				else if(c3 == 'p')
 				{
 					//&apos
-					bytes->ptr[len++] = '\'';
+					bytes->ptr[(bytes->len)++] = '\'';
 				}
 				else if(c3 == 'u')
 				{
 					//&auot
-					bytes->ptr[len++] = '\"';
+					bytes->ptr[(bytes->len)++] = '\"';
 				}
 			}
 		}
 		else
 		{
-			bytes->ptr[len++] = c;
+			bytes->ptr[(bytes->len)++] = c;
 		}
 	}
 	
@@ -243,3 +242,19 @@ hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val)
 	return E_HP_NOERROR;
 }
 
+HP_API hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
+{
+	hpbytes bytes;
+	bytes.ptr = str;
+	bytes.len = str_len;
+
+	if(xml_read_bytes(super, &bytes) == E_HP_ERROR)
+	{
+		goto ERROR_RET;
+	}
+	bytes.ptr[(bytes.len)++] = 0;
+
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}

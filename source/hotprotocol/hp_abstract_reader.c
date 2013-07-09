@@ -168,7 +168,7 @@ hpint32 read_hpdouble(HPAbstractReader *self, hpdouble *val)
 	return self->read_hpdouble(self, val);
 }
 
-hpint32 read_hpstring(HPAbstractReader *self, hpchar* str, hpuint32 *str_length)
+hpint32 read_hpstring(HPAbstractReader *self, hpchar* str, hpuint32 str_length)
 {
 	if(self->read_hpstring == NULL)
 	{
