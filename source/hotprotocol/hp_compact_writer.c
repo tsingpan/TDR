@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 
-hpint32 ddekit_compact_encoding_writer_init(DDEKIT_COMPACT_ENCODING_WRITER *self, void *addr, hpuint32 size)
+hpint32 ddekit_compact_encoding_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
 {
 	self->dpw.write_struct_begin = ddekit_compact_encoding_write_struct_begin;
 	self->dpw.write_struct_end = ddekit_compact_encoding_write_struct_end;
@@ -33,7 +33,7 @@ hpint32 ddekit_compact_encoding_writer_init(DDEKIT_COMPACT_ENCODING_WRITER *self
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_writer_fini(DDEKIT_COMPACT_ENCODING_WRITER *self)
+hpint32 ddekit_compact_encoding_writer_fini(HP_COMPACT_WRITER *self)
 {
 	self->dpw.write_struct_begin = NULL;
 	self->dpw.write_struct_end = NULL;
@@ -65,43 +65,43 @@ hpint32 ddekit_compact_encoding_writer_fini(DDEKIT_COMPACT_ENCODING_WRITER *self
 
 hpint32 ddekit_compact_encoding_write_struct_begin(HPAbstractWriter *super, const char *struct_name)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_write_struct_end(HPAbstractWriter *super, const char *struct_name)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_write_vector_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_write_vector_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_write_field_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_write_field_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	return E_HP_NOERROR;
 }
 
 HP_API hpint32 ddekit_compact_encoding_write_enum(HPAbstractWriter *super, const hpint32 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint32_encode(hp_host32_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -116,7 +116,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpchar(HPAbstractWriter *super, const char val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(char))
 	{
 		goto not_enough_bytebuff_size;
@@ -131,7 +131,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpdouble(HPAbstractWriter *super, const double val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(double))
 	{
 		goto not_enough_bytebuff_size;
@@ -146,7 +146,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(hpint8))
 	{
 		goto not_enough_bytebuff_size;
@@ -161,7 +161,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpint16(HPAbstractWriter *super, const hpint16 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint16_encode(hp_host16_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -176,7 +176,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpint32(HPAbstractWriter *super, const hpint32 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint32_encode(hp_host32_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -191,7 +191,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint64_encode(hp_host64_to_little(hp_zigzag_encode64(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -207,7 +207,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(hpuint8))
 	{
 		goto not_enough_bytebuff_size;
@@ -222,7 +222,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint16_encode(hp_host16_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -238,7 +238,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint32_encode(hp_host32_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
@@ -254,7 +254,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
-	DDEKIT_COMPACT_ENCODING_WRITER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_WRITER, dpw);
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, dpw);
 	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
 	hpint32 ret = hp_varint64_encode(hp_host64_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)

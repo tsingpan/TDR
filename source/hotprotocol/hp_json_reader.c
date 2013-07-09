@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 
-hpint32 ddekit_json_encoding_reader_init(JSON_READER *self, const void *addr, hpuint32 size)
+hpint32 ddekit_json_encoding_reader_init(HP_JSON_READER *self, const void *addr, hpuint32 size)
 {
 	self->super.read_struct_begin = ddekit_json_encoding_read_struct_begin;
 	self->super.read_struct_end = ddekit_json_encoding_read_struct_end;
@@ -33,7 +33,7 @@ hpint32 ddekit_json_encoding_reader_init(JSON_READER *self, const void *addr, hp
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_reader_fini(JSON_READER *self)
+hpint32 ddekit_json_encoding_reader_fini(HP_JSON_READER *self)
 {
 	self->super.read_struct_begin = NULL;
 	self->super.read_struct_end = NULL;
@@ -60,55 +60,55 @@ hpint32 ddekit_json_encoding_reader_fini(JSON_READER *self)
 
 hpint32 ddekit_json_encoding_read_struct_begin(HPAbstractReader *super, const char *struct_name)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_struct_end(HPAbstractReader *super, const char *struct_name)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_vector_begin(HPAbstractReader *super)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_vector_end(HPAbstractReader *super)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_field_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_field_end(HPAbstractReader *super, const char *var_name, hpint32 var_type)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 HP_API hpint32 ddekit_json_encoding_read_enum(HPAbstractReader *super, hpint32 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 HP_API hpint32 ddekit_json_encoding_read_enum_name(HPAbstractReader *super, hpchar *enum_name, hpuint32 *enum_name_length)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_json_encoding_read_hpchar(HPAbstractReader *super, char *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	
 	return E_HP_NOERROR;
 }
@@ -116,35 +116,35 @@ hpint32 ddekit_json_encoding_read_hpchar(HPAbstractReader *super, char *val)
 
 hpint32 ddekit_json_encoding_read_hpdouble(HPAbstractReader *super, double *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 ddekit_json_encoding_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 ddekit_json_encoding_read_hpint16(HPAbstractReader *super, hpint16 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 ddekit_json_encoding_read_hpint32(HPAbstractReader *super, hpint32 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 ddekit_json_encoding_read_hpint64(HPAbstractReader *super, hpint64 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -152,7 +152,7 @@ hpint32 ddekit_json_encoding_read_hpint64(HPAbstractReader *super, hpint64 *val)
 
 hpint32 ddekit_json_encoding_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -160,14 +160,14 @@ hpint32 ddekit_json_encoding_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
 
 hpint32 ddekit_json_encoding_read_hpuint16(HPAbstractReader *super, hpuint16 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 ddekit_json_encoding_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -175,6 +175,6 @@ hpint32 ddekit_json_encoding_read_hpuint32(HPAbstractReader *super, hpuint32 *va
 
 hpint32 ddekit_json_encoding_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 {
-	JSON_READER *self = HP_CONTAINER_OF(super, JSON_READER, super);
+	HP_JSON_READER *self = HP_CONTAINER_OF(super, HP_JSON_READER, super);
 	return E_HP_NOERROR;
 }

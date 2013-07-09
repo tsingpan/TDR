@@ -1,21 +1,21 @@
-#ifndef _H_DDEKIT_COMPACT_ENCODING_WRITER
-#define _H_DDEKIT_COMPACT_ENCODING_WRITER
+#ifndef _H_HP_COMPACT_WRITER
+#define _H_HP_COMPACT_WRITER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
 
-typedef struct tagDDEKIT_COMPACT_ENCODING_WRITER
+typedef struct _HP_COMPACT_WRITER
 {
 	HPAbstractWriter dpw;
 
 	char *addr;
 	hpuint32 size;
 	hpuint32 offset;
-}DDEKIT_COMPACT_ENCODING_WRITER;
+}HP_COMPACT_WRITER;
 
-HP_API hpint32 ddekit_compact_encoding_writer_init(DDEKIT_COMPACT_ENCODING_WRITER *self, void *addr, hpuint32 size);
+HP_API hpint32 ddekit_compact_encoding_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size);
 
-HP_API hpint32 ddekit_compact_encoding_writer_fini(DDEKIT_COMPACT_ENCODING_WRITER *self);
+HP_API hpint32 ddekit_compact_encoding_writer_fini(HP_COMPACT_WRITER *self);
 
 //virtual functions
 HP_API hpint32 ddekit_compact_encoding_write_struct_begin(HPAbstractWriter *self, const char *struct_name);

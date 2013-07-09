@@ -33,7 +33,7 @@ typedef void (*FUNC) (const char*, const char*);
 #define MAX_FUNC_NUM 1024
 
 DATA_PARSER dp;
-JSON_WRITER jw;
+HP_JSON_WRITER jw;
 
 char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;

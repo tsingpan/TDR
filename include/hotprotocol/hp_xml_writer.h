@@ -1,5 +1,5 @@
-#ifndef _H_XML_WRITER
-#define _H_XML_WRITER
+#ifndef _H_HP_XML_WRITER
+#define _H_HP_XML_WRITER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
@@ -8,17 +8,17 @@
 
 
 #define MAX_VECTOR_DEEP 1024
-typedef struct _XML_WRITER
+typedef struct _HP_XML_WRITER
 {
 	HPAbstractWriter super;
 	hpuint32 count;
 	hpbool need_tab;
 	FILE *f;
-}XML_WRITER;
+}HP_XML_WRITER;
 
-HP_API hpint32 xml_writer_init(XML_WRITER *self, FILE *f);
+HP_API hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f);
 
-HP_API hpint32 xml_writer_fini(XML_WRITER *self);
+HP_API hpint32 xml_writer_fini(HP_XML_WRITER *self);
 
 //virtual functions
 HP_API hpint32 xml_write_struct_begin(HPAbstractWriter *self, const char *struct_name);

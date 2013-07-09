@@ -1,22 +1,22 @@
-#ifndef _H_DDEKIT_COMPACT_ENCODING_READER
-#define _H_DDEKIT_COMPACT_ENCODING_READER
+#ifndef _H_HP_COMPACT_READER
+#define _H_HP_COMPACT_READER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 
-typedef struct tagDDEKIT_COMPACT_ENCODING_READER
+typedef struct _HP_COMPACT_READER
 {
 	HPAbstractReader dpr;
 
 	const char *addr;
 	hpuint32 size;
 	hpuint32 offset;
-}DDEKIT_COMPACT_ENCODING_READER;
+}HP_COMPACT_READER;
 
 
-HP_API hpint32 ddekit_compact_encoding_reader_init(DDEKIT_COMPACT_ENCODING_READER *self, const void *addr, hpuint32 size);
+HP_API hpint32 ddekit_compact_encoding_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size);
 
-HP_API hpint32 ddekit_compact_encoding_reader_fini(DDEKIT_COMPACT_ENCODING_READER *self);
+HP_API hpint32 ddekit_compact_encoding_reader_fini(HP_COMPACT_READER *self);
 
 //virtual public functions
 

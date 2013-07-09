@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 
-hpint32 ddekit_compact_encoding_reader_init(DDEKIT_COMPACT_ENCODING_READER *self, const void *addr, hpuint32 size)
+hpint32 ddekit_compact_encoding_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size)
 {
 	self->dpr.read_struct_begin = ddekit_compact_encoding_read_struct_begin;
 	self->dpr.read_struct_end = ddekit_compact_encoding_read_struct_end;
@@ -35,7 +35,7 @@ hpint32 ddekit_compact_encoding_reader_init(DDEKIT_COMPACT_ENCODING_READER *self
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_compact_encoding_reader_fini(DDEKIT_COMPACT_ENCODING_READER *self)
+hpint32 ddekit_compact_encoding_reader_fini(HP_COMPACT_READER *self)
 {
 	self->dpr.read_struct_begin = NULL;
 	self->dpr.read_struct_end = NULL;
@@ -68,43 +68,43 @@ hpint32 ddekit_compact_encoding_reader_fini(DDEKIT_COMPACT_ENCODING_READER *self
 
 hpint32 ddekit_compact_encoding_read_struct_begin(HPAbstractReader *super, const char *struct_name)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_struct_end(HPAbstractReader *super, const char *struct_name)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_vector_begin(HPAbstractReader *super)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_vector_end(HPAbstractReader *super)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	return E_HP_NOERROR;
 }
 
 hpint32 ddekit_compact_encoding_read_enum(HPAbstractReader *super, hpint32 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -121,7 +121,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpchar(HPAbstractReader *super, char *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	if(COMPACT_encoding_READER_CAPACITY(self) < sizeof(char))
 	{
 		goto not_enough_bytebuff_size;
@@ -137,7 +137,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpdouble(HPAbstractReader *super, double *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	if(COMPACT_encoding_READER_CAPACITY(self) < sizeof(double))
 	{
 		goto not_enough_bytebuff_size;
@@ -153,7 +153,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	if(COMPACT_encoding_READER_CAPACITY(self) < sizeof(hpint8))
 	{
 		goto not_enough_bytebuff_size;
@@ -169,7 +169,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpint16(HPAbstractReader *super, hpint16 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint16 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -187,7 +187,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpint32(HPAbstractReader *super, hpint32 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -205,7 +205,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpint64(HPAbstractReader *super, hpint64 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint64 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -224,7 +224,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	if(COMPACT_encoding_READER_CAPACITY(self) < sizeof(hpuint8))
 	{
 		goto not_enough_bytebuff_size;
@@ -241,7 +241,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpuint16(HPAbstractReader *super, hpuint16 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint16 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -259,7 +259,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
@@ -278,7 +278,7 @@ not_enough_bytebuff_size:
 
 hpint32 ddekit_compact_encoding_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 {
-	DDEKIT_COMPACT_ENCODING_READER *self = HP_CONTAINER_OF(super, DDEKIT_COMPACT_ENCODING_READER, dpr);
+	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, dpr);
 	hpuint64 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
 	int ret = hp_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);

@@ -1,20 +1,20 @@
-#ifndef _H_DDEKIT_JSON_ENCODING_READER
-#define _H_DDEKIT_JSON_ENCODING_READER
+#ifndef _H_HP_JSON_READER
+#define _H_HP_JSON_READER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 
-typedef struct _JSON_READER
+typedef struct _HP_JSON_READER
 {
 	HPAbstractReader super;
 
 
-}JSON_READER;
+}HP_JSON_READER;
 
 
-HP_API hpint32 ddekit_json_encoding_reader_init(JSON_READER *self, const void *addr, hpuint32 size);
+HP_API hpint32 ddekit_json_encoding_reader_init(HP_JSON_READER *self, const void *addr, hpuint32 size);
 
-HP_API hpint32 ddekit_json_encoding_reader_fini(JSON_READER *self);
+HP_API hpint32 ddekit_json_encoding_reader_fini(HP_JSON_READER *self);
 
 //virtual public functions
 

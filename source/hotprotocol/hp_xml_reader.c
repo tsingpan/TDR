@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 
-hpint32 xml_reader_init(XML_READER *self, const void *addr, hpuint32 size)
+hpint32 xml_reader_init(HP_XML_READER *self, const void *addr, hpuint32 size)
 {
 	self->super.read_struct_begin = xml_read_struct_begin;
 	self->super.read_struct_end = xml_read_struct_end;
@@ -33,7 +33,7 @@ hpint32 xml_reader_init(XML_READER *self, const void *addr, hpuint32 size)
 	return E_HP_NOERROR;
 }
 
-hpint32 xml_reader_fini(XML_READER *self)
+hpint32 xml_reader_fini(HP_XML_READER *self)
 {
 	self->super.read_struct_begin = NULL;
 	self->super.read_struct_end = NULL;
@@ -60,55 +60,55 @@ hpint32 xml_reader_fini(XML_READER *self)
 
 hpint32 xml_read_struct_begin(HPAbstractReader *super, const char *struct_name)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_struct_end(HPAbstractReader *super, const char *struct_name)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_vector_begin(HPAbstractReader *super)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_vector_end(HPAbstractReader *super)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_field_begin(HPAbstractReader *super, const char *var_name, hpint32 var_type)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_field_end(HPAbstractReader *super, const char *var_name, hpint32 var_type)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 HP_API hpint32 xml_read_enum(HPAbstractReader *super, hpint32 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 HP_API hpint32 xml_read_enum_name(HPAbstractReader *super, hpchar *enum_name, hpuint32 *enum_name_length)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_hpchar(HPAbstractReader *super, char *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	
 	return E_HP_NOERROR;
 }
@@ -116,35 +116,35 @@ hpint32 xml_read_hpchar(HPAbstractReader *super, char *val)
 
 hpint32 xml_read_hpdouble(HPAbstractReader *super, double *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 xml_read_hpint8(HPAbstractReader *super, hpint8 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 xml_read_hpint16(HPAbstractReader *super, hpint16 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 xml_read_hpint32(HPAbstractReader *super, hpint32 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 xml_read_hpint64(HPAbstractReader *super, hpint64 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -152,7 +152,7 @@ hpint32 xml_read_hpint64(HPAbstractReader *super, hpint64 *val)
 
 hpint32 xml_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -160,14 +160,14 @@ hpint32 xml_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
 
 hpint32 xml_read_hpuint16(HPAbstractReader *super, hpuint16 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
 
 hpint32 xml_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }
 
@@ -175,6 +175,6 @@ hpint32 xml_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 
 hpint32 xml_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 {
-	XML_READER *self = HP_CONTAINER_OF(super, XML_READER, super);
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	return E_HP_NOERROR;
 }

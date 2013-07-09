@@ -1,5 +1,5 @@
-#ifndef _H_DDEKIT_JSON_ENCODING_WRITER
-#define _H_DDEKIT_JSON_ENCODING_WRITER
+#ifndef _H_HP_JSON_WRITER
+#define _H_HP_JSON_WRITER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
@@ -8,17 +8,17 @@
 
 
 #define MAX_VECTOR_DEEP 1024
-typedef struct _JSON_WRITER
+typedef struct _HP_JSON_WRITER
 {
 	HPAbstractWriter super;
 	hpuint32 count;
 	hpbool need_tab;
 	FILE *f;
-}JSON_WRITER;
+}HP_JSON_WRITER;
 
-HP_API hpint32 ddekit_json_encoding_writer_init(JSON_WRITER *self, FILE *f);
+HP_API hpint32 ddekit_json_encoding_writer_init(HP_JSON_WRITER *self, FILE *f);
 
-HP_API hpint32 ddekit_json_encoding_writer_fini(JSON_WRITER *self);
+HP_API hpint32 ddekit_json_encoding_writer_fini(HP_JSON_WRITER *self);
 
 //virtual functions
 HP_API hpint32 ddekit_json_encoding_write_struct_begin(HPAbstractWriter *self, const char *struct_name);

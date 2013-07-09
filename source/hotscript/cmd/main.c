@@ -15,8 +15,8 @@ SCRIPT_PARSER sp;
 HotObject *obj;
 HotObjectReader reader;
 HotObjectWriter writer;
-JSON_WRITER json_writer;
-JSON_READER json_reader;
+HP_JSON_WRITER json_writer;
+HP_JSON_READER json_reader;
 
 
 HotObject *ho;

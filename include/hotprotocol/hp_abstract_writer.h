@@ -1,5 +1,5 @@
-#ifndef _H_HP_WRITER
-#define _H_HP_WRITER
+#ifndef _H_HP_ABSTRACT_WRITER
+#define _H_HP_ABSTRACT_WRITER
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
@@ -72,5 +72,5 @@ hpint32 write_type(HPAbstractWriter *self, const HPType type);
 hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index);
 hpint32 write_vector_item_end(HPAbstractWriter *self, hpuint32 index);
 hpuint32 writer_get_index(HPAbstractWriter *self);
-#endif //_H_HP_WRITER
+#endif //_H_HP_ABSTRACT_WRITER
 

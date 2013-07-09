@@ -1,20 +1,20 @@
-#ifndef _H_XML_READER
-#define _H_XML_READER
+#ifndef _H_HP_XML_READER
+#define _H_HP_XML_READER
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 
-typedef struct _XML_READER
+typedef struct _HP_XML_READER
 {
 	HPAbstractReader super;
 
 
-}XML_READER;
+}HP_XML_READER;
 
 
-HP_API hpint32 xml_reader_init(XML_READER *self, const void *addr, hpuint32 size);
+HP_API hpint32 xml_reader_init(HP_XML_READER *self, const void *addr, hpuint32 size);
 
-HP_API hpint32 xml_reader_fini(XML_READER *self);
+HP_API hpint32 xml_reader_fini(HP_XML_READER *self);
 
 //virtual public functions
 

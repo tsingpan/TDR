@@ -1,5 +1,5 @@
-#ifndef _H_HP_READR
-#define _H_HP_READR
+#ifndef _H_HP_ABSTRACT_READR
+#define _H_HP_ABSTRACT_READR
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
@@ -72,5 +72,5 @@ hpint32 read_type(HPAbstractReader *self, HPType *type);
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index);
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index);
 hpuint32 reader_get_index(HPAbstractReader *self);
-#endif //_H_HP_READR
+#endif //_H_HP_ABSTRACT_READR
 
