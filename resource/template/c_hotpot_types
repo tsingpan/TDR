@@ -50,7 +50,7 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%> <%$name%>;<%
+	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$name%>;<%
 					}
 				]
 %>
@@ -68,7 +68,7 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%> <% $name%>;<%
+	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <% $name%>;<%
 					}
 				]
 %>

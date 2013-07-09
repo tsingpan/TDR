@@ -13,14 +13,20 @@
 			$struct
 			{
 %>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 {
 <%				$list
 				[
 					$*
 					{
 %>
-	write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%>(<% $name %>);<%
+	write_<%$Type
+	{
+		$SimpleType{$type}
+		$ObjectType{$type}
+		$ContainerType{$vector{$Arguments[$0{$name}]}}
+	}
+%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}}%>);<%
 					}
 				]
 %>
@@ -31,7 +37,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data)
 	$union
 			{
 %>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data, hpint32 <% $TypeAnnotations[$*{$switch}] %>)
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 {
 	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
@@ -41,7 +47,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data, hpint32 <% $
 					{
 %>
 		case <% $condition{$expression{$op0}}%>:
-			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}}%>(<% $name %>);
+			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}}%>);
 			break;<%
 					}
 				]

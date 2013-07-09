@@ -321,12 +321,14 @@ Field :
 	}
 	FieldCondition 
 	{	write_field_end(GET_WRITER, "condition", strlen("condition"));	write_semicolon(GET_WRITER);}
-	Type {write_semicolon(GET_WRITER);}
+	Type
+	{write_semicolon(GET_WRITER); write_field_begin(GET_WRITER, "Arguments", strlen("Arguments"));}
 	Arguments 
+	{write_field_end(GET_WRITER, "Arguments", strlen("Arguments"));write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $7.var.val.bytes);
+		write_bytes(GET_WRITER, $8.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	';' UnixComment
@@ -461,10 +463,11 @@ ObjectType:
 
 ContainerType:
 	tok_t_vector
-	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "vector");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+	{	
+		write_field_begin(GET_WRITER, "vector", strlen("vector"));
+		write_struct_begin(GET_WRITER, NULL);
+		write_struct_end(GET_WRITER, NULL);
+		write_field_end(GET_WRITER, "vector", strlen("vector"));
 	}
 	
 SimpleType:
@@ -555,8 +558,7 @@ Parameters :
 	};
 	
 ParameterList:
-	ParameterList {write_semicolon(GET_WRITER);} 
-	Parameter 
+	ParameterList {write_semicolon(GET_WRITER);} Parameter 
 |	
 	Parameter
 	
@@ -583,24 +585,30 @@ Parameter:
 
 
 Arguments:
-	'<' ArgumentList '>'
-	{
-	}
+	'<'
+	{write_vector_begin(GET_WRITER);}
+	ArgumentList
+	{write_vector_end(GET_WRITER);}
+	'>'
 |
 	{
+		write_null(GET_WRITER);
 	};
 	
 ArgumentList:
-	ArgumentList Argument
-	{
-	}
-|
-	{
-	};
+	ArgumentList {write_semicolon(GET_WRITER);} Argument
+|	Argument;
 	
 Argument:
 	tok_identifier CommaOrSemicolonOptional
 	{
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "name", strlen("name"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "name", strlen("name"));
+		write_struct_end(GET_WRITER, NULL);
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 	};
 
 UnixComment:
