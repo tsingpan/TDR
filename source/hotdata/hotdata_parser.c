@@ -10,18 +10,31 @@
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer)
 {
 	hpint32 ret;
-	self->writer = writer;
+	AlphaMap *alpha_map = NULL;
 
+	self->writer = writer;	
 	self->result = E_HP_NOERROR;
+
+	
+
+	alpha_map = alpha_map_new();
+
+	alpha_map_add_range(alpha_map, 'a', 'z');
+	alpha_map_add_range(alpha_map, 'A', 'Z');
+	alpha_map_add_range(alpha_map, '0', '9');
+	alpha_map_add_range(alpha_map, '_', '_');
+	self->constance = trie_new(alpha_map);
+	alpha_map_free(alpha_map);
 
 	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
+	self->result = E_HP_NOERROR;
 
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
-	if(ret == 0)
+	if(ret != 0)
 	{
-		self->result = E_HP_NOERROR;
+		self->result = E_HP_ERROR;
 	}
 
 
@@ -155,7 +168,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		SCANNER *scanner = scanner_stack_get_scanner(ss);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
-		ret = ddc_lex_scan(scanner, yylloc_param, yylval_param);
+		ret = ddc_lex_scan(scanner, yylloc_param, yylval_param);		
 		if(ret <= 0)
 		{
 			if(scanner_stack_get_num(&jp->scanner_stack) <= 1)
@@ -179,10 +192,18 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	return ret;
 }
 
-hpint32 dp_on_const(SCANNER_STACK *super, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
+void dp_on_const(DATA_PARSER *self, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
 {
-	DATA_PARSER *self = HP_CONTAINER_OF(super, DATA_PARSER, scanner_stack);
+	char id[1024];
+	hpuint32 i;
+	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
+	{
+		id[i] = sn_identifier->var.val.bytes.ptr[i];
+	}
+	id[i] = 0;
 
-
-	return E_HP_NOERROR;
+	if(!trie_store_if_absent(self->constance, id, NULL))
+	{
+		self->result = E_HP_ERROR;
+	}
 }

@@ -111,7 +111,7 @@ Value:
 		write_type(YYJSON_WRITER, E_HP_DOUBLE);
 		write_hpdouble(YYJSON_WRITER, $1.val.d);
 	}
-|	{ write_type(YYJSON_WRITER, E_HP_STRUCT); } Object
+|	{ write_type(YYJSON_WRITER, E_HP_OBJECT); } Object
 |	{ write_type(YYJSON_WRITER, E_HP_VECTOR); } Array	
 |	tok_true
 	{

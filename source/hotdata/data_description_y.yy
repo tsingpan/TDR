@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define YYERROR_VERBOSE
-#define GET_SELF DATA_PARSER *self = HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
+#define GET_SELF HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
 #define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
 
 %}
@@ -138,7 +138,8 @@ Import :
 Const : 
 	{write_struct_begin(GET_WRITER, NULL);}
 	tok_const 
-	Type {write_semicolon(GET_WRITER);}
+	Type
+	{write_semicolon(GET_WRITER);}
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
@@ -150,9 +151,12 @@ Const :
 		write_semicolon(GET_WRITER);
 	}
 	Value
-	CommaOrSemicolonOptional
+	';'
 	{
 		write_struct_end(GET_WRITER, NULL);
+
+
+		dp_on_const(GET_SELF, &$3, &$3, &$3);
 	}
 
 
@@ -208,7 +212,7 @@ Typedef :
 		write_bytes(GET_WRITER, $6.var.val.bytes);
 		write_field_end(GET_WRITER, "new_type", strlen("new_type"));
 	}
-	CommaOrSemicolonOptional
+	';'
 	{write_struct_end(GET_WRITER, NULL);};
 	
 Enum :
@@ -227,7 +231,7 @@ Enum :
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
 	EnumDefList 
 	'}' {write_vector_end(GET_WRITER); write_field_end(GET_WRITER, "list", strlen("list")); }
-	CommaOrSemicolonOptional
+	';'
 	{write_struct_end(GET_WRITER, NULL);};
     
 EnumDefList : 
@@ -252,7 +256,7 @@ EnumDef :
 	{
 		write_semicolon(GET_WRITER);
 	}
-	Value CommaOrSemicolonOptional UnixComment
+	Value ',' UnixComment
 	{write_struct_end(GET_WRITER, NULL);};
     
 
@@ -276,7 +280,7 @@ Union :
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
 	FieldList 
 	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
-	CommaOrSemicolonOptional
+	';'
 	{write_struct_end(GET_WRITER, NULL);};
 	
 	
@@ -300,7 +304,7 @@ Struct :
 	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
 	FieldList
 	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
-	CommaOrSemicolonOptional
+	';'
 	{write_struct_end(GET_WRITER, NULL);};
 	
 
@@ -447,15 +451,19 @@ FieldExpression :
 Type :
 	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_begin(GET_WRITER, NULL);}
 	SimpleType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));}
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	$$.var.type = $2.var.type;
+	}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_begin(GET_WRITER, NULL);}
 	ContainerType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));}
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	$$.var.type = $2.var.type;}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_begin(GET_WRITER, NULL);}
 	ObjectType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));};
+	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	$$.var.type = $2.var.type;};
 
 ObjectType:
 	tok_identifier
@@ -463,6 +471,8 @@ ObjectType:
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_OBJECT;
 	};
 
 ContainerType:
@@ -472,80 +482,105 @@ ContainerType:
 		write_struct_begin(GET_WRITER, NULL);
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "vector", strlen("vector"));
+
+		$$.var.type = E_HP_VECTOR;
 	}
 	
 SimpleType:
-		tok_t_bool
+	tok_t_bool
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "bool");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_BOOL;
 	}
 |	tok_t_char
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "char");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_CHAR;
 	}
 |	tok_t_double
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "double");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_DOUBLE;
 	}
 |	tok_t_string
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "string");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_STRING;
 	}
 |	tok_t_int8
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "int8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_INT8;
 	}
 |	tok_t_int16
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "int16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_INT16;
 	}
 |	tok_t_int32
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "int32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_INT32;
 	}
 |	tok_t_int64
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "int64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_INT64;
 	}
 |	tok_t_uint8 
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_UINT8;
 	}
 |	tok_t_uint16 
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_UINT16;
 	}
 |	tok_t_uint32 
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+		$$.var.type = E_HP_UINT32;
 	}
 |	tok_t_uint64
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
+
+		$$.var.type = E_HP_UINT64;
 	};
 
 Parameters :
@@ -562,7 +597,7 @@ Parameters :
 	};
 	
 ParameterList:
-	ParameterList {write_semicolon(GET_WRITER);} Parameter 
+	ParameterList ',' {write_semicolon(GET_WRITER);} Parameter 
 |	
 	Parameter
 	
@@ -578,9 +613,6 @@ Parameter:
 		write_field_begin(GET_WRITER, "name", strlen("name"));
 		write_bytes(GET_WRITER, $4.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
-	}
-	CommaOrSemicolonOptional
-	{
 		write_struct_end(GET_WRITER, NULL);
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 	};
@@ -600,11 +632,11 @@ Arguments:
 	};
 	
 ArgumentList:
-	ArgumentList {write_semicolon(GET_WRITER);} Argument
+	ArgumentList ',' {write_semicolon(GET_WRITER);} Argument
 |	Argument;
 	
 Argument:
-	tok_identifier CommaOrSemicolonOptional
+	tok_identifier
 	{
 		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_begin(GET_WRITER, NULL);
@@ -648,10 +680,10 @@ TypeAnnotations:
     };
 
 TypeAnnotationList:
-  TypeAnnotationList TypeAnnotation
+  TypeAnnotationList ',' TypeAnnotation
     {
     }
-|
+| TypeAnnotation
     {
     };
 
@@ -661,18 +693,18 @@ Bool:
 	};
 
 TypeAnnotation:
-	tok_unique '=' Bool CommaOrSemicolonOptional
+	tok_unique '=' Bool
     {
     }
-|	tok_lower_bound '=' tok_identifier CommaOrSemicolonOptional
+|	tok_lower_bound '=' tok_identifier
 	{
 		
 	}
-|	tok_upper_bound '=' tok_identifier CommaOrSemicolonOptional
+|	tok_upper_bound '=' tok_identifier
 	{
 		
 	}
-|	tok_switch '=' tok_identifier CommaOrSemicolonOptional
+|	tok_switch '=' tok_identifier
 	{
 		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_begin(GET_WRITER, NULL);
@@ -681,23 +713,8 @@ TypeAnnotation:
 		write_field_end(GET_WRITER, "switch", strlen("switch"));		
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_end(GET_WRITER, NULL);
-	};
+	}
+|	;
 
-
-
-
-CommaOrSemicolonOptional:
-  ','
-    {
-    
-    }
-| ';'
-    {
-    
-    }
-|
-    {
-    
-    };
     
 %%
