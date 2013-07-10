@@ -97,10 +97,17 @@ int main(int argc, char **argv)
 
 		hotobject_writer_init(&writer, obj);
 		hotobject_reader_init(&reader, obj);
-		data_parser(&dp, argv[i], &jw.super);
+		if(data_parser(&dp, argv[i], &jw.super) != E_HP_NOERROR)
+		{
+			continue;
+		}
+		
 		fclose(fout);
 
-		data_parser(&dp, argv[i], &xml_writer.super);
+		if(data_parser(&dp, argv[i], &xml_writer.super) != E_HP_NOERROR)
+		{
+			continue;
+		}
 		fclose(fout_xml);
 
 		file_tag_len = strlen(argv[i]);		

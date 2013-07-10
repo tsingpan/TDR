@@ -44,6 +44,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...) 
 {
+	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 	va_list ap;
 	va_start(ap, s);
 
@@ -54,6 +55,8 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 	vfprintf(stderr, s, ap);
 	printf("\n");
 	va_end(ap);
+
+	self->result = E_HP_ERROR;
 
 	return;
 }
@@ -161,7 +164,6 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 {
 	DATA_PARSER *jp = HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
 	int ret = 0;
-
 	
 	for(;;)
 	{
