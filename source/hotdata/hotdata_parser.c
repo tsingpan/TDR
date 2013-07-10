@@ -61,6 +61,10 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 		snprintf(self->result_str, MAX_RESULT_STRING_LENGTH, "%s", yylloc->file_name);
 	}
 	len = strlen(self->result_str);
+	if(self->result == E_HP_NOERROR)
+	{
+		self->result = E_HP_SYNTAX_ERROR;
+	}
 	snprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result);
 	len = strlen(self->result_str);
 	vsnprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
@@ -215,7 +219,6 @@ void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* 
 	{
 		const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)E_HP_CONSTANT_REDEFINITION);
 		self->result = E_HP_CONSTANT_REDEFINITION;
-
 		yydataerror(yylloc, &self->scanner_stack, error_str, id);
 	}
 }
