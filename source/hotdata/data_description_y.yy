@@ -95,7 +95,7 @@ DefinitionList :
 	{
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 	}
-|	
+|
 	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
 	Definition 
 	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
@@ -126,8 +126,8 @@ Definition :
 	{write_field_end(GET_WRITER, "enum", strlen("enum"));write_struct_end(GET_WRITER, NULL);} 
 
 |   {write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "comment", strlen("comment")); }
-	UnixComment
-	{write_field_end(GET_WRITER, "comment", strlen("comment"));write_struct_end(GET_WRITER, NULL);} ;
+	tok_unixcomment
+	{write_field_end(GET_WRITER, "comment", strlen("comment"));write_struct_end(GET_WRITER, NULL);}
 
 Import : 
 	tok_import
