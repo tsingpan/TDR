@@ -99,7 +99,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 		{
 			errno = 0;
 			yylval->var.type = E_HP_INT64;
-			yylval->var.val.i64 = strtoll(yytext+2, NULL, 10);
+			yylval->var.val.i64 = strtoll(yytext, NULL, 10);
 			if (errno == ERANGE)
 			{
 				dp->result = E_HP_ERROR;

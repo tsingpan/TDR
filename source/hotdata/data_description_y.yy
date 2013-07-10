@@ -156,7 +156,7 @@ Const :
 		write_struct_end(GET_WRITER, NULL);
 
 
-		dp_on_const(GET_SELF, &$3, &$3, &$3);
+		dp_on_const(GET_SELF, &$3, &$5, &$9);
 	}
 
 
