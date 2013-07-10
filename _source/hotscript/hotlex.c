@@ -44,7 +44,7 @@ hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, 
 	}
 	else
 	{
-		self->file_name[0];
+		self->file_name[0] = 0;
 	}
 	self->yy_start = yy_start;
 	self->yy_limit = yy_limit;

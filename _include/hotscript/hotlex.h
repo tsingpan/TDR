@@ -3,6 +3,16 @@
 
 #include "hotpot/hp_platform.h"
 
+
+typedef struct YYLTYPE
+{
+	const char *file_name;
+	int first_line;
+	int first_column;
+	int last_line;
+	int last_column;
+} YYLTYPE;
+#define YYLTYPE_IS_DECLARED
 #define YYCTYPE   char
 #define YYFILL(n) 
 #define YYCURSOR  self->yy_cursor

@@ -34,7 +34,12 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	scanner_stack_pop(&self->scanner_stack);
 	if(ret != 0)
 	{
-		self->result = E_HP_ERROR;
+		self->result = E_HP_SYNTAX_ERROR;
+	}
+	if(self->result != E_HP_NOERROR)
+	{
+		fprintf(stderr, self->result_str);
+		fputc('\n', stderr);
 	}
 
 
@@ -46,19 +51,20 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...)
 {
 	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 	va_list ap;
+	hpuint32 len;
+
+	self->result = E_HP_SYNTAX_ERROR;
+	self->result_str[0] = 0;
 	va_start(ap, s);
-
-	if(yylloc->first_line)
+	if(yylloc->file_name[0])
 	{
-		fprintf(stderr, "%d.%d-%d.%d: error: ", yylloc->first_line, yylloc->first_column, yylloc->last_line, yylloc->last_column);
+		snprintf(self->result_str, MAX_RESULT_STRING_LENGTH, "%s", yylloc->file_name);
 	}
-	vfprintf(stderr, s, ap);
-	printf("\n");
+	len = strlen(self->result_str);
+	snprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result);
+	len = strlen(self->result_str);
+	vsnprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
 	va_end(ap);
-
-	self->result = E_HP_ERROR;
-
-	return;
 }
 
 hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
@@ -167,7 +173,8 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	
 	for(;;)
 	{
-		SCANNER *scanner = scanner_stack_get_scanner(ss);				
+		SCANNER *scanner = scanner_stack_get_scanner(ss);
+		yylloc_param->file_name = scanner->file_name;
 		ret = ddc_lex_scan(scanner, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
@@ -194,7 +201,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	return ret;
 }
 
-void dp_on_const(DATA_PARSER *self, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
+void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
 {
 	char id[1024];
 	hpuint32 i;
@@ -206,6 +213,6 @@ void dp_on_const(DATA_PARSER *self, const SyntacticNode* sn_type, const Syntacti
 
 	if(!trie_store_if_absent(self->constance, id, NULL))
 	{
-		self->result = E_HP_ERROR;
+		self->result = E_HP_CONSTANT_REDEFINITION;
 	}
 }

@@ -262,7 +262,8 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	
 	for(;;)
 	{
-		SCANNER *scanner = scanner_stack_get_scanner(ss);		
+		SCANNER *scanner = scanner_stack_get_scanner(ss);
+		yylloc_param->file_name = scanner->file_name;
 		ret = json_lex_scan(scanner, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;

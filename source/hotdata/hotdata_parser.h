@@ -18,7 +18,7 @@ struct _SyntacticNode
 	HPVar var;
 };
 
-
+#define MAX_RESULT_STRING_LENGTH 1024
 typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
 {
@@ -26,6 +26,7 @@ struct _DATA_PARSER
 	HPAbstractWriter *writer;
 
 	hpint32 result;
+	char result_str[MAX_RESULT_STRING_LENGTH];
 
 	//·ûºÅ±í
 	Trie *constance;
@@ -33,6 +34,8 @@ struct _DATA_PARSER
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
 
-void dp_on_const(DATA_PARSER *self, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
+
+void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
+
 #endif//_H_XML_PARSER
 

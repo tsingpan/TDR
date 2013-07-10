@@ -2,6 +2,7 @@
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
 
+
 #define YYERROR_VERBOSE
 #define GET_SELF HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
 #define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
@@ -156,7 +157,7 @@ Const :
 		write_struct_end(GET_WRITER, NULL);
 
 
-		dp_on_const(GET_SELF, &$3, &$5, &$9);
+		dp_on_const(GET_SELF, &yylloc, &$3, &$5, &$9);
 	}
 
 
