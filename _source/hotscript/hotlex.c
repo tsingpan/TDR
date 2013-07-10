@@ -81,13 +81,14 @@ static hpint32 fix_path(char* _path, hpuint32 *_len)
 	len = (hpuint32)strlen(_path);
 
 	snprintf(path, HP_MAX_FILE_PATH_LENGTH, "%s", _path);
-#ifndef WIN32
-	if(_path[0] == '/')
+	if(HP_FILE_SEPARATOR == '/')
 	{
-		p[0] = "/";
-		ptail = 1;
+		if(_path[0] == '/')
+		{
+			p[0] = "/";
+			ptail = 1;
+		}
 	}
-#endif //WIN32
 
 	for(i = 0; i < len; ++i)
 	{
