@@ -12,16 +12,8 @@
 #include "datrie/trie.h"
 #include "language/language.h"
 
-//语法节点的值
-typedef struct _SyntacticNode SyntacticNode;
-struct _SyntacticNode
-{
-	HPVar var;
-};
 
-
-
-
+#include "syntactic_node.h"
 
 
 typedef struct _DATA_PARSER DATA_PARSER;
