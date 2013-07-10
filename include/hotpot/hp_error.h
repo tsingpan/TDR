@@ -30,12 +30,11 @@ typedef enum tagHP_HOTPOT_ERROR_CODE_NUMBER
 }HP_HOTPOT_ERROR_CODE_NUMBER;
 
 
-//number错误区间
+//hotdata错误区间
 typedef enum _HP_HOTDATA_ERROR_CODE
 {	
 	E_HP_CONSTANT_REDEFINITION												= -E_HP_HOTDATA_SECTION - 1,
-	
+	E_HP_INTEGER_OVERFLOW													= -E_HP_HOTDATA_SECTION - 2,
 }HP_HOTDATA_ERROR_CODE;
 
 #endif //_H_HP_ERROR
-

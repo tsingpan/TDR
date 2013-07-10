@@ -42,5 +42,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
 
+void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
+
 #endif//_H_XML_PARSER
 

@@ -157,6 +157,8 @@ Const :
 	';'
 	{
 		write_struct_end(GET_WRITER, NULL);		
+		
+		dp_on_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
 	}
 
 
@@ -171,6 +173,11 @@ Value :
 		write_field_begin(GET_WRITER, "base", strlen("base"));
 		write_hpint64(GET_WRITER, 10);
 		write_field_end(GET_WRITER, "base", strlen("base"));
+		
+		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hpfalse;
+		$$.body.sn_value.var.type = E_HP_INT64;
+		$$.body.sn_value.var.val.i64 = $1.var.val.i64;
 	}
 |	tok_hex
 	{
@@ -181,24 +188,40 @@ Value :
 		write_field_begin(GET_WRITER, "base", strlen("base"));
 		write_hpint64(GET_WRITER, 16);
 		write_field_end(GET_WRITER, "base", strlen("base"));
-	}
-|	tok_identifier
-	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
-		write_field_end(GET_WRITER, "value", strlen("value"));
+		
+		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hpfalse;
+		$$.body.sn_value.var = $1.var;
 	}
 |	tok_true
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "true");
 		write_field_end(GET_WRITER, "value", strlen("value"));
+		
+		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hptrue;
+		$$.body.sn_value.var = $1.var;
 	}
 |	tok_false
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
 		write_hpstring(GET_WRITER, "false");
 		write_field_end(GET_WRITER, "value", strlen("value"));
+		
+		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hpfalse;
+		$$.body.sn_value.var = $1.var;
+	}
+|	tok_identifier
+	{
+		write_field_begin(GET_WRITER, "value", strlen("value"));
+		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_field_end(GET_WRITER, "value", strlen("value"));
+		
+		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hptrue;
+		$$.body.sn_value.var = $1.var;
 	};
 
 Typedef :

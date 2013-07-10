@@ -23,6 +23,10 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		{
 			*sid = E_SID_CONSTANT_REDEFINITION;
 		}
+		else if(strcmp(enum_name, "E_SID_INTEGER_OVERFLOW") == 0)
+		{
+			*sid = E_SID_INTEGER_OVERFLOW;
+		}
 	}
 
 	read_enum(self, (hpint32*)sid);

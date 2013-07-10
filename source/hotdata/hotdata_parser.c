@@ -47,31 +47,60 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 }
 
 
-void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...) 
-{
-	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
-	va_list ap;
+void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, va_list ap) 
+{	
 	hpuint32 len;
 
-	self->result_str[0] = 0;
-	va_start(ap, s);
 	if(yylloc->file_name[0])
 	{
 		snprintf(self->result_str, MAX_RESULT_STRING_LENGTH, "%s", yylloc->file_name);
 	}
 	len = strlen(self->result_str);
-	if(self->result == E_HP_NOERROR)
-	{
-		self->result = E_HP_SYNTAX_ERROR;
-	}
 	snprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result);
 	len = strlen(self->result_str);
 	vsnprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
-	va_end(ap);
 }
+
+void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...) 
+{
+	va_list ap;
+	const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)result);
+
+	if(self->result != E_HP_NOERROR)
+	{
+		goto done;
+	}
+
+	self->result = result;
+
+	va_start(ap, error_str);
+	_dp_error(self, yylloc, error_str, ap);
+	va_end(ap);
+done:
+	return;
+}
+hpint32 yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
+{
+	va_list ap;
+	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
+
+	if(self->result != E_HP_NOERROR)
+	{
+		goto done;
+	}
+
+	self->result = E_HP_SYNTAX_ERROR;
+	va_start(ap, s);
+	_dp_error(self, yylloc, s, ap);
+	va_end(ap);
+done:
+	return;
+}
+
+
 #define HOTDATA_EXTENSION ".dd"
 
-hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
+hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 	SCANNER_STACK *ss = &dp->scanner_stack;
@@ -121,8 +150,14 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 			yylval->var.val.i64 = strtoll(yytext, NULL, 10);
 			if (errno == ERANGE)
 			{
-				dp->result = E_HP_ERROR;
-				goto ERROR_RET;
+				errno = 0;
+				yylval->var.type = E_HP_UINT64;
+				yylval->var.val.ui64 = strtoull(yytext, NULL, 10);				
+				if(errno == ERANGE)
+				{
+					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
+					goto ERROR_RET;
+				}				
 			}
 			break;
 		}
@@ -133,8 +168,14 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 			yylval->var.val.i64 = strtoll(yytext+2, NULL, 16);
 			if (errno == ERANGE)
 			{
-				dp->result = E_HP_ERROR;
-				goto ERROR_RET;
+				errno = 0;
+				yylval->var.type = E_HP_UINT64;
+				yylval->var.val.ui64 = strtoull(yytext + 2, NULL, 10);				
+				if(errno == ERANGE)
+				{
+					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
+					goto ERROR_RET;
+				}
 			}
 			break;
 		}
@@ -198,9 +239,8 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		}
 		else
 		{
-			if(get_token_yylval(jp, ret, yylval_param) != E_HP_NOERROR)
+			if(get_token_yylval(jp, ret, yylval_param, yylloc_param) != E_HP_NOERROR)
 			{
-				jp->result = E_HP_ERROR;
 				ret = -1;
 				break;
 			}
@@ -234,4 +274,9 @@ hpint32 data_parser_init(DATA_PARSER *self)
 	scanner_stack_init(&self->scanner_stack);
 	
 	return E_HP_NOERROR;
+}
+
+
+void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
+{
 }

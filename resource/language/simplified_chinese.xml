@@ -1,5 +1,5 @@
 <LanguageLib>
-	<str_num>3</str_num>
+	<str_num>4</str_num>
 	<str>
 		<[0]>
 			<sid>E_SID_NOERROR</sid>
@@ -13,5 +13,9 @@
 			<sid>E_SID_CONSTANT_REDEFINITION</sid>
 			<str>常量[%s]重定义</str>
 		</[2]>
+		<[3]>
+			<sid>E_SID_INTEGER_OVERFLOW</sid>
+			<str>整数溢出</str>
+		</[3]>
 	<str>
 </LanguageLib>
