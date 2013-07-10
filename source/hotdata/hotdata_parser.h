@@ -32,13 +32,13 @@ struct _DATA_PARSER
 	const LanguageLib *language_lib;
 
 	//符号表
-	Trie *constance;
+	Trie *constant;				//记录已定义的常量符号
 };
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib);
 
 
-void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
+void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
 
 #endif//_H_XML_PARSER
 

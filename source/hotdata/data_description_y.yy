@@ -146,6 +146,8 @@ Const :
 		write_field_begin(GET_WRITER, "name", strlen("name"));
 		write_bytes(GET_WRITER, $5.var.val.bytes);
 		write_field_end(GET_WRITER, "name", strlen("name"));
+
+		dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
 	}
 	'='
 	{
@@ -154,10 +156,7 @@ Const :
 	Value
 	';'
 	{
-		write_struct_end(GET_WRITER, NULL);
-
-
-		dp_on_const(GET_SELF, &yylloc, &$3, &$5, &$9);
+		write_struct_end(GET_WRITER, NULL);		
 	}
 
 

@@ -24,7 +24,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	alpha_map_add_range(alpha_map, 'A', 'Z');
 	alpha_map_add_range(alpha_map, '0', '9');
 	alpha_map_add_range(alpha_map, '_', '_');
-	self->constance = trie_new(alpha_map);
+	self->constant = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
 	scanner_stack_init(&self->scanner_stack);
@@ -205,7 +205,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	return ret;
 }
 
-void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
+void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier)
 {
 	char id[1024];
 	hpuint32 i;
@@ -215,7 +215,7 @@ void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* 
 	}
 	id[i] = 0;
 
-	if(!trie_store_if_absent(self->constance, id, NULL))
+	if(!trie_store_if_absent(self->constant, id, NULL))
 	{
 		const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)E_HP_CONSTANT_REDEFINITION);
 		self->result = E_HP_CONSTANT_REDEFINITION;
