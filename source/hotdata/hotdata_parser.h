@@ -10,6 +10,7 @@
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "datrie/trie.h"
+#include "language/language.h"
 
 //语法节点的值
 typedef struct _SyntacticNode SyntacticNode;
@@ -28,11 +29,13 @@ struct _DATA_PARSER
 	hpint32 result;
 	char result_str[MAX_RESULT_STRING_LENGTH];
 
+	const LanguageLib *language_lib;
+
 	//符号表
 	Trie *constance;
 };
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
+hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib);
 
 
 void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);

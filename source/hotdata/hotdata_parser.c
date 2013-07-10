@@ -7,11 +7,12 @@
 #include <errno.h>
 #include <string.h>
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer)
+hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib)
 {
 	hpint32 ret;
 	AlphaMap *alpha_map = NULL;
 
+	self->language_lib = language_lib;
 	self->writer = writer;	
 	self->result = E_HP_NOERROR;
 
@@ -47,13 +48,12 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 }
 
 
-void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...) 
+void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...) 
 {
 	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 	va_list ap;
 	hpuint32 len;
 
-	self->result = E_HP_SYNTAX_ERROR;
 	self->result_str[0] = 0;
 	va_start(ap, s);
 	if(yylloc->file_name[0])
@@ -213,6 +213,9 @@ void dp_on_const(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* 
 
 	if(!trie_store_if_absent(self->constance, id, NULL))
 	{
+		const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)E_HP_CONSTANT_REDEFINITION);
 		self->result = E_HP_CONSTANT_REDEFINITION;
+
+		yydataerror(yylloc, &self->scanner_stack, error_str, id);
 	}
 }

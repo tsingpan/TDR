@@ -17,6 +17,7 @@
 
 #include "language/language_types.h"
 #include "language/language_reader.h"
+#include "language/language.h"
 
 LanguageLib language_lib;
 
@@ -59,12 +60,7 @@ int main(int argc, char **argv)
 	FILE *fin_xml;
 	int ret;
 
-	fin_xml = fopen("D:\\HotPot\\resource\\language\\simplified_chinese.xml", "r");
-
-	xml_reader_init(&xml_reader, fin_xml);
-	ret = read_LanguageLib(&xml_reader.super, &language_lib);
-
-	fclose(fin_xml);
+	
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
 	{
@@ -83,7 +79,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	
+	load_language(&language_lib, "D:\\HotPot\\resource\\language\\simplified_chinese.xml");
+
 	for(i = hp_optind; i < argc; ++i)
 	{
 		HotObject *obj = hotobject_new();
@@ -97,14 +94,14 @@ int main(int argc, char **argv)
 
 		hotobject_writer_init(&writer, obj);
 		hotobject_reader_init(&reader, obj);
-		if(data_parser(&dp, argv[i], &jw.super) != E_HP_NOERROR)
+		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
 		{
 			continue;
 		}
 		
 		fclose(fout);
 
-		if(data_parser(&dp, argv[i], &xml_writer.super) != E_HP_NOERROR)
+		if(data_parser(&dp, argv[i], &xml_writer.super, &language_lib) != E_HP_NOERROR)
 		{
 			continue;
 		}
@@ -136,7 +133,7 @@ int main(int argc, char **argv)
 		write_hpstring(&writer.super, argv[i]);
 		write_field_end(&writer.super, "file", strlen("file"));
 
-		if(data_parser(&dp, argv[i], &writer.super) == E_HP_NOERROR)
+		if(data_parser(&dp, argv[i], &writer.super, &language_lib) == E_HP_NOERROR)
 		{
 			printf("compile succeed\n");
 

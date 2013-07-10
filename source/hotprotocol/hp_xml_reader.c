@@ -12,6 +12,7 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->f = f;
 	self->count = 0;
 	self->need_tab = hpfalse;
+	memset(&self->super, 0, sizeof(HPAbstractReader));
 
 	self->super.read_enum_name = xml_read_enum_name;
 
