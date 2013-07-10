@@ -207,7 +207,6 @@ anychar			([^])
 <INITIAL>"byte"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"namespace"          { ddekit_reserved_keyword(yytext); }
 
-<*>{anychar}					{ goto restart;					 }
-
-*/
+<*>{anychar}					{ goto restart;					 }	
+*/	
 }

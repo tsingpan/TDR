@@ -176,10 +176,10 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 	for(;;)
 	{
 		SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);		
+		
+		ret = script_lex_scan(scanner, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
-		ret = script_lex_scan(scanner, yylloc_param, yylval_param);
-		
 		if(ret == 0)
 		{
 			if(scanner_stack_get_num(&sp->scanner_stack) <= 1)

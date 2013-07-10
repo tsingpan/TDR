@@ -15,28 +15,20 @@ hpint32 scanner_fini(SCANNER *self)
 hpint32 scanner_process(SCANNER *sp)
 {
 	const char *i;
-	for(i = sp->yy_last; i < sp->yy_cursor;)
+	for(i = sp->yy_last; i < sp->yy_cursor;++i)
 	{
 		if(*i == '\n')
 		{
 			++(sp->yylineno);
 			sp->yycolumn = 1;
-			++i;
-		}
+		}		
 		else if(*i == '\r')
 		{
-			++(sp->yylineno);
-			sp->yycolumn = 1;
-			++i;
-			if((i < sp->yy_cursor) && (*i == '\n'))
-			{
-				++i;
-			}
+			sp->yycolumn = 1;			
 		}
 		else
 		{
 			++(sp->yycolumn);
-			++i;
 		}
 	}
 	sp->yy_last = sp->yy_cursor;
