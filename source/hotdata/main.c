@@ -51,6 +51,7 @@ SCRIPT_PARSER sp;
 char file_tag[1024];
 hpuint32 file_tag_len;
 
+
 int main(int argc, char **argv)
 {
 	int i;
@@ -60,7 +61,7 @@ int main(int argc, char **argv)
 	FILE *fin_xml;
 	int ret;
 
-	
+	data_parser_init(&dp);
 	
 	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
 	{
@@ -69,10 +70,11 @@ int main(int argc, char **argv)
 		case '?':
 			//need useage
 			break;
-		case 'i':
-			break;		
 		case 't':
 			strncpy(file_name, hp_optarg, HP_MAX_FILE_PATH_LENGTH);
+			break;
+		case 'i':
+			scanner_stack_add_path(&dp.scanner_stack, hp_optarg);
 			break;
 		default:
 			break;

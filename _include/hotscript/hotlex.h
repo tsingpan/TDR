@@ -48,6 +48,8 @@ struct _SCANNER
 
 #define MAX_BUFF_SIZE 1000000
 #define MAX_SCANNER_STACK_DEEP 1024
+#define MAX_RESULT_STRING_LENGTH 1024
+#define MAX_INCLUDE_PATH 1024
 
 typedef struct _SCANNER_STACK SCANNER_STACK;
 typedef struct _SCANNER_STACK
@@ -55,9 +57,12 @@ typedef struct _SCANNER_STACK
 	hpuint32 stack_num;
 	SCANNER stack[MAX_SCANNER_STACK_DEEP];
 
+	char include_path[MAX_INCLUDE_PATH][HP_MAX_FILE_PATH_LENGTH];
+	hpuint32 include_path_tail;
+
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
-	YYCTYPE buff[MAX_BUFF_SIZE];	
+	YYCTYPE buff[MAX_BUFF_SIZE];
 };
 
 hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state, const char *file_name);
@@ -70,6 +75,7 @@ hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char
 hpint32 scanner_stack_pop(SCANNER_STACK *self);
 hpint32 scanner_stack_init(SCANNER_STACK *self);
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self);
+hpint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path);
 
 #endif//_H_HOTLEX
 

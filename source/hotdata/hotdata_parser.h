@@ -19,7 +19,11 @@ struct _SyntacticNode
 	HPVar var;
 };
 
-#define MAX_RESULT_STRING_LENGTH 1024
+
+
+
+
+
 typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
 {
@@ -31,11 +35,17 @@ struct _DATA_PARSER
 
 	const LanguageLib *language_lib;
 
+	
+
 	//符号表
 	Trie *constant;				//记录已定义的常量符号
 };
 
+hpint32 data_parser_init(DATA_PARSER *self);
+
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib);
+
+
 
 
 void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);

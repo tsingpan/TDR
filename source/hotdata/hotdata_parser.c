@@ -27,7 +27,6 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->constant = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
-	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 	self->result = E_HP_NOERROR;
 
@@ -70,6 +69,7 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	vsnprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
 	va_end(ap);
 }
+#define HOTDATA_EXTENSION ".dd"
 
 hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 {
@@ -83,10 +83,13 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 		{
 			char file_name[1024];
 			size_t len = 0;
+			const char *i;
+
 			while(self->yy_cursor < self->yy_limit)
 			{
 				if(*self->yy_cursor == ';')
 				{
+					++(self->yy_cursor);
 					break;
 				}
 				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
@@ -99,7 +102,10 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval)
 					++(self->yy_cursor);
 				}
 			}
-
+			for(i = HOTDATA_EXTENSION; *i; ++i)
+			{
+				file_name[len++] = *i;
+			}
 			file_name[len] = 0;
 			if(scanner_stack_push_file(ss, file_name, yycINITIAL) != E_HP_NOERROR)
 			{
@@ -221,4 +227,11 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 		self->result = E_HP_CONSTANT_REDEFINITION;
 		yydataerror(yylloc, &self->scanner_stack, error_str, id);
 	}
+}
+
+hpint32 data_parser_init(DATA_PARSER *self)
+{
+	scanner_stack_init(&self->scanner_stack);
+	
+	return E_HP_NOERROR;
 }
