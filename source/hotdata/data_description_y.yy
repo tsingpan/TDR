@@ -202,13 +202,12 @@ Typedef :
 Enum :
 	{dp_on_enum_begin(GET_SELF, &yylloc);}
 	tok_enum
-	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations
-	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
+	{write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6);
+		write_bytes(GET_WRITER, $5);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 	}
@@ -252,13 +251,12 @@ EnumDef :
 Union :
 	{ dp_on_union_begin(GET_SELF, &yylloc);}
 	tok_union 
-	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations	
-	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
+	{write_semicolon(GET_WRITER);}
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6);
+		write_bytes(GET_WRITER, $5);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -276,13 +274,12 @@ Union :
 Struct : 
 	{dp_on_struct_begin(GET_SELF, &yylloc);}
 	tok_struct
-	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations
-	{write_field_end(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));write_semicolon(GET_WRITER);}
+	{write_semicolon(GET_WRITER);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6);
+		write_bytes(GET_WRITER, $5);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -659,21 +656,16 @@ UnixCommentOrNot:
 	};
 
 TypeAnnotations:
-  '(' {write_vector_begin(GET_WRITER);}
-	 TypeAnnotationList ')'
-    {write_vector_end(GET_WRITER);}
+	'('
+	{dp_on_TypeAnnotations_begin(GET_SELF, &yylloc);}
+	TypeAnnotationList
+	{dp_on_TypeAnnotations_end(GET_SELF, &yylloc);}
+	')'
 |
     {
-		//这里放一个默认值
-		write_vector_begin(GET_WRITER);
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "switch", strlen("switch"));
-		write_hpstring(GET_WRITER, "selector");
-		write_field_end(GET_WRITER, "switch", strlen("switch"));		
-		write_struct_end(GET_WRITER, NULL);
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
-		write_vector_end(GET_WRITER);
+		dp_on_TypeAnnotations_begin(GET_SELF, &yylloc);
+		dp_on_TypeAnnotations_switch(GET_SELF, &yylloc, NULL);
+		dp_on_TypeAnnotations_end(GET_SELF, &yylloc);
     };
 
 TypeAnnotationList:
@@ -698,13 +690,7 @@ TypeAnnotation:
 	}
 |	tok_switch '=' tok_identifier
 	{
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "switch", strlen("switch"));
-		write_bytes(GET_WRITER, $3);
-		write_field_end(GET_WRITER, "switch", strlen("switch"));		
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_end(GET_WRITER, NULL);
+		dp_on_TypeAnnotations_switch(GET_SELF, &yylloc, &$3);
 	}
 |	;
 

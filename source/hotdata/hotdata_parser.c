@@ -620,3 +620,33 @@ void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "new_type", strlen("new_type"));
 }
+
+void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
+	write_vector_begin(self->writer);
+}
+
+void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes *sn_tok_identifier)
+{
+	write_vector_item_begin(self->writer, writer_get_index(self->writer));
+	write_struct_begin(self->writer, NULL);
+	write_field_begin(self->writer, "switch", strlen("switch"));
+	if(sn_tok_identifier == NULL)
+	{
+		write_hpstring(self->writer, "selector");
+	}
+	else
+	{
+		write_bytes(self->writer, *sn_tok_identifier);
+	}
+	write_field_end(self->writer, "switch", strlen("switch"));		
+	write_vector_item_end(self->writer, writer_get_index(self->writer));
+	write_struct_end(self->writer, NULL);
+}
+
+void dp_on_TypeAnnotations_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_end(self->writer);
+	write_field_end(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
+}

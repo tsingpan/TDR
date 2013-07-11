@@ -104,5 +104,11 @@ void dp_on_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier);
 
+void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes *sn_tok_identifier);
+
+void dp_on_TypeAnnotations_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
 #endif//_H_XML_PARSER
 
