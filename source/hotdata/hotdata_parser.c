@@ -311,7 +311,7 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 	size_t size;
 
 
-	if(sn_value->sn_value.is_identifier)
+	if(sn_value->sn_value.type == E_SNVT_IDENTIFIER)
 	{		
 		val = sn_value->sn_value.sn;
 	}
@@ -362,17 +362,17 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 		goto done;
 	}
 	size *= 8;
-	if(val->sn_value.var.type == E_HP_UINT64)
+	if(val->sn_value.type == E_SNVT_UINT64)
 	{
-		if(val->sn_value.var.val.ui64 >> size)
+		if(val->sn_value.ui64 >> size)
 		{
 			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 			goto done;
 		}
 	}
-	else if(val->sn_value.var.type == E_HP_INT64)
+	else if(val->sn_value.type == E_SNVT_INT64)
 	{
-		if(val->sn_value.var.val.i64 >> size)
+		if(val->sn_value.i64 >> size)
 		{
 			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 			goto done;
@@ -414,12 +414,12 @@ void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticN
 		goto error_ret;
 	}
 
-	current->sn_value.is_identifier = hptrue;
+	current->sn_value.type = E_SNVT_IDENTIFIER;
 	current->sn_value.sn = (const SyntacticNode*)data;
 done:
 	return;
 error_ret:
-	current->sn_value.is_identifier = hptrue;
+	current->sn_value.type = E_SNVT_IDENTIFIER;
 	current->sn_value.sn = NULL;
 	return;
 }
