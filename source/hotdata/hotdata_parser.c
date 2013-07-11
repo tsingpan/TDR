@@ -167,6 +167,18 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			}
 			break;
 		}
+	case tok_bool:
+		{
+			if(yytext[0] == 't')
+			{
+				yylval->sn_bool = hptrue;
+			}
+			else
+			{
+				yylval->sn_bool = hpfalse;
+			}
+			break;
+		}
 	case tok_int:
 		{
 			errno = 0;

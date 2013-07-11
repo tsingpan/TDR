@@ -52,8 +52,7 @@
 %token tok_unique
 %token tok_lower_bound
 %token tok_upper_bound
-%token tok_true
-%token tok_false
+%token tok_bool
 %token tok_typedef
 %token tok_switch
 %token tok_t_int8
@@ -74,6 +73,7 @@
 %type<sn_int64> tok_int64
 %type<sn_hex_int64> tok_hex_int64
 %type<sn_tok_unixcomment> tok_unixcomment
+%type<sn_bool> tok_bool
 
 
 %left '='
@@ -203,7 +203,7 @@ Value :
 		write_field_end(GET_WRITER, "base", strlen("base"));
 		
 	}
-|	Bool
+|	tok_bool
 	{
 	
 	}
@@ -703,22 +703,8 @@ TypeAnnotationList:
     {
     };
 
-Bool:
-	tok_true
-	{
-		write_hpstring(GET_WRITER, "true");
-
-		//$$.sn_bool = hptrue;
-	}
-	| tok_false
-	{
-		write_hpstring(GET_WRITER, "false");
-
-		//$$.sn_bool = hpfalse;
-	};
-
 TypeAnnotation:
-	tok_unique '=' Bool
+	tok_unique '=' tok_bool
     {
     }
 |	tok_lower_bound '=' tok_identifier

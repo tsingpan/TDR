@@ -82,8 +82,7 @@ anychar			([^])
 
 
 
-<INITIAL>"true"					{return tok_true;																}
-<INITIAL>"false"				{return tok_false;																}
+<INITIAL>"true"|"false"			{return tok_bool;																}
 <INITIAL>{hexconstant}			{return tok_hex;																}
 <INITIAL>{intconstant}			{return tok_int;																}
 <INITIAL>{identifier}			{return tok_identifier;															}
