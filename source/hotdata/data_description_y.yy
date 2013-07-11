@@ -112,48 +112,28 @@ DefinitionList :
 	{dp_on_definition_end(GET_SELF, &yylloc);};
 
 Definition :
-	{write_field_begin(GET_WRITER, "import", strlen("import")); }
 	Import
-	{write_field_end(GET_WRITER, "import", strlen("import"));} 
+|	Const
+|	Typedef
+|	Struct
+|	Union
+|	Enum
+|   UnixComment;
 
-|	{write_field_begin(GET_WRITER, "const", strlen("const")); }
-	Const
-	{write_field_end(GET_WRITER, "const", strlen("const"));} 
 
-|	{write_field_begin(GET_WRITER, "typedef", strlen("typedef")); }
-	Typedef
-	{write_field_end(GET_WRITER, "typedef", strlen("typedef"));} 
-
-|	{write_field_begin(GET_WRITER, "struct", strlen("struct")); }
-	Struct
-	{write_field_end(GET_WRITER, "struct", strlen("struct"));} 
-
-|	{write_field_begin(GET_WRITER, "union", strlen("union")); }
-	Union
-	{write_field_end(GET_WRITER, "union", strlen("union"));} 
-
-|	{write_field_begin(GET_WRITER, "enum", strlen("enum")); }
-	Enum
-	{write_field_end(GET_WRITER, "enum", strlen("enum"));} 
-
-|   {write_field_begin(GET_WRITER, "comment", strlen("comment")); }
-	tok_unixcomment
-	{write_field_end(GET_WRITER, "comment", strlen("comment"));}
-
-Import : 
+Import :
+	{dp_on_import_begin(GET_SELF, &yylloc);  }
 	tok_import
 	{
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "file", strlen("file"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "file", strlen("file"));
-		write_struct_end(GET_WRITER, NULL);
-		//dp_on_import(GET_SELF, &yylloc, &$$, &$1);
+		dp_on_tok_import(GET_SELF, &yylloc, $2);
+		//dp_on_import(GET_SELF, &yylloc, &$$, &$2);
+
+		dp_on_import_end(GET_SELF, &yylloc);
 	};
 
 
 Const : 
-	{write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_const_begin(GET_SELF, &yylloc);}
 	tok_const 
 	Type
 	{write_semicolon(GET_WRITER);}
@@ -172,9 +152,10 @@ Const :
 	Value
 	';'
 	{
-		write_struct_end(GET_WRITER, NULL);		
 		
 		//dp_on_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
+
+		dp_on_const_end(GET_SELF, &yylloc); 
 	}
 
 
@@ -224,7 +205,7 @@ Value :
 	};
 
 Typedef :
-	{write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_typedef_begin(GET_SELF, &yylloc);}
 	tok_typedef Type 
 	{write_semicolon(GET_WRITER);}
 	Arguments
@@ -235,10 +216,12 @@ Typedef :
 		write_field_end(GET_WRITER, "new_type", strlen("new_type"));
 	}
 	';'
-	{write_struct_end(GET_WRITER, NULL);};
+	{
+		dp_on_typedef_end(GET_SELF, &yylloc);
+	};
 	
 Enum :
-	{write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_enum_begin(GET_SELF, &yylloc);}
 	tok_enum
 	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations
@@ -254,7 +237,7 @@ Enum :
 	EnumDefList 
 	'}' {write_vector_end(GET_WRITER); write_field_end(GET_WRITER, "list", strlen("list")); }
 	';'
-	{write_struct_end(GET_WRITER, NULL);};
+	{dp_on_enum_end(GET_SELF, &yylloc);};
     
 EnumDefList : 
 	EnumDefList {write_semicolon(GET_WRITER);} 
@@ -278,12 +261,17 @@ EnumDef :
 	{
 		write_semicolon(GET_WRITER);
 	}
-	Value ',' UnixComment
+	Value
+	','
+	{
+		write_semicolon(GET_WRITER);
+	}
+	UnixCommentOrNot
 	{write_struct_end(GET_WRITER, NULL);};
     
 
 Union :
-	{write_struct_begin(GET_WRITER, NULL);}
+	{ dp_on_union_begin(GET_SELF, &yylloc);}
 	tok_union 
 	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations	
@@ -303,11 +291,11 @@ Union :
 	FieldList 
 	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
 	';'
-	{write_struct_end(GET_WRITER, NULL);};
+	{dp_on_union_end(GET_SELF, &yylloc);};
 	
 	
 Struct : 
-	{write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_struct_begin(GET_SELF, &yylloc);}
 	tok_struct
 	{write_field_begin(GET_WRITER, "TypeAnnotations", strlen("TypeAnnotations"));}
 	TypeAnnotations
@@ -327,7 +315,7 @@ Struct :
 	FieldList
 	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
 	';'
-	{write_struct_end(GET_WRITER, NULL);};
+	{dp_on_struct_end(GET_SELF, &yylloc); };
 	
 
 	
@@ -357,7 +345,11 @@ Field :
 		write_bytes(GET_WRITER, $8);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
-	';' UnixComment
+	';'
+	{
+		write_semicolon(GET_WRITER);
+	}
+	UnixCommentOrNot
 	{
 		write_struct_end(GET_WRITER, NULL);
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
@@ -492,8 +484,6 @@ ObjectType:
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_bytes(GET_WRITER, $1);
 		write_field_end(GET_WRITER, "type", strlen("type"));
-
-		
 	};
 
 ContainerType:
@@ -669,17 +659,24 @@ Argument:
 	};
 
 UnixComment:
-	{write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);}
 	tok_unixcomment
 	{
 		write_field_begin(GET_WRITER, "text", strlen("text"));
 		write_bytes(GET_WRITER, $2);
 		write_field_end(GET_WRITER, "text", strlen("text"));
-		write_struct_end(GET_WRITER, NULL);
-	}
+		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
+	};
+
+UnixCommentOrNot:
+	UnixComment
 |
 	{
-		
+		dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);
+		write_field_begin(GET_WRITER, "text", strlen("text"));
+		write_null(GET_WRITER);
+		write_field_end(GET_WRITER, "text", strlen("text"));
+		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
 	};
 
 TypeAnnotations:

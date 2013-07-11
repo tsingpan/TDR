@@ -60,6 +60,35 @@ void dp_on_definition_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
+void dp_on_import_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_import_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_typedef_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_struct_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_union_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_union_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_enum_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_enum_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_tok_unixcomment_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import);
 
 #endif//_H_XML_PARSER
 

@@ -424,11 +424,14 @@ error_ret:
 	return;
 }
 
+
 void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
 {
 	current->sn_import = sn_import->sn_tok_import;
 }
 
+
+//handler
 void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_struct_begin(self->writer, "Document");
@@ -460,4 +463,95 @@ void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_struct_end(self->writer, NULL);
 }
 
-//handler
+void dp_on_import_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "import", strlen("import"));
+}
+
+void dp_on_import_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_end(self->writer, "import", strlen("import"));
+}
+
+void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "const", strlen("const"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "const", strlen("const"));
+}
+
+void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "typedef", strlen("typedef"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_typedef_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "typedef", strlen("typedef"));
+}
+
+void dp_on_struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "struct", strlen("struct"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_struct_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "struct", strlen("struct"));
+}
+
+void dp_on_union_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "union", strlen("union"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_union_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "union", strlen("union"));
+}
+
+
+void dp_on_enum_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "enum", strlen("enum"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_enum_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "enum", strlen("enum"));
+}
+
+
+void dp_on_tok_unixcomment_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "comment", strlen("comment"));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_end(self->writer, NULL);
+	write_field_end(self->writer, "comment", strlen("comment"));
+}
+
+void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import)
+{
+	write_struct_begin(self->writer, NULL);
+	write_field_begin(self->writer, "file", strlen("file"));
+	write_bytes(self->writer, sn_tok_import);
+	write_field_end(self->writer, "file", strlen("file"));
+	write_struct_end(self->writer, NULL);
+}
