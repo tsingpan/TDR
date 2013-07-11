@@ -66,6 +66,13 @@ void dp_on_import_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
 
+void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_const_equal(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+
+void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
+
 void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc);

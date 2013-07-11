@@ -136,18 +136,15 @@ Const :
 	{dp_on_const_begin(GET_SELF, &yylloc);}
 	tok_const 
 	Type
-	{write_semicolon(GET_WRITER);}
+	{dp_on_const_semicolon(GET_SELF, &yylloc); }
 	tok_identifier 
 	{
-		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $5);
-		write_field_end(GET_WRITER, "name", strlen("name"));
-
+		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
 		//dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
 	}
 	'='
 	{
-		write_semicolon(GET_WRITER);
+		dp_on_const_equal(GET_SELF, &yylloc); 		
 	}
 	Value
 	';'

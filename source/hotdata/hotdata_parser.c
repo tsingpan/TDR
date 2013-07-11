@@ -479,6 +479,23 @@ void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_struct_begin(self->writer, NULL);
 }
 
+void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_semicolon(self->writer);
+}
+
+void dp_on_const_equal(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_semicolon(self->writer);
+}
+
+void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "name", strlen("name"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "name", strlen("name"));
+}
+
 void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_struct_end(self->writer, NULL);
