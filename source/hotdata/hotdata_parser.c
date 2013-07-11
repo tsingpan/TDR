@@ -6,6 +6,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib)
 {
@@ -137,30 +138,32 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 	case tok_int:
 		{
 			errno = 0;
-			yylval->var.type = E_HP_INT64;
-			yylval->var.val.i64 = strtoll(yytext, NULL, 10);
+			yylval->body.sn_value.var.type = E_HP_INT64;
+			yylval->body.sn_value.var.val.i64 = strtoll(yytext, NULL, 10);
 			if (errno == ERANGE)
 			{
 				errno = 0;
-				yylval->var.type = E_HP_UINT64;
-				yylval->var.val.ui64 = strtoull(yytext, NULL, 10);				
+				yylval->body.sn_value.var.type = E_HP_UINT64;
+				yylval->body.sn_value.var.val.ui64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
-				}				
+				}
+
+				
 			}
 			break;
 		}
 	case tok_hex:
 		{
 			errno = 0;
-			yylval->var.type = E_HP_INT64;
-			yylval->var.val.i64 = strtoll(yytext+2, NULL, 16);
+			yylval->body.sn_value.var.type = E_HP_INT64;
+			yylval->body.sn_value.var.val.i64 = strtoll(yytext+2, NULL, 16);
 			if (errno == ERANGE)
 			{
 				errno = 0;
-				yylval->var.type = E_HP_UINT64;
-				yylval->var.val.ui64 = strtoull(yytext + 2, NULL, 10);				
+				yylval->body.sn_value.var.type = E_HP_UINT64;
+				yylval->body.sn_value.var.val.ui64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
@@ -241,7 +244,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 			{
 				ret = -1;
 				break;
-			}
+			}			
 			break;
 		}		
 	}
@@ -279,7 +282,8 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 {
 	char id[1024];
 	hpuint32 i;
-	const SyntacticNode* val;
+	const SyntacticNode* val = NULL;
+	size_t size;
 
 
 	if(sn_value->body.sn_value.is_identifier)
@@ -299,18 +303,9 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 		}
 		val = (const SyntacticNode*)data;
 	}
-
-	if(val->body.sn_value.var.type == E_HP_UINT64)
+	else
 	{
-
-	}
-	else if(val->body.sn_value.var.type == E_HP_INT64)
-	{
-
-	}
-	else if(val->body.sn_value.var.type == E_HP_DOUBLE)
-	{
-
+		val = sn_value;
 	}
 
 	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
@@ -318,26 +313,67 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 		id[i] = sn_identifier->var.val.bytes.ptr[i];
 	}
 	id[i] = 0;
+
+	switch(sn_type->body.sn_type.type)
+	{
+	case E_SNT_INT8:
+		size = sizeof(hpint8);
+		break;
+	case E_SNT_INT16:
+		size = sizeof(hpint16);		
+		break;
+	case E_SNT_INT32:
+		size = sizeof(hpint32);
+		break;
+	case E_SNT_INT64:
+		size = sizeof(hpint64);
+		break;
+	case E_SNT_UINT8:
+		size = sizeof(hpuint8);
+		break;
+	case E_SNT_UINT16:
+		size = sizeof(hpuint16);
+		break;
+	case E_SNT_UINT32:
+		size = sizeof(hpuint32);
+		break;
+	case E_SNT_UINT64:
+		size = sizeof(hpuint64);
+		break;
+	default:
+		dp_error(self, yylloc, (hpint32)E_HP_INVALID_CONSTANCE_TYPE);
+		goto done;
+	}
+	size *= 8;
+	if(val->body.sn_value.var.type == E_HP_UINT64)
+	{
+		if(val->body.sn_value.var.val.ui64 >> size)
+		{
+			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+			goto done;
+		}
+	}
+	else if(val->body.sn_value.var.type == E_HP_INT64)
+	{
+		if(val->body.sn_value.var.val.i64 >> size)
+		{
+			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+			goto done;
+		}
+	}
+	else
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_UNKNOW_CONSTANT_VALUE);
+		goto done;
+	}
+
+	
 	if(!trie_store_if_absent(self->constant, id, sn_value))
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
 		goto done;
 	}
 
-	/*
-	switch(sn_type->body.sn_type.type)
-	{
-	case E_SNT_INT8:
-	case E_SNT_INT16:
-	case E_SNT_INT32:
-	case E_SNT_INT64:
-	case E_SNT_UINT8:
-	case E_SNT_UINT16:
-	case E_SNT_UINT32:
-	case E_SNT_UINT64:
-	case E_SNT_CHAR:
-	case E_SNT_BOOL:
-	}*/
 done:
 	return;
 }

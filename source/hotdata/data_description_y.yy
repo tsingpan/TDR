@@ -166,7 +166,14 @@ Value :
 	tok_int
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpint64(GET_WRITER, $1.var.val.i64);
+		if($1.var.type == E_HP_INT64)
+		{
+			write_hpint64(GET_WRITER, $1.body.sn_value.var.val.i64);
+		}
+		else
+		{
+			write_hpuint64(GET_WRITER, $1.body.sn_value.var.val.ui64);
+		}
 		write_field_end(GET_WRITER, "value", strlen("value"));
 
 		write_semicolon(GET_WRITER);
@@ -176,13 +183,19 @@ Value :
 		
 		$$.type = NT_VALUE;
 		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var.type = E_HP_INT64;
-		$$.body.sn_value.var.val.i64 = $1.var.val.i64;		
+		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
 |	tok_hex
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpint64(GET_WRITER, $1.var.val.i64);
+		if($1.var.type == E_HP_INT64)
+		{
+			write_hpint64(GET_WRITER, $1.body.sn_value.var.val.i64);
+		}
+		else
+		{
+			write_hpuint64(GET_WRITER, $1.body.sn_value.var.val.ui64);
+		}
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "base", strlen("base"));
@@ -190,8 +203,7 @@ Value :
 		write_field_end(GET_WRITER, "base", strlen("base"));
 		
 		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.var;
+		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
 |	tok_true
 	{
@@ -201,7 +213,7 @@ Value :
 		
 		$$.type = NT_VALUE;
 		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.var;
+		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
 |	tok_false
 	{
@@ -211,7 +223,7 @@ Value :
 		
 		$$.type = NT_VALUE;
 		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.var;
+		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
 |	tok_identifier
 	{

@@ -34,6 +34,18 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		else if(strcmp(enum_name, "E_SID_CAN_NOT_FIND_CONSTANCE") == 0)
 		{
 			*sid = E_SID_CAN_NOT_FIND_CONSTANCE;
+		}
+		else if(strcmp(enum_name, "E_SID_CONSTANCE_TYPE_TOO_SMALL") == 0)
+		{
+			*sid = E_SID_CONSTANCE_TYPE_TOO_SMALL;
+		}
+		else if(strcmp(enum_name, "E_SID_INVALID_CONSTANCE_TYPE") == 0)
+		{
+			*sid = E_SID_INVALID_CONSTANCE_TYPE;
+		}
+		else if(strcmp(enum_name, "E_SID_UNKNOW_CONSTANT_VALUE") == 0)
+		{
+			*sid = E_SID_UNKNOW_CONSTANT_VALUE;
 		}		
 	}
 

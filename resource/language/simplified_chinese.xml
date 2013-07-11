@@ -1,5 +1,5 @@
 <LanguageLib>
-	<str_num>6</str_num>
+	<str_num>9</str_num>
 	<str>
 		<[0]>
 			<sid>E_SID_NOERROR</sid>
@@ -25,5 +25,17 @@
 			<sid>E_SID_CAN_NOT_FIND_CONSTANCE</sid>
 			<str>找不到常量[%s]</str>
 		</[5]>
+		<[6]>
+			<sid>E_SID_CONSTANCE_TYPE_TOO_SMALL</sid>
+			<str>常量类型太小[%s]</str>
+		</[6]>
+		<[7]>
+			<sid>E_SID_INVALID_CONSTANCE_TYPE</sid>
+			<str>错误的常量类型</str>
+		</[7]>
+		<[8]>
+			<sid>E_SID_UNKNOW_CONSTANT_VALUE</sid>
+			<str>无法识别的常量值</str>
+		</[8]>
 	<str>
 </LanguageLib>
