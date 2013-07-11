@@ -3,7 +3,7 @@
 #include "hotpot/hp_error.h"
 #include "data_description_l.h"
 #include "hotscript/hotlex.h"
-
+#include "hotprotocol/hp_abstract_writer.h"
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -517,6 +517,26 @@ void dp_on_vector_item_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 void dp_on_vector_item_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_vector_item_end(self->writer, writer_get_index(self->writer));
+}
+
+void dp_on_null(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_null(self->writer);
+}
+
+void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, hpbool b)
+{
+	write_hpbool(self->writer, b);
+}
+
+void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, hpbytes bytes)
+{
+	write_bytes(self->writer, bytes);
+}
+
+void dp_on_string(DATA_PARSER *self, const YYLTYPE *yylloc, const hpchar *str)
+{
+	write_hpstring(self->writer, str);
 }
 
 void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)

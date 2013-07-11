@@ -325,15 +325,15 @@ Field :
 
 FieldCondition:
 	{
-		write_struct_begin(GET_WRITER, NULL);
+		dp_on_struct_begin(GET_SELF, &yylloc);;
 	}
 	Condition
 	{
-		write_struct_end(GET_WRITER, NULL);
+		dp_on_struct_end(GET_SELF, &yylloc);
 	}
 |
 	{
-		write_null(GET_WRITER);
+		dp_on_null(GET_SELF, &yylloc);
 	};
 
 Condition : 
@@ -341,126 +341,154 @@ Condition :
 |	tok_if
 	'!'
 	{
-		write_field_begin(GET_WRITER, "negation", strlen("negation"));
-		write_hpbool(GET_WRITER, hptrue);
-		write_field_end(GET_WRITER, "negation", strlen("negation"));
-		write_semicolon(GET_WRITER);
+		dp_on_field_begin(GET_SELF, &yylloc, "negation"); 
+		dp_on_bool(GET_SELF, &yylloc, hptrue);
+		dp_on_field_end(GET_SELF, &yylloc, "negation"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
 	}
 	 '(' FieldExpression ')'
 |	tok_if '(' tok_identifier tok_unequal tok_identifier ')'
 	{
-		write_field_begin(GET_WRITER, "negation", strlen("negation"));
-		write_hpbool(GET_WRITER, hptrue);
-		write_field_end(GET_WRITER, "negation", strlen("negation"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "expression", strlen("expression"));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $3);
-		write_field_end(GET_WRITER, "op0", strlen("op0"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "operator", strlen("operator"));
-		write_hpstring(GET_WRITER, "==");
-		write_field_end(GET_WRITER, "operator", strlen("operator"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $5);
-		write_field_end(GET_WRITER, "op1", strlen("op1"));
-		write_struct_end(GET_WRITER, NULL);
-		write_field_end(GET_WRITER, "expression", strlen("expression"));		
+		dp_on_field_begin(GET_SELF, &yylloc, "negation"); 
+		dp_on_bool(GET_SELF, &yylloc, hptrue);
+		dp_on_field_end(GET_SELF, &yylloc, "negation"); 
+
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
+		dp_on_struct_begin(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
+		dp_on_bytes(GET_SELF, &yylloc, $3);
+		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
+		dp_on_string(GET_SELF, &yylloc, "==");
+		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
+		dp_on_bytes(GET_SELF, &yylloc, $5);
+		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
+
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	}
 |	tok_case tok_identifier ':'
 	{
-		write_field_begin(GET_WRITER, "expression", strlen("expression"));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_hpstring(GET_WRITER, "switch");
-		write_field_end(GET_WRITER, "op0", strlen("op0"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "operator", strlen("operator"));
-		write_hpstring(GET_WRITER, "==");
-		write_field_end(GET_WRITER, "operator", strlen("operator"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $2);
-		write_field_end(GET_WRITER, "op1", strlen("op1"));
-		write_struct_end(GET_WRITER, NULL);
-		write_field_end(GET_WRITER, "expression", strlen("expression"));	
+		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
+		dp_on_struct_begin(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
+		dp_on_string(GET_SELF, &yylloc, "switch");
+		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
+		dp_on_string(GET_SELF, &yylloc, "==");
+		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
+		dp_on_bytes(GET_SELF, &yylloc, $2);
+		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
+
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	};
 
 
 FieldExpression :
 	tok_identifier tok_equal tok_identifier
 	{
-		write_field_begin(GET_WRITER, "expression", strlen("expression"));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "op0", strlen("op0"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "operator", strlen("operator"));
-		write_hpstring(GET_WRITER, "==");
-		write_field_end(GET_WRITER, "operator", strlen("operator"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $3);
-		write_field_end(GET_WRITER, "op1", strlen("op1"));
-		write_struct_end(GET_WRITER, NULL);
-		write_field_end(GET_WRITER, "expression", strlen("expression"));		
+		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
+		dp_on_struct_begin(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
+		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
+		dp_on_string(GET_SELF, &yylloc, "==");
+		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
+		dp_on_bytes(GET_SELF, &yylloc, $3);
+		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
+
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	}
 
 |	tok_identifier '&' tok_identifier
 	{
-		write_field_begin(GET_WRITER, "expression", strlen("expression"));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "op0", strlen("op0"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "operator", strlen("operator"));
-		write_hpstring(GET_WRITER, "&");
-		write_field_end(GET_WRITER, "operator", strlen("operator"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $3);
-		write_field_end(GET_WRITER, "op1", strlen("op1"));
-		write_struct_end(GET_WRITER, NULL);
-		write_field_end(GET_WRITER, "expression", strlen("expression"));		
+		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
+		dp_on_struct_begin(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
+		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
+		dp_on_string(GET_SELF, &yylloc, "&");
+		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
+
+		dp_on_semicolon(GET_SELF, &yylloc);
+
+		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
+		dp_on_bytes(GET_SELF, &yylloc, $3);
+		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
+
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "expression"); 	
 	};
 
 
 
 Type :
-	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_begin(GET_WRITER, NULL);}
+	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
 	SimpleType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type");
 	}
 	
-|	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_begin(GET_WRITER, NULL);}
+|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
 	ContainerType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type");
 	}
 	
-|	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_begin(GET_WRITER, NULL);}
+|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
 	ObjectType
-	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
+	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type");
 	};
 
 ObjectType:
 	tok_identifier
    	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 	};
 
 ContainerType:
 	tok_t_vector
 	{	
-		write_field_begin(GET_WRITER, "vector", strlen("vector"));
-		write_struct_begin(GET_WRITER, NULL);
-		write_struct_end(GET_WRITER, NULL);
-		write_field_end(GET_WRITER, "vector", strlen("vector"));
+		dp_on_field_begin(GET_SELF, &yylloc, "vector");
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "vector");
 
 		//$$.sn_type.type = E_SNT_VECTOR;
 	}
@@ -468,132 +496,132 @@ ContainerType:
 SimpleType:
 	tok_t_bool
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "bool");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "bool");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_BOOL;
 	}
 |	tok_t_char
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "char");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "char");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_CHAR;
 	}
 |	tok_t_double
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "double");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "double");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_DOUBLE;
 	}
 |	tok_t_string
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "string");
-		write_field_end(GET_WRITER, "type", strlen("type"));
-
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "string");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 		//$$.sn_type.type = E_SNT_STRING;
 	}
 |	tok_t_int8
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "int8");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "int8");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_INT8;
 	}
 |	tok_t_int16
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "int16");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "int16");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_INT16;
 	}
 |	tok_t_int32
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "int32");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "int32");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_INT32;
 	}
 |	tok_t_int64
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "int64");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "int64");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_INT64;
 	}
 |	tok_t_uint8 
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "uint8");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "uint8");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_UINT8;
 	}
 |	tok_t_uint16 
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "uint16");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "uint16");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_UINT16;
 	}
 |	tok_t_uint32 
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "uint32");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "uint32");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 		//$$.sn_type.type = E_SNT_UINT32;
 	}
 |	tok_t_uint64
 	{
-		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_hpstring(GET_WRITER, "uint64");
-		write_field_end(GET_WRITER, "type", strlen("type"));
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+		dp_on_string(GET_SELF, &yylloc, "uint64");
+		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		//$$.sn_type.type = E_SNT_UINT64;
 	};
 
 Parameters :
 	'<' 
-	{write_vector_begin(GET_WRITER);}
+	{dp_on_vector_begin(GET_SELF, &yylloc);}
 	ParameterList
-	{write_vector_end(GET_WRITER);}
+	{dp_on_vector_end(GET_SELF, &yylloc);}
 	'>'
 	{
 	}
 |
 	{
-		write_null(GET_WRITER);
+		dp_on_null(GET_SELF, &yylloc);
 	};
 	
 ParameterList:
-	ParameterList ',' {write_semicolon(GET_WRITER);} Parameter 
+	ParameterList ',' {dp_on_semicolon(GET_SELF, &yylloc);} Parameter 
 |	
 	Parameter
 	
 	
 Parameter:
 	{
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_begin(GET_WRITER, NULL);
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		dp_on_struct_begin(GET_SELF, &yylloc);
 	}
-	Type {write_semicolon(GET_WRITER);}
+	Type {dp_on_semicolon(GET_SELF, &yylloc);}
 	tok_identifier
 	{
-		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4);
-		write_field_end(GET_WRITER, "name", strlen("name"));
-		write_struct_end(GET_WRITER, NULL);
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		dp_on_field_begin(GET_SELF, &yylloc, "name");
+		dp_on_bytes(GET_SELF, &yylloc, $4);
+		dp_on_field_end(GET_SELF, &yylloc, "name");
+
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 
@@ -601,38 +629,39 @@ Parameter:
 
 Arguments:
 	'<'
-	{write_vector_begin(GET_WRITER);}
+	{dp_on_vector_begin(GET_SELF, &yylloc);}
 	ArgumentList
-	{write_vector_end(GET_WRITER);}
+	{dp_on_vector_end(GET_SELF, &yylloc);}
 	'>'
 |
 	{
-		write_null(GET_WRITER);
+		dp_on_null(GET_SELF, &yylloc);
 	};
 	
 ArgumentList:
-	ArgumentList ',' {write_semicolon(GET_WRITER);} Argument
+	ArgumentList ',' {dp_on_semicolon(GET_SELF, &yylloc);} Argument
 |	Argument;
 	
 Argument:
 	tok_identifier
 	{
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_begin(GET_WRITER, NULL);
-		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "name", strlen("name"));
-		write_struct_end(GET_WRITER, NULL);
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_field_begin(GET_SELF, &yylloc, "name");
+		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_field_end(GET_SELF, &yylloc, "name");
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 UnixComment:
 	{dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);}
 	tok_unixcomment
 	{
-		write_field_begin(GET_WRITER, "text", strlen("text"));
-		write_bytes(GET_WRITER, $2);
-		write_field_end(GET_WRITER, "text", strlen("text"));
+		dp_on_field_begin(GET_SELF, &yylloc, "text");
+		dp_on_bytes(GET_SELF, &yylloc, $2);
+		dp_on_field_end(GET_SELF, &yylloc, "text");
+
 		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
 	};
 
@@ -641,9 +670,9 @@ UnixCommentOrNot:
 |
 	{
 		dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);
-		write_field_begin(GET_WRITER, "text", strlen("text"));
-		write_null(GET_WRITER);
-		write_field_end(GET_WRITER, "text", strlen("text"));
+		dp_on_field_begin(GET_SELF, &yylloc, "text");
+		dp_on_null(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "text");
 		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
 	};
 

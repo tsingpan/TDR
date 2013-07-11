@@ -114,6 +114,14 @@ void dp_on_vector_item_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_vector_item_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
+void dp_on_null(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, hpbool b);
+
+void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, hpbytes bytes);
+
+void dp_on_string(DATA_PARSER *self, const YYLTYPE *yylloc, const hpchar *str);
+
 void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier);
 
 void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
