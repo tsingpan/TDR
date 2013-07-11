@@ -766,3 +766,13 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
 }
+
+void dp_on_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type)
+{
+	current->type = type;
+}
+
+void dp_on_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier)
+{
+	current->type = E_SNT_OBJECT;
+}
