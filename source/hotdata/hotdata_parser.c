@@ -489,6 +489,36 @@ void dp_on_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_semicolon(self->writer);
 }
 
+void dp_on_field_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
+{
+	write_field_begin(self->writer, name, strlen(name));
+}
+
+void dp_on_field_end(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
+{
+	write_field_end(self->writer, name, strlen(name));
+}
+
+void dp_on_vector_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_begin(self->writer);
+}
+
+void dp_on_vector_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_end(self->writer);
+}
+
+void dp_on_vector_item_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_item_begin(self->writer, writer_get_index(self->writer));
+}
+
+void dp_on_vector_item_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_item_end(self->writer, writer_get_index(self->writer));
+}
+
 void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
 	write_field_begin(self->writer, "name", strlen("name"));
@@ -516,14 +546,12 @@ void dp_on_typedef_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
-	write_field_begin(self->writer, "struct", strlen("struct"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_struct_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "struct", strlen("struct"));
 }
 
 void dp_on_union_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -649,4 +677,26 @@ void dp_on_TypeAnnotations_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_vector_end(self->writer);
 	write_field_end(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
+}
+
+void dp_on_enum_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "name", strlen("name"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "name", strlen("name"));
+	write_semicolon(self->writer);
+}
+
+void dp_on_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	dp_on_field_begin(self, yylloc, "name");
+	write_bytes(self->writer, sn_tok_identifier);
+	dp_on_field_end(self, yylloc, "name");
+}
+
+void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "name", strlen("name"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "name", strlen("name"));
 }
