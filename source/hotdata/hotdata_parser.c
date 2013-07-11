@@ -11,10 +11,11 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 {
 	hpint32 ret;
 	AlphaMap *alpha_map = NULL;
+	hpuint32 i;
 
 	self->language_lib = language_lib;
 	self->writer = writer;	
-	self->result = E_HP_NOERROR;
+	self->result_num = 0;
 
 	
 
@@ -28,22 +29,24 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	alpha_map_free(alpha_map);
 
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
-	self->result = E_HP_NOERROR;
 
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
-	if(ret != 0)
+
+	for(i = 0;i < self->result_num; ++i)
 	{
-		self->result = E_HP_SYNTAX_ERROR;
-	}
-	if(self->result != E_HP_NOERROR)
-	{
-		fprintf(stderr, self->result_str);
+		fprintf(stderr, self->result_str[i]);
 		fputc('\n', stderr);
 	}
 
-
-	return self->result;
+	if(self->result_num == 0)
+	{
+		return E_HP_NOERROR;
+	}
+	else
+	{
+		return E_HP_ERROR;
+	}
 }
 
 
@@ -53,12 +56,12 @@ void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, va_list 
 
 	if(yylloc->file_name[0])
 	{
-		snprintf(self->result_str, MAX_RESULT_STRING_LENGTH, "%s", yylloc->file_name);
+		snprintf(self->result_str[self->result_num], MAX_RESULT_STRING_LENGTH, "%s", yylloc->file_name);
 	}
-	len = strlen(self->result_str);
-	snprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result);
-	len = strlen(self->result_str);
-	vsnprintf(self->result_str + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
+	len = strlen(self->result_str[self->result_num]);
+	snprintf(self->result_str[self->result_num] + len, MAX_RESULT_STRING_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result[self->result_num]);
+	len = strlen(self->result_str[self->result_num]);
+	vsnprintf(self->result_str[self->result_num] + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
 }
 
 void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...) 
@@ -66,35 +69,24 @@ void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...)
 	va_list ap;
 	const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)result);
 
-	if(self->result != E_HP_NOERROR)
-	{
-		goto done;
-	}
+	self->result[self->result_num] = result;
 
-	self->result = result;
-
-	va_start(ap, error_str);
+	va_start(ap, result);
 	_dp_error(self, yylloc, error_str, ap);
 	va_end(ap);
-done:
-	return;
+	++(self->result_num);
 }
-hpint32 yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
+void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
 	va_list ap;
 	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 
-	if(self->result != E_HP_NOERROR)
-	{
-		goto done;
-	}
-
-	self->result = E_HP_SYNTAX_ERROR;
+	
+	self->result[self->result_num] = E_HP_SYNTAX_ERROR;
 	va_start(ap, s);
 	_dp_error(self, yylloc, s, ap);
 	va_end(ap);
-done:
-	return;
+	++(self->result_num);
 }
 
 
@@ -138,8 +130,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 			file_name[len] = 0;
 			if(scanner_stack_push_file(ss, file_name, yycINITIAL) != E_HP_NOERROR)
 			{
-				dp->result = E_HP_ERROR;
-				goto ERROR_RET;
+				dp_error(dp, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
 			}
 			break;
 		}
@@ -156,7 +147,6 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 				if(errno == ERANGE)
 				{
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
-					goto ERROR_RET;
 				}				
 			}
 			break;
@@ -174,7 +164,6 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 				if(errno == ERANGE)
 				{
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
-					goto ERROR_RET;
 				}
 			}
 			break;
@@ -212,8 +201,6 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 
 
 	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
 }
 
 extern hpint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
@@ -263,16 +250,15 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 
 	if(!trie_store_if_absent(self->constant, id, NULL))
 	{
-		const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)E_HP_CONSTANT_REDEFINITION);
-		self->result = E_HP_CONSTANT_REDEFINITION;
-		yydataerror(yylloc, &self->scanner_stack, error_str, id);
+		dp_error(self, yylloc, E_HP_CONSTANT_REDEFINITION, id);
 	}
 }
 
 hpint32 data_parser_init(DATA_PARSER *self)
 {
 	scanner_stack_init(&self->scanner_stack);
-	
+	self->result_num = 0;
+
 	return E_HP_NOERROR;
 }
 

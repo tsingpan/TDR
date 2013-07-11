@@ -15,15 +15,16 @@
 
 #include "syntactic_node.h"
 
-
+#define MAX_ERROR_NUM 1024
 typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
 {
 	SCANNER_STACK scanner_stack;
 	HPAbstractWriter *writer;
 
-	hpint32 result;
-	char result_str[MAX_RESULT_STRING_LENGTH];
+	hpint32 result[MAX_ERROR_NUM];
+	char result_str[MAX_ERROR_NUM][MAX_RESULT_STRING_LENGTH];
+	hpuint32 result_num;
 
 	const LanguageLib *language_lib;
 

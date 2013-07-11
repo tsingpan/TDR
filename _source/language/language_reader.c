@@ -27,6 +27,10 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		{
 			*sid = E_SID_INTEGER_OVERFLOW;
 		}
+		else if(strcmp(enum_name, "E_SID_CAN_NOT_OPEN_FILE") == 0)
+		{
+			*sid = E_SID_CAN_NOT_OPEN_FILE;
+		}		
 	}
 
 	read_enum(self, (hpint32*)sid);
