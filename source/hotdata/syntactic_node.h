@@ -53,9 +53,9 @@ union _SyntacticNode
 	hpbytes sn_tok_unixcomment;
 	hpbool sn_bool;
 	hpuint64 sn_uint64;
-	hpuint64 sn_int64;
+	hpint64 sn_int64;
 	hpuint64 sn_hex_uint64;
-	hpuint64 sn_hex_int64;
+	hpint64 sn_hex_int64;
 };
 
 #endif//_H_SYNTACTICNODE
