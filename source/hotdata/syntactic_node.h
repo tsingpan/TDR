@@ -12,6 +12,7 @@ typedef enum _NODE_TYPE
 	NT_VALUE				= 0,
 	NT_TYPE					= 1,
 	NT_TOK_IDENTIFIER		= 2,
+	NT_IMPORT			= 3,
 }NODE_TYPE;
 
 typedef struct _SN_VALUE
@@ -54,6 +55,7 @@ typedef union _SyntacticNodeBody
 	SN_VALUE sn_value;	
 	SN_TYPE sn_type;
 	hpbytes sn_tok_identifier;
+	hpbytes sn_tok_import;
 }SyntacticNodeBody;
 
 

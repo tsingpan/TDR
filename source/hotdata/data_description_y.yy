@@ -133,6 +133,7 @@ Definition :
 Import : 
 	tok_import
 	{
+		dp_on_import(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 

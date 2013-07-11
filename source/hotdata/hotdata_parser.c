@@ -122,6 +122,9 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 			size_t len = 0;
 			const char *i;
 
+			yylval->body.sn_tok_import.ptr = NULL;
+			yylval->body.sn_tok_import.len = 0;
+
 			while(self->yy_cursor < self->yy_limit)
 			{
 				if(*self->yy_cursor == ';')
@@ -132,9 +135,23 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
 				{
 					++(self->yy_cursor);
+					if(yylval->body.sn_tok_import.ptr == NULL)
+					{
+						++(yylval->body.sn_tok_import.len);
+					}
 				}
 				else
 				{
+					if(yylval->body.sn_tok_import.ptr == NULL)
+					{
+						yylval->body.sn_tok_import.ptr = self->yy_cursor;
+						++(yylval->body.sn_tok_import.len);
+					}
+					else
+					{
+						++(yylval->body.sn_tok_import.len);
+					}
+
 					file_name[len++] = *self->yy_cursor;
 					++(self->yy_cursor);
 				}
@@ -419,4 +436,10 @@ error_ret:
 	current->body.sn_value.is_identifier = hptrue;
 	current->body.sn_value.sn = NULL;
 	return;
+}
+
+void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
+{
+	current->type = NT_IMPORT;
+	current->body.sn_tok_import = sn_import->body.sn_tok_import;
 }
