@@ -37,6 +37,10 @@
 %token tok_if 
 %token tok_int
 %token tok_hex
+%token tok_int64
+%token tok_uint64
+%token tok_hex_int64
+%token tok_hex_uint64
 %token tok_identifier 
 %token tok_const 
 %token tok_enum 
@@ -145,7 +149,7 @@ Const :
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $5.var.val.bytes);
+		write_bytes(GET_WRITER, $5.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 
 		dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
@@ -164,17 +168,16 @@ Const :
 
 
 Value :
-	tok_int
+	tok_uint64
+	{
+	}
+|	tok_hex_uint64
+	{
+	}
+|	tok_int64
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
-		if($1.var.type == E_HP_INT64)
-		{
-			write_hpint64(GET_WRITER, $1.body.sn_value.var.val.i64);
-		}
-		else
-		{
-			write_hpuint64(GET_WRITER, $1.body.sn_value.var.val.ui64);
-		}
+		write_hpint64(GET_WRITER, $1.sn_value.var.val.i64);
 		write_field_end(GET_WRITER, "value", strlen("value"));
 
 		write_semicolon(GET_WRITER);
@@ -182,55 +185,26 @@ Value :
 		write_hpint64(GET_WRITER, 10);
 		write_field_end(GET_WRITER, "base", strlen("base"));
 		
-		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
-|	tok_hex
+|	tok_hex_int64
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
-		if($1.var.type == E_HP_INT64)
-		{
-			write_hpint64(GET_WRITER, $1.body.sn_value.var.val.i64);
-		}
-		else
-		{
-			write_hpuint64(GET_WRITER, $1.body.sn_value.var.val.ui64);
-		}
+		write_hpint64(GET_WRITER, $1.sn_value.var.val.i64);
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "base", strlen("base"));
 		write_hpint64(GET_WRITER, 16);
 		write_field_end(GET_WRITER, "base", strlen("base"));
 		
-		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
-|	tok_true
+|	Bool
 	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpstring(GET_WRITER, "true");
-		write_field_end(GET_WRITER, "value", strlen("value"));
-		
-		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.body.sn_value.var;
-	}
-|	tok_false
-	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpstring(GET_WRITER, "false");
-		write_field_end(GET_WRITER, "value", strlen("value"));
-		
-		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hpfalse;
-		$$.body.sn_value.var = $1.body.sn_value.var;
+	
 	}
 |	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $1.sn_tok_identifier);
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		
 		
@@ -246,7 +220,7 @@ Typedef :
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "new_type", strlen("new_type"));
-		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_bytes(GET_WRITER, $6.sn_tok_identifier);
 		write_field_end(GET_WRITER, "new_type", strlen("new_type"));
 	}
 	';'
@@ -261,7 +235,7 @@ Enum :
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_bytes(GET_WRITER, $6.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 	}
@@ -286,7 +260,7 @@ EnumDef :
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $2.var.val.bytes);
+		write_bytes(GET_WRITER, $2.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	'='
@@ -306,7 +280,7 @@ Union :
 	tok_identifier 
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_bytes(GET_WRITER, $6.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -330,7 +304,7 @@ Struct :
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $6.var.val.bytes);
+		write_bytes(GET_WRITER, $6.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_semicolon(GET_WRITER);
 
@@ -369,7 +343,7 @@ Field :
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $8.var.val.bytes);
+		write_bytes(GET_WRITER, $8.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 	}
 	';' UnixComment
@@ -411,7 +385,7 @@ Condition :
 		write_field_begin(GET_WRITER, "expression", strlen("expression"));
 		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_bytes(GET_WRITER, $3.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op0", strlen("op0"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "operator", strlen("operator"));
@@ -419,7 +393,7 @@ Condition :
 		write_field_end(GET_WRITER, "operator", strlen("operator"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $5.var.val.bytes);
+		write_bytes(GET_WRITER, $5.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op1", strlen("op1"));
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "expression", strlen("expression"));		
@@ -437,7 +411,7 @@ Condition :
 		write_field_end(GET_WRITER, "operator", strlen("operator"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $2.var.val.bytes);
+		write_bytes(GET_WRITER, $2.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op1", strlen("op1"));
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "expression", strlen("expression"));	
@@ -450,7 +424,7 @@ FieldExpression :
 		write_field_begin(GET_WRITER, "expression", strlen("expression"));
 		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $1.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op0", strlen("op0"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "operator", strlen("operator"));
@@ -458,7 +432,7 @@ FieldExpression :
 		write_field_end(GET_WRITER, "operator", strlen("operator"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_bytes(GET_WRITER, $3.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op1", strlen("op1"));
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "expression", strlen("expression"));		
@@ -469,7 +443,7 @@ FieldExpression :
 		write_field_begin(GET_WRITER, "expression", strlen("expression"));
 		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "op0", strlen("op0"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $1.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op0", strlen("op0"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "operator", strlen("operator"));
@@ -477,7 +451,7 @@ FieldExpression :
 		write_field_end(GET_WRITER, "operator", strlen("operator"));
 		write_semicolon(GET_WRITER);
 		write_field_begin(GET_WRITER, "op1", strlen("op1"));
-		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_bytes(GET_WRITER, $3.sn_tok_identifier);
 		write_field_end(GET_WRITER, "op1", strlen("op1"));
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "expression", strlen("expression"));		
@@ -489,33 +463,26 @@ Type :
 	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_begin(GET_WRITER, NULL);}
 	SimpleType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.body = $2.body;
-	$$.type = NT_TYPE;
 	}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_begin(GET_WRITER, NULL);}
 	ContainerType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.body = $2.body;
-	$$.type = NT_TYPE;
 	}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_begin(GET_WRITER, NULL);}
 	ObjectType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.body = $2.body;
-	$$.type = NT_TYPE;};
+	};
 
 ObjectType:
 	tok_identifier
    	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $1.sn_tok_identifier);
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_OBJECT;
-		memcpy($$.body.sn_type.identifier, $1.var.val.bytes.ptr, $1.var.val.bytes.len);
-		$$.body.sn_type.identifier[$1.var.val.bytes.len] = 0;
+		
 	};
 
 ContainerType:
@@ -526,7 +493,7 @@ ContainerType:
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "vector", strlen("vector"));
 
-		$$.body.sn_type.type = E_SNT_VECTOR;
+		$$.sn_type.type = E_SNT_VECTOR;
 	}
 	
 SimpleType:
@@ -536,7 +503,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "bool");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_BOOL;
+		$$.sn_type.type = E_SNT_BOOL;
 	}
 |	tok_t_char
 	{
@@ -544,7 +511,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "char");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_CHAR;
+		$$.sn_type.type = E_SNT_CHAR;
 	}
 |	tok_t_double
 	{
@@ -552,7 +519,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "double");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_DOUBLE;
+		$$.sn_type.type = E_SNT_DOUBLE;
 	}
 |	tok_t_string
 	{
@@ -560,7 +527,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "string");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_STRING;
+		$$.sn_type.type = E_SNT_STRING;
 	}
 |	tok_t_int8
 	{
@@ -568,7 +535,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_INT8;
+		$$.sn_type.type = E_SNT_INT8;
 	}
 |	tok_t_int16
 	{
@@ -576,7 +543,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_INT16;
+		$$.sn_type.type = E_SNT_INT16;
 	}
 |	tok_t_int32
 	{
@@ -584,7 +551,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_INT32;
+		$$.sn_type.type = E_SNT_INT32;
 	}
 |	tok_t_int64
 	{
@@ -592,7 +559,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_INT64;
+		$$.sn_type.type = E_SNT_INT64;
 	}
 |	tok_t_uint8 
 	{
@@ -600,7 +567,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_UINT8;
+		$$.sn_type.type = E_SNT_UINT8;
 	}
 |	tok_t_uint16 
 	{
@@ -608,14 +575,14 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_UINT16;
+		$$.sn_type.type = E_SNT_UINT16;
 	}
 |	tok_t_uint32 
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
-		$$.body.sn_type.type = E_SNT_UINT32;
+		$$.sn_type.type = E_SNT_UINT32;
 	}
 |	tok_t_uint64
 	{
@@ -623,7 +590,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.body.sn_type.type = E_SNT_UINT64;
+		$$.sn_type.type = E_SNT_UINT64;
 	};
 
 Parameters :
@@ -654,7 +621,7 @@ Parameter:
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $4.var.val.bytes);
+		write_bytes(GET_WRITER, $4.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_struct_end(GET_WRITER, NULL);
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
@@ -684,7 +651,7 @@ Argument:
 		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $1.var.val.bytes);
+		write_bytes(GET_WRITER, $1.sn_tok_identifier);
 		write_field_end(GET_WRITER, "name", strlen("name"));
 		write_struct_end(GET_WRITER, NULL);
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
@@ -695,7 +662,7 @@ UnixComment:
 	tok_unixcomment
 	{
 		write_field_begin(GET_WRITER, "text", strlen("text"));
-		write_bytes(GET_WRITER, $2.var.val.bytes);
+		write_bytes(GET_WRITER, $2.sn_tok_unixcomment);
 		write_field_end(GET_WRITER, "text", strlen("text"));
 		write_struct_end(GET_WRITER, NULL);
 	}
@@ -731,8 +698,17 @@ TypeAnnotationList:
     };
 
 Bool:
-	tok_true | tok_false
+	tok_true
 	{
+		write_hpstring(GET_WRITER, "true");
+
+		$$.sn_bool = hptrue;
+	}
+	| tok_false
+	{
+		write_hpstring(GET_WRITER, "false");
+
+		$$.sn_bool = hpfalse;
 	};
 
 TypeAnnotation:
@@ -752,7 +728,7 @@ TypeAnnotation:
 		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_begin(GET_WRITER, NULL);
 		write_field_begin(GET_WRITER, "switch", strlen("switch"));
-		write_bytes(GET_WRITER, $3.var.val.bytes);
+		write_bytes(GET_WRITER, $3.sn_tok_identifier);
 		write_field_end(GET_WRITER, "switch", strlen("switch"));		
 		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
 		write_struct_end(GET_WRITER, NULL);

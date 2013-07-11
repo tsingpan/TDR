@@ -108,13 +108,13 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 
 #define HOTDATA_EXTENSION ".dd"
 
-hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYLTYPE *yylloc)
+hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 	SCANNER_STACK *ss = &dp->scanner_stack;
 
 
-	switch(token)
+	switch(*token)
 	{
 	case tok_import:
 		{
@@ -122,8 +122,8 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 			size_t len = 0;
 			const char *i;
 
-			yylval->body.sn_tok_import.ptr = NULL;
-			yylval->body.sn_tok_import.len = 0;
+			yylval->sn_tok_import.ptr = NULL;
+			yylval->sn_tok_import.len = 0;
 
 			while(self->yy_cursor < self->yy_limit)
 			{
@@ -135,21 +135,21 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
 				{
 					++(self->yy_cursor);
-					if(yylval->body.sn_tok_import.ptr == NULL)
+					if(yylval->sn_tok_import.ptr == NULL)
 					{
-						++(yylval->body.sn_tok_import.len);
+						++(yylval->sn_tok_import.len);
 					}
 				}
 				else
 				{
-					if(yylval->body.sn_tok_import.ptr == NULL)
+					if(yylval->sn_tok_import.ptr == NULL)
 					{
-						yylval->body.sn_tok_import.ptr = self->yy_cursor;
-						++(yylval->body.sn_tok_import.len);
+						yylval->sn_tok_import.ptr = self->yy_cursor;
+						++(yylval->sn_tok_import.len);
 					}
 					else
 					{
-						++(yylval->body.sn_tok_import.len);
+						++(yylval->sn_tok_import.len);
 					}
 
 					file_name[len++] = *self->yy_cursor;
@@ -170,32 +170,30 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 	case tok_int:
 		{
 			errno = 0;
-			yylval->body.sn_value.var.type = E_HP_INT64;
-			yylval->body.sn_value.var.val.i64 = strtoll(yytext, NULL, 10);
+			*token = tok_int64;
+			yylval->sn_int64 = strtoll(yytext, NULL, 10);			
 			if (errno == ERANGE)
 			{
 				errno = 0;
-				yylval->body.sn_value.var.type = E_HP_UINT64;
-				yylval->body.sn_value.var.val.ui64 = strtoull(yytext, NULL, 10);				
+				*token = tok_uint64;
+				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
-				{
+				{	
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
 				}
-
-				
 			}
 			break;
 		}
 	case tok_hex:
 		{
 			errno = 0;
-			yylval->body.sn_value.var.type = E_HP_INT64;
-			yylval->body.sn_value.var.val.i64 = strtoll(yytext+2, NULL, 16);
+			*token = tok_hex_int64;
+			yylval->sn_hex_int64 = strtoll(yytext+2, NULL, 16);
 			if (errno == ERANGE)
 			{
 				errno = 0;
-				yylval->body.sn_value.var.type = E_HP_UINT64;
-				yylval->body.sn_value.var.val.ui64 = strtoull(yytext + 2, NULL, 16);				
+				*token = tok_hex_uint64;
+				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
@@ -205,18 +203,17 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 		}
 	case tok_unixcomment:
 		{
-			yylval->var.type = E_HP_BYTES;
-			yylval->var.val.bytes.ptr = yytext + 1;
-			yylval->var.val.bytes.len = yyleng - 1;
-			while(yylval->var.val.bytes.len > 0 )
+			yylval->sn_tok_unixcomment.ptr = yytext + 1;
+			yylval->sn_tok_unixcomment.len = yyleng - 1;
+			while(yylval->sn_tok_unixcomment.len > 0 )
 			{
-				if(yylval->var.val.bytes.ptr[yylval->var.val.bytes.len - 1] == '\r')
+				if(yylval->sn_tok_unixcomment.ptr[yylval->sn_tok_unixcomment.len - 1] == '\r')
 				{
-					--yylval->var.val.bytes.len;
+					--yylval->sn_tok_unixcomment.len;
 				}
-				else if(yylval->var.val.bytes.ptr[yylval->var.val.bytes.len - 1] == '\n')
+				else if(yylval->sn_tok_unixcomment.ptr[yylval->sn_tok_unixcomment.len - 1] == '\n')
 				{
-					--yylval->var.val.bytes.len;
+					--yylval->sn_tok_unixcomment.len;
 				}
 				else
 				{
@@ -227,26 +224,8 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 		}
 	case tok_identifier:
 		{
-			yylval->var.type = E_HP_BYTES;
-			yylval->var.val.bytes.ptr = yytext;
-			yylval->var.val.bytes.len = yyleng;
-
-
-			yylval->type = NT_TOK_IDENTIFIER;
-			yylval->body.sn_tok_identifier.ptr = yytext;
-			yylval->body.sn_tok_identifier.len = yyleng;
-			break;
-		}
-	case tok_true:
-		{
-			yylval->var.type = E_HP_BOOL;
-			yylval->var.val.b = hptrue;
-			break;
-		}
-	case tok_false:
-		{
-			yylval->var.type = E_HP_BOOL;
-			yylval->var.val.b = hpfalse;
+			yylval->sn_tok_identifier.ptr = yytext;
+			yylval->sn_tok_identifier.len = yyleng;
 			break;
 		}
 	}
@@ -277,7 +256,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		}
 		else
 		{
-			if(get_token_yylval(jp, ret, yylval_param, yylloc_param) != E_HP_NOERROR)
+			if(get_token_yylval(jp, &ret, yylval_param, yylloc_param) != E_HP_NOERROR)
 			{
 				ret = -1;
 				break;
@@ -294,9 +273,9 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 	char id[1024];
 	hpuint32 i;
 	void *data;
-	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
+	for(i = 0; i < sn_identifier->sn_tok_identifier.len; ++i)
 	{
-		id[i] = sn_identifier->var.val.bytes.ptr[i];
+		id[i] = sn_identifier->sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
 
@@ -323,9 +302,9 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 	size_t size;
 
 
-	if(sn_value->body.sn_value.is_identifier)
+	if(sn_value->sn_value.is_identifier)
 	{		
-		val = sn_value->body.sn_value.sn;
+		val = sn_value->sn_value.sn;
 	}
 	else
 	{
@@ -337,13 +316,13 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 		goto done;
 	}
 
-	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
+	for(i = 0; i < sn_identifier->sn_tok_identifier.len; ++i)
 	{
-		id[i] = sn_identifier->var.val.bytes.ptr[i];
+		id[i] = sn_identifier->sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
 
-	switch(sn_type->body.sn_type.type)
+	switch(sn_type->sn_type.type)
 	{
 	case E_SNT_INT8:
 		size = sizeof(hpint8);
@@ -374,17 +353,17 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 		goto done;
 	}
 	size *= 8;
-	if(val->body.sn_value.var.type == E_HP_UINT64)
+	if(val->sn_value.var.type == E_HP_UINT64)
 	{
-		if(val->body.sn_value.var.val.ui64 >> size)
+		if(val->sn_value.var.val.ui64 >> size)
 		{
 			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 			goto done;
 		}
 	}
-	else if(val->body.sn_value.var.type == E_HP_INT64)
+	else if(val->sn_value.var.type == E_HP_INT64)
 	{
-		if(val->body.sn_value.var.val.i64 >> size)
+		if(val->sn_value.var.val.i64 >> size)
 		{
 			dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 			goto done;
@@ -414,9 +393,9 @@ void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticN
 	hpuint32 i;
 	char id[1024];
 
-	for(i = 0; i < sn_identifier->body.sn_tok_identifier.len; ++i)
+	for(i = 0; i < sn_identifier->sn_tok_identifier.len; ++i)
 	{
-		id[i] = sn_identifier->body.sn_tok_identifier.ptr[i];
+		id[i] = sn_identifier->sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
 
@@ -426,20 +405,17 @@ void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticN
 		goto error_ret;
 	}
 
-	current->type = NT_VALUE;
-	current->body.sn_value.is_identifier = hptrue;
-	current->body.sn_value.sn = (const SyntacticNode*)data;
+	current->sn_value.is_identifier = hptrue;
+	current->sn_value.sn = (const SyntacticNode*)data;
 done:
 	return;
 error_ret:
-	current->type = NT_VALUE;
-	current->body.sn_value.is_identifier = hptrue;
-	current->body.sn_value.sn = NULL;
+	current->sn_value.is_identifier = hptrue;
+	current->sn_value.sn = NULL;
 	return;
 }
 
 void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
 {
-	current->type = NT_IMPORT;
-	current->body.sn_tok_import = sn_import->body.sn_tok_import;
+	current->sn_import = sn_import->sn_tok_import;
 }

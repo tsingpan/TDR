@@ -5,15 +5,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
 
-typedef struct _SyntacticNode SyntacticNode;
-
-typedef enum _NODE_TYPE
-{
-	NT_VALUE				= 0,
-	NT_TYPE					= 1,
-	NT_TOK_IDENTIFIER		= 2,
-	NT_IMPORT			= 3,
-}NODE_TYPE;
+typedef union _SyntacticNode SyntacticNode;
 
 typedef struct _SN_VALUE
 {
@@ -22,7 +14,7 @@ typedef struct _SN_VALUE
 	const SyntacticNode* sn;
 }SN_VALUE;
 
-#define MAX_IDENTIFIER_LENGTH 1024
+
 typedef enum _E_SN_TYPE
 {
 	E_SNT_INT8 = E_HP_INT8,
@@ -43,6 +35,7 @@ typedef enum _E_SN_TYPE
 	E_SNT_OBJECT = E_HP_OBJECT,
 }E_SN_TYPE;
 
+#define MAX_IDENTIFIER_LENGTH 1024
 typedef struct _SN_TYPE
 {
 	E_SN_TYPE type;
@@ -50,25 +43,20 @@ typedef struct _SN_TYPE
 }SN_TYPE;
 
 
-typedef union _SyntacticNodeBody
+union _SyntacticNode
 {
 	SN_VALUE sn_value;	
 	SN_TYPE sn_type;
 	hpbytes sn_tok_identifier;
 	hpbytes sn_tok_import;
-}SyntacticNodeBody;
-
-
-struct _SyntacticNode
-{
-	NODE_TYPE type;
-	SyntacticNodeBody body;
-
-
-	HPVar var;
+	hpbytes sn_import;
+	hpbytes sn_tok_unixcomment;
+	hpbool sn_bool;
+	hpuint64 sn_uint64;
+	hpuint64 sn_int64;
+	hpuint64 sn_hex_uint64;
+	hpuint64 sn_hex_int64;
 };
-
-
 
 #endif//_H_SYNTACTICNODE
 
