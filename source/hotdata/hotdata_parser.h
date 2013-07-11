@@ -42,9 +42,9 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
 
-void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
+void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* sn_type, const hpbytes* sn_identifier, const SN_VALUE* sn_value);
 
-void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_identifier);
+void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier);
 
 void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import);
 
@@ -94,9 +94,13 @@ void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import);
 
-void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
+void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
 
-void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
+void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
+
+void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
+
+void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
 
 void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 

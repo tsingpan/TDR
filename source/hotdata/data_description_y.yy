@@ -72,10 +72,13 @@
 %type<sn_tok_identifier> tok_identifier
 %type<sn_int64> tok_int64
 %type<sn_hex_int64> tok_hex_int64
+%type<sn_uint64> tok_uint64
+%type<sn_hex_uint64> tok_hex_uint64
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_bool> tok_bool
 %type<sn_tok_import> tok_import
 %type<sn_type> Type
+%type<sn_value> Value
 
 
 
@@ -141,7 +144,7 @@ Const :
 	tok_identifier 
 	{
 		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
-		//dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
+		dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
 	}
 	'='
 	{
@@ -149,9 +152,8 @@ Const :
 	}
 	Value
 	';'
-	{
-		
-		//dp_on_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
+	{		
+		dp_on_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
 
 		dp_on_const_end(GET_SELF, &yylloc); 
 	}
@@ -160,17 +162,19 @@ Const :
 Value :
 	tok_uint64
 	{
+		dp_on_value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_uint64
 	{
+		dp_on_value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_int64
 	{
-		dp_on_value_tok_int64(GET_SELF, &yylloc, $1);
+		dp_on_value_tok_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_int64
 	{
-		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, $1);
+		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_bool
 	{
@@ -181,7 +185,7 @@ Value :
 		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
 		
 
-		//dp_on_value_identifier(GET_SELF, &yylloc, &$$, &$1);
+		dp_on_value_identifier(GET_SELF, &yylloc, &$$, $1);
 	};
 
 Typedef :

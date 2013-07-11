@@ -17,14 +17,15 @@ typedef enum _SN_VALUE_TYPE
 	E_SNVT_HEX_UINT64,
 }SN_VALUE_TYPE;
 
+typedef struct _SN_VALUE SN_VALUE;
 typedef struct _SN_VALUE
 {
 	SN_VALUE_TYPE type;
 	hpint64 i64;
 	hpuint64 ui64;
 	hpbool b;
-	const SyntacticNode* sn;
-}SN_VALUE;
+	const SN_VALUE* sn;
+};
 
 
 typedef enum _E_SN_TYPE
