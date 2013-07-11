@@ -30,6 +30,10 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		else if(strcmp(enum_name, "E_SID_CAN_NOT_OPEN_FILE") == 0)
 		{
 			*sid = E_SID_CAN_NOT_OPEN_FILE;
+		}
+		else if(strcmp(enum_name, "E_SID_CAN_NOT_FIND_CONSTANCE") == 0)
+		{
+			*sid = E_SID_CAN_NOT_FIND_CONSTANCE;
 		}		
 	}
 

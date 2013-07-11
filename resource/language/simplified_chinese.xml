@@ -1,5 +1,5 @@
 <LanguageLib>
-	<str_num>5</str_num>
+	<str_num>6</str_num>
 	<str>
 		<[0]>
 			<sid>E_SID_NOERROR</sid>
@@ -7,7 +7,7 @@
 		</[0]>
 		<[1]>
 			<sid>E_SID_ERROR</sid>
-			<str>错误</str>
+			<str>未知错误</str>
 		</[1]>
 		<[2]>
 			<sid>E_SID_CONSTANT_REDEFINITION</sid>
@@ -19,7 +19,11 @@
 		</[3]>
 		<[4]>
 			<sid>E_SID_CAN_NOT_OPEN_FILE</sid>
-			<str>can not open file[%s]</str>
+			<str>不能打开文件[%s]</str>
 		</[4]>
+		<[5]>
+			<sid>E_SID_CAN_NOT_FIND_CONSTANCE</sid>
+			<str>找不到常量[%s]</str>
+		</[5]>
 	<str>
 </LanguageLib>

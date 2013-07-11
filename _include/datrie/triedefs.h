@@ -70,7 +70,7 @@ typedef int32          TrieIndex;
 /**
  * @brief Type of value associated to trie entries
  */
-typedef void*          TrieData;
+typedef const void*          TrieData;
 /**
  * @brief Trie error data
  */

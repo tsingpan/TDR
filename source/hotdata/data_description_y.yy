@@ -177,7 +177,7 @@ Value :
 		$$.type = NT_VALUE;
 		$$.body.sn_value.is_identifier = hpfalse;
 		$$.body.sn_value.var.type = E_HP_INT64;
-		$$.body.sn_value.var.val.i64 = $1.var.val.i64;
+		$$.body.sn_value.var.val.i64 = $1.var.val.i64;		
 	}
 |	tok_hex
 	{
@@ -200,7 +200,7 @@ Value :
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		
 		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hptrue;
+		$$.body.sn_value.is_identifier = hpfalse;
 		$$.body.sn_value.var = $1.var;
 	}
 |	tok_false
@@ -475,18 +475,22 @@ Type :
 	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_begin(GET_WRITER, NULL);}
 	SimpleType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "SimpleType", strlen("SimpleType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.var.type = $2.var.type;
+	$$.body = $2.body;
+	$$.type = NT_TYPE;
 	}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_begin(GET_WRITER, NULL);}
 	ContainerType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ContainerType", strlen("ContainerType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.var.type = $2.var.type;}
+	$$.body = $2.body;
+	$$.type = NT_TYPE;
+	}
 	
 |	{write_field_begin(GET_WRITER, "Type", strlen("Type")); write_struct_begin(GET_WRITER, NULL); write_field_begin(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_begin(GET_WRITER, NULL);}
 	ObjectType
 	{write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "ObjectType", strlen("ObjectType")); write_struct_end(GET_WRITER, NULL); write_field_end(GET_WRITER, "Type", strlen("Type"));
-	$$.var.type = $2.var.type;};
+	$$.body = $2.body;
+	$$.type = NT_TYPE;};
 
 ObjectType:
 	tok_identifier
@@ -495,7 +499,9 @@ ObjectType:
 		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_OBJECT;
+		$$.body.sn_type.type = E_SNT_OBJECT;
+		memcpy($$.body.sn_type.identifier, $1.var.val.bytes.ptr, $1.var.val.bytes.len);
+		$$.body.sn_type.identifier[$1.var.val.bytes.len] = 0;
 	};
 
 ContainerType:
@@ -506,7 +512,7 @@ ContainerType:
 		write_struct_end(GET_WRITER, NULL);
 		write_field_end(GET_WRITER, "vector", strlen("vector"));
 
-		$$.var.type = E_HP_VECTOR;
+		$$.body.sn_type.type = E_SNT_VECTOR;
 	}
 	
 SimpleType:
@@ -516,7 +522,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "bool");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_BOOL;
+		$$.body.sn_type.type = E_SNT_BOOL;
 	}
 |	tok_t_char
 	{
@@ -524,7 +530,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "char");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_CHAR;
+		$$.body.sn_type.type = E_SNT_CHAR;
 	}
 |	tok_t_double
 	{
@@ -532,7 +538,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "double");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_DOUBLE;
+		$$.body.sn_type.type = E_SNT_DOUBLE;
 	}
 |	tok_t_string
 	{
@@ -540,7 +546,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "string");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_STRING;
+		$$.body.sn_type.type = E_SNT_STRING;
 	}
 |	tok_t_int8
 	{
@@ -548,7 +554,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_INT8;
+		$$.body.sn_type.type = E_SNT_INT8;
 	}
 |	tok_t_int16
 	{
@@ -556,7 +562,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_INT16;
+		$$.body.sn_type.type = E_SNT_INT16;
 	}
 |	tok_t_int32
 	{
@@ -564,7 +570,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_INT32;
+		$$.body.sn_type.type = E_SNT_INT32;
 	}
 |	tok_t_int64
 	{
@@ -572,7 +578,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "int64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_INT64;
+		$$.body.sn_type.type = E_SNT_INT64;
 	}
 |	tok_t_uint8 
 	{
@@ -580,7 +586,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint8");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_UINT8;
+		$$.body.sn_type.type = E_SNT_UINT8;
 	}
 |	tok_t_uint16 
 	{
@@ -588,14 +594,14 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint16");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_UINT16;
+		$$.body.sn_type.type = E_SNT_UINT16;
 	}
 |	tok_t_uint32 
 	{
 		write_field_begin(GET_WRITER, "type", strlen("type"));
 		write_hpstring(GET_WRITER, "uint32");
 		write_field_end(GET_WRITER, "type", strlen("type"));
-		$$.var.type = E_HP_UINT32;
+		$$.body.sn_type.type = E_SNT_UINT32;
 	}
 |	tok_t_uint64
 	{
@@ -603,7 +609,7 @@ SimpleType:
 		write_hpstring(GET_WRITER, "uint64");
 		write_field_end(GET_WRITER, "type", strlen("type"));
 
-		$$.var.type = E_HP_UINT64;
+		$$.body.sn_type.type = E_SNT_UINT64;
 	};
 
 Parameters :

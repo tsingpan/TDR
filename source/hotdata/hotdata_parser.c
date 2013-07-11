@@ -197,8 +197,19 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 			yylval->var.val.bytes.len = yyleng;
 			break;
 		}
+	case tok_true:
+		{
+			yylval->var.type = E_HP_BOOL;
+			yylval->var.val.b = hptrue;
+			break;
+		}
+	case tok_false:
+		{
+			yylval->var.type = E_HP_BOOL;
+			yylval->var.val.b = hpfalse;
+			break;
+		}
 	}
-
 
 	return E_HP_NOERROR;
 }
@@ -242,13 +253,14 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 {
 	char id[1024];
 	hpuint32 i;
+	void *data;
 	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
 	{
 		id[i] = sn_identifier->var.val.bytes.ptr[i];
 	}
 	id[i] = 0;
 
-	if(!trie_store_if_absent(self->constant, id, NULL))
+	if(trie_retrieve(self->constant, id, &data))
 	{
 		dp_error(self, yylloc, E_HP_CONSTANT_REDEFINITION, id);
 	}
@@ -265,4 +277,67 @@ hpint32 data_parser_init(DATA_PARSER *self)
 
 void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value)
 {
+	char id[1024];
+	hpuint32 i;
+	const SyntacticNode* val;
+
+
+	if(sn_value->body.sn_value.is_identifier)
+	{
+		void *data;
+
+		for(i = 0; i < sn_value->body.sn_value.var.val.bytes.len; ++i)
+		{
+			id[i] = sn_value->body.sn_value.var.val.bytes.ptr[i];
+		}
+		id[i] = 0;
+
+		if(!trie_retrieve(self->constant, id, &data))
+		{
+			dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
+			goto done;
+		}
+		val = (const SyntacticNode*)data;
+	}
+
+	if(val->body.sn_value.var.type == E_HP_UINT64)
+	{
+
+	}
+	else if(val->body.sn_value.var.type == E_HP_INT64)
+	{
+
+	}
+	else if(val->body.sn_value.var.type == E_HP_DOUBLE)
+	{
+
+	}
+
+	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
+	{
+		id[i] = sn_identifier->var.val.bytes.ptr[i];
+	}
+	id[i] = 0;
+	if(!trie_store_if_absent(self->constant, id, sn_value))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+		goto done;
+	}
+
+	/*
+	switch(sn_type->body.sn_type.type)
+	{
+	case E_SNT_INT8:
+	case E_SNT_INT16:
+	case E_SNT_INT32:
+	case E_SNT_INT64:
+	case E_SNT_UINT8:
+	case E_SNT_UINT16:
+	case E_SNT_UINT32:
+	case E_SNT_UINT64:
+	case E_SNT_CHAR:
+	case E_SNT_BOOL:
+	}*/
+done:
+	return;
 }
