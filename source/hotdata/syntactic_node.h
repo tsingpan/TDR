@@ -5,16 +5,20 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
 
+typedef struct _SyntacticNode SyntacticNode;
+
 typedef enum _NODE_TYPE
 {
-	NT_VALUE		= 0,
-	NT_TYPE			= 1,
+	NT_VALUE				= 0,
+	NT_TYPE					= 1,
+	NT_TOK_IDENTIFIER		= 2,
 }NODE_TYPE;
 
 typedef struct _SN_VALUE
 {
 	hpbool is_identifier;
 	HPVar var;
+	const SyntacticNode* sn;
 }SN_VALUE;
 
 #define MAX_IDENTIFIER_LENGTH 1024
@@ -48,10 +52,11 @@ typedef struct _SN_TYPE
 typedef union _SyntacticNodeBody
 {
 	SN_VALUE sn_value;	
-	SN_TYPE sn_type;	
+	SN_TYPE sn_type;
+	hpbytes sn_tok_identifier;
 }SyntacticNodeBody;
 
-typedef struct _SyntacticNode SyntacticNode;
+
 struct _SyntacticNode
 {
 	NODE_TYPE type;

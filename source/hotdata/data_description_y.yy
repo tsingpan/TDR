@@ -203,6 +203,7 @@ Value :
 		write_field_end(GET_WRITER, "base", strlen("base"));
 		
 		$$.type = NT_VALUE;
+		$$.body.sn_value.is_identifier = hpfalse;
 		$$.body.sn_value.var = $1.body.sn_value.var;
 	}
 |	tok_true
@@ -231,9 +232,9 @@ Value :
 		write_bytes(GET_WRITER, $1.var.val.bytes);
 		write_field_end(GET_WRITER, "value", strlen("value"));
 		
-		$$.type = NT_VALUE;
-		$$.body.sn_value.is_identifier = hptrue;
-		$$.body.sn_value.var = $1.var;
+		
+
+		dp_on_value_identifier(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 Typedef :

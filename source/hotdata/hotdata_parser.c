@@ -50,8 +50,23 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	}
 }
 
-
-void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, va_list ap) 
+//因为一次编译需要返回多个错误， 所以要确保错误码没有重复
+static void dp_error_push_back(DATA_PARSER *self)
+{
+	/*
+	hpuint32 i;
+	for(i = 0;i < self->result_num; ++i)
+	{
+		if((self->result[i] == self->result[self->result_num]) 
+			&& (strcmp(self->result_str[i], self->result_str[self->result_num]) == 0))
+		{
+			return;
+		}
+	}
+	*/
+	++(self->result_num);
+}
+static void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, va_list ap) 
 {	
 	hpuint32 len;
 
@@ -75,7 +90,7 @@ void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...)
 	va_start(ap, result);
 	_dp_error(self, yylloc, error_str, ap);
 	va_end(ap);
-	++(self->result_num);
+	dp_error_push_back(self);
 }
 void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
@@ -87,7 +102,7 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	va_start(ap, s);
 	_dp_error(self, yylloc, s, ap);
 	va_end(ap);
-	++(self->result_num);
+	dp_error_push_back(self);
 }
 
 
@@ -198,6 +213,11 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int token, YYSTYPE * yylval, const YYL
 			yylval->var.type = E_HP_BYTES;
 			yylval->var.val.bytes.ptr = yytext;
 			yylval->var.val.bytes.len = yyleng;
+
+
+			yylval->type = NT_TOK_IDENTIFIER;
+			yylval->body.sn_tok_identifier.ptr = yytext;
+			yylval->body.sn_tok_identifier.len = yyleng;
 			break;
 		}
 	case tok_true:
@@ -287,25 +307,17 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 
 
 	if(sn_value->body.sn_value.is_identifier)
-	{
-		void *data;
-
-		for(i = 0; i < sn_value->body.sn_value.var.val.bytes.len; ++i)
-		{
-			id[i] = sn_value->body.sn_value.var.val.bytes.ptr[i];
-		}
-		id[i] = 0;
-
-		if(!trie_retrieve(self->constant, id, &data))
-		{
-			dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
-			goto done;
-		}
-		val = (const SyntacticNode*)data;
+	{		
+		val = sn_value->body.sn_value.sn;
 	}
 	else
 	{
 		val = sn_value;
+	}
+
+	if(val == NULL)
+	{
+		goto done;
 	}
 
 	for(i = 0; i < sn_identifier->var.val.bytes.len; ++i)
@@ -375,5 +387,36 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const Syntac
 	}
 
 done:
+	return;
+}
+
+
+void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_identifier)
+{
+	void *data;
+	hpuint32 i;
+	char id[1024];
+
+	for(i = 0; i < sn_identifier->body.sn_tok_identifier.len; ++i)
+	{
+		id[i] = sn_identifier->body.sn_tok_identifier.ptr[i];
+	}
+	id[i] = 0;
+
+	if(!trie_retrieve(self->constant, id, &data))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
+		goto error_ret;
+	}
+
+	current->type = NT_VALUE;
+	current->body.sn_value.is_identifier = hptrue;
+	current->body.sn_value.sn = (const SyntacticNode*)data;
+done:
+	return;
+error_ret:
+	current->type = NT_VALUE;
+	current->body.sn_value.is_identifier = hptrue;
+	current->body.sn_value.sn = NULL;
 	return;
 }

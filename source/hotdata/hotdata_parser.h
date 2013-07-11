@@ -45,5 +45,7 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 
 void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier, const SyntacticNode* sn_value);
 
+void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_identifier);
+
 #endif//_H_XML_PARSER
 
