@@ -75,6 +75,7 @@
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_bool> tok_bool
 %type<sn_tok_import> tok_import
+%type<sn_type> Type
 
 
 
@@ -144,7 +145,7 @@ Const :
 	}
 	'='
 	{
-		dp_on_const_equal(GET_SELF, &yylloc); 		
+		dp_on_const_semicolon(GET_SELF, &yylloc); 		
 	}
 	Value
 	';'
@@ -165,26 +166,11 @@ Value :
 	}
 |	tok_int64
 	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpint64(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "value", strlen("value"));
-
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "base", strlen("base"));
-		write_hpint64(GET_WRITER, 10);
-		write_field_end(GET_WRITER, "base", strlen("base"));
-		
+		dp_on_value_tok_int64(GET_SELF, &yylloc, $1);
 	}
 |	tok_hex_int64
 	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_hpint64(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "value", strlen("value"));
-		write_semicolon(GET_WRITER);
-		write_field_begin(GET_WRITER, "base", strlen("base"));
-		write_hpint64(GET_WRITER, 16);
-		write_field_end(GET_WRITER, "base", strlen("base"));
-		
+		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, $1);
 	}
 |	tok_bool
 	{
@@ -192,10 +178,7 @@ Value :
 	}
 |	tok_identifier
 	{
-		write_field_begin(GET_WRITER, "value", strlen("value"));
-		write_bytes(GET_WRITER, $1);
-		write_field_end(GET_WRITER, "value", strlen("value"));
-		
+		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
 		
 
 		//dp_on_value_identifier(GET_SELF, &yylloc, &$$, &$1);
@@ -203,14 +186,13 @@ Value :
 
 Typedef :
 	{dp_on_typedef_begin(GET_SELF, &yylloc);}
-	tok_typedef Type 
-	{write_semicolon(GET_WRITER);}
+	tok_typedef
+	Type 
+	{dp_on_semicolon(GET_SELF, &yylloc);}
 	Arguments
 	tok_identifier
 	{
-		write_field_begin(GET_WRITER, "new_type", strlen("new_type"));
-		write_bytes(GET_WRITER, $6);
-		write_field_end(GET_WRITER, "new_type", strlen("new_type"));
+		dp_on_typedef_tok_identifier(GET_SELF, &yylloc, &$3, $6);
 	}
 	';'
 	{

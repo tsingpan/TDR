@@ -68,9 +68,6 @@ void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc);
 
-void dp_on_const_equal(DATA_PARSER *self, const YYLTYPE *yylloc);
-
-
 void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
 void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc);
@@ -96,6 +93,16 @@ void dp_on_tok_unixcomment_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
 void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import);
+
+void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
+
+void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
+
+void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
+
+void dp_on_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier);
 
 #endif//_H_XML_PARSER
 

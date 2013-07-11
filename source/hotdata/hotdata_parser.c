@@ -484,7 +484,7 @@ void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_semicolon(self->writer);
 }
 
-void dp_on_const_equal(DATA_PARSER *self, const YYLTYPE *yylloc)
+void dp_on_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
 	write_semicolon(self->writer);
 }
@@ -571,4 +571,52 @@ void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn
 	write_bytes(self->writer, sn_tok_import);
 	write_field_end(self->writer, "file", strlen("file"));
 	write_struct_end(self->writer, NULL);
+}
+
+void dp_on_value_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_begin(self->writer, "value", strlen("value"));
+}
+
+void dp_on_value_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_field_end(self->writer, "value", strlen("value"));
+}
+
+void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
+{
+	write_field_begin(self->writer, "value", strlen("value"));
+	write_hpint64(self->writer, i64);
+	write_field_end(self->writer, "value", strlen("value"));
+
+	write_semicolon(self->writer);
+	write_field_begin(self->writer, "base", strlen("base"));
+	write_hpint64(self->writer, 10);
+	write_field_end(self->writer, "base", strlen("base"));		
+}
+
+void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
+{
+	write_field_begin(self->writer, "value", strlen("value"));
+	write_hpint64(self->writer, i64);
+	write_field_end(self->writer, "value", strlen("value"));
+
+	write_semicolon(self->writer);
+	write_field_begin(self->writer, "base", strlen("base"));
+	write_hpint64(self->writer, 16);
+	write_field_end(self->writer, "base", strlen("base"));		
+}
+
+void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "value", strlen("value"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "value", strlen("value"));
+}
+
+void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "new_type", strlen("new_type"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "new_type", strlen("new_type"));
 }
