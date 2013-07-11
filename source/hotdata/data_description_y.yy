@@ -74,6 +74,9 @@
 %type<sn_hex_int64> tok_hex_int64
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_bool> tok_bool
+%type<sn_tok_import> tok_import
+
+
 
 
 %left '='
@@ -85,64 +88,66 @@
 
 Document :
 	{
-		write_struct_begin(GET_WRITER, "Document");
-		write_field_begin(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
-		write_vector_begin(GET_WRITER);
+		dp_on_document_begin(GET_SELF, &yylloc);		
 	}
 	DefinitionList
 	{
-		write_vector_end(GET_WRITER);
-		write_field_end(GET_WRITER, "DefinitionList", strlen("DefinitionList"));
-		write_struct_end(GET_WRITER, "Document");
+		dp_on_document_end(GET_SELF, &yylloc);
 	};
 
 DefinitionList :
 	DefinitionList 
 	{
-		write_semicolon(GET_WRITER);
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		dp_on_definition_semicolon(GET_SELF, &yylloc);
+
+		dp_on_definition_begin(GET_SELF, &yylloc);
 	}
 	Definition 
 	{
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		dp_on_definition_end(GET_SELF, &yylloc);
 	}
 |
-	{write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));}
+	{dp_on_definition_begin(GET_SELF, &yylloc);}
 	Definition 
-	{write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));};
+	{dp_on_definition_end(GET_SELF, &yylloc);};
 
 Definition :
-	{write_struct_begin(GET_WRITER, NULL);}
-	Import	
-	{write_struct_end(GET_WRITER, NULL);}	 
+	{write_field_begin(GET_WRITER, "import", strlen("import")); }
+	Import
+	{write_field_end(GET_WRITER, "import", strlen("import"));} 
 
-|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "const", strlen("const")); }
+|	{write_field_begin(GET_WRITER, "const", strlen("const")); }
 	Const
-	{write_field_end(GET_WRITER, "const", strlen("const"));write_struct_end(GET_WRITER, NULL);} 
+	{write_field_end(GET_WRITER, "const", strlen("const"));} 
 
-|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "typedef", strlen("typedef")); }
+|	{write_field_begin(GET_WRITER, "typedef", strlen("typedef")); }
 	Typedef
-	{write_field_end(GET_WRITER, "typedef", strlen("typedef"));write_struct_end(GET_WRITER, NULL); } 
+	{write_field_end(GET_WRITER, "typedef", strlen("typedef"));} 
 
-|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "struct", strlen("struct")); }
+|	{write_field_begin(GET_WRITER, "struct", strlen("struct")); }
 	Struct
-	{write_field_end(GET_WRITER, "struct", strlen("struct"));write_struct_end(GET_WRITER, NULL);} 
+	{write_field_end(GET_WRITER, "struct", strlen("struct"));} 
 
-|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "union", strlen("union")); }
+|	{write_field_begin(GET_WRITER, "union", strlen("union")); }
 	Union
-	{write_field_end(GET_WRITER, "union", strlen("union"));write_struct_end(GET_WRITER, NULL);} 
+	{write_field_end(GET_WRITER, "union", strlen("union"));} 
 
-|	{write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "enum", strlen("enum")); }
+|	{write_field_begin(GET_WRITER, "enum", strlen("enum")); }
 	Enum
-	{write_field_end(GET_WRITER, "enum", strlen("enum"));write_struct_end(GET_WRITER, NULL);} 
+	{write_field_end(GET_WRITER, "enum", strlen("enum"));} 
 
-|   {write_struct_begin(GET_WRITER, NULL);write_field_begin(GET_WRITER, "comment", strlen("comment")); }
+|   {write_field_begin(GET_WRITER, "comment", strlen("comment")); }
 	tok_unixcomment
-	{write_field_end(GET_WRITER, "comment", strlen("comment"));write_struct_end(GET_WRITER, NULL);}
+	{write_field_end(GET_WRITER, "comment", strlen("comment"));}
 
 Import : 
 	tok_import
 	{
+		write_struct_begin(GET_WRITER, NULL);
+		write_field_begin(GET_WRITER, "file", strlen("file"));
+		write_bytes(GET_WRITER, $1);
+		write_field_end(GET_WRITER, "file", strlen("file"));
+		write_struct_end(GET_WRITER, NULL);
 		//dp_on_import(GET_SELF, &yylloc, &$$, &$1);
 	};
 

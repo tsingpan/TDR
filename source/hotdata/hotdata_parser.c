@@ -135,7 +135,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
 				{
 					++(self->yy_cursor);
-					if(yylval->sn_tok_import.ptr == NULL)
+					if(yylval->sn_tok_import.ptr != NULL)
 					{
 						++(yylval->sn_tok_import.len);
 					}
@@ -145,12 +145,9 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 					if(yylval->sn_tok_import.ptr == NULL)
 					{
 						yylval->sn_tok_import.ptr = self->yy_cursor;
-						++(yylval->sn_tok_import.len);
 					}
-					else
-					{
-						++(yylval->sn_tok_import.len);
-					}
+
+					++(yylval->sn_tok_import.len);
 
 					file_name[len++] = *self->yy_cursor;
 					++(self->yy_cursor);
@@ -431,3 +428,36 @@ void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* curre
 {
 	current->sn_import = sn_import->sn_tok_import;
 }
+
+void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_struct_begin(self->writer, "Document");
+	write_field_begin(self->writer, "DefinitionList", strlen("DefinitionList"));
+	write_vector_begin(self->writer);
+}
+
+void dp_on_document_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_end(self->writer);
+	write_field_end(self->writer, "DefinitionList", strlen("DefinitionList"));
+	write_struct_end(self->writer, "Document");
+}
+
+void dp_on_definition_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_item_begin(self->writer, writer_get_index(self->writer));
+	write_struct_begin(self->writer, NULL);
+}
+
+void dp_on_definition_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_semicolon(self->writer);
+}
+
+void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	write_vector_item_end(self->writer, writer_get_index(self->writer));
+	write_struct_end(self->writer, NULL);
+}
+
+//handler
