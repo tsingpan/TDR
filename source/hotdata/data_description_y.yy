@@ -203,7 +203,7 @@ Enum :
 	{dp_on_enum_begin(GET_SELF, &yylloc);}
 	tok_enum
 	TypeAnnotations
-	{write_semicolon(GET_WRITER);}
+	{dp_on_semicolon(GET_SELF, &yylloc);}
 	tok_identifier
 	{
 		write_field_begin(GET_WRITER, "name", strlen("name"));
