@@ -128,5 +128,9 @@ void dp_on_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 
 void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
+void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
+
+void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
+
 #endif//_H_XML_PARSER
 

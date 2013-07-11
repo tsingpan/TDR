@@ -270,28 +270,25 @@ Struct :
 	{dp_on_field_begin(GET_SELF, &yylloc, "struct"); dp_on_struct_begin(GET_SELF, &yylloc);  }
 	tok_struct
 	TypeAnnotations
-	{write_semicolon(GET_WRITER);}
+	{dp_on_semicolon(GET_SELF, &yylloc);}
 	tok_identifier
 	{
-		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $5);
-		write_field_end(GET_WRITER, "name", strlen("name"));
-		write_semicolon(GET_WRITER);
-
+		dp_on_struct_tok_identifier(GET_SELF, &yylloc, $5);;
+		dp_on_semicolon(GET_SELF, &yylloc);
 		dp_on_field_begin(GET_SELF, &yylloc, "Parameters");
 	}
 	Parameters
 	{dp_on_field_end(GET_SELF, &yylloc, "Parameters"); dp_on_semicolon(GET_SELF, &yylloc);}
-	'{' {write_field_begin(GET_WRITER, "list", strlen("list")); write_vector_begin(GET_WRITER);}
+	'{' {dp_on_field_begin(GET_SELF, &yylloc, "list"); dp_on_vector_begin(GET_SELF, &yylloc);}
 	FieldList
-	'}' {write_field_end(GET_WRITER, "list", strlen("list")); write_vector_end(GET_WRITER);}
+	'}' {dp_on_field_end(GET_SELF, &yylloc, "list"); dp_on_vector_end(GET_SELF, &yylloc);}
 	';'
 	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "struct");};
 	
 
 	
 FieldList: 
-	FieldList {write_semicolon(GET_WRITER);}
+	FieldList {dp_on_semicolon(GET_SELF, &yylloc);}
 	Field	
 |	
 	Field
@@ -299,31 +296,31 @@ FieldList:
 
 Field : 
 	{
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_struct_begin(GET_WRITER, NULL);
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+
+		dp_on_struct_begin(GET_SELF, &yylloc);
 		
-		write_field_begin(GET_WRITER, "condition", strlen("condition"));		
+		dp_on_field_begin(GET_SELF, &yylloc, "condition");
 	}
 	FieldCondition 
-	{	write_field_end(GET_WRITER, "condition", strlen("condition"));	write_semicolon(GET_WRITER);}
+	{	dp_on_field_end(GET_SELF, &yylloc, "condition"); dp_on_semicolon(GET_SELF, &yylloc);}
 	Type
-	{write_semicolon(GET_WRITER); write_field_begin(GET_WRITER, "Arguments", strlen("Arguments"));}
+	{dp_on_semicolon(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
 	Arguments 
-	{write_field_end(GET_WRITER, "Arguments", strlen("Arguments"));write_semicolon(GET_WRITER);}
+	{dp_on_field_end(GET_SELF, &yylloc, "Arguments");dp_on_semicolon(GET_SELF, &yylloc);}
 	tok_identifier
 	{
-		write_field_begin(GET_WRITER, "name", strlen("name"));
-		write_bytes(GET_WRITER, $8);
-		write_field_end(GET_WRITER, "name", strlen("name"));
+		dp_on_field_tok_identifier(GET_SELF, &yylloc, $8);
 	}
 	';'
 	{
-		write_semicolon(GET_WRITER);
+		dp_on_semicolon(GET_SELF, &yylloc);
 	}
 	UnixCommentOrNot
 	{
-		write_struct_end(GET_WRITER, NULL);
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+		dp_on_struct_end(GET_SELF, &yylloc);
+
+		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 FieldCondition:

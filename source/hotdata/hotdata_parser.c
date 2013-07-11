@@ -700,3 +700,17 @@ void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
 }
+
+void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "name", strlen("name"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "name", strlen("name"));
+}
+
+void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
+{
+	write_field_begin(self->writer, "name", strlen("name"));
+	write_bytes(self->writer, sn_tok_identifier);
+	write_field_end(self->writer, "name", strlen("name"));
+}
