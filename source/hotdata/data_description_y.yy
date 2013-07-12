@@ -646,13 +646,31 @@ Argument:
 	tok_identifier
 	{
 		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_field_begin(GET_SELF, &yylloc, "Identifier");
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_field_begin(GET_SELF, &yylloc, "id");
 		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_field_end(GET_SELF, &yylloc, "id");
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "Identifier");
+		dp_on_struct_end(GET_SELF, &yylloc);		
 		dp_on_vector_item_end(GET_SELF, &yylloc);
 	}
-|	{dp_on_vector_item_begin(GET_SELF, &yylloc);}
+|	{
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_field_begin(GET_SELF, &yylloc, "SimpleType");
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_field_begin(GET_SELF, &yylloc, "type");
+	}
 	SimpleType
 	{
-	dp_on_vector_item_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "type");
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "SimpleType");
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 UnixComment:
