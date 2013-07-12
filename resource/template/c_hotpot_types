@@ -16,9 +16,9 @@
 			$const
 			{
 %>
-#ifndef _DEF_<% $name %>
+#ifndef <% $name %>
 #define <% $name %> <% $value %>
-#endif//_DEF_<% $name %>
+#endif//<% $name %>
 <%
 			}
 
@@ -36,7 +36,7 @@ typedef enum _<% $name %>
 	<% $name %> = <% $value %> ,<%	}
 				]
 %>
-}<% $name %>
+}<% $name %>;
 <%
 			}
 
@@ -50,11 +50,11 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$name%>;<%
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$name%>;<%
 					}
 				]
 %>
-}<% $name %>
+}<% $name %>;
 <%
 			}
 
@@ -68,11 +68,11 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <% $name%>;<%
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <% $name%>;<%
 					}
 				]
 %>
-}<% $name %>
+}<% $name %>;
 <%
 			}
 		

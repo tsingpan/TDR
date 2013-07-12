@@ -71,7 +71,7 @@ hpint32 ddekit_json_encoding_writer_fini(HP_JSON_WRITER *self)
 static void printf_tab(HP_JSON_WRITER *self)
 {
 	hpuint32 i;
-	for(i = 0;i < self->count + self->count; ++i)
+	for(i = 0;i < self->count; ++i)
 	{
 		fputc(' ', self->f);
 		fputc(' ', self->f);
@@ -116,7 +116,7 @@ hpint32 ddekit_json_encoding_write_vector_begin(HPAbstractWriter *super)
 	HP_JSON_WRITER *self = HP_CONTAINER_OF(super, HP_JSON_WRITER, super);	
 	
 	
-	self->need_tab = hptrue;
+	
 	fputc('\n', self->f);	
 	printf_tab(self);
 	fputc('[', self->f);
@@ -353,5 +353,6 @@ HP_API hpint32 ddekit_json_encoding_write_semicolon(HPAbstractWriter *super)
 HP_API hpint32 ddekit_json_encoding_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
 {
 	HP_JSON_WRITER *self = HP_CONTAINER_OF(super, HP_JSON_WRITER, super);
+	self->need_tab = hptrue;
 	return E_HP_NOERROR;
 }

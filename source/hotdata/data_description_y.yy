@@ -201,7 +201,7 @@ Value :
 
 Typedef :
 	{dp_on_typedef_begin(GET_SELF, &yylloc);}
-	tok_typedef
+	tok_typedef	
 	Type 
 	{dp_on_semicolon(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
 	Arguments
@@ -671,8 +671,11 @@ Argument:
 		dp_on_bytes(GET_SELF, &yylloc, $1);
 		dp_on_vector_item_end(GET_SELF, &yylloc);
 	}
-|	SimpleType
+|	{dp_on_vector_item_begin(GET_SELF, &yylloc);dp_on_struct_begin(GET_SELF, &yylloc);}
+	SimpleType
 	{
+	dp_on_struct_end(GET_SELF, &yylloc);
+	dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 UnixComment:
