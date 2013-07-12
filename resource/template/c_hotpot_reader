@@ -3,6 +3,12 @@
 	[
 		$*
 		{
+			$import
+			{
+%>
+	#include "<%$file%>.h"
+<%
+			}
 			$comment
 			{
 %>
@@ -21,7 +27,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 					{
 						$Type{$ContainerType{$vector
 						{%>
-	for(i = 0; i < 10; ++i)
+	for(i = 0; i < <%$Arguments[$1]%>; ++i)
 	{
 <%						}}}%>	
 	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }}%><%$Type{$ContainerType{$vector{'\t'}}}%>write_<%$Type

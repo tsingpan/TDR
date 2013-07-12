@@ -89,7 +89,7 @@ typedef enum _SyntacticSymbolType
 typedef struct SyntacticSymbol
 {
 	SyntacticSymbolType type;
-	const SyntacticNode *sn;
+	SyntacticNode sn;
 }SyntacticSymbol;
 
 #endif//_H_SYNTACTICNODE

@@ -76,7 +76,7 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
-		identifier->vector_item_begin_index = op->lineno;
+		identifier->vector_item_begin_index = op->lineno;	
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
@@ -114,6 +114,7 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_END;
+
 		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_auto_integer)

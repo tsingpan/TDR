@@ -93,7 +93,7 @@ any_char		((.|"\n"))
 
 <ST_IN_SCRIPTING>'$'{intconstant}{
 	char number[128];
-	memcpy(number, yytext, yyleng);
+	memcpy(number, yytext + 1, yyleng - 1);
 	number[yyleng] = 0;
 	yylval->var.type = E_HP_UINT32;
 	yylval->var.val.ui32 = strtoul(number, NULL, 10);

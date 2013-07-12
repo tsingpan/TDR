@@ -316,7 +316,7 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYP
 	{
 		if(self->symbol_list[sn_value->index].type == E_SST_Const)
 		{
-			val = &self->symbol_list[sn_value->index].sn->sn_value;
+			val = &self->symbol_list[sn_value->index].sn.sn_value;
 		}
 	}
 	else
@@ -382,6 +382,10 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYP
 			goto done;
 		}
 	}
+	else if(val->type == E_SNVT_IDENTIFIER)
+	{
+
+	}
 	else
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_UNKNOW_CONSTANT_VALUE);
@@ -389,7 +393,7 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYP
 	}
 
 	self->symbol_list[self->symbol_list_num].type = E_SST_Const;
-	self->symbol_list[self->symbol_list_num].sn = (const SyntacticNode *)sn_value;
+	self->symbol_list[self->symbol_list_num].sn.sn_value = *sn_value;
 	
 
 	if(!trie_store_if_absent(self->symbols, id, self->symbol_list_num))
@@ -729,7 +733,7 @@ void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	write_field_begin(self->writer, "switch", strlen("switch"));
 	if(sn_tok_identifier == NULL)
 	{
-		write_hpstring(self->writer, "selector");
+		write_hpstring(self->writer, "s");
 	}
 	else
 	{
