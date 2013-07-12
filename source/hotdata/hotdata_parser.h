@@ -45,10 +45,6 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 
 
-void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
-
-void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* sn_type, const hpbytes* sn_identifier, const SN_VALUE* sn_value);
-
 //handler
 
 void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
@@ -121,9 +117,9 @@ void dp_on_vector_item_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_null(DATA_PARSER *self, const YYLTYPE *yylloc);
 
-void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, hpbool b);
+void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbool b);
 
-void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, hpbytes bytes);
+void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes bytes);
 
 void dp_on_string(DATA_PARSER *self, const YYLTYPE *yylloc, const hpchar *str);
 
@@ -145,8 +141,6 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
-void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, const hpbytes sn_tok_identifier);
-
 //do
 void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import);
 
@@ -163,6 +157,12 @@ void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VAL
 void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type);
 
 void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier);
+
+
+//check
+void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
+
+void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* sn_type, const hpbytes* sn_identifier, const SN_VALUE* sn_value);
 
 
 #endif//_H_XML_PARSER

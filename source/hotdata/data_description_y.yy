@@ -145,7 +145,9 @@ Const :
 	tok_identifier 
 	{
 		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
-		dp_on_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
+
+
+		dp_check_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
 	}
 	'='
 	{
@@ -153,10 +155,10 @@ Const :
 	}
 	Value
 	';'
-	{		
-		dp_on_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
-
+	{	
 		dp_on_const_end(GET_SELF, &yylloc); 
+
+		dp_check_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
 	}
 
 
@@ -211,8 +213,6 @@ Typedef :
 	';'
 	{
 		dp_on_typedef_end(GET_SELF, &yylloc);
-		
-		dp_on_typedef(GET_SELF, &yylloc, &$3, $7);
 	};
 	
 Enum :
