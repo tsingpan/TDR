@@ -658,9 +658,9 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 
 //do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const hpbytes sn_tok_import)
 {
-	current->sn_import = sn_import->sn_tok_import;
+	current->sn_import = sn_tok_import;
 }
 
 
@@ -748,15 +748,15 @@ done:
 }
 
 //check
-void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SyntacticNode* sn_type, const SyntacticNode* sn_identifier)
+void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const hpbytes sn_tok_identifier)
 {
 	char id[1024];
 	hpuint32 i;
 	hpuint32 data;
 
-	for(i = 0; i < sn_identifier->sn_tok_identifier.len; ++i)
+	for(i = 0; i < sn_tok_identifier.len; ++i)
 	{
-		id[i] = sn_identifier->sn_tok_identifier.ptr[i];
+		id[i] = sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
 

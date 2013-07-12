@@ -142,7 +142,7 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
 //do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import);
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const hpbytes sn_tok_import);
 
 void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier);
 
@@ -160,7 +160,7 @@ void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *curren
 
 
 //check
-void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const SyntacticNode* sn_identifier);
+void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const hpbytes sn_tok_identifier);
 
 void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* sn_type, const hpbytes* sn_identifier, const SN_VALUE* sn_value);
 

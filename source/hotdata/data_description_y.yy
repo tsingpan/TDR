@@ -131,7 +131,7 @@ Import :
 	tok_import
 	{
 		dp_on_tok_import(GET_SELF, &yylloc, $2);
-		dp_do_import(GET_SELF, &yylloc, &$$, &$2);
+		dp_do_import(GET_SELF, &yylloc, &$$, $2);
 
 		dp_on_import_end(GET_SELF, &yylloc);
 	};
@@ -147,7 +147,7 @@ Const :
 		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
 
 
-		dp_check_constant_identifier(GET_SELF, &yylloc, &$3, &$5);
+		dp_check_constant_identifier(GET_SELF, &yylloc, &$3, $5);
 	}
 	'='
 	{
@@ -670,6 +670,9 @@ Argument:
 		dp_on_vector_item_begin(GET_SELF, &yylloc);
 		dp_on_bytes(GET_SELF, &yylloc, $1);
 		dp_on_vector_item_end(GET_SELF, &yylloc);
+	}
+|	SimpleType
+	{
 	};
 
 UnixComment:
