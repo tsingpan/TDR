@@ -19,6 +19,7 @@
 #include "language/language.h"
 
 #include "hotscript/hot_vm.h"
+#include <io.h>
 
 #define HOTDATA_VERSION "0.0.1"
 
@@ -55,15 +56,56 @@ SCRIPT_PARSER sp;
 FILE* output_file = NULL;
 FILE* json_output_file = NULL;
 
+
+char root_dir[HP_MAX_FILE_PATH_LENGTH];
+char real_script_path[HP_MAX_FILE_PATH_LENGTH];
+char path_prefix[HP_MAX_FILE_PATH_LENGTH];
+
 void script_putc(HotVM *self, char c)
 {
 	fputc(c, (FILE*)self->user_data);
+}
+
+void get_real_file_path()
+{
+	hpuint32 i, count;
+	hpuint32 len;
+	count = 0;
+	
+
+	//首先获得根目录
+	len = strlen(root_dir);
+	for(i = len - 1; i >= 0; --i)
+	{
+		if(root_dir[i] == HP_FILE_SEPARATOR)
+		{
+			++count;
+			root_dir[i] = 0;
+		}
+		if(count == 2)
+		{
+			break;
+		}
+	}
+	//
+	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%ctemplate%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+	//strncpy(real_script_path, root_dir, HP_MAX_FILE_PATH_LENGTH);
+
+	if(access(file_name, 00) == 0)
+	{
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", file_name);		
+	}
+	else
+	{
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, file_name);
+	}
 }
 
 int main(int argc, char **argv)
 {
 	int i;
 	HotObject *obj = hotobject_new();
+	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
 
 	data_parser_init(&dp);
 	for (i = 1; i < argc - 1; ++i)
@@ -168,8 +210,10 @@ int main(int argc, char **argv)
 		goto ERROR_RET;
 	}
 
+	get_real_file_path();
+
 	hotobject_reader_init(&reader, obj);
-	if(script_parser(&sp, file_name, &reader.super, output_file, script_putc) != 0)
+	if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
 	{
 		goto ERROR_RET;
 	}
