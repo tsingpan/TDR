@@ -11,7 +11,7 @@ INCLUDE_DIRECTORIES(
 	${HOTPOT_INCLUDE_DIR}/
 	${GEN_PATH}/
 	)
-set(DDC_OUTPUTS ${GEN_PATH}/proto.h ${GEN_PATH}/proto_read.h ${GEN_PATH}/proto_read.c ${GEN_PATH}/proto_write.h ${GEN_PATH}/proto_write.c)
+set(DDC_OUTPUTS ${GEN_PATH}/proto.h)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
 
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
