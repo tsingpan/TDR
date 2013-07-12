@@ -83,6 +83,11 @@ Array:
 	'[' { write_vector_begin(YYJSON_WRITER); }
 	Elements
 	']' { write_vector_end(YYJSON_WRITER); }
+| '[' ']'
+	{
+		write_vector_begin(YYJSON_WRITER);
+		write_vector_end(YYJSON_WRITER);
+	}
 
 Elements:
 	Elements

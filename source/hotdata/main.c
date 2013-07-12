@@ -33,9 +33,6 @@ void usage()
   fprintf(stderr, "Use hd -help for a list of options\n");
 }
 
-/**
- * Diplays the help message and then exits with an error code.
- */
 void help()
 {
 	fprintf(stderr, "Usage: thrift [options] file\n");
@@ -49,19 +46,13 @@ void help()
 
 
 LanguageLib language_lib;
-
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
-HP_XML_WRITER xml_writer;
-HP_XML_READER xml_reader;
-
 char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
 HotObjectWriter writer;
 SCRIPT_PARSER sp;
-
 FILE* output_file = NULL;
-
 FILE* json_output_file = NULL;
 
 void script_putc(HotVM *self, char c)
@@ -72,14 +63,7 @@ void script_putc(HotVM *self, char c)
 int main(int argc, char **argv)
 {
 	int i;
-	int oc;		
-	FILE *fout;
-	FILE *fout_xml;
-	FILE *fin_xml;
-	int ret;
 	HotObject *obj = hotobject_new();
-
-	hpuint32 j;
 
 	data_parser_init(&dp);
 	for (i = 1; i < argc - 1; ++i)

@@ -241,6 +241,11 @@ hpint32 ddekit_json_encoding_write_hpuint32(HPAbstractWriter *super, const hpuin
 hpint32 ddekit_json_encoding_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
 	HP_JSON_WRITER *self = HP_CONTAINER_OF(super, HP_JSON_WRITER, super);
+	if(self->need_tab)
+	{
+		printf_tab(self);
+	}
+	fprintf(self->f, "%llu", val);
 	return E_HP_NOERROR;
 }
 
