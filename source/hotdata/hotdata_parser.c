@@ -411,45 +411,9 @@ done:
 }
 
 
-void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier)
-{
-	hpuint32 data;
-	hpuint32 i;
-	char id[1024];
-
-	for(i = 0; i < sn_identifier.len; ++i)
-	{
-		id[i] = sn_identifier.ptr[i];
-	}
-	id[i] = 0;
-
-	if(!trie_retrieve(self->symbols, id, &data))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
-		goto error_ret;
-	}
-
-	if((self->symbol_list[data].type != E_SST_Const) && (self->symbol_list[data].type != E_SST_EnumDef))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
-		goto error_ret;
-	}
-
-	current->type = E_SNVT_IDENTIFIER;
-	current->index = data;
-done:
-	return;
-error_ret:
-	current->type = E_SNVT_IDENTIFIER;
-	current->index = INVALID_INDEX;
-	return;
-}
 
 
-void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
-{
-	current->sn_import = sn_import->sn_tok_import;
-}
+
 
 
 //handler
@@ -688,7 +652,7 @@ void dp_on_value_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_field_end(self->writer, "value", strlen("value"));
 }
 
-void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
 {
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpint64(self->writer, i64);
@@ -698,11 +662,9 @@ void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* c
 	write_field_begin(self->writer, "base", strlen("base"));
 	write_hpint64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
-
-	current->type = E_SNVT_INT64;
 }
 
-void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
 {
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpint64(self->writer, i64);
@@ -712,11 +674,9 @@ void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALU
 	write_field_begin(self->writer, "base", strlen("base"));
 	write_hpint64(self->writer, 16);
 	write_field_end(self->writer, "base", strlen("base"));
-
-	current->type = E_SNVT_HEX_INT64;
 }
 
-void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
 {
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpuint64(self->writer, ui64);
@@ -726,11 +686,9 @@ void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* 
 	write_field_begin(self->writer, "base", strlen("base"));
 	write_hpint64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
-
-	current->type = E_SNVT_UINT64;
 }
 
-void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
 {
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpuint64(self->writer, ui64);
@@ -740,8 +698,6 @@ void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VAL
 	write_field_begin(self->writer, "base", strlen("base"));
 	write_hpint64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
-
-	current->type = E_SNVT_HEX_UINT64;
 }
 
 void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -824,34 +780,6 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	write_field_end(self->writer, "name", strlen("name"));
 }
 
-void dp_on_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type)
-{
-	current->type = type;
-}
-
-void dp_on_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier)
-{
-	hpuint32 i;
-	char id[1024];
-	SN_TYPE *type;
-
-	current->type = E_SNT_OBJECT;
-
-	for(i = 0; i < sn_tok_identifier.len; ++i)
-	{
-		id[i] = sn_tok_identifier.ptr[i];
-	}
-	id[i] = 0;
-/*
-	if(!trie_retrieve(self->typedef_identifier, id, type))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
-		goto done;
-	}
-	*/
-done:
-	return;
-}
 
 void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, const hpbytes sn_tok_identifier)
 {
@@ -881,6 +809,98 @@ void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, cons
 		goto done;
 	}
 */
+done:
+	return;
+}
+
+
+
+//do
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import)
+{
+	current->sn_import = sn_import->sn_tok_import;
+}
+
+
+void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier)
+{
+	hpuint32 data;
+	hpuint32 i;
+	char id[1024];
+
+	for(i = 0; i < sn_identifier.len; ++i)
+	{
+		id[i] = sn_identifier.ptr[i];
+	}
+	id[i] = 0;
+
+	if(!trie_retrieve(self->symbols, id, &data))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
+		goto error_ret;
+	}
+
+	if((self->symbol_list[data].type != E_SST_Const) && (self->symbol_list[data].type != E_SST_EnumDef))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
+		goto error_ret;
+	}
+
+	current->type = E_SNVT_IDENTIFIER;
+	current->index = data;
+done:
+	return;
+error_ret:
+	current->type = E_SNVT_IDENTIFIER;
+	current->index = INVALID_INDEX;
+	return;
+}
+
+void dp_do_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+{
+	current->type = E_SNVT_INT64;
+}
+
+void dp_do_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+{
+	current->type = E_SNVT_HEX_INT64;
+}
+
+void dp_do_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+{
+	current->type = E_SNVT_UINT64;
+}
+
+void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+{
+	current->type = E_SNVT_HEX_UINT64;
+}
+
+void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type)
+{
+	current->type = type;
+}
+
+void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier)
+{
+	hpuint32 i;
+	char id[1024];
+	SN_TYPE *type;
+
+	current->type = E_SNT_OBJECT;
+
+	for(i = 0; i < sn_tok_identifier.len; ++i)
+	{
+		id[i] = sn_tok_identifier.ptr[i];
+	}
+	id[i] = 0;
+/*
+	if(!trie_retrieve(self->typedef_identifier, id, type))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+		goto done;
+	}
+	*/
 done:
 	return;
 }

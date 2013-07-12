@@ -49,10 +49,6 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 
 void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* sn_type, const hpbytes* sn_identifier, const SN_VALUE* sn_value);
 
-void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier);
-
-void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import);
-
 //handler
 
 void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
@@ -99,13 +95,13 @@ void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import);
 
-void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
+void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
 
-void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
+void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64);
 
-void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
+void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64);
 
-void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
+void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64);
 
 void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
@@ -149,11 +145,25 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
-void dp_on_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type);
-
-void dp_on_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier);
-
 void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, const hpbytes sn_tok_identifier);
+
+//do
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const SyntacticNode* sn_import);
+
+void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier);
+
+void dp_do_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
+
+void dp_do_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64);
+
+void dp_do_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
+
+void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64);
+
+void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type);
+
+void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier);
+
 
 #endif//_H_XML_PARSER
 

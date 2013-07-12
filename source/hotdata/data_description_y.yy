@@ -79,6 +79,7 @@
 %type<sn_tok_import> tok_import
 %type<sn_type> Type SimpleType ObjectType ContainerType
 %type<sn_value> Value
+%type<sn_tok_import> Import
 
 
 
@@ -130,7 +131,7 @@ Import :
 	tok_import
 	{
 		dp_on_tok_import(GET_SELF, &yylloc, $2);
-		//dp_on_import(GET_SELF, &yylloc, &$$, &$2);
+		dp_do_import(GET_SELF, &yylloc, &$$, &$2);
 
 		dp_on_import_end(GET_SELF, &yylloc);
 	};
@@ -162,19 +163,27 @@ Const :
 Value :
 	tok_uint64
 	{
-		dp_on_value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_on_value_tok_uint64(GET_SELF, &yylloc, $1);
+
+		dp_do_value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_uint64
 	{
-		dp_on_value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_on_value_tok_hex_uint64(GET_SELF, &yylloc, $1);
+
+		dp_do_value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_int64
 	{
-		dp_on_value_tok_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_on_value_tok_int64(GET_SELF, &yylloc, $1);
+
+		dp_do_value_tok_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_int64
 	{
-		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, $1);
+
+		dp_do_value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_bool
 	{
@@ -185,7 +194,7 @@ Value :
 		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
 		
 
-		dp_on_value_identifier(GET_SELF, &yylloc, &$$, $1);
+		dp_do_value_identifier(GET_SELF, &yylloc, &$$, $1);
 	};
 
 Typedef :
@@ -488,7 +497,7 @@ ObjectType:
 		dp_on_bytes(GET_SELF, &yylloc, $1);
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 		
-		dp_on_type_object(GET_SELF, &yylloc, &$$, $1);
+		dp_do_type_object(GET_SELF, &yylloc, &$$, $1);
 	};
 
 ContainerType:
@@ -499,7 +508,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "vector");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_VECTOR);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_VECTOR);
 	}
 |	tok_t_string
 	{
@@ -508,7 +517,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "string");
 		
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_STRING);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_STRING);
 	};
 
 	
@@ -519,7 +528,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "bool");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_BOOL);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_BOOL);
 	}
 |	tok_t_char
 	{
@@ -527,7 +536,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "char");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_CHAR);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_CHAR);
 	}
 |	tok_t_double
 	{
@@ -535,7 +544,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "double");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_DOUBLE);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_DOUBLE);
 	}
 |	tok_t_int8
 	{
@@ -543,7 +552,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "int8");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_INT8);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT8);
 	}
 |	tok_t_int16
 	{
@@ -551,7 +560,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "int16");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_INT16);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT16);
 	}
 |	tok_t_int32
 	{
@@ -559,7 +568,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "int32");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_INT32);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT32);
 	}
 |	tok_t_int64
 	{
@@ -567,7 +576,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "int64");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_INT64);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT64);
 	}
 |	tok_t_uint8 
 	{
@@ -575,7 +584,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "uint8");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_UINT8);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT8);
 	}
 |	tok_t_uint16 
 	{
@@ -583,7 +592,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "uint16");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_UINT16);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT16);
 	}
 |	tok_t_uint32 
 	{
@@ -591,7 +600,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "uint32");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 		
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_UINT32);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT32);
 	}
 |	tok_t_uint64
 	{
@@ -599,7 +608,7 @@ SimpleType:
 		dp_on_string(GET_SELF, &yylloc, "uint64");
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_UINT64);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT64);
 	};
 
 Parameters :
