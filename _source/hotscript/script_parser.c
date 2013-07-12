@@ -145,8 +145,10 @@ hpint32 hotscript_do_echo_field(SCANNER_STACK *super)
 }
 
 
-void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...) 
+void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...) 
 {
+	SCRIPT_PARSER *sp = HP_CONTAINER_OF(ss, SCRIPT_PARSER, scanner_stack);
+
 	va_list ap;
 	va_start(ap, s);
 
@@ -157,6 +159,8 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER *sp, char *s, ...)
 	vfprintf(stderr, s, ap);
 	printf("\n");
 	va_end(ap);
+
+	sp->result = E_HP_ERROR;
 
 	return;
 }

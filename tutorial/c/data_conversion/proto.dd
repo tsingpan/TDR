@@ -44,7 +44,7 @@ struct PROTO
 	int32 id;
 	string<MAX_NAME_LENGTH> name;
 	uint32 list_num;
-	vector<MAX_NAME_LENGTH, list_num> list;
+	vector<int32,MAX_NAME_LENGTH, list_num> list;
 	uint32 blob_size;
 	vector<char, MAX_BLOB_SIZE, blob_size> blob;
 	char single_c;

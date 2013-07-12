@@ -1,5 +1,8 @@
 #ifndef _H_<% $file_tag %>
 #define _H_<% $file_tag %>
+
+#include "hotpot/hp_platform.h"
+
 <%
 	$DefinitionList
 	[
@@ -50,7 +53,7 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$name%>;<%
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0]}$string{'hpstring'}}}%> <%$name%>;<%
 					}
 				]
 %>
@@ -68,7 +71,7 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <% $name%>;<%
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0]}$string{'hpstring'}}}%> <% $name%>;<%
 					}
 				]
 %>
@@ -79,7 +82,7 @@ typedef union _<% $name %>
 			$typedef
 			{
 %>
-typedef <%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%> <%$new_type%>;
+typedef <%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0]}$string{'hpstring'}}}%> <%$new_type%>;
 <%
 			}
 		}
