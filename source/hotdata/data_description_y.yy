@@ -492,7 +492,7 @@ ObjectType:
 
 ContainerType:
 	tok_t_vector
-	{	
+	{
 		dp_on_field_begin(GET_SELF, &yylloc, "vector");
 		dp_on_struct_begin(GET_SELF, &yylloc);
 		dp_on_struct_end(GET_SELF, &yylloc);
@@ -500,6 +500,16 @@ ContainerType:
 
 		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_VECTOR);
 	}
+|	tok_t_string
+	{
+		dp_on_field_begin(GET_SELF, &yylloc, "string");
+		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "string");
+		
+		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_STRING);
+	};
+
 	
 SimpleType:
 	tok_t_bool
@@ -525,14 +535,6 @@ SimpleType:
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 
 		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_DOUBLE);
-	}
-|	tok_t_string
-	{
-		dp_on_field_begin(GET_SELF, &yylloc, "type");
-		dp_on_string(GET_SELF, &yylloc, "string");
-		dp_on_field_end(GET_SELF, &yylloc, "type");
-		
-		dp_on_type(GET_SELF, &yylloc, &$$, E_SNT_STRING);
 	}
 |	tok_t_int8
 	{

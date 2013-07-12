@@ -29,14 +29,18 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 						{%>
 	for(i = 0; i < <%$Arguments[$1]%>; ++i)
 	{
+		if( i == <%$Arguments[$2]%> )
+		{
+			break;
+		}
 <%						}}}%>	
 	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }}%><%$Type{$ContainerType{$vector{'\t'}}}%>write_<%$Type
 	{
 		$SimpleType{$type}
 		$ObjectType{$type}
-		$ContainerType{$vector{$Arguments[$0{$name}]}}
+		$ContainerType{$vector{$Arguments[$0{$name}]} $string{'string'}}
 	}
-%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]} $ContainerType{$vector{$Arguments[$2+{',' $name}]}}}%>);<%
+%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]} $ContainerType{$vector{$Arguments[$2+{',' $name}]} $string{', ' $Arguments[$0]}}}%>);<%
 						$Type{$ContainerType{$vector
 						{%>
 	}
@@ -61,7 +65,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 					{
 %>
 		case <% $condition{$expression{$op1}}%>:
-			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}}}%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}}%>);
+			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}$string{'string'}}}%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}$ContainerType{$string{', ' $Arguments[$0]}}}%>);
 			break;<%
 					}
 				]
