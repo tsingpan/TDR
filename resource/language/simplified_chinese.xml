@@ -1,5 +1,5 @@
 <LanguageLib>
-	<str_num>9</str_num>
+	<str_num>10</str_num>
 	<str>
 		<[0]>
 			<sid>E_SID_NOERROR</sid>
@@ -37,5 +37,9 @@
 			<sid>E_SID_UNKNOW_CONSTANT_VALUE</sid>
 			<str>无法识别的常量值</str>
 		</[8]>
+		<[9]>
+			<sid>E_SID_SYMBOL_REDEFINITION</sid>
+			<str>符号[%s]重定义</str>
+		</[9]>
 	<str>
 </LanguageLib>

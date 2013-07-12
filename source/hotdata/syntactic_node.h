@@ -17,6 +17,8 @@ typedef enum _SN_VALUE_TYPE
 	E_SNVT_HEX_UINT64,
 }SN_VALUE_TYPE;
 
+#define INVALID_INDEX 0xffffffff
+
 typedef struct _SN_VALUE SN_VALUE;
 typedef struct _SN_VALUE
 {
@@ -24,7 +26,8 @@ typedef struct _SN_VALUE
 	hpint64 i64;
 	hpuint64 ui64;
 	hpbool b;
-	const SN_VALUE* sn;
+
+	hpuint32 index;
 };
 
 
@@ -70,6 +73,24 @@ union _SyntacticNode
 	hpuint64 sn_hex_uint64;
 	hpint64 sn_hex_int64;
 };
+
+
+typedef enum _SyntacticSymbolType
+{
+	E_SST_Value			= 0,
+	E_SST_Type			= 1,
+	E_SST_Struct		= 2,
+	E_SST_Union			= 3,
+	E_SST_Enum			= 4,
+	E_SST_EnumDef		= 5,
+	E_SST_Const			= 6,
+}SyntacticSymbolType;
+
+typedef struct SyntacticSymbol
+{
+	SyntacticSymbolType type;
+	const SyntacticNode *sn;
+}SyntacticSymbol;
 
 #endif//_H_SYNTACTICNODE
 

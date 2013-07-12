@@ -201,6 +201,8 @@ Typedef :
 	';'
 	{
 		dp_on_typedef_end(GET_SELF, &yylloc);
+		
+		dp_on_typedef(GET_SELF, &yylloc, &$3, $6);
 	};
 	
 Enum :

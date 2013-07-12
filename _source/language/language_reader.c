@@ -46,7 +46,11 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		else if(strcmp(enum_name, "E_SID_UNKNOW_CONSTANT_VALUE") == 0)
 		{
 			*sid = E_SID_UNKNOW_CONSTANT_VALUE;
-		}		
+		}
+		else if(strcmp(enum_name, "E_SID_SYMBOL_REDEFINITION") == 0)
+		{
+			*sid = E_SID_SYMBOL_REDEFINITION;
+		}
 	}
 
 	read_enum(self, (hpint32*)sid);

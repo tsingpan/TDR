@@ -15,6 +15,7 @@
 
 #include "syntactic_node.h"
 
+#define MAX_SYMBOL_LIST_NUM 1024
 #define MAX_ERROR_NUM 1024
 typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
@@ -28,10 +29,12 @@ struct _DATA_PARSER
 
 	const LanguageLib *language_lib;
 
-	
+
+	hpuint32 symbol_list_num;
+	SyntacticSymbol symbol_list[MAX_SYMBOL_LIST_NUM];
 
 	//符号表
-	Trie *constant;				//记录已定义的常量符号
+	Trie *symbols;
 };
 
 hpint32 data_parser_init(DATA_PARSER *self);
@@ -147,6 +150,8 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 void dp_on_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type);
 
 void dp_on_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier);
+
+void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, const hpbytes sn_tok_identifier);
 
 #endif//_H_XML_PARSER
 

@@ -17,6 +17,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->language_lib = language_lib;
 	self->writer = writer;	
 	self->result_num = 0;
+	self->symbol_list_num = 0;
 
 	
 
@@ -26,7 +27,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	alpha_map_add_range(alpha_map, 'A', 'Z');
 	alpha_map_add_range(alpha_map, '0', '9');
 	alpha_map_add_range(alpha_map, '_', '_');
-	self->constant = trie_new(alpha_map);
+	self->symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
@@ -281,16 +282,17 @@ void dp_on_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 {
 	char id[1024];
 	hpuint32 i;
-	void *data;
+	hpuint32 data;
+
 	for(i = 0; i < sn_identifier->sn_tok_identifier.len; ++i)
 	{
 		id[i] = sn_identifier->sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
 
-	if(trie_retrieve(self->constant, id, &data))
+	if(trie_retrieve(self->symbols, id, &data))
 	{
-		dp_error(self, yylloc, E_HP_CONSTANT_REDEFINITION, id);
+		dp_error(self, yylloc, E_SID_SYMBOL_REDEFINITION, id);
 	}
 }
 
@@ -310,10 +312,12 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYP
 	const SN_VALUE* val = NULL;
 	size_t size;
 
-
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		val = sn_value->sn;
+		if(self->symbol_list[sn_value->index].type == E_SST_Const)
+		{
+			val = &self->symbol_list[sn_value->index].sn->sn_value;
+		}
 	}
 	else
 	{
@@ -384,12 +388,17 @@ void dp_on_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYP
 		goto done;
 	}
 
+	self->symbol_list[self->symbol_list_num].type = E_SST_Const;
+	self->symbol_list[self->symbol_list_num].sn = (const SyntacticNode *)sn_value;
 	
-	if(!trie_store_if_absent(self->constant, id, sn_value))
+
+	if(!trie_store_if_absent(self->symbols, id, self->symbol_list_num))
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
 		goto done;
 	}
+
+	++(self->symbol_list_num);
 
 done:
 	return;
@@ -398,7 +407,7 @@ done:
 
 void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier)
 {
-	void *data;
+	hpuint32 data;
 	hpuint32 i;
 	char id[1024];
 
@@ -408,19 +417,25 @@ void dp_on_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* 
 	}
 	id[i] = 0;
 
-	if(!trie_retrieve(self->constant, id, &data))
+	if(!trie_retrieve(self->symbols, id, &data))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
+		goto error_ret;
+	}
+
+	if((self->symbol_list[data].type != E_SST_Const) && (self->symbol_list[data].type != E_SST_EnumDef))
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
 		goto error_ret;
 	}
 
 	current->type = E_SNVT_IDENTIFIER;
-	current->sn = (const SN_VALUE*)data;
+	current->index = data;
 done:
 	return;
 error_ret:
 	current->type = E_SNVT_IDENTIFIER;
-	current->sn = NULL;
+	current->index = INVALID_INDEX;
 	return;
 }
 
@@ -774,5 +789,56 @@ void dp_on_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, cons
 
 void dp_on_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier)
 {
+	hpuint32 i;
+	char id[1024];
+	SN_TYPE *type;
+
 	current->type = E_SNT_OBJECT;
+
+	for(i = 0; i < sn_tok_identifier.len; ++i)
+	{
+		id[i] = sn_tok_identifier.ptr[i];
+	}
+	id[i] = 0;
+/*
+	if(!trie_retrieve(self->typedef_identifier, id, type))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+		goto done;
+	}
+	*/
+done:
+	return;
+}
+
+void dp_on_typedef(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *type, const hpbytes sn_tok_identifier)
+{
+	hpuint32 i;
+	char id[1024];
+
+	for(i = 0; i < sn_tok_identifier.len; ++i)
+	{
+		id[i] = sn_tok_identifier.ptr[i];
+	}
+	id[i] = 0;
+
+	if(type->type == E_SNT_OBJECT)
+	{
+		/*
+		if(!trie_store_if_absent(self->typedef_identifier, id, type))
+		{
+			dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+			goto done;
+		}
+		*/
+	}
+/*
+	if(!trie_store_if_absent(self->typedef_identifier, id, type))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+		goto done;
+	}
+*/
+done:
+	return;
 }
