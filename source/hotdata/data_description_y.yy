@@ -104,17 +104,14 @@ DefinitionList :
 	DefinitionList 
 	{
 		dp_on_definition_semicolon(GET_SELF, &yylloc);
-
-		dp_on_definition_begin(GET_SELF, &yylloc);
 	}
 	Definition 
 	{
-		dp_on_definition_end(GET_SELF, &yylloc);
 	}
 |
-	{dp_on_definition_begin(GET_SELF, &yylloc);}
+	{}
 	Definition 
-	{dp_on_definition_end(GET_SELF, &yylloc);};
+	{};
 
 Definition :
 	Import
@@ -127,18 +124,21 @@ Definition :
 
 
 Import :
-	{dp_on_import_begin(GET_SELF, &yylloc);  }
+	{dp_on_definition_begin(GET_SELF, &yylloc); dp_on_import_begin(GET_SELF, &yylloc);  }
 	tok_import
 	{
 		dp_on_tok_import(GET_SELF, &yylloc, $2);
-		dp_do_import(GET_SELF, &yylloc, &$$, $2);
-
+		
 		dp_on_import_end(GET_SELF, &yylloc);
+		
+		dp_on_definition_end(GET_SELF, &yylloc);
+		
+		dp_do_import(GET_SELF, &yylloc, &$$, $2);		
 	};
 
 
 Const : 
-	{dp_on_const_begin(GET_SELF, &yylloc);}
+	{dp_on_definition_begin(GET_SELF, &yylloc); dp_on_const_begin(GET_SELF, &yylloc);}
 	tok_const 
 	Type
 	{dp_on_const_semicolon(GET_SELF, &yylloc); }
@@ -159,6 +159,8 @@ Const :
 		dp_on_const_end(GET_SELF, &yylloc); 
 
 		dp_check_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
+		
+		dp_on_definition_end(GET_SELF, &yylloc);
 	}
 
 
@@ -200,7 +202,7 @@ Value :
 	};
 
 Typedef :
-	{dp_on_typedef_begin(GET_SELF, &yylloc);}
+	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_typedef_begin(GET_SELF, &yylloc);}
 	tok_typedef	
 	Type 
 	{dp_on_semicolon(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
@@ -213,10 +215,11 @@ Typedef :
 	';'
 	{
 		dp_on_typedef_end(GET_SELF, &yylloc);
+		dp_on_definition_end(GET_SELF, &yylloc);
 	};
 	
 Enum :
-	{dp_on_enum_begin(GET_SELF, &yylloc);}
+	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_enum_begin(GET_SELF, &yylloc);}
 	tok_enum
 	TypeAnnotations
 	{dp_on_semicolon(GET_SELF, &yylloc);}
@@ -228,8 +231,9 @@ Enum :
 	EnumDefList 
 	'}' {dp_on_vector_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "list"); }
 	';'
-
-	{dp_on_enum_end(GET_SELF, &yylloc);};
+	{dp_on_enum_end(GET_SELF, &yylloc);
+	dp_on_definition_end(GET_SELF, &yylloc);
+	};
     
 EnumDefList : 
 	EnumDefList {dp_on_semicolon(GET_SELF, &yylloc);} 
@@ -261,7 +265,7 @@ EnumDef :
     
 
 Union :
-	{ dp_on_union_begin(GET_SELF, &yylloc);}
+	{ dp_on_definition_begin(GET_SELF, &yylloc);dp_on_union_begin(GET_SELF, &yylloc);}
 	tok_union 
 	TypeAnnotations	
 	{dp_on_semicolon(GET_SELF, &yylloc);}
@@ -279,11 +283,11 @@ Union :
 	FieldList 
 	'}' {dp_on_field_end(GET_SELF, &yylloc, "list");dp_on_vector_end(GET_SELF, &yylloc);}
 	';'
-	{dp_on_union_end(GET_SELF, &yylloc);};
+	{dp_on_union_end(GET_SELF, &yylloc);dp_on_definition_end(GET_SELF, &yylloc);};
 	
 	
 Struct : 
-	{dp_on_field_begin(GET_SELF, &yylloc, "struct"); dp_on_struct_begin(GET_SELF, &yylloc);  }
+	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "struct"); dp_on_struct_begin(GET_SELF, &yylloc);  }
 	tok_struct
 	TypeAnnotations
 	{dp_on_semicolon(GET_SELF, &yylloc);}
@@ -299,7 +303,7 @@ Struct :
 	FieldList
 	'}' {dp_on_field_end(GET_SELF, &yylloc, "list"); dp_on_vector_end(GET_SELF, &yylloc);}
 	';'
-	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "struct");};
+	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "struct");dp_on_definition_end(GET_SELF, &yylloc);};
 	
 
 	
@@ -674,7 +678,7 @@ Argument:
 	};
 
 UnixComment:
-	{dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);}
+	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);}
 	tok_unixcomment
 	{
 		dp_on_field_begin(GET_SELF, &yylloc, "text");
@@ -682,6 +686,7 @@ UnixComment:
 		dp_on_field_end(GET_SELF, &yylloc, "text");
 
 		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
+		dp_on_definition_end(GET_SELF, &yylloc);
 	};
 
 UnixCommentOrNot:

@@ -120,8 +120,6 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 	{
 	case tok_import:
 		{
-			char file_name[1024];
-			size_t len = 0;
 			const char *i;
 
 			yylval->sn_tok_import.ptr = NULL;
@@ -151,19 +149,10 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 
 					++(yylval->sn_tok_import.len);
 
-					file_name[len++] = *self->yy_cursor;
 					++(self->yy_cursor);
 				}
 			}
-			for(i = HOTDATA_EXTENSION; *i; ++i)
-			{
-				file_name[len++] = *i;
-			}
-			file_name[len] = 0;
-			if(scanner_stack_push_file(ss, file_name, yycINITIAL) != E_HP_NOERROR)
-			{
-				dp_error(dp, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
-			}
+			
 			break;
 		}
 	case tok_bool:
@@ -298,6 +287,11 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	hpuint32 file_tag_len;
 	hpuint32 j;
 
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
+
 	write_struct_begin(self->writer, "Document");
 
 
@@ -337,6 +331,10 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_document_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_end(self->writer);
 	write_field_end(self->writer, "DefinitionList", strlen("DefinitionList"));
 	write_struct_end(self->writer, "Document");
@@ -344,99 +342,176 @@ void dp_on_document_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_definition_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_item_begin(self->writer, writer_get_index(self->writer));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_definition_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_semicolon(self->writer);
 }
 
 void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_item_end(self->writer, writer_get_index(self->writer));
 	write_struct_end(self->writer, NULL);
 }
 
 void dp_on_import_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "import", strlen("import"));
 }
 
 void dp_on_import_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_end(self->writer, "import", strlen("import"));
 }
 
 void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
+
 	write_field_begin(self->writer, "const", strlen("const"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_semicolon(self->writer);
 }
 
 void dp_on_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_semicolon(self->writer);
 }
 
 void dp_on_field_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, name, strlen(name));
 }
 
 void dp_on_field_end(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_end(self->writer, name, strlen(name));
 }
 
 void dp_on_vector_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_begin(self->writer);
 }
 
 void dp_on_vector_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_end(self->writer);
 }
 
 void dp_on_vector_item_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_item_begin(self->writer, writer_get_index(self->writer));
 }
 
 void dp_on_vector_item_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_item_end(self->writer, writer_get_index(self->writer));
 }
 
 void dp_on_null(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_null(self->writer);
 }
 
 void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbool b)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_hpbool(self->writer, b);
 }
 
 void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes bytes)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_bytes(self->writer, bytes);
 }
 
 void dp_on_string(DATA_PARSER *self, const YYLTYPE *yylloc, const hpchar *str)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_hpstring(self->writer, str);
 }
 
 void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
@@ -444,40 +519,68 @@ void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 	write_field_end(self->writer, "const", strlen("const"));
 }
 
 void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "typedef", strlen("typedef"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_typedef_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 	write_field_end(self->writer, "typedef", strlen("typedef"));
 }
 
 void dp_on_struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_struct_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 }
 
 void dp_on_union_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "union", strlen("union"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_union_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 	write_field_end(self->writer, "union", strlen("union"));
 }
@@ -485,12 +588,20 @@ void dp_on_union_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_enum_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "enum", strlen("enum"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_enum_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 	write_field_end(self->writer, "enum", strlen("enum"));
 }
@@ -498,18 +609,30 @@ void dp_on_enum_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_tok_unixcomment_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "comment", strlen("comment"));
 	write_struct_begin(self->writer, NULL);
 }
 
 void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_end(self->writer, NULL);
 	write_field_end(self->writer, "comment", strlen("comment"));
 }
 
 void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_struct_begin(self->writer, NULL);
 	write_field_begin(self->writer, "file", strlen("file"));
 	write_bytes(self->writer, sn_tok_import);
@@ -519,6 +642,10 @@ void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn
 
 void dp_on_value_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 }
 
@@ -529,6 +656,10 @@ void dp_on_value_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpint64(self->writer, i64);
 	write_field_end(self->writer, "value", strlen("value"));
@@ -541,6 +672,10 @@ void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint
 
 void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpint64(self->writer, i64);
 	write_field_end(self->writer, "value", strlen("value"));
@@ -553,6 +688,10 @@ void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const h
 
 void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpuint64(self->writer, ui64);
 	write_field_end(self->writer, "value", strlen("value"));
@@ -565,6 +704,10 @@ void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpui
 
 void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_hpuint64(self->writer, ui64);
 	write_field_end(self->writer, "value", strlen("value"));
@@ -577,6 +720,10 @@ void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "value", strlen("value"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "value", strlen("value"));
@@ -584,6 +731,10 @@ void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "new_type", strlen("new_type"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "new_type", strlen("new_type"));
@@ -591,12 +742,20 @@ void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 
 void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
 	write_vector_begin(self->writer);
 }
 
 void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes *sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_item_begin(self->writer, writer_get_index(self->writer));
 	write_struct_begin(self->writer, NULL);
 	write_field_begin(self->writer, "switch", strlen("switch"));
@@ -615,12 +774,20 @@ void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 
 void dp_on_TypeAnnotations_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_vector_end(self->writer);
 	write_field_end(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
 }
 
 void dp_on_enum_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
@@ -629,6 +796,10 @@ void dp_on_enum_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const h
 
 void dp_on_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	dp_on_field_begin(self, yylloc, "name");
 	write_bytes(self->writer, sn_tok_identifier);
 	dp_on_field_end(self, yylloc, "name");
@@ -636,6 +807,10 @@ void dp_on_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 
 void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
@@ -643,6 +818,10 @@ void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
@@ -650,6 +829,10 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
@@ -659,6 +842,22 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 //do
 void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const hpbytes sn_tok_import)
 {
+	const char* i;
+	char file_name[1024];
+	size_t len = sn_tok_import.len;
+
+	memcpy(file_name, sn_tok_import.ptr, len);
+
+	for(i = HOTDATA_EXTENSION; *i; ++i)
+	{
+		file_name[len++] = *i;
+	}
+	file_name[len] = 0;
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
+	}
+
 	current->sn_import = sn_tok_import;
 }
 
