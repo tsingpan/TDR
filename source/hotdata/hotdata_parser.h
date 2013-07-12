@@ -33,6 +33,8 @@ struct _DATA_PARSER
 	hpuint32 symbol_list_num;
 	SyntacticSymbol symbol_list[MAX_SYMBOL_LIST_NUM];
 
+	char file_name[MAX_FILE_NAME_LENGTH];
+
 	//·ûºÅ±í
 	Trie *symbols;
 };

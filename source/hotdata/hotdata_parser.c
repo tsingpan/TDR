@@ -13,6 +13,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	hpint32 ret;
 	AlphaMap *alpha_map = NULL;
 	hpuint32 i;
+	
 
 	self->language_lib = language_lib;
 	self->writer = writer;	
@@ -30,6 +31,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
+	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
 	ret = yydataparse(&self->scanner_stack);
@@ -453,7 +455,43 @@ void dp_on_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* curre
 //handler
 void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	char file_tag[1024];
+	hpuint32 file_tag_len;
+	hpuint32 j;
+
 	write_struct_begin(self->writer, "Document");
+
+
+	file_tag_len = strlen(self->file_name);
+	for(j = 0;j < file_tag_len; ++j)
+	{
+		char ch = self->file_name[j];
+		if(
+			((ch >= 'a') && (ch <= 'z'))
+			||((ch >= 'A') && (ch <= 'Z'))
+			||((ch >= '0') && (ch <= '9'))
+			||(ch == '_')
+			)
+		{
+			file_tag[j] = ch;
+		}
+		else
+		{
+			file_tag[j] = '_';
+		}
+	}
+	write_field_begin(self->writer, "file_tag", strlen("file_tag"));
+	write_hpstring(self->writer, file_tag);
+	write_field_end(self->writer, "file_tag", strlen("file_tag"));
+
+	write_semicolon(self->writer);
+
+	write_field_begin(self->writer, "file", strlen("file"));
+	write_hpstring(self->writer, self->file_name);
+	write_field_end(self->writer, "file", strlen("file"));
+
+	write_semicolon(self->writer);
+
 	write_field_begin(self->writer, "DefinitionList", strlen("DefinitionList"));
 	write_vector_begin(self->writer);
 }

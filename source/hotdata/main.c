@@ -18,6 +18,8 @@
 #include "language/language_reader.h"
 #include "language/language.h"
 
+#include "hotscript/hot_vm.h"
+
 #define HOTDATA_VERSION "0.0.1"
 
 void version()
@@ -36,11 +38,13 @@ void usage()
  */
 void help()
 {
-  fprintf(stderr, "Usage: thrift [options] file\n");
-  fprintf(stderr, "Options:\n");
-  fprintf(stderr, "  -version    Print the compiler version\n");
-  fprintf(stderr, "  -t dir      Set the template file\n");
-  fprintf(stderr, "  -i dir      Add a directory to the list of directories\n");
+	fprintf(stderr, "Usage: thrift [options] file\n");
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  -version					Print the compiler version\n");
+	fprintf(stderr, "  -t filename				Set the template file\n");
+	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
+	fprintf(stderr, "  -j dir					set json output path\n");
+	fprintf(stderr, "  -o dir					set output path\n");
 }
 
 
@@ -55,9 +59,15 @@ char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
 HotObjectWriter writer;
 SCRIPT_PARSER sp;
-char file_tag[1024];
-hpuint32 file_tag_len;
 
+FILE* output_file = NULL;
+
+FILE* json_output_file = NULL;
+
+void script_putc(HotVM *self, char c)
+{
+	fputc(c, (FILE*)self->user_data);
+}
 
 int main(int argc, char **argv)
 {
@@ -67,9 +77,12 @@ int main(int argc, char **argv)
 	FILE *fout_xml;
 	FILE *fin_xml;
 	int ret;
+	HotObject *obj = hotobject_new();
+
+	hpuint32 j;
 
 	data_parser_init(&dp);
-	for (i = 1; i < argc; ++i)
+	for (i = 1; i < argc - 1; ++i)
 	{
 		char* arg;
 
@@ -79,7 +92,6 @@ int main(int argc, char **argv)
 		{
 			++arg;
 		}
-
 		if (strcmp(arg, "-help") == 0)
 		{
 			help();
@@ -104,88 +116,84 @@ int main(int argc, char **argv)
 		else if (strcmp(arg, "-i") == 0)
 		{
 			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
+		}
+		else if(strcmp(arg, "-j") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			json_output_file = fopen(arg, "wb");
+		}
+		else if(strcmp(arg, "-o") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			output_file = fopen(arg, "wb");;
 		}
 		else
 		{
-			//默认后面都是文件名
-			break;
+			fprintf(stderr, "Unrecognized option: %s\n", arg);
+			usage();
+			goto ERROR_RET;
 		}
 	}
 	
 	load_language(&language_lib, "D:\\HotPot\\resource\\language\\simplified_chinese.xml");
+	
 
-	for(; i < argc; ++i)
+	if(json_output_file != NULL)
 	{
-		HotObject *obj = hotobject_new();
+		ddekit_json_encoding_writer_init(&jw, json_output_file);
 		
-		hpuint32 j;
-		fout = fopen("d:/ast_base.out", "w");
-		ddekit_json_encoding_writer_init(&jw, fout);
-
-		fout_xml = fopen("d:/ast_base.xml", "w");
-		xml_writer_init(&xml_writer, fout_xml);
-
-		hotobject_writer_init(&writer, obj);
-		hotobject_reader_init(&reader, obj);
 		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
 		{
-			continue;
+			goto ERROR_RET;
 		}
-		
-		fclose(fout);
+		fclose(json_output_file);
+		json_output_file = NULL;
 
-		if(data_parser(&dp, argv[i], &xml_writer.super, &language_lib) != E_HP_NOERROR)
-		{
-			continue;
-		}
-		fclose(fout_xml);
-
-		file_tag_len = strlen(argv[i]);		
-		for(j = 0;j < file_tag_len; ++j)
-		{
-			char ch = argv[i][j];
-			if(
-				((ch >= 'a') && (ch <= 'z'))
-				||((ch >= 'A') && (ch <= 'Z'))
-				||((ch >= '0') && (ch <= '9'))
-				||(ch == '_')
-				)
-			{
-				file_tag[j] = ch;
-			}
-			else
-			{
-				file_tag[j] = '_';
-			}
-			
-		}
-		write_field_begin(&writer.super, "file_tag", strlen("file_tag"));
-		write_hpstring(&writer.super, file_tag);
-		write_field_end(&writer.super, "file_tag", strlen("file_tag"));
-		write_field_begin(&writer.super, "file", strlen("file"));
-		write_hpstring(&writer.super, argv[i]);
-		write_field_end(&writer.super, "file", strlen("file"));
-
-		if(data_parser(&dp, argv[i], &writer.super, &language_lib) == E_HP_NOERROR)
-		{
-			printf("compile succeed\n");
-
-			hotobject_reader_init(&reader, obj);
-			if(script_parser(&sp, file_name, &reader.super, NULL, NULL) == 0)
-			{
-				printf("output succeed\n");
-			}
-		}
-		else
-		{
-			printf("failed\n");
-		}
-		
-		hotobject_free(obj);
+		printf("Json output succeed.\n");
 	}
-	//fclose(fout);
+
+	if(output_file == NULL)
+	{
+		goto ERROR_RET;
+	}
+	
+	
+	
+	hotobject_writer_init(&writer, obj);
+	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
+	{
+		goto ERROR_RET;
+	}
+
+	hotobject_reader_init(&reader, obj);
+	if(script_parser(&sp, file_name, &reader.super, output_file, script_putc) != 0)
+	{
+		goto ERROR_RET;
+	}
+	printf("template output succeed.\n");
+	hotobject_free(obj);
+
 	return 0;
 ERROR_RET:
+	printf("compile failed\n");
 	return 1;
 }

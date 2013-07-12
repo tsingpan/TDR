@@ -192,17 +192,18 @@ Typedef :
 	{dp_on_typedef_begin(GET_SELF, &yylloc);}
 	tok_typedef
 	Type 
-	{dp_on_semicolon(GET_SELF, &yylloc);}
+	{dp_on_semicolon(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
 	Arguments
+	{dp_on_field_end(GET_SELF, &yylloc, "Arguments");dp_on_semicolon(GET_SELF, &yylloc);}
 	tok_identifier
 	{
-		dp_on_typedef_tok_identifier(GET_SELF, &yylloc, &$3, $6);
+		dp_on_typedef_tok_identifier(GET_SELF, &yylloc, &$3, $7);
 	}
 	';'
 	{
 		dp_on_typedef_end(GET_SELF, &yylloc);
 		
-		dp_on_typedef(GET_SELF, &yylloc, &$3, $6);
+		dp_on_typedef(GET_SELF, &yylloc, &$3, $7);
 	};
 	
 Enum :
@@ -467,7 +468,7 @@ FieldExpression :
 Type :
 	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
 	SimpleType
-	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
 	}
 	
 |	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
@@ -477,7 +478,7 @@ Type :
 	
 |	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
 	ObjectType
-	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
 	};
 
 ObjectType:
