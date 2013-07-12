@@ -1,4 +1,3 @@
-#include "hotpot/hp_getopt.h"
 #include "hotpot/hp_error.h"
 #include "globals.h"
 
@@ -19,25 +18,33 @@
 #include "language/language_reader.h"
 #include "language/language.h"
 
-LanguageLib language_lib;
+#define HOTDATA_VERSION "0.0.1"
 
-const char* const short_options = "?h:i:t:";
-
-const struct option long_options[] =
+void version()
 {
-	{ "help",					0, NULL, '?' },		//查看帮助
+  printf("HotData version %s\n", HOTDATA_VERSION);
+}
+
+void usage()
+{
+  fprintf(stderr, "Usage: hd [options] file\n\n");
+  fprintf(stderr, "Use hd -help for a list of options\n");
+}
+
+/**
+ * Diplays the help message and then exits with an error code.
+ */
+void help()
+{
+  fprintf(stderr, "Usage: thrift [options] file\n");
+  fprintf(stderr, "Options:\n");
+  fprintf(stderr, "  -version    Print the compiler version\n");
+  fprintf(stderr, "  -t dir      Set the template file\n");
+  fprintf(stderr, "  -i dir      Add a directory to the list of directories\n");
+}
 
 
-
-	{ "include",				1, NULL, 'i' },		//设置包含文件目录
-	
-	{ "template",				1, NULL, 't' },		//模版文件名
-
-	{ NULL,						0, NULL, 0     }
-};//最后一个元素标识为NULL
-
-typedef void (*FUNC) (const char*, const char*);
-#define MAX_FUNC_NUM 1024
+LanguageLib language_lib;
 
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
@@ -62,28 +69,53 @@ int main(int argc, char **argv)
 	int ret;
 
 	data_parser_init(&dp);
-	
-	while((oc = hp_getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
+	for (i = 1; i < argc; ++i)
 	{
-		switch (oc)
+		char* arg;
+
+		arg = strtok(argv[i], " ");
+		// Treat double dashes as single dashes
+		if (arg[0] == '-' && arg[1] == '-')
 		{
-		case '?':
-			//need useage
-			break;
-		case 't':
-			strncpy(file_name, hp_optarg, HP_MAX_FILE_PATH_LENGTH);
-			break;
-		case 'i':
-			scanner_stack_add_path(&dp.scanner_stack, hp_optarg);
-			break;
-		default:
+			++arg;
+		}
+
+		if (strcmp(arg, "-help") == 0)
+		{
+			help();
+			goto ERROR_RET;
+		}
+		else if (strcmp(arg, "-version") == 0)
+		{
+			version();
+			goto ERROR_RET;
+		}
+		else if (strcmp(arg, "-t") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			strncpy(file_name, arg, HP_MAX_FILE_PATH_LENGTH);
+		}
+		else if (strcmp(arg, "-i") == 0)
+		{
+			arg = argv[++i];
+			scanner_stack_add_path(&dp.scanner_stack, arg);
+		}
+		else
+		{
+			//默认后面都是文件名
 			break;
 		}
 	}
-
+	
 	load_language(&language_lib, "D:\\HotPot\\resource\\language\\simplified_chinese.xml");
 
-	for(i = hp_optind; i < argc; ++i)
+	for(; i < argc; ++i)
 	{
 		HotObject *obj = hotobject_new();
 		
@@ -154,4 +186,6 @@ int main(int argc, char **argv)
 	}
 	//fclose(fout);
 	return 0;
+ERROR_RET:
+	return 1;
 }
