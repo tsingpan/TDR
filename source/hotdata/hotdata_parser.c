@@ -13,7 +13,6 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	hpint32 ret;
 	AlphaMap *alpha_map = NULL;
 	hpuint32 i;
-	
 
 	self->language_lib = language_lib;
 	self->writer = writer;	

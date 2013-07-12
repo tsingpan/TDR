@@ -60,6 +60,7 @@ FILE* json_output_file = NULL;
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
 char path_prefix[HP_MAX_FILE_PATH_LENGTH];
+char language_path[HP_MAX_FILE_PATH_LENGTH];
 
 void script_putc(HotVM *self, char c)
 {
@@ -68,26 +69,6 @@ void script_putc(HotVM *self, char c)
 
 void get_real_file_path()
 {
-	hpuint32 i, count;
-	hpuint32 len;
-	count = 0;
-	
-
-	//首先获得根目录
-	len = strlen(root_dir);
-	for(i = len - 1; i >= 0; --i)
-	{
-		if(root_dir[i] == HP_FILE_SEPARATOR)
-		{
-			++count;
-			root_dir[i] = 0;
-		}
-		if(count == 2)
-		{
-			break;
-		}
-	}
-	//
 	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%ctemplate%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 	//strncpy(real_script_path, root_dir, HP_MAX_FILE_PATH_LENGTH);
 
@@ -104,8 +85,22 @@ void get_real_file_path()
 int main(int argc, char **argv)
 {
 	int i;
+	int count = 0;
 	HotObject *obj = hotobject_new();
+	hpuint32 len;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
+
+	
+	
+	//首先获得根目录
+	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HotPot_Dir"));
+	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
+	{
+		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
+	}
+#ifdef _DEBUG
+	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, "D:\\HotPot\\");
+#endif//_DEBUG
 
 	data_parser_init(&dp);
 	for (i = 1; i < argc - 1; ++i)
@@ -179,10 +174,10 @@ int main(int argc, char **argv)
 			goto ERROR_RET;
 		}
 	}
-	
-	load_language(&language_lib, "D:\\HotPot\\resource\\language\\simplified_chinese.xml");
-	
 
+	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+	load_language(&language_lib, language_path);
+	
 	if(json_output_file != NULL)
 	{
 		ddekit_json_encoding_writer_init(&jw, json_output_file);
@@ -205,13 +200,13 @@ int main(int argc, char **argv)
 	
 	
 	hotobject_writer_init(&writer, obj);
+	
 	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
 	{
 		goto ERROR_RET;
 	}
-
 	get_real_file_path();
-
+	
 	hotobject_reader_init(&reader, obj);
 	if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
 	{
