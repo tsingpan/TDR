@@ -45,7 +45,7 @@
 					$*
 					{
 %>
-		$<%$name%>;<%
+		$<%$name%>;//<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]}$string{'string'}}}%><%
 					}
 				]
 %>
@@ -63,7 +63,7 @@
 					$*
 					{
 %>
-		$<% $name%>;<%
+		$<% $name%>;//<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]}$string{'string'}}}%><%
 					}
 				]
 %>
