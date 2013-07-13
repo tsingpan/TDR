@@ -39,7 +39,7 @@ void help()
 	fprintf(stderr, "Usage: thrift [options] file\n");
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version					Print the compiler version\n");
-	fprintf(stderr, "  -t filename				Set the template file\n");
+	fprintf(stderr, "  -hs filename				Set the template file\n");
 	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
 	fprintf(stderr, "  -j dir					set json output path\n");
 	fprintf(stderr, "  -o dir					set output path\n");
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
-		else if (strcmp(arg, "-t") == 0)
+		else if (strcmp(arg, "-hs") == 0)
 		{
 			arg = argv[++i];
 			if (arg == NULL)

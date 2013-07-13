@@ -42,7 +42,7 @@ PHP_RINIT_FUNCTION(hotscript);
 PHP_RSHUTDOWN_FUNCTION(hotscript);
 PHP_MINFO_FUNCTION(hotscript);
 
-PHP_FUNCTION(hot_encode);
+PHP_FUNCTION(hs_execute);
 
 /* 
   	Declare any global variables you may need between the BEGIN
