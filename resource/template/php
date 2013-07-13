@@ -1,0 +1,91 @@
+#ifndef _H_<% $file_tag %>
+#define _H_<% $file_tag %>
+
+#include "hotpot/hp_platform.h"
+
+<%
+	$DefinitionList
+	[
+		$*
+		{
+			$comment
+			{
+%>
+//<% $text %>
+<%
+			}
+
+
+			$const
+			{
+%>
+#ifndef <% $name %>
+#define <% $name %> <% $value %>
+#endif//<% $name %>
+<%
+			}
+
+			$enum
+			{
+%>
+typedef enum _<% $name %>
+{
+<%
+				$list
+				[
+					$*
+					{
+%>
+	<% $name %> = <% $value %> ,<%	}
+				]
+%>
+}<% $name %>;
+<%
+			}
+
+			$struct
+			{
+%>
+typedef struct _<% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpstring'}}}%> <%$name%>;<%
+					}
+				]
+%>
+}<% $name %>;
+<%
+			}
+
+			$union
+			{
+%>
+typedef union _<% $name %>
+{
+<%				$list
+				[
+					$*
+					{
+%>
+	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpstring'}}}%> <% $name%>;<%
+					}
+				]
+%>
+}<% $name %>;
+<%
+			}
+		
+			$typedef
+			{
+%>
+typedef <%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpstring'}}}%> <%$new_type%>;
+<%
+			}
+		}
+	]
+%>
+#endif//_H_<% $file_tag %>
