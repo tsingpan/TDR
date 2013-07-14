@@ -42,6 +42,7 @@ PHP_RINIT_FUNCTION(hotscript);
 PHP_RSHUTDOWN_FUNCTION(hotscript);
 PHP_MINFO_FUNCTION(hotscript);
 
+PHP_FUNCTION(hs_execute_array);
 PHP_FUNCTION(hs_execute);
 
 /* 
