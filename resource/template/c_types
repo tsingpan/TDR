@@ -1,5 +1,5 @@
-#ifndef _H_<% $file_tag %>
-#define _H_<% $file_tag %>
+#ifndef _H_<% $file_tag %>_types
+#define _H_<% $file_tag %>_types
 
 #include "hotpot/hp_platform.h"
 
@@ -88,4 +88,4 @@ typedef <%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector
 		}
 	]
 %>
-#endif//_H_<% $file_tag %>
+#endif//_H_<% $file_tag %>_types

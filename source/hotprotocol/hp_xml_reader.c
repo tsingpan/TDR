@@ -24,7 +24,15 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_field_begin = xml_read_field_begin;
 	self->super.read_field_end = xml_read_field_end;
 
+	self->super.read_int8 = xml_read_hpint8;
+	self->super.read_int16 = xml_read_hpint16;
+	self->super.read_int32 = xml_read_hpint32;
 	self->super.read_int64 = xml_read_hpint64;
+
+	self->super.read_uint8 = xml_read_hpuint8;
+	self->super.read_uint16 = xml_read_hpuint16;
+	self->super.read_uint32 = xml_read_hpuint32;
+	self->super.read_uint64 = xml_read_hpuint64;
 
 	self->super.read_double = xml_read_hpdouble;
 	self->super.read_bytes = xml_read_bytes;
@@ -32,7 +40,6 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_vector_item_begin = xml_read_vector_item_begin;
 	self->super.read_vector_item_end= xml_read_vector_item_end;
 	self->super.read_string = xml_read_string;
-	self->super.read_uint32 = xml_read_hpuint32;
 	
 
 
@@ -199,6 +206,29 @@ hpint32 xml_read_hpdouble(HPAbstractReader *super, double *val)
 	return E_HP_NOERROR;
 }
 
+hpint32 xml_read_hpint8(HPAbstractReader *super, hpint8 *val)
+{
+	hpint64 i64;
+	hpint32 ret = xml_read_hpint64(super, &i64);
+	*val = i64;
+	return ret;
+}
+
+hpint32 xml_read_hpint16(HPAbstractReader *super, hpint16 *val)
+{
+	hpint64 i64;
+	hpint32 ret = xml_read_hpint64(super, &i64);
+	*val = i64;
+	return ret;
+}
+
+hpint32 xml_read_hpint32(HPAbstractReader *super, hpint32 *val)
+{
+	hpint64 i64;
+	hpint32 ret = xml_read_hpint64(super, &i64);
+	*val = i64;
+	return ret;
+}
 
 hpint32 xml_read_hpint64(HPAbstractReader *super, hpint64 *val)
 {
@@ -208,10 +238,34 @@ hpint32 xml_read_hpint64(HPAbstractReader *super, hpint64 *val)
 	return E_HP_NOERROR;
 }
 
+hpint32 xml_read_hpuint8(HPAbstractReader *super, hpuint8 *val)
+{
+	hpuint64 ui64;
+	hpint32 ret = xml_read_hpuint64(super, &ui64);
+	*val = ui64;
+	return ret;
+}
+
 hpint32 xml_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 {
+	hpuint64 ui64;
+	hpint32 ret = xml_read_hpuint64(super, &ui64);
+	*val = ui64;
+	return ret;
+}
+
+hpint32 xml_read_hpuint16(HPAbstractReader *super, hpuint16 *val)
+{
+	hpuint64 ui64;
+	hpint32 ret = xml_read_hpuint64(super, &ui64);
+	*val = ui64;
+	return ret;
+}
+
+hpint32 xml_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
+{
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
-	fscanf(self->f, "%u", val);
+	fscanf(self->f, "%llu", val);
 	self->need_tab = hpfalse;
 	return E_HP_NOERROR;
 }

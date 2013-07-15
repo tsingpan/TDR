@@ -1,0 +1,40 @@
+#ifndef _H_<% $file_tag %>_reader_header
+#define _H_<% $file_tag %>_reader_header
+
+#include "<%$package_name%>_types.h"
+<%
+	$DefinitionList
+	[
+		$*
+		{
+			$import
+			{
+%>
+#include "<%$file%>.h"
+<%
+			}
+			$comment
+			{
+%>
+//<% $text %>
+<%
+			}
+
+			$struct
+			{
+%>
+void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>);
+<%
+			}
+
+	$union
+			{
+%>
+void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>);
+<%
+			}
+
+		}
+	]
+%>
+#endif//_H_<% $file_tag %>_reader_header
