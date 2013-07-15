@@ -154,7 +154,14 @@ int main(int argc, char **argv)
 				usage();
 				goto ERROR_RET;
 			}
-			json_output_file = fopen(arg, "wb");
+			if(strcmp(arg, "stdout") == 0)
+			{
+				json_output_file= stdout;
+			}
+			else
+			{
+				json_output_file = fopen(arg, "wb");
+			}
 		}
 		else if(strcmp(arg, "-o") == 0)
 		{
@@ -188,8 +195,6 @@ int main(int argc, char **argv)
 		}
 		fclose(json_output_file);
 		json_output_file = NULL;
-
-		printf("Json output succeed.\n");
 	}
 
 	if(output_file == NULL)
@@ -212,11 +217,9 @@ int main(int argc, char **argv)
 	{
 		goto ERROR_RET;
 	}
-	printf("template output succeed.\n");
 	hotobject_free(obj);
 
 	return 0;
 ERROR_RET:
-	printf("compile failed\n");
 	return 1;
 }
