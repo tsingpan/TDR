@@ -11,7 +11,14 @@
 	{
 		if(isset($type['ContainerType']))
 		{
-			return 'array';
+				if(isset($type['ContainerType']['vector']))
+				{
+					return 'array';
+				}
+				else if(isset($type['ContainerType']['string']))
+				{
+					return 'string';
+				}
 		}
 		else if(isset($type['ObjectType']))
 		{
@@ -62,6 +69,7 @@
 				echo "\t\t\t\t\t\tthrow new Exception(\$property_name . \" is not " . $t . "\");\n";
 				echo "\t\t\t\t\t}\n";
 			}
+			echo "\t\t\t\tbreak;\n";
 			echo "\t\t\t\t}\n";
 		}
 		echo "\t\t\t}\n";
