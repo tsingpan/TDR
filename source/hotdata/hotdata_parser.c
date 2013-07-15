@@ -320,13 +320,13 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 		}
 	}
 	write_field_begin(self->writer, "file_tag", strlen("file_tag"));
-	write_hpstring(self->writer, file_tag);
+	write_string(self->writer, file_tag);
 	write_field_end(self->writer, "file_tag", strlen("file_tag"));
 
 	write_semicolon(self->writer);
 
 	write_field_begin(self->writer, "file", strlen("file"));
-	write_hpstring(self->writer, self->file_name);
+	write_string(self->writer, self->file_name);
 	write_field_end(self->writer, "file", strlen("file"));
 
 	if(last == 0xffffffff)
@@ -347,7 +347,7 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	file_tag[file_tag_len] = 0;
 	write_semicolon(self->writer);
 	write_field_begin(self->writer, "package_name", strlen("package_name"));
-	write_hpstring(self->writer, file_tag);
+	write_string(self->writer, file_tag);
 	write_field_end(self->writer, "package_name", strlen("package_name"));
 
 	write_semicolon(self->writer);
@@ -512,7 +512,7 @@ void dp_on_bool(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbool b)
 	{
 		return;
 	}
-	write_hpbool(self->writer, b);
+	write_bool(self->writer, b);
 }
 
 void dp_on_bytes(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes bytes)
@@ -530,7 +530,7 @@ void dp_on_string(DATA_PARSER *self, const YYLTYPE *yylloc, const hpchar *str)
 	{
 		return;
 	}
-	write_hpstring(self->writer, str);
+	write_string(self->writer, str);
 }
 
 void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -688,12 +688,12 @@ void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint
 		return;
 	}
 	write_field_begin(self->writer, "value", strlen("value"));
-	write_hpint64(self->writer, i64);
+	write_int64(self->writer, i64);
 	write_field_end(self->writer, "value", strlen("value"));
 
 	write_semicolon(self->writer);
 	write_field_begin(self->writer, "base", strlen("base"));
-	write_hpint64(self->writer, 10);
+	write_int64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
 }
 
@@ -704,12 +704,12 @@ void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const h
 		return;
 	}
 	write_field_begin(self->writer, "value", strlen("value"));
-	write_hpint64(self->writer, i64);
+	write_int64(self->writer, i64);
 	write_field_end(self->writer, "value", strlen("value"));
 
 	write_semicolon(self->writer);
 	write_field_begin(self->writer, "base", strlen("base"));
-	write_hpint64(self->writer, 16);
+	write_int64(self->writer, 16);
 	write_field_end(self->writer, "base", strlen("base"));
 }
 
@@ -720,12 +720,12 @@ void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpui
 		return;
 	}
 	write_field_begin(self->writer, "value", strlen("value"));
-	write_hpuint64(self->writer, ui64);
+	write_uint64(self->writer, ui64);
 	write_field_end(self->writer, "value", strlen("value"));
 
 	write_semicolon(self->writer);
 	write_field_begin(self->writer, "base", strlen("base"));
-	write_hpint64(self->writer, 10);
+	write_int64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
 }
 
@@ -736,12 +736,12 @@ void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 		return;
 	}
 	write_field_begin(self->writer, "value", strlen("value"));
-	write_hpuint64(self->writer, ui64);
+	write_uint64(self->writer, ui64);
 	write_field_end(self->writer, "value", strlen("value"));
 
 	write_semicolon(self->writer);
 	write_field_begin(self->writer, "base", strlen("base"));
-	write_hpint64(self->writer, 10);
+	write_int64(self->writer, 10);
 	write_field_end(self->writer, "base", strlen("base"));
 }
 
@@ -788,7 +788,7 @@ void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	write_field_begin(self->writer, "switch", strlen("switch"));
 	if(sn_tok_identifier == NULL)
 	{
-		write_hpstring(self->writer, "s");
+		write_string(self->writer, "s");
 	}
 	else
 	{

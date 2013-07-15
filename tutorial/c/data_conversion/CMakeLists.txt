@@ -11,13 +11,15 @@ INCLUDE_DIRECTORIES(
 	${HOTPOT_INCLUDE_DIR}/
 	${GEN_PATH}/
 	)
-set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c ${GEN_PATH}/proto_reader.h)
+set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c ${GEN_PATH}/proto_reader.h ${GEN_PATH}/proto_writer.c ${GEN_PATH}/proto_writer.h)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
 
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
 	COMMAND ${HOTDATA_EXECUTABLE} -hs c_types -o ${GEN_PATH}/proto_types.h ${data_conversion_SOURCE_DIR}/proto.dd
 	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader -o ${GEN_PATH}/proto_reader.c ${data_conversion_SOURCE_DIR}/proto.dd
 	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader_header -o ${GEN_PATH}/proto_reader.h ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer -o ${GEN_PATH}/proto_writer.c ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer_header -o ${GEN_PATH}/proto_writer.h ${data_conversion_SOURCE_DIR}/proto.dd
 )
 
 ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})

@@ -20,21 +20,21 @@ hpint32 ddekit_json_encoding_writer_init(HP_JSON_WRITER *self, FILE *f)
 	self->super.write_field_begin = ddekit_json_encoding_write_field_begin;
 	self->super.write_field_end = ddekit_json_encoding_write_field_end;
 	
-	self->super.write_hpint8 = ddekit_json_encoding_write_hpint8;
-	self->super.write_hpint16 = ddekit_json_encoding_write_hpint16;
-	self->super.write_hpint32 = ddekit_json_encoding_write_hpint32;
-	self->super.write_hpint64 = ddekit_json_encoding_write_hpint64;
-	self->super.write_hpuint8 = ddekit_json_encoding_write_hpuint8;
-	self->super.write_hpuint16 = ddekit_json_encoding_write_hpuint16;
-	self->super.write_hpuint32 = ddekit_json_encoding_write_hpuint32;
-	self->super.write_hpuint64 = ddekit_json_encoding_write_hpuint64;
+	self->super.write_int8 = ddekit_json_encoding_write_hpint8;
+	self->super.write_int16 = ddekit_json_encoding_write_hpint16;
+	self->super.write_int32 = ddekit_json_encoding_write_hpint32;
+	self->super.write_int64 = ddekit_json_encoding_write_hpint64;
+	self->super.write_uint8 = ddekit_json_encoding_write_hpuint8;
+	self->super.write_uint16 = ddekit_json_encoding_write_hpuint16;
+	self->super.write_uint32 = ddekit_json_encoding_write_hpuint32;
+	self->super.write_uint64 = ddekit_json_encoding_write_hpuint64;
 
 	self->super.write_enum = ddekit_json_encoding_write_enum;
-	self->super.write_hpchar = ddekit_json_encoding_write_hpchar;
-	self->super.write_hpdouble = ddekit_json_encoding_write_hpdouble;
+	self->super.write_char = ddekit_json_encoding_write_hpchar;
+	self->super.write_double = ddekit_json_encoding_write_hpdouble;
 	self->super.write_bytes = ddekit_json_encoding_write_bytes;
-	self->super.write_hpstring = ddekit_json_encoding_write_string;
-	self->super.write_hpbool = ddekit_json_encoding_write_hpbool;
+	self->super.write_string = ddekit_json_encoding_write_string;
+	self->super.write_bool = ddekit_json_encoding_write_hpbool;
 	self->super.write_null = ddekit_json_encoding_write_null;
 	self->super.write_semicolon = ddekit_json_encoding_write_semicolon;
 	self->super.write_vector_item_begin = ddekit_json_encoding_write_vector_item_begin;
@@ -53,16 +53,16 @@ hpint32 ddekit_json_encoding_writer_fini(HP_JSON_WRITER *self)
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
 	self->super.write_enum = NULL;
-	self->super.write_hpchar = NULL;
-	self->super.write_hpdouble = NULL;
-	self->super.write_hpint8 = NULL;
-	self->super.write_hpint16 = NULL;
-	self->super.write_hpint32 = NULL;
-	self->super.write_hpint64 = NULL;
-	self->super.write_hpuint8 = NULL;
-	self->super.write_hpuint16 = NULL;
-	self->super.write_hpuint32 = NULL;
-	self->super.write_hpuint64 = NULL;
+	self->super.write_char = NULL;
+	self->super.write_double = NULL;
+	self->super.write_int8 = NULL;
+	self->super.write_int16 = NULL;
+	self->super.write_int32 = NULL;
+	self->super.write_int64 = NULL;
+	self->super.write_uint8 = NULL;
+	self->super.write_uint16 = NULL;
+	self->super.write_uint32 = NULL;
+	self->super.write_uint64 = NULL;
 
 
 	return E_HP_NOERROR;

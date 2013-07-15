@@ -109,24 +109,24 @@ Value:
 |	tok_integer
 	{
 		write_type(YYJSON_WRITER, E_HP_INT64);
-		write_hpint64(YYJSON_WRITER, $1.val.i64);
+		write_int64(YYJSON_WRITER, $1.val.i64);
 	}
 |	tok_double
 	{
 		write_type(YYJSON_WRITER, E_HP_DOUBLE);
-		write_hpdouble(YYJSON_WRITER, $1.val.d);
+		write_double(YYJSON_WRITER, $1.val.d);
 	}
 |	{ write_type(YYJSON_WRITER, E_HP_OBJECT); } Object
 |	{ write_type(YYJSON_WRITER, E_HP_VECTOR); } Array	
 |	tok_true
 	{
 		write_type(YYJSON_WRITER, E_HP_BOOL);
-		write_hpbool(YYJSON_WRITER, hptrue);
+		write_bool(YYJSON_WRITER, hptrue);
 	}
 |	tok_false
 	{
 		write_type(YYJSON_WRITER, E_HP_BOOL);
-		write_hpbool(YYJSON_WRITER, hpfalse);
+		write_bool(YYJSON_WRITER, hpfalse);
 	}
 |	tok_null
 	{

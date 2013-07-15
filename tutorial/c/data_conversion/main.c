@@ -12,6 +12,7 @@ PROTO proto;
 
 
 HP_XML_READER xml_reader;
+
 int main()
 {
 	FILE *fin = fopen("d:/t.xml", "rb");

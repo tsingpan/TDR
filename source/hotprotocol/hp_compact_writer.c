@@ -14,16 +14,16 @@ hpint32 ddekit_compact_encoding_writer_init(HP_COMPACT_WRITER *self, void *addr,
 	self->dpw.write_field_begin = ddekit_compact_encoding_write_field_begin;
 	self->dpw.write_field_end = ddekit_compact_encoding_write_field_end;
 	self->dpw.write_enum = ddekit_compact_encoding_write_enum;
-	self->dpw.write_hpchar = ddekit_compact_encoding_write_hpchar;
-	self->dpw.write_hpdouble = ddekit_compact_encoding_write_hpdouble;
-	self->dpw.write_hpint8 = ddekit_compact_encoding_write_hpint8;
-	self->dpw.write_hpint16 = ddekit_compact_encoding_write_hpint16;
-	self->dpw.write_hpint32 = ddekit_compact_encoding_write_hpint32;
-	self->dpw.write_hpint64 = ddekit_compact_encoding_write_hpint64;
-	self->dpw.write_hpuint8 = ddekit_compact_encoding_write_hpuint8;
-	self->dpw.write_hpuint16 = ddekit_compact_encoding_write_hpuint16;
-	self->dpw.write_hpuint32 = ddekit_compact_encoding_write_hpuint32;
-	self->dpw.write_hpuint64 = ddekit_compact_encoding_write_hpuint64;
+	self->dpw.write_char = ddekit_compact_encoding_write_hpchar;
+	self->dpw.write_double = ddekit_compact_encoding_write_hpdouble;
+	self->dpw.write_int8 = ddekit_compact_encoding_write_hpint8;
+	self->dpw.write_int16 = ddekit_compact_encoding_write_hpint16;
+	self->dpw.write_int32 = ddekit_compact_encoding_write_hpint32;
+	self->dpw.write_int64 = ddekit_compact_encoding_write_hpint64;
+	self->dpw.write_uint8 = ddekit_compact_encoding_write_hpuint8;
+	self->dpw.write_uint16 = ddekit_compact_encoding_write_hpuint16;
+	self->dpw.write_uint32 = ddekit_compact_encoding_write_hpuint32;
+	self->dpw.write_uint64 = ddekit_compact_encoding_write_hpuint64;
 	
 
 	self->addr = addr;
@@ -42,16 +42,16 @@ hpint32 ddekit_compact_encoding_writer_fini(HP_COMPACT_WRITER *self)
 	self->dpw.write_vector_begin = NULL;
 	self->dpw.write_vector_end = NULL;
 	self->dpw.write_enum = NULL;
-	self->dpw.write_hpchar = NULL;
-	self->dpw.write_hpdouble = NULL;
-	self->dpw.write_hpint8 = NULL;
-	self->dpw.write_hpint16 = NULL;
-	self->dpw.write_hpint32 = NULL;
-	self->dpw.write_hpint64 = NULL;
-	self->dpw.write_hpuint8 = NULL;
-	self->dpw.write_hpuint16 = NULL;
-	self->dpw.write_hpuint32 = NULL;
-	self->dpw.write_hpuint64 = NULL;
+	self->dpw.write_char = NULL;
+	self->dpw.write_double = NULL;
+	self->dpw.write_int8 = NULL;
+	self->dpw.write_int16 = NULL;
+	self->dpw.write_int32 = NULL;
+	self->dpw.write_int64 = NULL;
+	self->dpw.write_uint8 = NULL;
+	self->dpw.write_uint16 = NULL;
+	self->dpw.write_uint32 = NULL;
+	self->dpw.write_uint64 = NULL;
 
 	self->addr = NULL;
 	self->size = 0;

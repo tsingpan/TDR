@@ -1,0 +1,325 @@
+#include "hotpot/hp_platform.h"
+#include "hotprotocol/hp_abstract_writer.h"
+
+#include "<%$package_name%>_types.h"
+#include <string.h>
+<%
+	$DefinitionList
+	[
+		$*
+		{
+			$import
+			{
+%>
+#include "<%$file%>.h"
+<%
+			}
+			$comment
+			{
+%>
+//<% $text %>
+<%
+			}
+
+			$struct
+			{
+%>
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
+{ 
+	write_struct_begin(self, "<%$name%>");
+<%				$list
+				[
+					$*
+					{
+						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{%>
+	write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+	write_vector_begin(self);
+	{	
+		hpuint32 i;
+		for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
+		{
+			if( i == data-><%$Arguments[$2{$Identifier{$id}}]%> )
+			{
+				break;
+			}
+			write_vector_item_begin(self, i);
+<%								}
+								$string
+								{%>
+	write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+<%								}
+							}
+						$ObjectType
+						{%>
+		write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+<%						}
+						$SimpleType
+						{%>
+		write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+<%						}
+					}%>
+		<%
+						$condition
+						{
+							$expression
+							{
+								'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'}
+							' '
+							}
+						}
+						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{
+									'\t'
+								}
+							}
+						}%>write_<%
+						$Type
+						{
+							$SimpleType{$type}
+							$ObjectType{$type}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$0
+										{
+											$Identifier
+											{
+												$id
+											}
+											$SimpleType
+											{
+												$type
+											}
+										}
+									]
+								}
+								$string
+								{
+									'string'
+								}
+							}
+						}%>(self, <%
+						$Type
+						{
+							$ContainerType
+							{
+								'&data->'
+							}
+							$ObjectType
+							{
+								'&data->'
+							}
+							$SimpleType
+							{
+								'data->'
+							}
+							$name
+						}
+						$Type
+						{
+							$ObjectType
+							{
+								$Arguments
+								[
+									$*
+									{
+										', data->'
+										$Identifier{$id}
+									}
+								]
+							}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$3+
+										{
+											', '
+											$Identifier
+											{
+												'data->'
+												$id
+											}
+										}
+									]
+								}
+							}
+						}%>);
+<%						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{%>
+			write_vector_item_end(self, i);
+		}
+	}
+	write_vector_end(self);
+	write_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%								}
+								$string
+								{%>
+	write_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%								}
+							}
+							$ObjectType
+							{%>
+		write_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%							}
+							$SimpleType
+							{%>
+		write_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%							}
+						}
+					}
+				]
+%>
+	write_struct_end(self , "<%$name%>");
+}
+<%
+			}
+
+			$union
+			{
+%>
+void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% 
+				$Parameters
+				[
+					$*
+					{
+						' , hp'
+						$Type
+						{
+							$SimpleType
+							{
+								$type
+							}
+							$ObjectType
+							{
+								$type
+							}
+							$ContainerType
+							{
+								$type
+							}
+						}
+						' '
+						$name
+					}
+				]%>)
+{
+	write_struct_begin(self, "<%$name%>");
+	switch(<% $TypeAnnotations[$*{$switch}] %>)
+	{
+<%				$list
+				[
+					$*
+					{
+%>
+		case <% $condition{$expression{$op1}}%>:
+			write_<%
+						$Type
+						{
+							$SimpleType{$type}
+							$ObjectType{$type}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$0
+										{
+											$Identifier
+											{
+												$id
+											}
+											$SimpleType
+											{
+												$type
+											}
+										}
+									]
+								}
+								$string{'string'}
+							}
+	}
+%>(self, <%
+						$Type
+						{
+							$ContainerType
+							{
+								'data->'
+							}
+							$ObjectType
+							{
+								'*data->'
+							}
+							$SimpleType
+							{
+								'*data->'
+							}
+							$name
+						}
+						$Type
+						{
+							$ObjectType
+							{
+								$Arguments
+								[
+									$*
+									{
+										', data->'
+										$Identifier
+										{
+											$id
+										}
+									}
+								]
+							}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$3+
+										{
+											', '
+											$Identifier
+											{
+												'data->'
+												$id
+											}
+										}
+									]
+								}
+							}
+						}%>);
+			break;<%
+					}
+				]
+%>
+	}
+	write_struct_end(self, "<%$name%>");
+}
+<%
+			}
+
+		}
+	]
+%>

@@ -20,12 +20,12 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->super.write_field_begin = xml_write_field_begin;
 	self->super.write_field_end = xml_write_field_end;
 	
-	self->super.write_hpint64 = xml_write_hpint64;
+	self->super.write_int64 = xml_write_hpint64;
 
-	self->super.write_hpdouble = xml_write_hpdouble;
+	self->super.write_double = xml_write_hpdouble;
 	self->super.write_bytes = xml_write_bytes;
-	self->super.write_hpstring = xml_write_string;
-	self->super.write_hpbool = xml_write_hpbool;
+	self->super.write_string = xml_write_string;
+	self->super.write_bool = xml_write_hpbool;
 	self->super.write_vector_item_begin = xml_write_vector_item_begin;
 	self->super.write_vector_item_end= xml_write_vector_item_end;
 
@@ -45,16 +45,16 @@ hpint32 xml_writer_fini(HP_XML_WRITER *self)
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
 	self->super.write_enum = NULL;
-	self->super.write_hpchar = NULL;
-	self->super.write_hpdouble = NULL;
-	self->super.write_hpint8 = NULL;
-	self->super.write_hpint16 = NULL;
-	self->super.write_hpint32 = NULL;
-	self->super.write_hpint64 = NULL;
-	self->super.write_hpuint8 = NULL;
-	self->super.write_hpuint16 = NULL;
-	self->super.write_hpuint32 = NULL;
-	self->super.write_hpuint64 = NULL;
+	self->super.write_char = NULL;
+	self->super.write_double = NULL;
+	self->super.write_int8 = NULL;
+	self->super.write_int16 = NULL;
+	self->super.write_int32 = NULL;
+	self->super.write_int64 = NULL;
+	self->super.write_uint8 = NULL;
+	self->super.write_uint16 = NULL;
+	self->super.write_uint32 = NULL;
+	self->super.write_uint64 = NULL;
 
 
 	return E_HP_NOERROR;
