@@ -2,6 +2,7 @@
 #include "hotprotocol/hp_abstract_reader.h"
 
 #include "<%$package_name%>_types.h"
+#include <string.h>
 <%
 	$DefinitionList
 	[
@@ -25,12 +26,18 @@
 %>
 void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 { 
+	read_struct_begin(self, "<%$name%>", strlen("<%$name%>"));
 <%				$list
 				[
 					$*
 					{
-						$Type{$ContainerType{$vector
-						{%>
+						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{%>
+	read_vector_begin(self);
 	{	
 		hpuint32 i;
 		for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
@@ -39,31 +46,184 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 			{
 				break;
 			}
-<%						}}}%>	
-		<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }} $Type{$ContainerType{$vector{'\t'}}}%>read_<%$Type
-	{
-		$SimpleType{$type}
-		$ObjectType{$type}
-		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
-	}
-%>(self, <% $Type{$ContainerType{'data->'}$ObjectType{'&data->'}$SimpleType{'&data->'} $name} $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);<%
-						$Type{$ContainerType{$vector
+			read_vector_item_begin(self, i);
+<%								}
+							}
+						$ObjectType
 						{%>
+		read_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+<%						}
+						$SimpleType
+						{%>
+		read_field_begin(self, "<%$name%>", strlen("<%$name%>"));
+<%						}
+					}%>
+		<%
+						$condition
+						{
+							$expression
+							{
+								'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'}
+							' '
+							}
+						}
+						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{
+									'\t'
+								}
+							}
+						}%>read_<%
+						$Type
+						{
+							$SimpleType{$type}
+							$ObjectType{$type}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$0
+										{
+											$Identifier
+											{
+												$id
+											}
+											$SimpleType
+											{
+												$type
+											}
+										}
+									]
+								}
+								$string
+								{
+									'string'
+								}
+							}
+						}%>(self, <%
+						$Type
+						{
+							$ContainerType
+							{
+								'data->'
+							}
+							$ObjectType
+							{
+								'&data->'
+							}
+							$SimpleType
+							{
+								'&data->'
+							}
+							$name
+						}
+						$Type
+						{
+							$ObjectType
+							{
+								$Arguments
+								[
+									$*
+									{
+										', data->'
+										$Identifier{$id}
+									}
+								]
+							}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$3+
+										{
+											', '
+											$Identifier
+											{
+												'data->'
+												$id
+											}
+										}
+									]
+								}
+								$string
+								{
+									', '
+									$Arguments
+									[
+										$0
+										{
+											$Identifier{$id}
+										}
+									]
+								}
+							}
+						}%>);
+<%						$Type
+						{
+							$ContainerType
+							{
+								$vector
+								{%>
+			read_vector_item_end(self, i);
 		}
 	}
-<%						}}}
+	read_vector_end(self);
+<%								}
+							}
+							$ObjectType
+							{%>
+		read_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%							}
+							$SimpleType
+							{%>
+		read_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%							}
+						}
 					}
 				]
 %>
+	read_struct_end(self , "<%$name%>", strlen("<%$name%>"));
 }
 <%
 			}
 
-	$union
+			$union
 			{
 %>
-void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
+void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% 
+				$Parameters
+				[
+					$*
+					{
+						' , hp'
+						$Type
+						{
+							$SimpleType
+							{
+								$type
+							}
+							$ObjectType
+							{
+								$type
+							}
+							$ContainerType
+							{
+								$type
+							}
+						}
+						' '
+						$name
+					}
+				]%>)
 {
+	read_struct_begin(self, "<%$name%>", strlen("<%$name%>"));
 	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
 <%				$list
@@ -72,18 +232,105 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 					{
 %>
 		case <% $condition{$expression{$op1}}%>:
-			read_<%$Type
-	{
-		$SimpleType{$type}
-		$ObjectType{$type}
-		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
+			read_<%
+						$Type
+						{
+							$SimpleType{$type}
+							$ObjectType{$type}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$0
+										{
+											$Identifier
+											{
+												$id
+											}
+											$SimpleType
+											{
+												$type
+											}
+										}
+									]
+								}
+								$string{'string'}
+							}
 	}
-%>(self, <% $Type{$ContainerType{'data->'}$ObjectType{'&data->'}$SimpleType{'&data->'} $name} $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);
+%>(self, <%
+						$Type
+						{
+							$ContainerType
+							{
+								'data->'
+							}
+							$ObjectType
+							{
+								'&data->'
+							}
+							$SimpleType
+							{
+								'&data->'
+							}
+							$name
+						}
+						$Type
+						{
+							$ObjectType
+							{
+								$Arguments
+								[
+									$*
+									{
+										', data->'
+										$Identifier
+										{
+											$id
+										}
+									}
+								]
+							}
+							$ContainerType
+							{
+								$vector
+								{
+									$Arguments
+									[
+										$3+
+										{
+											', '
+											$Identifier
+											{
+												'data->'
+												$id
+											}
+										}
+									]
+								}
+								$string
+								{
+									', '
+									$Arguments
+									[
+										$0
+										{
+											$Identifier
+											{
+												$id
+											}
+										}
+									]
+								}
+							}
+						}%>);
 			break;<%
 					}
 				]
 %>
 	}
+	read_struct_end(self, "<%$name%>", strlen("<%$name%>"));
 }
 <%
 			}

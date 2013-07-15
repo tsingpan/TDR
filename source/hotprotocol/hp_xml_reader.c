@@ -23,6 +23,8 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_vector_end = xml_read_vector_end;
 	self->super.read_field_begin = xml_read_field_begin;
 	self->super.read_field_end = xml_read_field_end;
+	self->super.read_vector_item_begin = xml_read_vector_item_begin;
+	self->super.read_vector_item_end= xml_read_vector_item_end;
 
 	self->super.read_int8 = xml_read_hpint8;
 	self->super.read_int16 = xml_read_hpint16;
@@ -36,9 +38,7 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 
 	self->super.read_double = xml_read_hpdouble;
 	self->super.read_bytes = xml_read_bytes;
-	self->super.read_bool = xml_read_hpbool;
-	self->super.read_vector_item_begin = xml_read_vector_item_begin;
-	self->super.read_vector_item_end= xml_read_vector_item_end;
+	self->super.read_bool = xml_read_hpbool;	
 	self->super.read_string = xml_read_string;
 	
 
