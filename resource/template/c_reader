@@ -25,29 +25,31 @@
 %>
 void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 { 
-	hpuint32 i;
 <%				$list
 				[
 					$*
 					{
 						$Type{$ContainerType{$vector
 						{%>
-	for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
-	{
-		if( i == data-><%$Arguments[$2{$Identifier{$id}}]%> )
+	{	
+		hpuint32 i;
+		for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
 		{
-			break;
-		}
+			if( i == data-><%$Arguments[$2{$Identifier{$id}}]%> )
+			{
+				break;
+			}
 <%						}}}%>	
-	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }} $Type{$ContainerType{$vector{'\t'}}}%>read_<%$Type
+		<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }} $Type{$ContainerType{$vector{'\t'}}}%>read_<%$Type
 	{
 		$SimpleType{$type}
 		$ObjectType{$type}
 		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
 	}
-%>(self, &data-><% $name $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);<%
+%>(self, <% $Type{$ContainerType{'data->'}$ObjectType{'&data->'}$SimpleType{'&data->'} $name} $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);<%
 						$Type{$ContainerType{$vector
 						{%>
+		}
 	}
 <%						}}}
 					}
@@ -70,13 +72,13 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 					{
 %>
 		case <% $condition{$expression{$op1}}%>:
-		read_<%$Type
+			read_<%$Type
 	{
 		$SimpleType{$type}
 		$ObjectType{$type}
 		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
 	}
-%>(self, &data-><% $name $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}$SimpleType{$type}}]} $ContainerType{$vector{$Arguments[$3+{', data->' $Identifier{$id}$SimpleType{$type}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);
+%>(self, <% $Type{$ContainerType{'data->'}$ObjectType{'&data->'}$SimpleType{'&data->'} $name} $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);
 			break;<%
 					}
 				]
