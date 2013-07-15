@@ -76,7 +76,7 @@ static void skip_tab(HP_XML_READER *self)
 	for(;;)
 	{
 		char c = fgetc(self->f);
-		if(c != '\t')
+		if((c != '\t') && (c != '\n') && (c != '\r') && (c != ' '))
 		{
 			ungetc('a', self->f);
 			break;

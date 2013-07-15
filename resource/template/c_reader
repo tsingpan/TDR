@@ -26,7 +26,7 @@
 %>
 void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 { 
-	read_struct_begin(self, "<%$name%>", strlen("<%$name%>"));
+	read_struct_begin(self, "<%$name%>");
 <%				$list
 				[
 					$*
@@ -37,6 +37,7 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 							{
 								$vector
 								{%>
+	read_field_begin(self, "<%$name%>", strlen("<%$name%>"));
 	read_vector_begin(self);
 	{	
 		hpuint32 i;
@@ -47,6 +48,10 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 				break;
 			}
 			read_vector_item_begin(self, i);
+<%								}
+								$string
+								{%>
+	read_field_begin(self, "<%$name%>", strlen("<%$name%>"));
 <%								}
 							}
 						$ObjectType
@@ -175,6 +180,11 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 		}
 	}
 	read_vector_end(self);
+	read_field_end(self, "<%$name%>", strlen("<%$name%>"));
+<%								}
+								$string
+								{%>
+	read_field_end(self, "<%$name%>", strlen("<%$name%>"));
 <%								}
 							}
 							$ObjectType
@@ -189,7 +199,7 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' '
 					}
 				]
 %>
-	read_struct_end(self , "<%$name%>", strlen("<%$name%>"));
+	read_struct_end(self , "<%$name%>");
 }
 <%
 			}
@@ -223,7 +233,7 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<%
 					}
 				]%>)
 {
-	read_struct_begin(self, "<%$name%>", strlen("<%$name%>"));
+	read_struct_begin(self, "<%$name%>");
 	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
 <%				$list
@@ -330,7 +340,7 @@ void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<%
 				]
 %>
 	}
-	read_struct_end(self, "<%$name%>", strlen("<%$name%>"));
+	read_struct_end(self, "<%$name%>");
 }
 <%
 			}
