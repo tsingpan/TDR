@@ -69,7 +69,7 @@
 				echo "\t\t\t\t\t\tthrow new Exception(\$property_name . \" is not " . $t . "\");\n";
 				echo "\t\t\t\t\t}\n";
 			}
-			echo "\t\t\t\tbreak;\n";
+			echo "\t\t\t\t\tbreak;\n";
 			echo "\t\t\t\t}\n";
 		}
 		echo "\t\t\t}\n";

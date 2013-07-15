@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include "proto.h"
-
 #include "hotpot/hp_platform.h"
-#include "proto.h"
+#include "proto_types.h"
 
 #include <string.h>
 

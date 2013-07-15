@@ -24,15 +24,15 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_field_begin = xml_read_field_begin;
 	self->super.read_field_end = xml_read_field_end;
 
-	self->super.read_hpint64 = xml_read_hpint64;
+	self->super.read_int64 = xml_read_hpint64;
 
-	self->super.read_hpdouble = xml_read_hpdouble;
+	self->super.read_double = xml_read_hpdouble;
 	self->super.read_bytes = xml_read_bytes;
-	self->super.read_hpbool = xml_read_hpbool;
+	self->super.read_bool = xml_read_hpbool;
 	self->super.read_vector_item_begin = xml_read_vector_item_begin;
 	self->super.read_vector_item_end= xml_read_vector_item_end;
-	self->super.read_hpstring = xml_read_string;
-	self->super.read_hpuint32 = xml_read_hpuint32;
+	self->super.read_string = xml_read_string;
+	self->super.read_uint32 = xml_read_hpuint32;
 	
 
 
@@ -48,16 +48,16 @@ hpint32 xml_reader_fini(HP_XML_READER *self)
 	self->super.read_vector_begin = NULL;
 	self->super.read_vector_end = NULL;
 	self->super.read_enum = NULL;
-	self->super.read_hpchar = NULL;
-	self->super.read_hpdouble = NULL;
-	self->super.read_hpint8 = NULL;
-	self->super.read_hpint16 = NULL;
-	self->super.read_hpint32 = NULL;
-	self->super.read_hpint64 = NULL;
-	self->super.read_hpuint8 = NULL;
-	self->super.read_hpuint16 = NULL;
-	self->super.read_hpuint32 = NULL;
-	self->super.read_hpuint64 = NULL;
+	self->super.read_char = NULL;
+	self->super.read_double = NULL;
+	self->super.read_int8 = NULL;
+	self->super.read_int16 = NULL;
+	self->super.read_int32 = NULL;
+	self->super.read_int64 = NULL;
+	self->super.read_uint8 = NULL;
+	self->super.read_uint16 = NULL;
+	self->super.read_uint32 = NULL;
+	self->super.read_uint64 = NULL;
 
 
 	return E_HP_NOERROR;

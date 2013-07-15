@@ -1,3 +1,7 @@
+#include "hotpot/hp_platform.h"
+#include "hotprotocol/hp_abstract_reader.h"
+
+#include "<%$package_name%>_types.h"
 <%
 	$DefinitionList
 	[
@@ -6,7 +10,7 @@
 			$import
 			{
 %>
-	#include "<%$file%>.h"
+#include "<%$file%>.h"
 <%
 			}
 			$comment
@@ -19,28 +23,29 @@
 			$struct
 			{
 %>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
-{
+void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
+{ 
+	hpuint32 i;
 <%				$list
 				[
 					$*
 					{
 						$Type{$ContainerType{$vector
 						{%>
-	for(i = 0; i < <%$Arguments[$1]%>; ++i)
+	for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
 	{
-		if( i == <%$Arguments[$2]%> )
+		if( i == data-><%$Arguments[$2{$Identifier{$id}}]%> )
 		{
 			break;
 		}
 <%						}}}%>	
-	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }}%><%$Type{$ContainerType{$vector{'\t'}}}%>write_<%$Type
+	<%$condition{$expression{'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'} ' ' }} $Type{$ContainerType{$vector{'\t'}}}%>read_<%$Type
 	{
 		$SimpleType{$type}
 		$ObjectType{$type}
-		$ContainerType{$vector{$Arguments[$0{$name}]} $string{'string'}}
+		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
 	}
-%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]} $ContainerType{$vector{$Arguments[$2+{',' $name}]} $string{', ' $Arguments[$0]}}}%>);<%
+%>(self, &data-><% $name $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}}]} $ContainerType{$vector{$Arguments[$3+{', ' $Identifier{'data->'$id}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);<%
 						$Type{$ContainerType{$vector
 						{%>
 	}
@@ -55,7 +60,7 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 	$union
 			{
 %>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
+void read_<%$name%>(HPAbstractReader *self, <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
 {
 	switch(<% $TypeAnnotations[$*{$switch}] %>)
 	{
@@ -65,7 +70,13 @@ void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters
 					{
 %>
 		case <% $condition{$expression{$op1}}%>:
-			write_<%$Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$name}]}$string{'string'}}}%>(<% $name $Type{$ObjectType{$Arguments[$*{',' $name}]}$ContainerType{$string{', ' $Arguments[$0]}}}%>);
+		read_<%$Type
+	{
+		$SimpleType{$type}
+		$ObjectType{$type}
+		$ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{$type}}]} $string{'string'}}
+	}
+%>(self, &data-><% $name $Type{$ObjectType{$Arguments[$*{', data->' $Identifier{$id}$SimpleType{$type}}]} $ContainerType{$vector{$Arguments[$3+{', data->' $Identifier{$id}$SimpleType{$type}}]} $string{', ' $Arguments[$0{$Identifier{$id}}]}}}%>);
 			break;<%
 					}
 				]

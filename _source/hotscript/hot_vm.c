@@ -224,7 +224,7 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 			const char *i;
 			hpint64 i64;
 			char number[1024];
-			read_hpint64(self->reader, &i64);
+			read_int64(self->reader, &i64);
 			snprintf(number, 1024, "%lld", i64);
 
 			for(i = number; *i; ++i)
@@ -238,7 +238,7 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 			const char *i;
 			hpdouble d;
 			char number[1024];
-			read_hpdouble(self->reader, &d);
+			read_double(self->reader, &d);
 			snprintf(number, 1024, "%lf", d);
 
 			for(i = number; *i; ++i)
@@ -252,7 +252,7 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 			const char *i;
 			hpbool b;
 			char number[1024];
-			read_hpbool(self->reader, &b);
+			read_bool(self->reader, &b);
 			if(b)
 			{
 				snprintf(number, 1024, "hptrue");

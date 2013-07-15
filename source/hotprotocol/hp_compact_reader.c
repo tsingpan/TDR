@@ -15,16 +15,16 @@ hpint32 ddekit_compact_encoding_reader_init(HP_COMPACT_READER *self, const void 
 	self->dpr.read_field_begin = ddekit_compact_encoding_read_field_begin;
 	self->dpr.read_field_end = ddekit_compact_encoding_read_field_end;
 	self->dpr.read_enum = ddekit_compact_encoding_read_enum;
-	self->dpr.read_hpchar = ddekit_compact_encoding_read_hpchar;
-	self->dpr.read_hpdouble = ddekit_compact_encoding_read_hpdouble;
-	self->dpr.read_hpint8 = ddekit_compact_encoding_read_hpint8;
-	self->dpr.read_hpint16 = ddekit_compact_encoding_read_hpint16;
-	self->dpr.read_hpint32 = ddekit_compact_encoding_read_hpint32;
-	self->dpr.read_hpint64 = ddekit_compact_encoding_read_hpint64;
-	self->dpr.read_hpuint8 = ddekit_compact_encoding_read_hpuint8;
-	self->dpr.read_hpuint16 = ddekit_compact_encoding_read_hpuint16;
-	self->dpr.read_hpuint32 = ddekit_compact_encoding_read_hpuint32;
-	self->dpr.read_hpuint64 = ddekit_compact_encoding_read_hpuint64;
+	self->dpr.read_char = ddekit_compact_encoding_read_hpchar;
+	self->dpr.read_double = ddekit_compact_encoding_read_hpdouble;
+	self->dpr.read_int8 = ddekit_compact_encoding_read_hpint8;
+	self->dpr.read_int16 = ddekit_compact_encoding_read_hpint16;
+	self->dpr.read_int32 = ddekit_compact_encoding_read_hpint32;
+	self->dpr.read_int64 = ddekit_compact_encoding_read_hpint64;
+	self->dpr.read_uint8 = ddekit_compact_encoding_read_hpuint8;
+	self->dpr.read_uint16 = ddekit_compact_encoding_read_hpuint16;
+	self->dpr.read_uint32 = ddekit_compact_encoding_read_hpuint32;
+	self->dpr.read_uint64 = ddekit_compact_encoding_read_hpuint64;
 
 
 
@@ -44,16 +44,16 @@ hpint32 ddekit_compact_encoding_reader_fini(HP_COMPACT_READER *self)
 	self->dpr.read_field_begin = NULL;
 	self->dpr.read_field_end = NULL;
 	self->dpr.read_enum = NULL;
-	self->dpr.read_hpchar = NULL;
-	self->dpr.read_hpdouble = NULL;
-	self->dpr.read_hpint8 = NULL;
-	self->dpr.read_hpint16 = NULL;
-	self->dpr.read_hpint32 = NULL;
-	self->dpr.read_hpint64 = NULL;
-	self->dpr.read_hpuint8 = NULL;
-	self->dpr.read_hpuint16 = NULL;
-	self->dpr.read_hpuint32 = NULL;
-	self->dpr.read_hpuint64 = NULL;
+	self->dpr.read_char = NULL;
+	self->dpr.read_double = NULL;
+	self->dpr.read_int8 = NULL;
+	self->dpr.read_int16 = NULL;
+	self->dpr.read_int32 = NULL;
+	self->dpr.read_int64 = NULL;
+	self->dpr.read_uint8 = NULL;
+	self->dpr.read_uint16 = NULL;
+	self->dpr.read_uint32 = NULL;
+	self->dpr.read_uint64 = NULL;
 
 
 	self->addr = NULL;

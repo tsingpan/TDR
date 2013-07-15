@@ -67,7 +67,7 @@ hpint32 read_LanguageString(HPAbstractReader *self, LanguageString *data)
 	read_field_end(self, "sid", strlen("sid"));
 
 	read_field_begin(self, "str", strlen("str"));
-	read_hpstring(self, data->str, MAX_LANGUAGE_STRING_LENGTH);
+	read_string(self, data->str, MAX_LANGUAGE_STRING_LENGTH);
 	read_field_end(self, "str", strlen("str"));
 	return E_HP_NOERROR;
 }
@@ -78,7 +78,7 @@ hpint32 read_LanguageLib(HPAbstractReader *self, LanguageLib *data)
 	read_struct_begin(self, "LanguageLib");
 
 	read_field_begin(self, "str_num", strlen("str_num"));
-	read_hpuint32(self, &data->str_num);
+	read_uint32(self, &data->str_num);
 	read_field_end(self, "str_num", strlen("str_num"));
 
 	read_field_begin(self, "str", strlen("str"));

@@ -11,12 +11,13 @@ INCLUDE_DIRECTORIES(
 	${HOTPOT_INCLUDE_DIR}/
 	${GEN_PATH}/
 	)
-set(DDC_OUTPUTS ${GEN_PATH}/proto.h)
+set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
 
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
-	COMMAND ${HOTDATA_EXECUTABLE} -t D:/HotPot/resource/template/c_hotpot_types -o ${GEN_PATH}/proto.h ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_types -o ${GEN_PATH}/proto_types.h ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader -o ${GEN_PATH}/proto_reader.c ${data_conversion_SOURCE_DIR}/proto.dd
 )
 
 ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})
-TARGET_LINK_LIBRARIES(data_conversion ${HOTPOT_LIBRARIES})
+TARGET_LINK_LIBRARIES(data_conversion ${HOTPOT_LIBRARIES} ${HOTPROTOCOL_LIBRARIES})
