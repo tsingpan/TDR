@@ -2,7 +2,7 @@
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "<%$types_file%>"
-#include "<%$header_file%>"
+#include "<%$writer_header_file%>"
 #include <string.h>
 <%
 	$DefinitionList

@@ -16,10 +16,10 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
 
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
 	COMMAND ${HOTDATA_EXECUTABLE} -hs c_types -o ${GEN_PATH}/proto_types.h ${data_conversion_SOURCE_DIR}/proto.dd
-	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader -o ${GEN_PATH}/proto_reader.c -jin {\\"types_file\\":\\"${GEN_PATH}/proto_types.h\\",\\"header_file\\":\\"${GEN_PATH}/proto_reader.h\\"} ${data_conversion_SOURCE_DIR}/proto.dd
-	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader_header -o ${GEN_PATH}/proto_reader.h -jin {\\"types_file\\":\\"${GEN_PATH}/proto_types.h\\"} ${data_conversion_SOURCE_DIR}/proto.dd
-	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer -o ${GEN_PATH}/proto_writer.c -jin {\\"types_file\\":\\"${GEN_PATH}/proto_types.h\\",\\"header_file\\":\\"${GEN_PATH}/proto_reader.h\\"} ${data_conversion_SOURCE_DIR}/proto.dd
-	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer_header -o ${GEN_PATH}/proto_writer.h -jin {\\"types_file\\":\\"${GEN_PATH}/proto_types.h\\"} ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader -o ${GEN_PATH}/proto_reader.c -jin ${data_conversion_SOURCE_DIR}/build.json ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_reader_header -o ${GEN_PATH}/proto_reader.h -jin ${data_conversion_SOURCE_DIR}/build.json ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer -o ${GEN_PATH}/proto_writer.c -jin ${data_conversion_SOURCE_DIR}/build.json ${data_conversion_SOURCE_DIR}/proto.dd
+	COMMAND ${HOTDATA_EXECUTABLE} -hs c_writer_header -o ${GEN_PATH}/proto_writer.h -jin ${data_conversion_SOURCE_DIR}/build.json ${data_conversion_SOURCE_DIR}/proto.dd
 )
 
 ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})

@@ -54,6 +54,7 @@ char file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
 HotObjectWriter writer;
 SCRIPT_PARSER sp;
+const char *json_input = NULL;
 FILE* output_file = NULL;
 FILE* json_output_file = NULL;
 
@@ -83,7 +84,7 @@ void get_real_file_path()
 	}
 }
 
-const char *json_input = NULL;
+
 JSON_PARSER jp;
 SCRIPT_PARSER sp;
 
@@ -160,7 +161,6 @@ int main(int argc, char **argv)
 				goto ERROR_RET;
 			}
 			json_input = arg;
-			
 		}
 		else if(strcmp(arg, "-jout") == 0)
 		{
@@ -171,14 +171,7 @@ int main(int argc, char **argv)
 				usage();
 				goto ERROR_RET;
 			}
-			if(strcmp(arg, "stdout") == 0)
-			{
-				json_output_file= stdout;
-			}
-			else
-			{
-				json_output_file = fopen(arg, "wb");
-			}
+			json_output_file = fopen(arg, "wb");
 		}
 		else if(strcmp(arg, "-o") == 0)
 		{
@@ -189,7 +182,7 @@ int main(int argc, char **argv)
 				usage();
 				goto ERROR_RET;
 			}
-			output_file = fopen(arg, "wb");;
+			output_file = fopen(arg, "wb");
 		}
 		else
 		{
@@ -201,26 +194,7 @@ int main(int argc, char **argv)
 
 	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 	load_language(&language_lib, language_path);
-	
-	if(json_output_file != NULL)
-	{
-		ddekit_json_encoding_writer_init(&jw, json_output_file);
-		
-		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-		fclose(json_output_file);
-		json_output_file = NULL;
-	}
 
-	if(output_file == NULL)
-	{
-		goto ERROR_RET;
-	}
-	
-	
-	
 	hotobject_writer_init(&writer, obj);
 	
 	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
@@ -230,16 +204,31 @@ int main(int argc, char **argv)
 
 	if(json_input)
 	{
-		json_parser_str(&jp, json_input, strlen(json_input), obj, &sp);
+		json_parser(&jp, json_input, obj, &sp);
 	}
 	
-	
-	hotobject_reader_init(&reader, obj);
-	get_real_file_path();
-	if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
+	if(json_output_file != NULL)
 	{
-		goto ERROR_RET;
+		ddekit_json_encoding_writer_init(&jw, json_output_file);
+
+		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
+		{
+			goto ERROR_RET;
+		}
+		fclose(json_output_file);
+		json_output_file = NULL;
 	}
+	
+	if(output_file)
+	{
+		hotobject_reader_init(&reader, obj);
+		get_real_file_path();
+		if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
+		{
+			goto ERROR_RET;
+		}
+	}
+	
 	hotobject_free(obj);
 
 	return 0;
