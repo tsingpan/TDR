@@ -4,8 +4,10 @@
 #include "json_l.h"
 #include "hotscript/script_parser.h"
 #include "hotscript/hotlex.h"
+#include "hotscript/hotobject_reader.h"
+#include "hotscript/hotobject_writer.h"
 
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp)
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HotObject *obj, SCRIPT_PARSER *sp)
 {
 	hpint32 ret;
 	hpint64 data;
@@ -13,44 +15,19 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 	char c;
 	YYSTYPE yystype;
 	YYLTYPE yylloc;
+	HotObjectWriter writer;
+	HotObjectReader reader;
+	hotobject_writer_init(&writer, obj);
+	hotobject_reader_init(&reader, obj);
 
 	self->result = HP_INVALID_ERROR_CODE;
 
 	self->sp = sp;
-	self->writer = writer;
-	self->reader = reader;
+	self->writer = &writer.super;
+	self->reader = &reader.super;
 	scanner_stack_init(&self->scanner_stack);
 	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
 
-	/*
-	for(;;)
-	{
-		int ret = yyjsonlex(&yystype, &yylloc, &self->scanner_stack);
-		
-		
-		if(ret == tok_string)
-		{
-			hpuint32 i;
-			printf("%d: ", ret);
-			for(i = 0;i < yystype.val.bytes.len; ++i)
-			{
-				putc(yystype.val.bytes.ptr[i], stdout);
-			}			
-			printf("\n");
-		}
-		else
-		{
-			char c = (char)ret;
-			printf("%d: %c\n", ret, c);
-		}
-		
-		if(ret <= 0)
-		{
-			exit(1);
-		}
-	}
-	return 0;
-	*/
 	ret = yyjsonparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
 	if(ret == 0)
@@ -61,6 +38,39 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *
 
 	return self->result;
 }
+
+hpint32 json_parser_str(JSON_PARSER *self, const char* str, hpuint32 str_len, HotObject *obj, SCRIPT_PARSER *sp)
+{
+	hpint32 ret;
+	hpint64 data;
+	FILE *fin;
+	char c;
+	YYSTYPE yystype;
+	YYLTYPE yylloc;
+	HotObjectWriter writer;
+	HotObjectReader reader;
+	hotobject_writer_init(&writer, obj);
+	hotobject_reader_init(&reader, obj);
+
+	self->result = HP_INVALID_ERROR_CODE;
+
+	self->sp = sp;
+	self->writer = &writer.super;
+	self->reader = &reader.super;
+	scanner_stack_init(&self->scanner_stack);
+	scanner_stack_push(&self->scanner_stack, str, str + str_len, yycINITIAL);
+
+	ret = yyjsonparse(&self->scanner_stack);
+	scanner_stack_pop(&self->scanner_stack);
+	if(ret == 0)
+	{
+		self->result = E_HP_NOERROR;
+	}
+
+
+	return self->result;
+}
+
 
 
 void yyjsonerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, char *s, ...) 

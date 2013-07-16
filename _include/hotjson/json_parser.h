@@ -1,5 +1,5 @@
-#ifndef _H_XML_PARSER
-#define _H_XML_PARSER
+#ifndef _H_JSON_PARSER
+#define _H_JSON_PARSER
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -52,7 +52,9 @@ struct tagJSON_PARSER
 	HPAbstractReader *reader;
 };
 
-hpint32 json_parser(JSON_PARSER *self, const char* file_name, HPAbstractWriter *writer, HPAbstractReader *reader, SCRIPT_PARSER *sp);
+hpint32 json_parser(JSON_PARSER *self, const char* file_name, HotObject *obj, SCRIPT_PARSER *sp);
 
-#endif//_H_XML_PARSER
+hpint32 json_parser_str(JSON_PARSER *self, const char* str, hpuint32 str_len, HotObject *obj, SCRIPT_PARSER *sp);
+
+#endif//_H_JSON_PARSER
 

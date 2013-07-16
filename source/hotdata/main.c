@@ -17,6 +17,7 @@
 #include "language/language_types.h"
 #include "language/language_reader.h"
 #include "language/language.h"
+#include "hotjson/json_parser.h"
 
 #include "hotscript/hot_vm.h"
 #include <io.h>
@@ -82,6 +83,10 @@ void get_real_file_path()
 	}
 }
 
+const char *json_input = NULL;
+JSON_PARSER jp;
+SCRIPT_PARSER sp;
+
 int main(int argc, char **argv)
 {
 	int i;
@@ -145,7 +150,19 @@ int main(int argc, char **argv)
 			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
 		}
-		else if(strcmp(arg, "-j") == 0)
+		else if(strcmp(arg, "-jin") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			json_input = arg;
+			
+		}
+		else if(strcmp(arg, "-jout") == 0)
 		{
 			arg = argv[++i];
 			if (arg == NULL)
@@ -210,6 +227,8 @@ int main(int argc, char **argv)
 	{
 		goto ERROR_RET;
 	}
+
+	json_parser_str(&jp, json_input, strlen(json_input), obj, &sp);
 	
 	
 	hotobject_reader_init(&reader, obj);

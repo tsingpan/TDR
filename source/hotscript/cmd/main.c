@@ -4,11 +4,12 @@
 #include <string.h>
 #include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
-#include "hotscript/hotobject_reader.h"
-#include "hotscript/hotobject_writer.h"
 #include "hotprotocol/hp_json_writer.h"
 #include "hotprotocol/hp_json_reader.h"
 #include "hotpot/hp_platform.h"
+#include "hotscript/hotobject_reader.h"
+#include "hotscript/hotobject_writer.h"
+
 #include <stdio.h>
 
 JSON_PARSER xp;
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
-		else if (strcmp(arg, "-j") == 0)
+		else if (strcmp(arg, "-f") == 0)
 		{
 			arg = argv[++i];
 			if (arg == NULL)
@@ -119,10 +120,9 @@ int main(int argc, char **argv)
 
 	
 	obj = hotobject_new();
-	hotobject_writer_init(&writer, obj);
-	hotobject_reader_init(&reader, obj);
+	
 
-	if(json_parser(&xp, json_file_name, &writer.super, &reader.super, &sp) != 0)
+	if(json_parser(&xp, json_file_name, obj, &sp) != 0)
 	{
 		goto ERROR_RET;
 	}
