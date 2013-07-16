@@ -268,14 +268,7 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 				self->uputc(self, *i);
 			}
 			break;
-		}
-	case E_HP_NULL:
-		{
-			self->uputc(self, 'n');
-			self->uputc(self, 'u');
-			self->uputc(self, 'l');
-			self->uputc(self, 'l');
-		}
+		}	
 	}
 
 	++(self->current_op);
