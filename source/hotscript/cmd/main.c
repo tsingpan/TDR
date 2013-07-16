@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "json_parser.h"
+#include "hotjson/json_parser.h"
 #include "hotscript/script_parser.h"
 #include <string.h>
 #include "hotscript/hotobject.h"

@@ -3,7 +3,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
 #include "json_y.h"
-#include "json_parser.h"
+#include "hotjson/json_parser.h"
 #include "json_l.h"
 #include "hotscript/hotlex.h"
 

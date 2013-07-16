@@ -8,7 +8,7 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error.h"
-#include "json_parser.h"
+#include "hotjson/json_parser.h"
 #include "hotscript/hotobject.h"
 
 #include "hotscript/hotlex.h"
@@ -21,9 +21,9 @@
 
 %code requires
 {
-#include "globals.h"
+#include "hotjson/globals.h"
 #include "hotpot/hp_value.h"
-#include "json_parser.h"
+#include "hotjson/json_parser.h"
 
 #define YYMALLOC
 #define YYFREE

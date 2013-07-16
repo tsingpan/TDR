@@ -8,7 +8,7 @@
 #include "hotpot/hp_platform.h"
 
 
-#include "json_y.h"
+
 
 #include "hotscript/hotobject.h"
 #include "hotscript/hotlex.h"
