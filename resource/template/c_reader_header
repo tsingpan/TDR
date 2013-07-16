@@ -1,6 +1,9 @@
 #ifndef _H_<% $file_tag %>_reader_header
 #define _H_<% $file_tag %>_reader_header
 
+#include "hotpot/hp_platform.h"
+#include "hotprotocol/hp_abstract_reader.h"
+
 #include "<%$package_name%>_types.h"
 <%
 	$DefinitionList
