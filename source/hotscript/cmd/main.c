@@ -27,10 +27,6 @@ HotObjectReader citer;
 
 const char *str;
 
-char buff[102400];
-size_t buff_size;
-const char *sstr = "<% \'2222\' %>";
-
 #define HOTSCRIPTCMD_VERSION "0.0.1"
 void version()
 {
