@@ -25,13 +25,13 @@
 
 void version()
 {
-  printf("HotData version %s\n", HOTDATA_VERSION);
+	printf("HotData version %s\n", HOTDATA_VERSION);
 }
 
 void usage()
 {
-  fprintf(stderr, "Usage: hd [options] file\n\n");
-  fprintf(stderr, "Use hd -help for a list of options\n");
+	fprintf(stderr, "Usage: hd [options] file\n\n");
+	fprintf(stderr, "Use hd -help for a list of options\n");
 }
 
 void help()
@@ -42,7 +42,7 @@ void help()
 	fprintf(stderr, "  -hs filename				Set the template file\n");
 	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
 	fprintf(stderr, "  -j dir					set json output path\n");
-	fprintf(stderr, "  -o dir					set output path\n");
+fprintf(stderr, "  -o dir					set output path\n");
 }
 
 
@@ -210,9 +210,10 @@ int main(int argc, char **argv)
 	{
 		goto ERROR_RET;
 	}
-	get_real_file_path();
+	
 	
 	hotobject_reader_init(&reader, obj);
+	get_real_file_path();
 	if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
 	{
 		goto ERROR_RET;
