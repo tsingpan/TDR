@@ -228,7 +228,10 @@ int main(int argc, char **argv)
 		goto ERROR_RET;
 	}
 
-	json_parser_str(&jp, json_input, strlen(json_input), obj, &sp);
+	if(json_input)
+	{
+		json_parser_str(&jp, json_input, strlen(json_input), obj, &sp);
+	}
 	
 	
 	hotobject_reader_init(&reader, obj);

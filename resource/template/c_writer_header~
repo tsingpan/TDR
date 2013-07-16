@@ -1,7 +1,12 @@
 #ifndef _H_<% $file_tag %>_writer_header
 #define _H_<% $file_tag %>_writer_header
 
-#include "<%$package_name%>_types.h"
+
+#include "hotpot/hp_platform.h"
+#include "hotprotocol/hp_abstract_writer.h"
+
+#include "<%$types_file%>"
+#
 <%
 	$DefinitionList
 	[

@@ -286,8 +286,6 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	char file_tag[1024];
 	hpuint32 file_tag_len;
 	hpuint32 j;
-	hpuint32 last = 0xffffffff;
-	hpuint32 start_pos;
 
 	if(self->scanner_stack.stack_num > 1)
 	{
@@ -301,10 +299,6 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	for(j = 0;j < file_tag_len; ++j)
 	{
 		char ch = self->file_name[j];
-		if((ch == '/') || (ch == '\\'))
-		{
-			last = j;
-		}
 		if(
 			((ch >= 'a') && (ch <= 'z'))
 			||((ch >= 'A') && (ch <= 'Z'))
@@ -329,26 +323,7 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_string(self->writer, self->file_name);
 	write_field_end(self->writer, "file", strlen("file"));
 
-	if(last == 0xffffffff)
-	{
-		start_pos = 0;
-	}
-	else
-	{
-		start_pos = last + 1;
-	}
-
-	file_tag_len = strlen(self->file_name) - start_pos;
-	if(file_tag_len >= 3)
-	{
-		file_tag_len -= 3;
-	}
-	memcpy(file_tag, self->file_name + start_pos, file_tag_len);
-	file_tag[file_tag_len] = 0;
-	write_semicolon(self->writer);
-	write_field_begin(self->writer, "package_name", strlen("package_name"));
-	write_string(self->writer, file_tag);
-	write_field_end(self->writer, "package_name", strlen("package_name"));
+	
 
 	write_semicolon(self->writer);
 

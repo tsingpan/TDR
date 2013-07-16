@@ -5,7 +5,8 @@
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
 
-#include "<%$package_name%>_types.h"
+#include "<%$types_file%>"
+
 <%
 	$DefinitionList
 	[
