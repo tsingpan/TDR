@@ -159,6 +159,7 @@ hpint32 hotobject_write_struct_end(HPAbstractWriter *super, const char *struct_n
 
 hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject)
 {
+	memset(self, 0, sizeof(HotObjectWriter));
 	self->stack_num = 0;
 	self->stack[self->stack_num].ho = hotobject;
 	++(self->stack_num);

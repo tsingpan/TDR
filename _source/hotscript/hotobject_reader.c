@@ -184,6 +184,7 @@ hpint32 hotobject_read_vector_item_end(HPAbstractReader *super, hpuint32 index)
 
 hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject)
 {
+	memset(self, 0, sizeof(HotObjectReader));
 	self->stack_num = 0;
 	self->stack[self->stack_num].ho = hotobject;
 	++(self->stack_num);

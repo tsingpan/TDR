@@ -21,7 +21,7 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HotObject *obj, SC
 	hotobject_reader_init(&reader, obj);
 
 	self->result = HP_INVALID_ERROR_CODE;
-
+	self->stack_num = 0;
 	self->sp = sp;
 	self->writer = &writer.super;
 	self->reader = &reader.super;
