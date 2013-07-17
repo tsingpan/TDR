@@ -1,0 +1,142 @@
+const uint32 MAX_STRLEN_LENGTH = 1024;
+
+//common begin
+
+//value begin
+enum SN_VALUE_TYPE
+{
+	E_SNVT_IDENTIFIER = 0,
+	E_SNVT_BOOL = 1,
+	E_SNVT_INT64 = 2,
+	E_SNVT_UINT64 = 3,
+	E_SNVT_HEX_INT64 = 4,
+	E_SNVT_HEX_UINT64 = 5,
+};
+
+union UN_VALUE<SN_VALUE_TYPE s>
+{
+case E_SNVT_INT64: int64 i64;
+case E_SNVT_HEX_INT64: int64 i64;
+case E_SNVT_UINT64: uint64 ui64;
+case E_SNVT_HEX_UINT64: uint64 ui64;
+case E_SNVT_BOOL: bool b;
+case E_SNVT_IDENTIFIER: string<MAX_STRLEN_LENGTH> identifier;
+};
+
+struct SN_VALUE
+{
+	SN_VALUE_TYPE type;
+	UN_VALUE<type> val;
+};
+//value end
+
+//type begin
+enum SN_SIMPLE_TYPE
+{
+	E_ST_INT8 = 0,
+	E_ST_INT16 = 1,
+	E_ST_INT32 = 2,
+	E_ST_INT64 = 3,
+	E_ST_UINT8 = 4,
+	E_ST_UINT16 = 5,
+	E_ST_UINT32 = 6,
+	E_ST_UINT64 = 7,
+	E_ST_CHAR = 8,
+	E_ST_BOOL = 9,
+};
+
+enum SN_CONTAINER_TYPE
+{
+	E_CT_VECTOR = 0,
+	E_CT_STRING = 1,
+};
+
+enum SN_TYPE
+{
+	E_SNT_SIMPLE = 1,
+	E_SNT_CONTAINER = 2,
+	E_SNT_OBJECT = 0,
+};
+
+struct ST_TYPE
+{
+	E_SN_TYPE type;
+if(type == E_SNT_SIMPLE) SN_SIMPLE_TYPE st;
+if(type == E_SNT_CONTAINER) SN_CONTAINER_TYPE ct;
+if(type == E_SNT_OBJECT) string<MAX_STRING_LENGTH> ot;
+};
+
+const uint32 MAX_ARGUMENT_NUM = 16;
+struct ST_ARGUMENT
+{
+	string<MAX_STRING_LENGTH> id;
+};
+struct ST_ARGUMENTS
+{
+	uint32 arg_list_num;
+	vector<ST_ARGUMENT, MAX_ARGUMENT_NUM, arg_list_num> arg_list;
+};
+
+struct ST_Expression
+{
+	bool neg;
+	string<MAX_STRLEN_LENGTH> op0;
+	string<MAX_STRLEN_LENGTH> operator;
+	string<MAX_STRLEN_LENGTH> op1;
+};
+
+struct ST_CONDITION
+{
+	bool empty;
+	ST_Expression exp;
+};
+
+struct ST_FIELD
+{
+	ST_CONDITION condition;
+	ST_TYPE type;
+	ST_ARGUMENTS args;
+	string<MAX_STRING_LENGTH> identifier;
+	ST_UNIX_COMMENT comment;
+};
+
+//type end
+
+//import begin
+struct ST_Import
+{
+	string<MAX_STRLEN_LENGTH> package_name;
+};
+
+//const begin
+struct ST_Const
+{
+	ST_TYPE type;
+	SN_VALUE val;
+};
+
+//UnixComment begin
+const uint32 MAX_COMMENT_LENGTH = 1024;
+struct ST_UNIX_COMMENT
+{
+	uint32 len;
+	vector<char, MAX_COMMENT_LENGTH, len> text;
+};
+//UnixComment end
+
+//enum begin
+struct ST_ENUM_DEF
+{
+	string<MAX_STRLEN_LENGTH> identifier;
+	SN_VALUE val;
+	ST_UNIX_COMMENT comment;
+};
+
+const uint32 MAX_ENUM_DEF_LIST_NUM = 65536;
+struct ST_ENUM
+{
+	uint32 enum_def_list_num;
+	vector<ST_ENUM_DEF, MAX_ENUM_DEF_LIST_NUM, enum_def_list_num> enum_def_list;
+};
+//enum end
+

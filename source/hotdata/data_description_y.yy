@@ -475,7 +475,8 @@ FieldExpression :
 
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "expression"); 	
-	};
+	}
+	;
 
 
 
