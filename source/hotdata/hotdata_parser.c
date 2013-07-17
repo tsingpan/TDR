@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include "globals.h"
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib)
 {
@@ -112,8 +113,6 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	dp_error_push_back(self);
 }
 
-
-#define HOTDATA_EXTENSION ".dd"
 
 hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
@@ -855,7 +854,7 @@ void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* curre
 
 	memcpy(file_name, sn_tok_import.ptr, len);
 
-	for(i = HOTDATA_EXTENSION; *i; ++i)
+	for(i = DATA_DESCRIPTION_FILE_EXTENSION_NAME; *i; ++i)
 	{
 		file_name[len++] = *i;
 	}
