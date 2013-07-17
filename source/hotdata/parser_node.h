@@ -5,6 +5,8 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
 
+//#include "syntactic_node.h"
+
 typedef union _ParserNode ParserNode;
 
 typedef enum _PN_VALUE_TYPE

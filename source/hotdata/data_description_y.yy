@@ -514,7 +514,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "vector");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_VECTOR);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_VECTOR);
 	}
 |	tok_t_string
 	{
@@ -523,7 +523,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "string");
 		
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_STRING);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_STRING);
 	};
 
 	
@@ -532,67 +532,67 @@ SimpleType:
 	{
 		dp_on_string(GET_SELF, &yylloc, "bool");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_BOOL);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_BOOL);
 	}
 |	tok_t_char
 	{
 		dp_on_string(GET_SELF, &yylloc, "char");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_CHAR);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_CHAR);
 	}
 |	tok_t_double
 	{
 		dp_on_string(GET_SELF, &yylloc, "double");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_DOUBLE);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_DOUBLE);
 	}
 |	tok_t_int8
 	{
 		dp_on_string(GET_SELF, &yylloc, "int8");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT8);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_INT8);
 	}
 |	tok_t_int16
 	{
 		dp_on_string(GET_SELF, &yylloc, "int16");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT16);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_INT16);
 	}
 |	tok_t_int32
 	{
 		dp_on_string(GET_SELF, &yylloc, "int32");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT32);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_INT32);
 	}
 |	tok_t_int64
 	{
 		dp_on_string(GET_SELF, &yylloc, "int64");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_INT64);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_INT64);
 	}
 |	tok_t_uint8 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint8");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT8);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_UINT8);
 	}
 |	tok_t_uint16 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint16");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT16);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_UINT16);
 	}
 |	tok_t_uint32 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint32");
 		
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT32);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_UINT32);
 	}
 |	tok_t_uint64
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint64");
 
-		dp_do_type(GET_SELF, &yylloc, &$$, E_SNT_UINT64);
+		dp_do_type(GET_SELF, &yylloc, &$$, E_PNT_UINT64);
 	};
 
 Parameters :
