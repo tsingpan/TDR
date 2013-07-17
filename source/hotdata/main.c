@@ -204,7 +204,10 @@ int main(int argc, char **argv)
 
 	if(json_input)
 	{
-		json_parser(&jp, json_input, obj, &sp);
+		if(json_parser(&jp, json_input, obj, &sp) != E_HP_NOERROR)
+		{
+			goto ERROR_RET;
+		}
 	}
 	
 	if(json_output_file != NULL)
@@ -223,7 +226,7 @@ int main(int argc, char **argv)
 	{
 		hotobject_reader_init(&reader, obj);
 		get_real_file_path();
-		if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != 0)
+		if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}

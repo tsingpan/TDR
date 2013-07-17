@@ -31,7 +31,12 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	alpha_map_free(alpha_map);
 
 	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
-	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	{
+		self->result[0] = E_HP_ERROR;
+		self->result_num = 1;		
+		goto done;
+	}
 
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
@@ -41,7 +46,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 		fprintf(stderr, self->result_str[i]);
 		fputc('\n', stderr);
 	}
-
+done:
 	if(self->result_num == 0)
 	{
 		return E_HP_NOERROR;

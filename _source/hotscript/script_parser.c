@@ -278,7 +278,11 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	scanner_stack_init(&self->scanner_stack);
 
 
-	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	{
+		self->result = E_HP_ERROR;
+		goto ERROR_RET;
+	}
 	
 
 	hotoparr_init(&self->hotoparr);
@@ -293,5 +297,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
 
+	return self->result;
+ERROR_RET:
 	return self->result;
 }

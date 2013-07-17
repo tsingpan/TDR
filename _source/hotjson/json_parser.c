@@ -26,7 +26,13 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HotObject *obj, SC
 	self->writer = &writer.super;
 	self->reader = &reader.super;
 	scanner_stack_init(&self->scanner_stack);
-	scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL);
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	{
+		//todo 这里改成配置文件， 已支持多语言
+		fprintf(stderr, "can not open file\n");
+		self->result = E_HP_ERROR;
+		goto ERROR_RET;
+	}
 
 	ret = yyjsonparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
@@ -36,6 +42,9 @@ hpint32 json_parser(JSON_PARSER *self, const char* file_name, HotObject *obj, SC
 	}
 
 
+	return self->result;
+
+ERROR_RET:
 	return self->result;
 }
 
