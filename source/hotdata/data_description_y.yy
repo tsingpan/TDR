@@ -22,7 +22,7 @@
 #define YYMALLOC
 #define YYFREE
 
-#define YYSTYPE SyntacticNode
+#define YYSTYPE ParserNode
 #define YYLEX_PARAM ss
 }
 
@@ -148,7 +148,7 @@ Const :
 		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
 
 
-		dp_check_constant_identifier(GET_SELF, &yylloc, &$3, $5);
+		//dp_check_constant_identifier(GET_SELF, &yylloc, &$3, $5);
 	}
 	'='
 	{
@@ -159,7 +159,7 @@ Const :
 	{	
 		dp_on_const_end(GET_SELF, &yylloc); 
 
-		dp_check_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
+		//dp_check_constant_value(GET_SELF, &yylloc, &$3, &$5, &$9);
 		
 		dp_on_definition_end(GET_SELF, &yylloc);
 	}

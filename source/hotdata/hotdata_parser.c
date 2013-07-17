@@ -18,7 +18,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->language_lib = language_lib;
 	self->writer = writer;	
 	self->result_num = 0;
-	self->symbol_list_num = 0;
+	//self->symbol_list_num = 0;
 
 	
 
@@ -735,7 +735,7 @@ void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	write_field_end(self->writer, "value", strlen("value"));
 }
 
-void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_TYPE* type, const hpbytes sn_tok_identifier)
+void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_TYPE* type, const hpbytes sn_tok_identifier)
 {
 	if(self->scanner_stack.stack_num > 1)
 	{
@@ -846,7 +846,7 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 
 //do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* current, const hpbytes sn_tok_import)
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, ParserNode* current, const hpbytes sn_tok_import)
 {
 	const char* i;
 	char file_name[1024];
@@ -868,7 +868,7 @@ void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, SyntacticNode* curre
 }
 
 
-void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpbytes sn_identifier)
+void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier)
 {
 	hpuint32 data;
 	hpuint32 i;
@@ -885,53 +885,51 @@ void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* 
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
 		goto error_ret;
 	}
-
+/*
 	if((self->symbol_list[data].type != E_SST_Const) && (self->symbol_list[data].type != E_SST_EnumDef))
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
 		goto error_ret;
 	}
-
-	current->type = E_SNVT_IDENTIFIER;
-	current->index = data;
+*/
+	current->type = E_PNVT_IDENTIFIER;
 done:
 	return;
 error_ret:
-	current->type = E_SNVT_IDENTIFIER;
-	current->index = INVALID_INDEX;
+	current->type = E_PNVT_IDENTIFIER;
 	return;
 }
 
-void dp_do_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+void dp_do_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
-	current->type = E_SNVT_INT64;
+	current->type = E_PNVT_INT64;
 }
 
-void dp_do_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpint64 i64)
+void dp_do_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
-	current->type = E_SNVT_HEX_INT64;
+	current->type = E_PNVT_HEX_INT64;
 }
 
-void dp_do_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+void dp_do_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
-	current->type = E_SNVT_UINT64;
+	current->type = E_PNVT_UINT64;
 }
 
-void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, SN_VALUE* current, const hpuint64 ui64)
+void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
-	current->type = E_SNVT_HEX_UINT64;
+	current->type = E_PNVT_HEX_UINT64;
 }
 
-void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const E_SN_TYPE type)
+void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const E_PN_TYPE type)
 {
 	current->type = type;
 }
 
-void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, SN_TYPE *current, const hpbytes sn_tok_identifier)
+void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const hpbytes sn_tok_identifier)
 {
 	hpuint32 i;
 	char id[1024];
-	SN_TYPE *type;
+	PN_TYPE *type;
 
 	current->type = E_SNT_OBJECT;
 
@@ -951,6 +949,7 @@ done:
 	return;
 }
 
+/*
 //check
 void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const hpbytes sn_tok_identifier)
 {
@@ -1072,3 +1071,4 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const SN_
 done:
 	return;
 }
+*/
