@@ -19,6 +19,8 @@
 #include "language/language.h"
 #include "hotjson/json_parser.h"
 
+#include "syntactic_node.h"
+
 #include "hotscript/hot_vm.h"
 #include <io.h>
 

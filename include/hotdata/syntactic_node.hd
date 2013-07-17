@@ -1,6 +1,14 @@
-const uint32 MAX_STRLEN_LENGTH = 1024;
+const uint32 MAX_STRING_LENGTH = 1024;
 
 //common begin
+//unix_comment_or_not begin
+const uint32 MAX_COMMENT_LENGTH = 1024;
+struct ST_UNIX_COMMENT_OR_NOT
+{
+	bool empty;
+	uint32 len;
+	vector<char, MAX_COMMENT_LENGTH, len> text;
+};
 
 //value begin
 enum SN_VALUE_TYPE
@@ -16,32 +24,19 @@ enum SN_VALUE_TYPE
 union UN_VALUE<SN_VALUE_TYPE s>
 {
 case E_SNVT_INT64: int64 i64;
-case E_SNVT_HEX_INT64: int64 i64;
+case E_SNVT_HEX_INT64: int64 hex_i64;
 case E_SNVT_UINT64: uint64 ui64;
-case E_SNVT_HEX_UINT64: uint64 ui64;
+case E_SNVT_HEX_UINT64: uint64 hex_ui64;
 case E_SNVT_BOOL: bool b;
-case E_SNVT_IDENTIFIER: string<MAX_STRLEN_LENGTH> identifier;
+case E_SNVT_IDENTIFIER: string<MAX_STRING_LENGTH> identifier;
 };
 
-struct SN_VALUE
+struct ST_VALUE
 {
 	SN_VALUE_TYPE type;
 	UN_VALUE<type> val;
 };
 
-const uint32 MAX_PARAMETER_NUM = 1024;
-
-struct ST_Parameter
-{
-	ST_Type type;
-	string<MAX_STRING_LENGTH> identifier;
-};
-
-struct ST_Parameters
-{
-	uint32 par_list_num;
-	vector<ST_Parameter, MAX_PARAMETER_NUM, par_list_num> par_list;
-};
 //value end
 
 //type begin
@@ -74,12 +69,27 @@ enum SN_TYPE
 
 struct ST_TYPE
 {
-	E_SN_TYPE type;
+	SN_TYPE type;
 if(type == E_SNT_SIMPLE) SN_SIMPLE_TYPE st;
 if(type == E_SNT_CONTAINER) SN_CONTAINER_TYPE ct;
 if(type == E_SNT_OBJECT) string<MAX_STRING_LENGTH> ot;
 };
 
+//Parameters begin
+const uint32 MAX_PARAMETER_NUM = 1024;
+struct ST_Parameter
+{
+	ST_TYPE type;
+	string<MAX_STRING_LENGTH> identifier;
+};
+
+struct ST_Parameters
+{
+	uint32 par_list_num;
+	vector<ST_Parameter, MAX_PARAMETER_NUM, par_list_num> par_list;
+};
+
+//argument begin
 const uint32 MAX_ARGUMENT_NUM = 16;
 struct ST_ARGUMENT
 {
@@ -91,12 +101,13 @@ struct ST_ARGUMENTS
 	vector<ST_ARGUMENT, MAX_ARGUMENT_NUM, arg_list_num> arg_list;
 };
 
+//condition begin
 struct ST_Expression
 {
 	bool neg;
-	string<MAX_STRLEN_LENGTH> op0;
-	string<MAX_STRLEN_LENGTH> operator;
-	string<MAX_STRLEN_LENGTH> op1;
+	string<MAX_STRING_LENGTH> op0;
+	string<MAX_STRING_LENGTH> operator;
+	string<MAX_STRING_LENGTH> op1;
 };
 
 struct ST_CONDITION
@@ -105,13 +116,14 @@ struct ST_CONDITION
 	ST_Expression exp;
 };
 
+//field begin
 struct ST_FIELD
 {
 	ST_CONDITION condition;
 	ST_TYPE type;
 	ST_ARGUMENTS args;
 	string<MAX_STRING_LENGTH> identifier;
-	ST_UNIX_COMMENT comment;
+	ST_UNIX_COMMENT_OR_NOT comment;
 };
 
 const uint32 MAX_TA_LIST_NUM = 1024;
@@ -125,8 +137,8 @@ enum TA_TYPE
 union UN_TypeAnnotation<TA_TYPE s>
 {
 case E_TA_SWITCH:		string<MAX_STRING_LENGTH> ta_switch;
-case E_TA_LOWER_BOUND:	ST_Value ta_lower_bound;
-case E_TA_UPPER_BOUND:	ST_Value ta_upper_bound;
+case E_TA_LOWER_BOUND:	ST_VALUE ta_lower_bound;
+case E_TA_UPPER_BOUND:	ST_VALUE ta_upper_bound;
 };
 
 struct ST_TypeAnnotation
@@ -146,18 +158,17 @@ struct ST_TypeAnnotations
 //import begin
 struct ST_Import
 {
-	string<MAX_STRLEN_LENGTH> package_name;
+	string<MAX_STRING_LENGTH> package_name;
 };
 
 //const begin
 struct ST_Const
 {
 	ST_TYPE type;
-	SN_VALUE val;
+	ST_VALUE val;
 };
 
 //UnixComment begin
-const uint32 MAX_COMMENT_LENGTH = 1024;
 struct ST_UNIX_COMMENT
 {
 	uint32 len;
@@ -168,9 +179,9 @@ struct ST_UNIX_COMMENT
 //enum begin
 struct ST_ENUM_DEF
 {
-	string<MAX_STRLEN_LENGTH> identifier;
-	SN_VALUE val;
-	ST_UNIX_COMMENT comment;
+	string<MAX_STRING_LENGTH> identifier;
+	ST_VALUE val;
+	ST_UNIX_COMMENT_OR_NOT comment;
 };
 
 const uint32 MAX_ENUM_DEF_LIST_NUM = 65536;

@@ -931,7 +931,7 @@ void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *curren
 	char id[1024];
 	PN_TYPE *type;
 
-	current->type = E_SNT_OBJECT;
+	current->type = E_PNT_OBJECT;
 
 	for(i = 0; i < sn_tok_identifier.len; ++i)
 	{
