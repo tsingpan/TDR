@@ -28,6 +28,20 @@ struct SN_VALUE
 	SN_VALUE_TYPE type;
 	UN_VALUE<type> val;
 };
+
+const uint32 MAX_PARAMETER_NUM = 1024;
+
+struct ST_Parameter
+{
+	ST_Type type;
+	string<MAX_STRING_LENGTH> identifier;
+};
+
+struct ST_Parameters
+{
+	uint32 par_list_num;
+	vector<ST_Parameter, MAX_PARAMETER_NUM, par_list_num> par_list;
+};
 //value end
 
 //type begin
@@ -100,6 +114,33 @@ struct ST_FIELD
 	ST_UNIX_COMMENT comment;
 };
 
+const uint32 MAX_TA_LIST_NUM = 1024;
+enum TA_TYPE
+{
+	E_TA_SWITCH = 0,
+	E_TA_LOWER_BOUND = 1,
+	E_TA_UPPER_BOUND = 2,
+};
+
+union UN_TypeAnnotation<TA_TYPE s>
+{
+case E_TA_SWITCH:		string<MAX_STRING_LENGTH> ta_switch;
+case E_TA_LOWER_BOUND:	ST_Value ta_lower_bound;
+case E_TA_UPPER_BOUND:	ST_Value ta_upper_bound;
+};
+
+struct ST_TypeAnnotation
+{
+	TA_TYPE type;
+	UN_TypeAnnotation<type, MAX_TA_LIST_NUM> ta;
+};
+
+struct ST_TypeAnnotations
+{
+	uint32 ta_list_num;
+	vector<ST_TypeAnnotation, MAX_TA_LIST_NUM, ta_list_num> ta_list;
+};
+
 //type end
 
 //import begin
@@ -140,3 +181,23 @@ struct ST_ENUM
 };
 //enum end
 
+//struct begin
+const uint32 MAX_FIELD_LIST_NUM = 65536;
+struct ST_STRUCT
+{
+	ST_TypeAnnotations ta;
+	string<MAX_STRING_LENGTH> name;
+	ST_Parameters parameters;
+	uint32 field_list_num;
+	vector<ST_FIELD, MAX_FIELD_LIST_NUM, field_list_num> field_list;
+};
+
+//union begin
+struct ST_UNION
+{
+	ST_TypeAnnotations ta;
+	string<MAX_STRING_LENGTH> name;
+	ST_Parameters parameters;
+	uint32 field_list_num;
+	vector<ST_FIELD, MAX_FIELD_LIST_NUM, field_list_num> field_list;
+};
