@@ -892,32 +892,32 @@ void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* 
 		goto error_ret;
 	}
 */
-	current->type = E_PNVT_IDENTIFIER;
+	current->type = E_SNVT_IDENTIFIER;
 done:
 	return;
 error_ret:
-	current->type = E_PNVT_IDENTIFIER;
+	current->type = E_SNVT_IDENTIFIER;
 	return;
 }
 
 void dp_do_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
-	current->type = E_PNVT_INT64;
+	current->type = E_SNVT_INT64;
 }
 
 void dp_do_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
-	current->type = E_PNVT_HEX_INT64;
+	current->type = E_SNVT_HEX_INT64;
 }
 
 void dp_do_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
-	current->type = E_PNVT_UINT64;
+	current->type = E_SNVT_UINT64;
 }
 
 void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
-	current->type = E_PNVT_HEX_UINT64;
+	current->type = E_SNVT_HEX_UINT64;
 }
 
 void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const E_PN_TYPE type)

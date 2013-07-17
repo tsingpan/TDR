@@ -5,29 +5,9 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_value.h"
 
-//#include "syntactic_node.h"
+#include "syntactic_node.h"
 
 typedef union _ParserNode ParserNode;
-
-typedef enum _PN_VALUE_TYPE
-{
-	E_PNVT_IDENTIFIER,
-	E_PNVT_BOOL,
-	E_PNVT_INT64,
-	E_PNVT_UINT64,
-	E_PNVT_HEX_INT64,
-	E_PNVT_HEX_UINT64,
-}PN_VALUE_TYPE;
-
-typedef struct _PN_VALUE PN_VALUE;
-typedef struct _PN_VALUE
-{
-	PN_VALUE_TYPE type;
-	hpint64 i64;
-	hpuint64 ui64;
-	hpbool b;
-
-};
 
 
 typedef enum _E_PN_TYPE
@@ -57,6 +37,7 @@ typedef struct _PN_TYPE
 	char identifier[MAX_IDENTIFIER_LENGTH];
 }PN_TYPE;
 
+typedef ST_VALUE PN_VALUE;
 
 union _ParserNode
 {
