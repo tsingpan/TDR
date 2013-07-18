@@ -232,6 +232,61 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			yylval->sn_tok_identifier.len = yyleng;
 			break;
 		}
+	case tok_t_bool:
+		{
+			yylval->sn_st = E_ST_BOOL;
+			break;
+		}
+	case tok_t_char:
+		{
+			yylval->sn_st = E_ST_CHAR;
+			break;
+		}
+	case tok_t_double:
+		{
+			yylval->sn_st = E_ST_DOUBLE;
+			break;
+		}
+	case tok_t_int8:
+		{
+			yylval->sn_st = E_ST_INT8;
+			break;
+		}
+	case tok_t_int16:
+		{
+			yylval->sn_st = E_ST_INT16;
+			break;
+		}
+	case tok_t_int32:
+		{
+			yylval->sn_st = E_ST_INT32;
+			break;
+		}
+	case tok_t_int64:
+		{
+			yylval->sn_st = E_ST_INT64;
+			break;
+		}
+	case tok_t_uint8:
+		{
+			yylval->sn_st = E_ST_UINT8;
+			break;
+		}
+	case tok_t_uint16:
+		{
+			yylval->sn_st = E_ST_UINT16;
+			break;
+		}
+	case tok_t_uint32:
+		{
+			yylval->sn_st = E_ST_UINT32;
+			break;
+		}
+	case tok_t_uint64:
+		{
+			yylval->sn_st = E_ST_UINT64;
+			break;
+		}
 	}
 
 	return E_HP_NOERROR;
@@ -920,9 +975,16 @@ void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VAL
 	current->type = E_SNVT_HEX_UINT64;
 }
 
-void dp_do_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const E_PN_TYPE type)
+void dp_do_simple_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_SIMPLE_TYPE type)
 {
-	current->type = type;
+	current->type = E_SNT_SIMPLE;
+	current->st = type;
+}
+
+void dp_do_container_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_CONTAINER_TYPE type)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = type;
 }
 
 void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const hpbytes sn_tok_identifier)
@@ -931,13 +993,14 @@ void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *curren
 	char id[1024];
 	PN_TYPE *type;
 
-	current->type = E_PNT_OBJECT;
+	current->type = E_SNT_OBJECT;
 
 	for(i = 0; i < sn_tok_identifier.len; ++i)
 	{
 		id[i] = sn_tok_identifier.ptr[i];
 	}
 	id[i] = 0;
+	strncpy(current->ot, id, MAX_STRING_LENGTH);
 /*
 	if(!trie_retrieve(self->typedef_identifier, id, type))
 	{

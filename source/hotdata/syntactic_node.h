@@ -62,6 +62,7 @@ typedef enum _SN_SIMPLE_TYPE
 	E_ST_UINT64 = 7 ,
 	E_ST_CHAR = 8 ,
 	E_ST_BOOL = 9 ,
+	E_ST_DOUBLE = 10 ,
 }SN_SIMPLE_TYPE;
 
 typedef enum _SN_CONTAINER_TYPE
@@ -74,9 +75,9 @@ typedef enum _SN_CONTAINER_TYPE
 typedef enum _SN_TYPE
 {
 
-	E_SNT_SIMPLE = 1 ,
-	E_SNT_CONTAINER = 2 ,
-	E_SNT_OBJECT = 0 ,
+	E_SNT_SIMPLE = 0 ,
+	E_SNT_CONTAINER = 1 ,
+	E_SNT_OBJECT = 2 ,
 }SN_TYPE;
 
 typedef struct _ST_TYPE

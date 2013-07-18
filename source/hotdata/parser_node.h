@@ -9,35 +9,8 @@
 
 typedef union _ParserNode ParserNode;
 
-
-typedef enum _E_PN_TYPE
-{
-	E_PNT_INT8 = E_HP_INT8,
-	E_PNT_INT16 = E_HP_INT16,
-	E_PNT_INT32 = E_HP_INT32,
-	E_PNT_INT64 = E_HP_INT64,
-	E_PNT_UINT8 = E_HP_UINT8,
-	E_PNT_UINT16 = E_HP_UINT16,
-	E_PNT_UINT32 = E_HP_UINT32,
-	E_PNT_UINT64 = E_HP_UINT64,
-	E_PNT_CHAR = E_HP_CHAR,
-	E_PNT_BYTES = E_HP_BYTES,
-	E_PNT_STRING = E_HP_STRING,
-	E_PNT_DOUBLE = E_HP_DOUBLE,
-	E_PNT_BOOL = E_HP_BOOL,
-	E_PNT_NULL = E_HP_NULL,
-	E_PNT_VECTOR = E_HP_VECTOR,
-	E_PNT_OBJECT = E_HP_OBJECT,
-}E_PN_TYPE;
-
-#define MAX_IDENTIFIER_LENGTH 1024
-typedef struct _PN_TYPE
-{
-	E_PN_TYPE type;
-	char identifier[MAX_IDENTIFIER_LENGTH];
-}PN_TYPE;
-
 typedef ST_VALUE PN_VALUE;
+typedef ST_TYPE PN_TYPE;
 
 union _ParserNode
 {
@@ -52,6 +25,8 @@ union _ParserNode
 	hpint64 sn_int64;
 	hpuint64 sn_hex_uint64;
 	hpint64 sn_hex_int64;
+	SN_SIMPLE_TYPE sn_st;
+	SN_CONTAINER_TYPE sn_ct;
 };
 
 
