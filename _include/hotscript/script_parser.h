@@ -37,7 +37,7 @@ struct tagSCRIPT_PARSER
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, 
 					  void *user_data, vm_user_putc uputc);
 
-hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *script_limit, 
+hpint32 script_parser_str(SCRIPT_PARSER *self, char* script, char *script_limit, 
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
 

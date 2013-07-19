@@ -30,9 +30,14 @@ restart:
 /*!re2c
 re2c:yyfill:check = 0;
 
-identifier		([a-zA-Z_][a-zA-Z_0-9]*)
-intconstant		([+-]?[0-9]+)
+LNUM			[0-9]+
+DNUM			([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
+doubleconstant	(({LNUM}|{DNUM})[eE][+-]?{LNUM})
+literal_begin	([\"])
+char_begin		(['])
+intconstant		([+-]?{LNUM})
 hexconstant		("0x"[0-9A-Fa-f]+)
+identifier		([a-zA-Z_][a-zA-Z_0-9]*)
 newline			("\r\n"|"\r"|"\n")
 comment			("//".*{newline})
 unixcomment		("#".*{newline})
@@ -83,6 +88,9 @@ anychar			([^])
 
 
 <INITIAL>"true"|"false"			{return tok_bool;																}
+<INITIAL>{literal_begin}		{return tok_string;																}
+<INITIAL>{char_begin}			{return tok_char;																}
+<INITIAL>{doubleconstant}|{DNUM}{return tok_double;																}
 <INITIAL>{hexconstant}			{return tok_hex;																}
 <INITIAL>{intconstant}			{return tok_int;																}
 <INITIAL>{identifier}			{return tok_identifier;															}

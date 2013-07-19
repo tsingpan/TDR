@@ -34,12 +34,12 @@ struct _SCANNER
 {
 	char file_name[MAX_FILE_NAME_LENGTH];
 	int yy_state;
-	const YYCTYPE *yy_last;
-	const YYCTYPE *yy_cursor;
-	const YYCTYPE *yy_limit;
-	const YYCTYPE *yy_text;
-	const YYCTYPE *yy_marker;
-	const YYCTYPE *yy_start;
+	YYCTYPE *yy_last;
+	YYCTYPE *yy_cursor;
+	YYCTYPE *yy_limit;
+	YYCTYPE *yy_text;
+	YYCTYPE *yy_marker;
+	YYCTYPE *yy_start;
 	hpuint32 yy_leng;
 
 	hpuint32 yylineno;
@@ -65,13 +65,13 @@ typedef struct _SCANNER_STACK
 	YYCTYPE buff[MAX_BUFF_SIZE];
 };
 
-hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state, const char *file_name);
+hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);
 hpint32 scanner_fini(SCANNER *self);
 
 hpint32 scanner_process(SCANNER *sp);
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
-hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state);
+hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state);
 hpint32 scanner_stack_pop(SCANNER_STACK *self);
 hpint32 scanner_stack_init(SCANNER_STACK *self);
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self);

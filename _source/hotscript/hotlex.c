@@ -36,7 +36,7 @@ hpint32 scanner_process(SCANNER *sp)
 	return E_HP_NOERROR;
 }
 
-hpint32 scanner_init(SCANNER *self, const char *yy_start, const char *yy_limit, int state, const char *file_name)
+hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name)
 {
 	if(file_name)
 	{
@@ -179,7 +179,7 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 {
 	FILE* fin;
 	char c;
-	const YYCTYPE* yy_start = self->buff_curr;
+	YYCTYPE* yy_start = self->buff_curr;
 	hpint32 i = 0;
 	hpuint32 len = 0;
 	char realPath[HP_MAX_FILE_PATH_LENGTH];
@@ -229,7 +229,7 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 
 	return E_HP_NOERROR;
 }
-hpint32 scanner_stack_push(SCANNER_STACK *self, const char *yy_start, const char *yy_limit, int state)
+hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state)
 {
 	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);

@@ -296,8 +296,8 @@ int yyjsonlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		else if(ret == tok_script_begin)
 		{
 			//这里好玩了~
-			const YYCTYPE * script_start = scanner->yy_cursor - 2;
-			const char *yy_start;
+			YYCTYPE * script_start = scanner->yy_cursor - 2;
+			char *yy_start;
 
 			while(scanner->yy_cursor < scanner->yy_limit)
 			{

@@ -36,12 +36,19 @@
 %token tok_struct
 %token tok_union 
 %token tok_if 
+
 %token tok_int
 %token tok_hex
 %token tok_int64
 %token tok_uint64
 %token tok_hex_int64
 %token tok_hex_uint64
+%token tok_double
+%token tok_bool
+%token tok_string
+%token tok_char
+
+
 %token tok_identifier 
 %token tok_const 
 %token tok_enum 
@@ -53,7 +60,6 @@
 %token tok_unique
 %token tok_lower_bound
 %token tok_upper_bound
-%token tok_bool
 %token tok_typedef
 %token tok_switch
 %token tok_t_int8
@@ -196,13 +202,23 @@ Value :
 	{
 	
 	}
+|	tok_double
+	{
+	}
+|	tok_string
+	{
+	}
+|	tok_char
+	{
+	}
 |	tok_identifier
 	{
 		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
 		
 
 		dp_do_value_identifier(GET_SELF, &yylloc, &$$, $1);
-	};
+	}
+;
 
 Typedef :
 	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_typedef_begin(GET_SELF, &yylloc);}

@@ -23,8 +23,11 @@ union _ParserNode
 	hpbool sn_bool;
 	hpuint64 sn_uint64;
 	hpint64 sn_int64;
+	hpdouble sn_d;
 	hpuint64 sn_hex_uint64;
 	hpint64 sn_hex_int64;
+	hpstring sn_string;
+	hpchar sn_char;
 	SN_SIMPLE_TYPE sn_st;
 	SN_CONTAINER_TYPE sn_ct;
 };

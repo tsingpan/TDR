@@ -159,6 +159,106 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			
 			break;
 		}
+	case tok_char:
+		{
+			if(YYCURSOR >= YYLIMIT)
+			{
+				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				break;
+			}
+			if(*YYCURSOR == '\\')
+			{
+				++YYCURSOR;
+				switch(*YYCURSOR)
+				{
+				case 'b':
+					yylval->sn_char = '\b';
+					break;
+				case 'f':
+					yylval->sn_char = '\f';
+					break;
+				case 'n':
+					yylval->sn_char = '\n';
+					break;
+				case 'r':
+					yylval->sn_char = '\r';
+					break;
+				case 't':
+					yylval->sn_char = '\t';
+					break;
+				case '\'':
+					yylval->sn_char = '\'';
+					break;
+				case '\"':
+					yylval->sn_char = '\"';
+					break;
+				case '\\':
+					yylval->sn_char = '\\';
+					break;
+				case '\/':
+					yylval->sn_char = '\/';
+					break;
+				default:
+					break;
+				}
+				++YYCURSOR;
+			}
+			else
+			{
+				yylval->sn_char = *YYCURSOR;
+				++YYCURSOR;
+			}
+			if(*YYCURSOR == '\'')
+			{
+				++YYCURSOR;				
+			}
+			else
+			{
+				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+			}
+			break;
+		}
+	case tok_string:
+		{
+			hpuint32 len = 0;
+			if(YYCURSOR >= YYLIMIT)
+			{
+				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				break;
+			}
+			yylval->sn_string = YYCURSOR;
+			while(YYCURSOR < YYLIMIT)
+			{
+				if(*YYCURSOR == '\\')
+				{
+					++YYCURSOR;
+					
+					++YYCURSOR;
+					yylval->sn_string[len++] = *YYCURSOR;
+				}
+				else if(*YYCURSOR == '\"')
+				{
+					++YYCURSOR;
+					yylval->sn_string[len] = 0;
+					break;
+				}
+				else
+				{
+					yylval->sn_string[len++] = *YYCURSOR;
+					++YYCURSOR;
+				}
+			}
+			if(YYCURSOR >= YYLIMIT)
+			{
+				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+			}
+			else
+			{				
+				yyleng = YYCURSOR - yytext;
+			}
+			
+			break;
+		}
 	case tok_bool:
 		{
 			if(yytext[0] == 't')
@@ -185,6 +285,17 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				{	
 					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
 				}
+			}
+			break;
+		}
+	case tok_double:
+		{
+			errno = 0;
+			*token = tok_double;
+			yylval->sn_d = strtod(yytext, NULL);
+			if (errno == ERANGE)
+			{
+					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
 			}
 			break;
 		}

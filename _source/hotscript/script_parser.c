@@ -238,7 +238,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 	return ret;
 }
 
-hpint32 script_parser_str(SCRIPT_PARSER *self, const char* script, const char *script_limit, 
+hpint32 script_parser_str(SCRIPT_PARSER *self, char* script, char *script_limit, 
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
 	hpint32 ret;
