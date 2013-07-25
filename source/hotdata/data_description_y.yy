@@ -136,16 +136,22 @@ Definition :
 
 
 Import :
-	{dp_on_definition_begin(GET_SELF, &yylloc); dp_on_import_begin(GET_SELF, &yylloc);  }
+	{dp_on_vector_item_begin(GET_SELF, &yylloc); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "import");  }
 	tok_import
 	{
-		dp_on_tok_import(GET_SELF, &yylloc, $2);
+		//首先规约这个语法节点
+		dp_do_import(GET_SELF, &yylloc, &$$, $2);
+
+		write_ST_Import(GET_WRITER, &$$);
+		//dp_on_tok_import(GET_SELF, &yylloc, $2);
 		
-		dp_on_import_end(GET_SELF, &yylloc);
+		dp_on_field_end(GET_SELF, &yylloc, "import");
 		
-		dp_on_definition_end(GET_SELF, &yylloc);
+		dp_on_struct_end(GET_SELF, &yylloc);
+
+		dp_on_vector_item_end(GET_SELF, &yylloc);
 		
-		dp_do_import(GET_SELF, &yylloc, &$$, $2);		
+		
 	};
 
 

@@ -6,7 +6,7 @@
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "<%$types_file%>"
-#
+
 <%
 	$DefinitionList
 	[
@@ -15,7 +15,7 @@
 			$import
 			{
 %>
-#include "<%$file%>.h"
+#include "<%$package_name%>.h"
 <%
 			}
 			$comment

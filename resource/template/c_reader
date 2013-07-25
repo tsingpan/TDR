@@ -13,7 +13,7 @@
 			$import
 			{
 %>
-#include "<%$file%>.h"
+#include "<%$package_name%>.h"
 <%
 			}
 			$comment
