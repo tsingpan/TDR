@@ -56,7 +56,6 @@ fprintf(stderr, "  -o dir					set output path\n");
 LanguageLib language_lib;
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
-char file_name[HP_MAX_FILE_PATH_LENGTH];
 char lua_file_name[HP_MAX_FILE_PATH_LENGTH];
 char luaprev_file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
@@ -82,13 +81,13 @@ void get_real_file_path()
 	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%ctemplate%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 	//strncpy(real_script_path, root_dir, HP_MAX_FILE_PATH_LENGTH);
 
-	if(access(file_name, 00) == 0)
+	if(access(lua_file_name, 00) == 0)
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", file_name);		
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", lua_file_name);		
 	}
 	else
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, file_name);
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, lua_file_name);
 	}
 }
 
@@ -264,7 +263,8 @@ int main(int argc, char **argv)
 	{
 		lua_pushnumber( L, 211 );
 		lua_setglobal( L, "hp" );
-		luaL_dofile(L, lua_file_name);
+		get_real_file_path();
+		luaL_dofile(L, real_script_path);
 	}
 
 	/*
