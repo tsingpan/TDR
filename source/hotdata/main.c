@@ -262,6 +262,8 @@ int main(int argc, char **argv)
 
 	if(lua_file_name[0])
 	{
+		lua_pushnumber( L, 211 );
+		lua_setglobal( L, "hp" );
 		luaL_dofile(L, lua_file_name);
 	}
 
