@@ -1,6 +1,10 @@
 #include "hotpot/hp_error.h"
 #include "globals.h"
 
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+
 #include "hotprotocol/hp_json_writer.h"
 #include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
@@ -53,6 +57,8 @@ LanguageLib language_lib;
 DATA_PARSER dp;
 HP_JSON_WRITER jw;
 char file_name[HP_MAX_FILE_PATH_LENGTH];
+char lua_file_name[HP_MAX_FILE_PATH_LENGTH];
+char luaprev_file_name[HP_MAX_FILE_PATH_LENGTH];
 HotObjectReader reader;
 HotObjectWriter writer;
 SCRIPT_PARSER sp;
@@ -96,7 +102,9 @@ int main(int argc, char **argv)
 	int count = 0;
 	HotObject *obj = hotobject_new();
 	hpuint32 len;
+	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
+	
 
 	
 	
@@ -131,6 +139,7 @@ int main(int argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
+		/*
 		else if (strcmp(arg, "-hs") == 0)
 		{
 			arg = argv[++i];
@@ -141,6 +150,29 @@ int main(int argc, char **argv)
 				goto ERROR_RET;
 			}
 			strncpy(file_name, arg, HP_MAX_FILE_PATH_LENGTH);
+		}
+		*/
+		else if (strcmp(arg, "-luaprev") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			strncpy(luaprev_file_name, arg, HP_MAX_FILE_PATH_LENGTH);
+		}
+		else if (strcmp(arg, "-lua") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			strncpy(lua_file_name, arg, HP_MAX_FILE_PATH_LENGTH);
 		}
 		else if (strcmp(arg, "-i") == 0)
 		{
@@ -153,17 +185,6 @@ int main(int argc, char **argv)
 			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
 		}
-		else if(strcmp(arg, "-jin") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			json_input = arg;
-		}
 		else if(strcmp(arg, "-jout") == 0)
 		{
 			arg = argv[++i];
@@ -175,6 +196,18 @@ int main(int argc, char **argv)
 			}
 			json_output_file = fopen(arg, "wb");
 		}
+		/*
+		else if(strcmp(arg, "-jin") == 0)
+		{
+			arg = argv[++i];
+			if (arg == NULL)
+			{
+				fprintf(stderr, "Missing template file specification\n");
+				usage();
+				goto ERROR_RET;
+			}
+			json_input = arg;
+		}		
 		else if(strcmp(arg, "-o") == 0)
 		{
 			arg = argv[++i];
@@ -186,6 +219,7 @@ int main(int argc, char **argv)
 			}
 			output_file = fopen(arg, "wb");
 		}
+		*/
 		else
 		{
 			fprintf(stderr, "Unrecognized option: %s\n", arg);
@@ -204,14 +238,6 @@ int main(int argc, char **argv)
 		goto ERROR_RET;
 	}
 
-	if(json_input)
-	{
-		if(json_parser(&jp, json_input, obj, &sp) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-	}
-	
 	if(json_output_file != NULL)
 	{
 		ddekit_json_encoding_writer_init(&jw, json_output_file);
@@ -223,6 +249,32 @@ int main(int argc, char **argv)
 		fclose(json_output_file);
 		json_output_file = NULL;
 	}
+
+
+	L = luaL_newstate();
+	luaL_openlibs(L);
+
+
+	if(luaprev_file_name[0])
+	{
+		luaL_dofile(L, luaprev_file_name);
+	}
+
+	if(lua_file_name[0])
+	{
+		luaL_dofile(L, lua_file_name);
+	}
+
+	/*
+	if(json_input)
+	{
+		if(json_parser(&jp, json_input, obj, &sp) != E_HP_NOERROR)
+		{
+			goto ERROR_RET;
+		}
+	}
+	
+	
 	
 	if(output_file)
 	{
@@ -233,7 +285,7 @@ int main(int argc, char **argv)
 			goto ERROR_RET;
 		}
 	}
-	
+	*/
 	hotobject_free(obj);
 
 	return 0;
