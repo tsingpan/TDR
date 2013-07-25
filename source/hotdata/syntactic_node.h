@@ -129,7 +129,7 @@ typedef struct _ST_Expression
 
 	hpbool neg;
 	hpchar op0[MAX_STRING_LENGTH];
-	hpchar operator[MAX_STRING_LENGTH];
+	hpchar oper[MAX_STRING_LENGTH];
 	hpchar op1[MAX_STRING_LENGTH];
 }ST_Expression;
 
