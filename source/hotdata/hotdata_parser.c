@@ -537,34 +537,6 @@ void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_struct_end(self->writer, NULL);
 }
 
-void dp_on_import_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
-{
-	if(self->scanner_stack.stack_num > 1)
-	{
-		return;
-	}
-	write_field_begin(self->writer, "import", strlen("import"));
-}
-
-void dp_on_import_end(DATA_PARSER *self, const YYLTYPE *yylloc)
-{
-	if(self->scanner_stack.stack_num > 1)
-	{
-		return;
-	}
-	write_field_end(self->writer, "import", strlen("import"));
-}
-
-void dp_on_const_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
-{
-	if(self->scanner_stack.stack_num > 1)
-	{
-		return;
-	}
-
-	write_field_begin(self->writer, "const", strlen("const"));
-	write_struct_begin(self->writer, NULL);
-}
 
 void dp_on_const_semicolon(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
@@ -683,16 +655,6 @@ void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	write_field_begin(self->writer, "name", strlen("name"));
 	write_bytes(self->writer, sn_tok_identifier);
 	write_field_end(self->writer, "name", strlen("name"));
-}
-
-void dp_on_const_end(DATA_PARSER *self, const YYLTYPE *yylloc)
-{
-	if(self->scanner_stack.stack_num > 1)
-	{
-		return;
-	}
-	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "const", strlen("const"));
 }
 
 void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
