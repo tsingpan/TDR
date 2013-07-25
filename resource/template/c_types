@@ -53,7 +53,7 @@ typedef struct _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpchar'}}}%> <%$name%><%$Type{$ContainerType{$vector{$Arguments[$1{$Identifier{'['$id']'}}]}$string{$Arguments[$0{$Identifier{'['$id']'}}]}}}%>;<%
+	<%$Type%> <%$name%><%array{'['$num']'}%>;<%
 					}
 				]
 %>
@@ -71,7 +71,7 @@ typedef union _<% $name %>
 					$*
 					{
 %>
-	<%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpchar'}}}%> <% $name%><%$Type{$ContainerType{$vector{$Arguments[$1{$Identifier{'['$id']'}}]}$string{$Arguments[$0{$Identifier{'['$id']'}}]}}}%>;<%
+	<%$Type%> <%$name%><%array{'['$num']'}%>;<%
 					}
 				]
 %>
@@ -82,7 +82,7 @@ typedef union _<% $name %>
 			$typedef
 			{
 %>
-typedef <%$Type{$SimpleType{'hp'$type} $ObjectType{$type} $ContainerType{$vector{$Arguments[$0{$Identifier{$id}$SimpleType{'hp'$type}}]}$string{'hpstring'}}}%> <%$new_type%>;
+typedef <%$Type%> <%$new_type%>;
 <%
 			}
 		}
