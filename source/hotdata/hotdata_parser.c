@@ -126,32 +126,27 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 		{
 			const char *i;
 
-			yylval->sn_tok_import.ptr = NULL;
-			yylval->sn_tok_import.len = 0;
+			yylval->sn_tok_import = NULL;
 
 			while(self->yy_cursor < self->yy_limit)
 			{
 				if(*self->yy_cursor == ';')
 				{
+					*self->yy_cursor = 0;
 					++(self->yy_cursor);
 					break;
 				}
 				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
 				{
+					*self->yy_cursor = 0;
 					++(self->yy_cursor);
-					if(yylval->sn_tok_import.ptr != NULL)
-					{
-						++(yylval->sn_tok_import.len);
-					}
 				}
 				else
 				{
-					if(yylval->sn_tok_import.ptr == NULL)
+					if(yylval->sn_tok_import == NULL)
 					{
-						yylval->sn_tok_import.ptr = self->yy_cursor;
+						yylval->sn_tok_import = self->yy_cursor;
 					}
-
-					++(yylval->sn_tok_import.len);
 
 					++(self->yy_cursor);
 				}
@@ -483,6 +478,7 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 			file_tag[j] = '_';
 		}
 	}
+	file_tag[j] = 0;
 	write_field_begin(self->writer, "file_tag", strlen("file_tag"));
 	write_string(self->writer, file_tag);
 	write_field_end(self->writer, "file_tag", strlen("file_tag"));
@@ -799,7 +795,7 @@ void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	write_field_end(self->writer, "comment", strlen("comment"));
 }
 
-void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_import)
+void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring sn_tok_import)
 {
 	if(self->scanner_stack.stack_num > 1)
 	{
@@ -807,7 +803,7 @@ void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn
 	}
 	write_struct_begin(self->writer, NULL);
 	write_field_begin(self->writer, "file", strlen("file"));
-	write_bytes(self->writer, sn_tok_import);
+	write_string(self->writer, sn_tok_import);
 	write_field_end(self->writer, "file", strlen("file"));
 	write_struct_end(self->writer, NULL);
 }
@@ -1012,25 +1008,18 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 
 
 //do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, ParserNode* current, const hpbytes sn_tok_import)
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring sn_tok_import)
 {
 	const char* i;
 	char file_name[1024];
-	size_t len = sn_tok_import.len;
-
-	memcpy(file_name, sn_tok_import.ptr, len);
-
-	for(i = DATA_DESCRIPTION_FILE_EXTENSION_NAME; *i; ++i)
-	{
-		file_name[len++] = *i;
-	}
-	file_name[len] = 0;
+	snprintf(file_name, sizeof(file_name), "%s%s", sn_tok_import, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
+	file_name[sizeof(file_name) - 1] = 0;
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
 	}
 
-	current->sn_import = sn_tok_import;
+	current->package_name[0] = 0;// = sn_tok_import;
 }
 
 

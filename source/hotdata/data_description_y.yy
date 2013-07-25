@@ -76,6 +76,10 @@
 %token tok_t_string
 %token tok_t_vector
 
+
+%type<sn_import> Import
+%type<sn_tok_import> tok_import
+
 %type<sn_tok_identifier> tok_identifier
 %type<sn_int64> tok_int64
 %type<sn_hex_int64> tok_hex_int64
@@ -83,10 +87,9 @@
 %type<sn_hex_uint64> tok_hex_uint64
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_bool> tok_bool
-%type<sn_tok_import> tok_import
 %type<sn_type> Type SimpleType ObjectType ContainerType
 %type<sn_value> Value
-%type<sn_tok_import> Import
+
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
 
@@ -499,17 +502,17 @@ FieldExpression :
 
 
 Type :
-	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);dp_on_field_begin(GET_SELF, &yylloc, "type");}
+	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "type");}
 	SimpleType
 	{dp_on_field_end(GET_SELF, &yylloc, "type");dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
 	}
 	
-|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
+|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc);}
 	ContainerType
-	{dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_end(GET_SELF, &yylloc, NULL); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
 	}
 	
-|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc, NULL); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc, NULL);}
+|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc);}
 	ObjectType
 	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
 	};

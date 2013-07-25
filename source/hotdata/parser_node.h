@@ -11,14 +11,15 @@ typedef union _ParserNode ParserNode;
 
 typedef ST_VALUE PN_VALUE;
 typedef ST_TYPE PN_TYPE;
+typedef ST_Import PN_IMPORT;
 
 union _ParserNode
 {
 	PN_VALUE sn_value;	
 	PN_TYPE sn_type;
+	PN_IMPORT sn_import;
 	hpbytes sn_tok_identifier;
-	hpbytes sn_tok_import;
-	hpbytes sn_import;
+	hpstring sn_tok_import;
 	hpbytes sn_tok_unixcomment;
 	hpbool sn_bool;
 	hpuint64 sn_uint64;
