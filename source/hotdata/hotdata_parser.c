@@ -774,6 +774,11 @@ void dp_on_value_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 void dp_on_value_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
+	if(self->scanner_stack.stack_num > 1)
+	{
+		return;
+	}
+
 	write_field_end(self->writer, "value");
 }
 
@@ -965,18 +970,20 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 //do
 void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring sn_tok_import)
 {
-	const char* i;
+	snprintf(current->package_name, sizeof(current->package_name), sn_tok_import);
+}
+
+void dp_dodo_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring sn_tok_import)
+{
 	char file_name[1024];
 	snprintf(file_name, sizeof(file_name), "%s%s", sn_tok_import, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
 	file_name[sizeof(file_name) - 1] = 0;
+
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
 	}
-
-	snprintf(current->package_name, sizeof(current->package_name), sn_tok_import);
 }
-
 
 void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier)
 {

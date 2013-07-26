@@ -31,6 +31,10 @@ HP_API hpint32 lua_write_field_begin(HPAbstractWriter *self, const char *var_nam
 
 HP_API hpint32 lua_write_field_end(HPAbstractWriter *self, const char *var_name);
 
+HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
+
+HP_API hpint32 lua_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
+
 HP_API hpint32 lua_write_enum(HPAbstractWriter *super, const int val);
 
 HP_API hpint32 lua_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
@@ -64,8 +68,5 @@ HP_API hpint32 lua_write_hpbool(HPAbstractWriter *self, const hpbool val);
 HP_API hpint32 lua_write_null(HPAbstractWriter *self);
 
 HP_API hpint32 lua_write_semicolon(HPAbstractWriter *super);
-
-HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
-
 
 #endif//_H_DDEKIT_LUA_ENCODING_WRITER

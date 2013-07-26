@@ -21,7 +21,9 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *ls)
 	self->super.write_vector_end = lua_write_vector_end;
 	self->super.write_field_begin = lua_write_field_begin;
 	self->super.write_field_end = lua_write_field_end;
-	
+	self->super.write_vector_item_begin = lua_write_vector_item_begin;
+	self->super.write_vector_item_end = lua_write_vector_item_end;
+
 	self->super.write_int8 = lua_write_hpint8;
 	self->super.write_int16 = lua_write_hpint16;
 	self->super.write_int32 = lua_write_hpint32;
@@ -38,9 +40,7 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *ls)
 	self->super.write_string = lua_write_string;
 	self->super.write_bool = lua_write_hpbool;
 	self->super.write_null = lua_write_null;
-	self->super.write_semicolon = lua_write_semicolon;
-	self->super.write_vector_item_begin = lua_write_vector_item_begin;
-
+	
 	
 
 	return E_HP_NOERROR;
@@ -113,8 +113,25 @@ hpint32 lua_write_field_begin(HPAbstractWriter *super, const char *var_name)
 hpint32 lua_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);	
+	lua_rawset(self->ls, -3);
 	return E_HP_NOERROR;
 }
+
+
+HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
+{
+	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushinteger( self->ls, index);
+	return E_HP_NOERROR;
+}
+
+HP_API hpint32 lua_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
+{
+	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_rawset(self->ls, -3);
+	return E_HP_NOERROR;
+}
+
 
 HP_API hpint32 lua_write_enum(HPAbstractWriter *super, const int val)
 {
@@ -131,12 +148,18 @@ HP_API hpint32 lua_write_enum_name(HPAbstractWriter *super, const hpchar *enum_n
 hpint32 lua_write_hpchar(HPAbstractWriter *super, const char val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	char str[2];
+	str[0] = val;
+	str[1] = 0;
+	
+	lua_pushstring(self->ls, str);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpdouble(HPAbstractWriter *super, const double val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushnumber(self->ls, val);
 	
 	return E_HP_NOERROR;
 }
@@ -144,25 +167,29 @@ hpint32 lua_write_hpdouble(HPAbstractWriter *super, const double val)
 hpint32 lua_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);	
+	lua_pushinteger(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpint16(HPAbstractWriter *super, const hpint16 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushinteger(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpint32(HPAbstractWriter *super, const hpint32 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushinteger(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
-	
+	//32位机上面使用这个可能会有问题
+	lua_pushinteger(self->ls, val);
 	return E_HP_NOERROR;
 }
 
@@ -170,41 +197,44 @@ hpint32 lua_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 hpint32 lua_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushunsigned(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushunsigned(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushunsigned(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
-	
+	lua_pushunsigned(self->ls, val);
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushlstring(self->ls, bytes.ptr, bytes.len);
 	
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_write_string(HPAbstractWriter *super, const hpchar* str)
 {
-	hpbytes bytes;
-	bytes.ptr = str;
-	bytes.len = strlen(str);
-	lua_write_bytes(super, bytes);
+	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushstring(self->ls, str);
+
 	return E_HP_NOERROR;
 }
 
@@ -212,7 +242,7 @@ hpint32 lua_write_hpbool(HPAbstractWriter *super, const hpbool val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
 	
-
+	lua_pushboolean(self->ls, val);
 	return E_HP_NOERROR;
 }
 
@@ -220,20 +250,7 @@ hpint32 lua_write_null(HPAbstractWriter *super)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
 	
+	lua_pushnil(self->ls);
 
-	return E_HP_NOERROR;
-}
-
-HP_API hpint32 lua_write_semicolon(HPAbstractWriter *super)
-{
-	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
-	
-	return E_HP_NOERROR;
-}
-
-HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
-{
-	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
-	
 	return E_HP_NOERROR;
 }

@@ -17,6 +17,7 @@
 #include "hotdata_parser.h"
 #include "hotprotocol/hp_xml_writer.h"
 #include "hotprotocol/hp_xml_reader.h"
+#include "hotprotocol/hp_lua_writer.h"
 
 #include "language/language_types.h"
 #include "language/language_reader.h"
@@ -230,25 +231,7 @@ int main(int argc, char **argv)
 	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 	load_language(&language_lib, language_path);
 
-	hotobject_writer_init(&writer, obj);
 	
-	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
-	{
-		goto ERROR_RET;
-	}
-
-	if(json_output_file != NULL)
-	{
-		ddekit_json_encoding_writer_init(&jw, json_output_file);
-
-		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-		fclose(json_output_file);
-		json_output_file = NULL;
-	}
-
 
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -256,15 +239,23 @@ int main(int argc, char **argv)
 	lua_pushstring(L, root_dir);
 	lua_setglobal( L, "root_dir" );
 
-
 	if(luaprev_file_name[0])
 	{
 		luaL_dofile(L, luaprev_file_name);
 	}
 
+	lua_writer_init(&writer, L);
+	//hotobject_writer_init(&writer, obj);
+	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
+	{
+		goto ERROR_RET;
+	}
+
 	if(lua_file_name[0])
 	{
+		/*
 		lua_newtable(L);
+		
 		lua_pushinteger( L, 1);
 		lua_pushinteger( L, 211 );
 		lua_rawset(L, -3);
@@ -280,6 +271,7 @@ int main(int argc, char **argv)
 		lua_pushinteger( L, 123 );
 		lua_rawset(L, -3);
 		lua_rawset(L, -3);
+		*/
 		lua_setglobal( L, "hp" );
 		get_real_file_path();
 		if(luaL_dofile(L, real_script_path) != 0)
@@ -288,6 +280,24 @@ int main(int argc, char **argv)
 			fprintf(stderr, error);
 		}
 	}
+
+	
+	if(json_output_file != NULL)
+	{
+		ddekit_json_encoding_writer_init(&jw, json_output_file);
+
+		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
+		{
+			goto ERROR_RET;
+		}
+		fclose(json_output_file);
+		json_output_file = NULL;
+	}
+	
+
+
+
+	
 
 	/*
 	if(json_input)
