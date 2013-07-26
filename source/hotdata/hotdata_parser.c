@@ -190,8 +190,8 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				case '\\':
 					yylval->sn_char = '\\';
 					break;
-				case '\/':
-					yylval->sn_char = '\/';
+				case '/':
+					yylval->sn_char = '/';
 					break;
 				default:
 					break;
@@ -479,21 +479,21 @@ void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 		}
 	}
 	file_tag[j] = 0;
-	write_field_begin(self->writer, "file_tag", strlen("file_tag"));
+	write_field_begin(self->writer, "file_tag");
 	write_string(self->writer, file_tag);
-	write_field_end(self->writer, "file_tag", strlen("file_tag"));
+	write_field_end(self->writer, "file_tag");
 
 	write_semicolon(self->writer);
 
-	write_field_begin(self->writer, "file", strlen("file"));
+	write_field_begin(self->writer, "file");
 	write_string(self->writer, self->file_name);
-	write_field_end(self->writer, "file", strlen("file"));
+	write_field_end(self->writer, "file");
 
 	
 
 	write_semicolon(self->writer);
 
-	write_field_begin(self->writer, "DefinitionList", strlen("DefinitionList"));
+	write_field_begin(self->writer, "DefinitionList");
 	write_vector_begin(self->writer);
 }
 
@@ -504,7 +504,7 @@ void dp_on_document_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_vector_end(self->writer);
-	write_field_end(self->writer, "DefinitionList", strlen("DefinitionList"));
+	write_field_end(self->writer, "DefinitionList");
 	write_struct_end(self->writer, "Document");
 }
 
@@ -562,7 +562,7 @@ void dp_on_field_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const char *nam
 	{
 		return;
 	}
-	write_field_begin(self->writer, name, strlen(name));
+	write_field_begin(self->writer, name);
 }
 
 void dp_on_field_end(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
@@ -571,7 +571,7 @@ void dp_on_field_end(DATA_PARSER *self, const YYLTYPE *yylloc, const char *name)
 	{
 		return;
 	}
-	write_field_end(self->writer, name, strlen(name));
+	write_field_end(self->writer, name);
 }
 
 void dp_on_vector_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -652,9 +652,9 @@ void dp_on_const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	{
 		return;
 	}
-	write_field_begin(self->writer, "name", strlen("name"));
+	write_field_begin(self->writer, "name");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "name", strlen("name"));
+	write_field_end(self->writer, "name");
 }
 
 void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -663,7 +663,7 @@ void dp_on_typedef_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "typedef", strlen("typedef"));
+	write_field_begin(self->writer, "typedef");
 	write_struct_begin(self->writer, NULL);
 }
 
@@ -674,7 +674,7 @@ void dp_on_typedef_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "typedef", strlen("typedef"));
+	write_field_end(self->writer, "typedef");
 }
 
 void dp_on_struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -701,7 +701,7 @@ void dp_on_union_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "union", strlen("union"));
+	write_field_begin(self->writer, "union");
 	write_struct_begin(self->writer, NULL);
 }
 
@@ -712,7 +712,7 @@ void dp_on_union_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "union", strlen("union"));
+	write_field_end(self->writer, "union");
 }
 
 
@@ -722,7 +722,7 @@ void dp_on_enum_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "enum", strlen("enum"));
+	write_field_begin(self->writer, "enum");
 	write_struct_begin(self->writer, NULL);
 }
 
@@ -733,7 +733,7 @@ void dp_on_enum_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "enum", strlen("enum"));
+	write_field_end(self->writer, "enum");
 }
 
 
@@ -743,7 +743,7 @@ void dp_on_tok_unixcomment_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "comment", strlen("comment"));
+	write_field_begin(self->writer, "comment");
 	write_struct_begin(self->writer, NULL);
 }
 
@@ -754,7 +754,7 @@ void dp_on_tok_unixcomment_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_struct_end(self->writer, NULL);
-	write_field_end(self->writer, "comment", strlen("comment"));
+	write_field_end(self->writer, "comment");
 }
 
 void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring sn_tok_import)
@@ -764,9 +764,9 @@ void dp_on_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring s
 		return;
 	}
 	write_struct_begin(self->writer, NULL);
-	write_field_begin(self->writer, "file", strlen("file"));
+	write_field_begin(self->writer, "file");
 	write_string(self->writer, sn_tok_import);
-	write_field_end(self->writer, "file", strlen("file"));
+	write_field_end(self->writer, "file");
 	write_struct_end(self->writer, NULL);
 }
 
@@ -776,12 +776,12 @@ void dp_on_value_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 }
 
 void dp_on_value_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 }
 
 void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
@@ -790,14 +790,14 @@ void dp_on_value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 	write_int64(self->writer, i64);
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 
 	write_semicolon(self->writer);
-	write_field_begin(self->writer, "base", strlen("base"));
+	write_field_begin(self->writer, "base");
 	write_int64(self->writer, 10);
-	write_field_end(self->writer, "base", strlen("base"));
+	write_field_end(self->writer, "base");
 }
 
 void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpint64 i64)
@@ -806,14 +806,14 @@ void dp_on_value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, const h
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 	write_int64(self->writer, i64);
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 
 	write_semicolon(self->writer);
-	write_field_begin(self->writer, "base", strlen("base"));
+	write_field_begin(self->writer, "base");
 	write_int64(self->writer, 16);
-	write_field_end(self->writer, "base", strlen("base"));
+	write_field_end(self->writer, "base");
 }
 
 void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
@@ -822,14 +822,14 @@ void dp_on_value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpui
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 	write_uint64(self->writer, ui64);
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 
 	write_semicolon(self->writer);
-	write_field_begin(self->writer, "base", strlen("base"));
+	write_field_begin(self->writer, "base");
 	write_int64(self->writer, 10);
-	write_field_end(self->writer, "base", strlen("base"));
+	write_field_end(self->writer, "base");
 }
 
 void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const hpuint64 ui64)
@@ -838,14 +838,14 @@ void dp_on_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 	write_uint64(self->writer, ui64);
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 
 	write_semicolon(self->writer);
-	write_field_begin(self->writer, "base", strlen("base"));
+	write_field_begin(self->writer, "base");
 	write_int64(self->writer, 10);
-	write_field_end(self->writer, "base", strlen("base"));
+	write_field_end(self->writer, "base");
 }
 
 void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -854,9 +854,9 @@ void dp_on_value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	{
 		return;
 	}
-	write_field_begin(self->writer, "value", strlen("value"));
+	write_field_begin(self->writer, "value");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "value", strlen("value"));
+	write_field_end(self->writer, "value");
 }
 
 void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_TYPE* type, const hpbytes sn_tok_identifier)
@@ -865,9 +865,9 @@ void dp_on_typedef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	{
 		return;
 	}
-	write_field_begin(self->writer, "new_type", strlen("new_type"));
+	write_field_begin(self->writer, "new_type");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "new_type", strlen("new_type"));
+	write_field_end(self->writer, "new_type");
 }
 
 void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -876,7 +876,7 @@ void dp_on_TypeAnnotations_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 	{
 		return;
 	}
-	write_field_begin(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
+	write_field_begin(self->writer, "TypeAnnotations");
 	write_vector_begin(self->writer);
 }
 
@@ -888,7 +888,7 @@ void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	}
 	write_vector_item_begin(self->writer, writer_get_index(self->writer));
 	write_struct_begin(self->writer, NULL);
-	write_field_begin(self->writer, "switch", strlen("switch"));
+	write_field_begin(self->writer, "switch");
 	if(sn_tok_identifier == NULL)
 	{
 		write_string(self->writer, "s");
@@ -897,7 +897,7 @@ void dp_on_TypeAnnotations_switch(DATA_PARSER *self, const YYLTYPE *yylloc, cons
 	{
 		write_bytes(self->writer, *sn_tok_identifier);
 	}
-	write_field_end(self->writer, "switch", strlen("switch"));		
+	write_field_end(self->writer, "switch");
 	write_vector_item_end(self->writer, writer_get_index(self->writer));
 	write_struct_end(self->writer, NULL);
 }
@@ -909,7 +909,7 @@ void dp_on_TypeAnnotations_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_vector_end(self->writer);
-	write_field_end(self->writer, "TypeAnnotations", strlen("TypeAnnotations"));
+	write_field_end(self->writer, "TypeAnnotations");
 }
 
 void dp_on_enum_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -918,9 +918,9 @@ void dp_on_enum_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const h
 	{
 		return;
 	}
-	write_field_begin(self->writer, "name", strlen("name"));
+	write_field_begin(self->writer, "name");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "name", strlen("name"));
+	write_field_end(self->writer, "name");
 	write_semicolon(self->writer);
 }
 
@@ -941,9 +941,9 @@ void dp_on_union_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	{
 		return;
 	}
-	write_field_begin(self->writer, "name", strlen("name"));
+	write_field_begin(self->writer, "name");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "name", strlen("name"));
+	write_field_end(self->writer, "name");
 }
 
 void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -952,9 +952,9 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 	{
 		return;
 	}
-	write_field_begin(self->writer, "name", strlen("name"));
+	write_field_begin(self->writer, "name");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "name", strlen("name"));
+	write_field_end(self->writer, "name");
 }
 
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier)
@@ -963,9 +963,9 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 	{
 		return;
 	}
-	write_field_begin(self->writer, "name", strlen("name"));
+	write_field_begin(self->writer, "name");
 	write_bytes(self->writer, sn_tok_identifier);
-	write_field_end(self->writer, "name", strlen("name"));
+	write_field_end(self->writer, "name");
 }
 
 

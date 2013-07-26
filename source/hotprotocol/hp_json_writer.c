@@ -137,16 +137,17 @@ hpint32 ddekit_json_encoding_write_vector_end(HPAbstractWriter *super)
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *super, const char *var_name)
 {
 	HP_JSON_WRITER *self = HP_CONTAINER_OF(super, HP_JSON_WRITER, super);
-	hpuint32 i;
+	const char *i;
+
 	self->need_tab = hpfalse;
 	printf_tab(self);
 	fputc('\"', self->f);
-	for(i = 0;i < len; ++i)
+	for(i = var_name; *i; ++i)
 	{
-		fputc(var_name[i], self->f);
+		fputc(*i, self->f);
 	}
 	fputc('\"', self->f);
 	fputc(' ', self->f);
@@ -155,7 +156,7 @@ hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *super, const ch
 	return E_HP_NOERROR;
 }
 
-hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HP_JSON_WRITER *self = HP_CONTAINER_OF(super, HP_JSON_WRITER, super);	
 	return E_HP_NOERROR;

@@ -25,9 +25,9 @@ HP_API hpint32 xml_write_vector_begin(HPAbstractWriter *self);
 
 HP_API hpint32 xml_write_vector_end(HPAbstractWriter *self);
 
-HP_API hpint32 xml_write_field_begin(HPAbstractWriter *self, const char *var_name, hpuint32 len);
+HP_API hpint32 xml_write_field_begin(HPAbstractWriter *self, const char *var_name);
 
-HP_API hpint32 xml_write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len);
+HP_API hpint32 xml_write_field_end(HPAbstractWriter *self, const char *var_name);
 
 HP_API hpint32 xml_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
 

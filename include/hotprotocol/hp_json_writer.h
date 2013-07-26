@@ -29,9 +29,9 @@ HP_API hpint32 ddekit_json_encoding_write_vector_begin(HPAbstractWriter *self);
 
 HP_API hpint32 ddekit_json_encoding_write_vector_end(HPAbstractWriter *self);
 
-HP_API hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *self, const char *var_name, hpuint32 len);
+HP_API hpint32 ddekit_json_encoding_write_field_begin(HPAbstractWriter *self, const char *var_name);
 
-HP_API hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len);
+HP_API hpint32 ddekit_json_encoding_write_field_end(HPAbstractWriter *self, const char *var_name);
 
 HP_API hpint32 ddekit_json_encoding_write_enum(HPAbstractWriter *super, const int val);
 

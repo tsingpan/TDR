@@ -19,21 +19,15 @@ static hpint32 hotobject_push(HotObjectWriter *self, HotObject *ho)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 hotobject_write_field_begin(HPAbstractWriter *super, const char *var_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	HotObject *ob = hotobject_get(self);
 	HotObject *new_ob = hotobject_new();
-	char name[1024];
 	hpuint32 i;
-	for(i = 0; i < len; ++i)
-	{
-		name[i] = var_name[i];
-	}
-	name[i] = 0;
 
 	hotobject_push(self, new_ob);
-	if(!trie_store(ob->keys, name, new_ob))
+	if(!trie_store(ob->keys, var_name, new_ob))
 	{
 		goto ERROR_RET;
 	}
@@ -43,7 +37,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 hotobject_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HotObjectWriter* self = HP_CONTAINER_OF(super, HotObjectWriter, super);
 	--(self->stack_num);

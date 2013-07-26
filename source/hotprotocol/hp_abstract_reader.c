@@ -42,22 +42,22 @@ hpint32 read_vector_end(HPAbstractReader *self)
 	return self->read_vector_end(self);
 }
 
-hpint32 read_field_begin(HPAbstractReader *self, const char *var_name, hpuint32 len)
+hpint32 read_field_begin(HPAbstractReader *self, const char *var_name)
 {
 	if(self->read_field_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_field_begin(self, var_name, len);
+	return self->read_field_begin(self, var_name);
 }
 
-hpint32 read_field_end(HPAbstractReader *self, const char *var_name, hpuint32 len)
+hpint32 read_field_end(HPAbstractReader *self, const char *var_name)
 {
 	if(self->read_field_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_field_end(self, var_name, len);
+	return self->read_field_end(self, var_name);
 }
 
 hpint32 read_int8(HPAbstractReader *self, hpint8 *val)

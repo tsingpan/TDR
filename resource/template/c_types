@@ -1,1 +1,1 @@
-print(hp)
+print(hp[2])

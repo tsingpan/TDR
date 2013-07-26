@@ -142,16 +142,16 @@ hpint32 xml_read_vector_end(HPAbstractReader *super)
 	return E_HP_NOERROR;
 }
 
-hpint32 xml_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
+hpint32 xml_read_field_begin(HPAbstractReader *super, const char *var_name)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
-	hpuint32 i;
+	const char *i;
 
 	fgetc(self->f);
 	++(self->count);
 	skip_tab(self);	
 	fgetc(self->f);
-	for(i = 0;i < len; ++i)
+	for(i = var_name; *i; ++i)
 	{
 		fgetc(self->f);
 	}
@@ -160,10 +160,10 @@ hpint32 xml_read_field_begin(HPAbstractReader *super, const char *var_name, hpui
 	return E_HP_NOERROR;
 }
 
-hpint32 xml_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
+hpint32 xml_read_field_end(HPAbstractReader *super, const char *var_name)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);	
-	hpuint32 i;
+	const char *i;
 	
 	if(self->need_tab)
 	{
@@ -174,7 +174,7 @@ hpint32 xml_read_field_end(HPAbstractReader *super, const char *var_name, hpuint
 	self->need_tab = hptrue;
 	fgetc(self->f);
 	fgetc(self->f);
-	for(i = 0;i < len; ++i)
+	for(i = var_name; *i; ++i)
 	{
 		fgetc(self->f);
 	}

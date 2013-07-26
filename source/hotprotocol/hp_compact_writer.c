@@ -91,13 +91,13 @@ hpint32 hp_compact_write_vector_end(HPAbstractWriter *super, const char *var_nam
 	return E_HP_NOERROR;
 }
 
-hpint32 hp_compact_write_field_begin(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 hp_compact_write_field_begin(HPAbstractWriter *super, const char *var_name)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
 	return E_HP_NOERROR;
 }
 
-hpint32 hp_compact_write_field_end(HPAbstractWriter *super, const char *var_name, hpuint32 len)
+hpint32 hp_compact_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
 	return E_HP_NOERROR;

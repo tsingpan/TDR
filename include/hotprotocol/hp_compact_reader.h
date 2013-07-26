@@ -28,9 +28,9 @@ HP_API hpint32 hp_compact_read_vector_begin(HPAbstractReader *self);
 
 HP_API hpint32 hp_compact_read_vector_end(HPAbstractReader *self);
 
-HP_API hpint32 hp_compact_read_field_begin(HPAbstractReader *self, const char *var_name, hpuint32 len);
+HP_API hpint32 hp_compact_read_field_begin(HPAbstractReader *self, const char *var_name);
 
-HP_API hpint32 hp_compact_read_field_end(HPAbstractReader *self, const char *var_name, hpuint32 len);
+HP_API hpint32 hp_compact_read_field_end(HPAbstractReader *self, const char *var_name);
 
 HP_API hpint32 hp_compact_read_enum(HPAbstractReader *super, hpint32 *val);
 

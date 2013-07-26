@@ -41,22 +41,22 @@ hpint32 write_vector_end(HPAbstractWriter *self)
 	return self->write_vector_end(self);
 }
 
-hpint32 write_field_begin(HPAbstractWriter *self, const char *var_name, hpuint32 len)
+hpint32 write_field_begin(HPAbstractWriter *self, const char *var_name)
 {
 	if(self->write_field_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_field_begin(self, var_name, len);
+	return self->write_field_begin(self, var_name);
 }
 
-hpint32 write_field_end(HPAbstractWriter *self, const char *var_name, hpuint32 len)
+hpint32 write_field_end(HPAbstractWriter *self, const char *var_name)
 {
 	if(self->write_field_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_field_end(self, var_name, len);
+	return self->write_field_end(self, var_name);
 }
 
 hpint32 write_int8(HPAbstractWriter *self, const hpint8 val)

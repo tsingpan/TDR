@@ -32,21 +32,15 @@ hpint32 hotobject_read_struct_end(HPAbstractReader *super, const char *struct_na
 	return E_HP_NOERROR;
 }
 
-hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name, hpuint32 len)
+hpint32 hotobject_read_field_begin(HPAbstractReader *super, const char *var_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	const HotObject *new_ob;
 	hpint32 ret;
-	char name[1024];
 	hpuint32 i;
-	for(i = 0; i < len; ++i)
-	{
-		name[i] = var_name[i];
-	}
-	name[i] = 0;
 	for(i = self->stack_num; i > 0; --i)
 	{
-		ret = trie_retrieve(self->stack[i - 1].ho->keys, name, &new_ob);
+		ret = trie_retrieve(self->stack[i - 1].ho->keys, var_name, &new_ob);
 		if(ret)
 		{
 			hotobject_push(self, new_ob);
@@ -89,7 +83,7 @@ ERROR_RET:
 	return E_HP_ERROR;
 }
 
-hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name, hpuint32 len)
+hpint32 hotobject_read_field_end(HPAbstractReader *super, const char *var_name)
 {
 	HotObjectReader* self = HP_CONTAINER_OF(super, HotObjectReader, super);
 	--(self->stack_num);

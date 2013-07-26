@@ -261,7 +261,13 @@ int main(int argc, char **argv)
 
 	if(lua_file_name[0])
 	{
-		lua_pushnumber( L, 211 );
+		lua_newtable(L);
+		lua_pushinteger( L, 1);
+		lua_pushinteger( L, 211 );
+		lua_rawset(L, 1);
+		lua_pushinteger( L, 2);
+		lua_pushinteger( L, 311 );
+		lua_rawset(L, 1);
 		lua_setglobal( L, "hp" );
 		get_real_file_path();
 		luaL_dofile(L, real_script_path);

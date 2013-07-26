@@ -26,11 +26,11 @@ HP_API hpint32 hp_compact_write_vector_begin(HPAbstractWriter *self);
 
 HP_API hpint32 hp_compact_write_vector_end(HPAbstractWriter *self);
 
-HP_API hpint32 hp_compact_write_field_begin(HPAbstractWriter *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 hp_compact_write_field_begin(HPAbstractWriter *self, const char *var_name);
 
-HP_API hpint32 hp_compact_write_field_end(HPAbstractWriter *self, const char *var_name, hpint32 var_type);
+HP_API hpint32 hp_compact_write_field_end(HPAbstractWriter *self, const char *var_name);
 
-HP_API hpint32 hp_compact_write_enum(HPAbstractWriter *super, const hpint32 val, const hpchar *enum_name);
+HP_API hpint32 hp_compact_write_enum(HPAbstractWriter *super, const hpint32 val);
 
 HP_API hpint32 hp_compact_write_hpchar(HPAbstractWriter *super, const char val);
 
