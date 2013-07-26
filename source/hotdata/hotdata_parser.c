@@ -313,22 +313,15 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 		}
 	case tok_unixcomment:
 		{
-			yylval->sn_tok_unixcomment.ptr = yytext + 1;
-			yylval->sn_tok_unixcomment.len = yyleng - 1;
-			while(yylval->sn_tok_unixcomment.len > 0 )
+			hpuint32 len = yyleng;
+			yylval->sn_tok_unixcomment = yytext + 1;
+			while(len - 1 > 0)
 			{
-				if(yylval->sn_tok_unixcomment.ptr[yylval->sn_tok_unixcomment.len - 1] == '\r')
+				if((yytext[len - 1] == '\n') || (yytext[len - 1] == '\r'))
 				{
-					--yylval->sn_tok_unixcomment.len;
+					yytext[len - 1] = 0;
 				}
-				else if(yylval->sn_tok_unixcomment.ptr[yylval->sn_tok_unixcomment.len - 1] == '\n')
-				{
-					--yylval->sn_tok_unixcomment.len;
-				}
-				else
-				{
-					break;
-				}
+				--len;
 			}
 			break;
 		}

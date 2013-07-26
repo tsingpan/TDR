@@ -20,7 +20,7 @@ union _ParserNode
 	PN_IMPORT sn_import;
 	hpbytes sn_tok_identifier;
 	hpstring sn_tok_import;
-	hpbytes sn_tok_unixcomment;
+	const char* sn_tok_unixcomment;
 	hpbool sn_bool;
 	hpuint64 sn_uint64;
 	hpint64 sn_int64;

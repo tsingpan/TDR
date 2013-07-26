@@ -717,7 +717,7 @@ UnixComment:
 	tok_unixcomment
 	{
 		dp_on_field_begin(GET_SELF, &yylloc, "text");
-		dp_on_bytes(GET_SELF, &yylloc, $2);
+		dp_on_string(GET_SELF, &yylloc, $2);
 		dp_on_field_end(GET_SELF, &yylloc, "text");
 
 		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
@@ -729,7 +729,7 @@ UnixCommentOrNot:
 	{
 		dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);
 		dp_on_field_begin(GET_SELF, &yylloc, "text");
-		dp_on_bytes(GET_SELF, &yylloc, $1);
+		dp_on_string(GET_SELF, &yylloc, $1);
 		dp_on_field_end(GET_SELF, &yylloc, "text");
 		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
 	}
