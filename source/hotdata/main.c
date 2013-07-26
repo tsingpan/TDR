@@ -253,6 +253,9 @@ int main(int argc, char **argv)
 	L = luaL_newstate();
 	luaL_openlibs(L);
 
+	lua_pushstring(L, root_dir);
+	lua_setglobal( L, "root_dir" );
+
 
 	if(luaprev_file_name[0])
 	{
@@ -264,13 +267,26 @@ int main(int argc, char **argv)
 		lua_newtable(L);
 		lua_pushinteger( L, 1);
 		lua_pushinteger( L, 211 );
-		lua_rawset(L, 1);
+		lua_rawset(L, -3);
 		lua_pushinteger( L, 2);
 		lua_pushinteger( L, 311 );
-		lua_rawset(L, 1);
+		lua_rawset(L, -3);
+		lua_pushinteger( L, 3);
+		lua_newtable(L);
+		lua_pushstring( L, "a");
+		lua_pushinteger( L, 321 );
+		lua_rawset(L, -3);
+		lua_pushstring( L, "b");
+		lua_pushinteger( L, 123 );
+		lua_rawset(L, -3);
+		lua_rawset(L, -3);
 		lua_setglobal( L, "hp" );
 		get_real_file_path();
-		luaL_dofile(L, real_script_path);
+		if(luaL_dofile(L, real_script_path) != 0)
+		{
+			const char* error = lua_tostring(L, -1);
+			fprintf(stderr, error);
+		}
 	}
 
 	/*

@@ -974,7 +974,7 @@ void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, 
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
 	}
 
-	current->package_name[0] = 0;// = sn_tok_import;
+	snprintf(current->package_name, sizeof(current->package_name), sn_tok_import);
 }
 
 
