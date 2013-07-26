@@ -432,6 +432,7 @@ hpint32 data_parser_init(DATA_PARSER *self)
 {
 	scanner_stack_init(&self->scanner_stack);
 	self->result_num = 0;
+	self->definition_list_num = 0;
 
 	return E_HP_NOERROR;
 }
@@ -441,52 +442,18 @@ hpint32 data_parser_init(DATA_PARSER *self)
 //handler
 void dp_on_document_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
 {
-	char file_tag[1024];
-	hpuint32 file_tag_len;
-	hpuint32 j;
-
 	if(self->scanner_stack.stack_num > 1)
 	{
 		return;
 	}
 
-	write_struct_begin(self->writer, "Document");
+	write_struct_begin(self->writer, "ST_DOCUMENT");
 
-
-	file_tag_len = strlen(self->file_name);
-	for(j = 0;j < file_tag_len; ++j)
-	{
-		char ch = self->file_name[j];
-		if(
-			((ch >= 'a') && (ch <= 'z'))
-			||((ch >= 'A') && (ch <= 'Z'))
-			||((ch >= '0') && (ch <= '9'))
-			||(ch == '_')
-			)
-		{
-			file_tag[j] = ch;
-		}
-		else
-		{
-			file_tag[j] = '_';
-		}
-	}
-	file_tag[j] = 0;
-	write_field_begin(self->writer, "file_tag");
-	write_string(self->writer, file_tag);
-	write_field_end(self->writer, "file_tag");
-
-	write_semicolon(self->writer);
-
-	write_field_begin(self->writer, "file");
+	write_field_begin(self->writer, "file_name");
 	write_string(self->writer, self->file_name);
-	write_field_end(self->writer, "file");
+	write_field_end(self->writer, "file_name");
 
-	
-
-	write_semicolon(self->writer);
-
-	write_field_begin(self->writer, "DefinitionList");
+	write_field_begin(self->writer, "definition_list");
 	write_vector_begin(self->writer);
 }
 
@@ -497,8 +464,12 @@ void dp_on_document_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 		return;
 	}
 	write_vector_end(self->writer);
-	write_field_end(self->writer, "DefinitionList");
-	write_struct_end(self->writer, "Document");
+	write_field_end(self->writer, "definition_list");
+
+	write_field_begin(self->writer, "definition_list_num");
+	write_uint32(self->writer, self->definition_list_num);
+	write_field_end(self->writer, "definition_list_num");
+	write_struct_end(self->writer, "ST_DOCUMENT");
 }
 
 void dp_on_definition_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
@@ -528,6 +499,7 @@ void dp_on_definition_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	}
 	write_vector_item_end(self->writer, writer_get_index(self->writer));
 	write_struct_end(self->writer, NULL);
+	++(self->definition_list_num);
 }
 
 

@@ -22,7 +22,7 @@ struct _DATA_PARSER
 {
 	SCANNER_STACK scanner_stack;
 	HPAbstractWriter *writer;
-
+	hpuint32 definition_list_num;
 	hpint32 result[MAX_ERROR_NUM];
 	char result_str[MAX_ERROR_NUM][MAX_RESULT_STRING_LENGTH];
 	hpuint32 result_num;

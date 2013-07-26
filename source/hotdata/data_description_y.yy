@@ -113,34 +113,18 @@ Document :
 	};
 
 DefinitionList :
-	DefinitionList 
-	{
-		dp_on_definition_semicolon(GET_SELF, &yylloc);
-	}
-	Definition 
-	{
-	}
-|
-	{}
-	Definition 
-	{};
+	DefinitionList Definition 
+|	Definition ;
 
 Definition :
-	Import
-|	Const
-|	Typedef
-|	Struct
-|	Union
-|	Enum
-|   UnixComment;
+	Import | Const | Typedef | Struct | Union | Enum | UnixComment;
 
 
 Import :
 	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		dp_on_struct_begin(GET_SELF, &yylloc);
+		dp_on_definition_begin(GET_SELF, &yylloc);
+				
 		dp_on_field_begin(GET_SELF, &yylloc, "import");
-
 	}
 	tok_import
 	{
@@ -150,8 +134,8 @@ Import :
 		write_ST_Import(GET_WRITER, &$$);
 
 		dp_on_field_end(GET_SELF, &yylloc, "import");
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_vector_item_end(GET_SELF, &yylloc);
+		
+		dp_on_definition_end(GET_SELF, &yylloc);
 
 		//执行这个节点的动作
 		dp_dodo_import(GET_SELF, &yylloc, $2);
@@ -160,10 +144,9 @@ Import :
 
 Const :
 	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "const");
+		dp_on_definition_begin(GET_SELF, &yylloc);
 
+		dp_on_field_begin(GET_SELF, &yylloc, "const");
 		dp_on_struct_begin(GET_SELF, &yylloc);
 	}
 	tok_const
@@ -185,8 +168,7 @@ Const :
 	{
 		dp_on_struct_end(GET_SELF, &yylloc);
 
-		dp_on_vector_item_end(GET_SELF, &yylloc);
-		dp_on_struct_end(GET_SELF, &yylloc);
+		dp_on_definition_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "const");
 	}
 

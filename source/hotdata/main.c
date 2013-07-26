@@ -253,26 +253,7 @@ int main(int argc, char **argv)
 
 	if(lua_file_name[0])
 	{
-		/*
-		lua_newtable(L);
-		
-		lua_pushinteger( L, 1);
-		lua_pushinteger( L, 211 );
-		lua_rawset(L, -3);
-		lua_pushinteger( L, 2);
-		lua_pushinteger( L, 311 );
-		lua_rawset(L, -3);
-		lua_pushinteger( L, 3);
-		lua_newtable(L);
-		lua_pushstring( L, "a");
-		lua_pushinteger( L, 321 );
-		lua_rawset(L, -3);
-		lua_pushstring( L, "b");
-		lua_pushinteger( L, 123 );
-		lua_rawset(L, -3);
-		lua_rawset(L, -3);
-		*/
-		lua_setglobal( L, "hp" );
+		lua_setglobal( L, "hd" );
 		get_real_file_path();
 		if(luaL_dofile(L, real_script_path) != 0)
 		{
