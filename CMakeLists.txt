@@ -22,8 +22,10 @@ set(_BUILD_INCLUDE ${BUILD_HOME}/_include)
 set(_BUILD_SOURCE ${BUILD_HOME}/_source)
 
 set(INCLUDE  ${DIR_HOME}/include)
-set(_INCLUDE  ${DIR_HOME}/_include)
 set(SOURCE  ${DIR_HOME}/source)
+set(_INCLUDE  ${DIR_HOME}/_include)
+set(_SOURCE  ${DIR_HOME}/_source)
+set(_LUA_INCLUDE ${_SOURCE}/lua/original/src)
 
 add_subdirectory(source)
 add_subdirectory(_source)

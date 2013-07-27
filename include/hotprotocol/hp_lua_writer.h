@@ -3,18 +3,11 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
-#include "lua.h"
 #include <stdio.h>
 
+typedef struct _HP_LUA_WRITER HP_LUA_WRITER;
 
-#define MAX_VECTOR_DEEP 1024
-typedef struct _HP_LUA_WRITER
-{
-	HPAbstractWriter super;
-	lua_State *ls;
-}HP_LUA_WRITER;
-
-HP_API hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *ls);
+HP_API hpint32 lua_writer_init(HP_LUA_WRITER *self, void *lua_state);
 
 HP_API hpint32 lua_writer_fini(HP_LUA_WRITER *self);
 

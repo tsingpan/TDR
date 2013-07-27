@@ -11,9 +11,15 @@
 #include <assert.h>
 #include <stdio.h>
 
-hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *ls)
+typedef struct _HP_LUA_WRITER
 {
-	self->ls = ls;
+	HPAbstractWriter super;
+	lua_State *ls;
+};
+
+hpint32 lua_writer_init(HP_LUA_WRITER *self, void *lua_state)
+{
+	self->ls = (lua_State*)lua_state;
 
 	self->super.write_struct_begin = lua_write_struct_begin;
 	self->super.write_struct_end = lua_write_struct_end;
