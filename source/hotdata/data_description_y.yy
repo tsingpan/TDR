@@ -124,7 +124,6 @@ DefinitionList :
 Definition :
 	Import
 	{
-		//规约这个节点
 		dp_reduce_Definition_Import(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
 
 		dp_on_vector_item_begin(GET_SELF, &yylloc);
@@ -137,10 +136,12 @@ Definition :
 |	Const
 	{
 		dp_reduce_Definition_Const(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+		/*
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
 
-		//dp_on_vector_item_begin(GET_SELF, &yylloc);
-		//write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-		//dp_on_vector_item_end(GET_SELF, &yylloc);
+		dp_on_vector_item_end(GET_SELF, &yylloc);
+		*/
 	}
 | Typedef | Struct | Union | Enum | UnixComment;
 

@@ -655,6 +655,8 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_ST_Const(self, &data->de_const);
 		write_field_end(self, "de_const");
 		break;
+	default:
+		break;
 	}
 
 	write_struct_end(self, "UN_DEFINITION");
@@ -671,13 +673,11 @@ void write_ST_DEFINITION(HPAbstractWriter *self, const ST_DEFINITION* data)
 
 	write_field_end(self, "type");
 
-
 	write_field_begin(self, "definition");
 
 	write_UN_DEFINITION(self, &data->definition, data->type);
 
 	write_field_end(self, "definition");
-
 
 	write_struct_end(self, "ST_DEFINITION");
 }
