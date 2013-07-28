@@ -78,7 +78,7 @@ void write_ST_VALUE(HPAbstractWriter *self, const ST_VALUE* data)
 
 		write_field_begin(self, "type");
 
-		//write_SN_VALUE_TYPE(self, &data->type);
+		write_int32(self, data->type);
 
 		write_field_end(self, "type");
 
@@ -97,27 +97,34 @@ void write_ST_TYPE(HPAbstractWriter *self, const ST_TYPE* data)
 
 		write_field_begin(self, "type");
 
-		//write_SN_TYPE(self, &data->type);
+		write_int32(self, &data->type);
 
 		write_field_end(self, "type");
 
-		write_field_begin(self, "st");
+		
 
-		//if (type == E_SNT_SIMPLE) write_SN_SIMPLE_TYPE(self, &data->st);
+		if (data->type == E_SNT_SIMPLE)
+		{
+			write_field_begin(self, "st");
+				write_int32(self, data->st);
+			write_field_end(self, "st");
+		}
+		
+		if (data->type == E_SNT_CONTAINER)
+		{
+			write_field_begin(self, "ct");
+				write_int32(self, data->ct);
+			write_field_end(self, "ct");
+		}
 
-		write_field_end(self, "st");
+		if (data->type == E_SNT_OBJECT)
+		{
+			write_field_begin(self, "ot");
+				write_string(self, data->ot);
+			write_field_end(self, "ot");
+		}
 
-		write_field_begin(self, "ct");
-
-		//if (type == E_SNT_CONTAINER) write_SN_CONTAINER_TYPE(self, &data->ct);
-
-		write_field_end(self, "ct");
-
-	write_field_begin(self, "ot");
-
-		//if (type == E_SNT_OBJECT) write_string(self, &data->ot);
-
-	write_field_end(self, "ot");
+	
 
 	write_struct_end(self , "ST_TYPE");
 }
@@ -619,6 +626,11 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_field_begin(self, "de_import");
 		write_ST_Import(self, &data->de_import);
 		write_field_end(self, "de_import");
+		break;
+	case E_DT_CONST:
+		write_field_begin(self, "de_const");
+		write_ST_Const(self, &data->de_const);
+		write_field_end(self, "de_const");
 		break;
 	}
 
