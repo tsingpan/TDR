@@ -122,7 +122,7 @@ hpint32 lua_write_field_end(HPAbstractWriter *super, const char *var_name)
 HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
-	lua_pushinteger( self->ls, index);
+	lua_pushinteger( self->ls, index + 1);
 	return E_HP_NOERROR;
 }
 

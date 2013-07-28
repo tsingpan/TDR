@@ -125,11 +125,11 @@ Definition :
 	Import
 	{
 		dp_reduce_Definition_Import(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
-
+		
 		dp_on_vector_item_begin(GET_SELF, &yylloc);
 		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
 		dp_on_vector_item_end(GET_SELF, &yylloc);
-
+		
 
 		dp_do_import(GET_SELF, &yylloc, &$1);
 	}
@@ -154,36 +154,9 @@ Import :
 
 
 Const :
+	tok_const Type tok_identifier '=' Value ';'
 	{
-		dp_on_definition_begin(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "const");
-		dp_on_struct_begin(GET_SELF, &yylloc);
-	}
-	tok_const
-	Type
-	{dp_on_const_semicolon(GET_SELF, &yylloc); }
-	tok_identifier 
-	{
-		dp_on_const_tok_identifier(GET_SELF, &yylloc, $5);
-
-
-		//dp_check_constant_identifier(GET_SELF, &yylloc, &$3, $5);
-	}
-	'='
-	{
-		dp_on_const_semicolon(GET_SELF, &yylloc); 		
-	}
-	Value
-	';'
-	{
-		dp_on_struct_end(GET_SELF, &yylloc);
-
-		dp_on_definition_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "const");
-
-
-		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$3, &$5, &$9);
+		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
 	}
 
 
@@ -191,26 +164,18 @@ Const :
 Value :
 	tok_uint64
 	{
-		dp_on_value_tok_uint64(GET_SELF, &yylloc, $1);
-
 		dp_reduce_Value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_uint64
 	{
-		dp_on_value_tok_hex_uint64(GET_SELF, &yylloc, $1);
-
 		dp_reduce_Value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_int64
 	{
-		dp_on_value_tok_int64(GET_SELF, &yylloc, $1);
-
 		dp_reduce_Value_tok_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_int64
 	{
-		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, $1);
-
 		dp_reduce_Value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_bool
@@ -229,337 +194,115 @@ Value :
 	}
 |	tok_identifier
 	{
-		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
-		
-
 		dp_reduce_Value_tok_identifier(GET_SELF, &yylloc, &$$, $1);
 	}
 ;
 
 Typedef :
-	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_typedef_begin(GET_SELF, &yylloc);}
-	tok_typedef	
-	Type 
-	{dp_on_semicolon(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
-	Arguments
-	{dp_on_field_end(GET_SELF, &yylloc, "Arguments");dp_on_semicolon(GET_SELF, &yylloc);}
-	tok_identifier
+	tok_typedef Type Arguments tok_identifier ';'
 	{
-		dp_on_typedef_tok_identifier(GET_SELF, &yylloc, &$3, $7);
-	}
-	';'
-	{
-		dp_on_typedef_end(GET_SELF, &yylloc);
-		dp_on_definition_end(GET_SELF, &yylloc);
 	};
 	
 Enum :
-	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_enum_begin(GET_SELF, &yylloc);}
-	tok_enum
-	TypeAnnotations
-	{dp_on_semicolon(GET_SELF, &yylloc);}
-	tok_identifier
+	tok_enum TypeAnnotations tok_identifier	'{' EnumDefList '}' ';'
 	{
-		dp_on_enum_tok_identifier(GET_SELF, &yylloc, $5);
-	}
-	'{' {dp_on_field_begin(GET_SELF, &yylloc, "list");  dp_on_vector_begin(GET_SELF, &yylloc);}
-	EnumDefList 
-	'}' {dp_on_vector_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "list"); }
-	';'
-	{dp_on_enum_end(GET_SELF, &yylloc);
-	dp_on_definition_end(GET_SELF, &yylloc);
+	
 	};
     
 EnumDefList : 
-	EnumDefList {dp_on_semicolon(GET_SELF, &yylloc);} 
-	{dp_on_vector_item_begin(GET_SELF, &yylloc);}
-	EnumDef
-	{dp_on_vector_item_end(GET_SELF, &yylloc);}
+	EnumDefList EnumDef
 |	
-	{dp_on_vector_item_begin(GET_SELF, &yylloc);}
 	EnumDef
-	{dp_on_vector_item_end(GET_SELF, &yylloc);};
 	
 EnumDef : 
-	{dp_on_struct_begin(GET_SELF, &yylloc);}
-	tok_identifier 
+	tok_identifier '=' Value ',' UnixCommentOrNot
 	{
-		dp_on_EnumDef_tok_identifier(GET_SELF, &yylloc, $2);
-	}
-	'='
-	{
-		dp_on_semicolon(GET_SELF, &yylloc);
-	}
-	Value
-	','
-	{
-		dp_on_semicolon(GET_SELF, &yylloc);
-	}
-	UnixCommentOrNot
-	{dp_on_struct_end(GET_SELF, &yylloc);};
+
+	};
     
 
 Union :
-	{ dp_on_definition_begin(GET_SELF, &yylloc);dp_on_union_begin(GET_SELF, &yylloc);}
-	tok_union 
-	TypeAnnotations	
-	{dp_on_semicolon(GET_SELF, &yylloc);}
-	tok_identifier 
+	tok_union TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
 	{
-		dp_on_union_tok_identifier(GET_SELF, &yylloc, $5);
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "Parameters");
-	}
-	Parameters
-	{dp_on_field_end(GET_SELF, &yylloc, "Parameters");dp_on_semicolon(GET_SELF, &yylloc);}
-	'{' {dp_on_field_begin(GET_SELF, &yylloc, "list");dp_on_vector_begin(GET_SELF, &yylloc);}
-	FieldList 
-	'}' {dp_on_field_end(GET_SELF, &yylloc, "list");dp_on_vector_end(GET_SELF, &yylloc);}
-	';'
-	{dp_on_union_end(GET_SELF, &yylloc);dp_on_definition_end(GET_SELF, &yylloc);};
+	};
 	
 	
 Struct : 
-	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "struct"); dp_on_struct_begin(GET_SELF, &yylloc);  }
-	tok_struct
-	TypeAnnotations
-	{dp_on_semicolon(GET_SELF, &yylloc);}
-	tok_identifier
+	tok_struct TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
 	{
-		dp_on_struct_tok_identifier(GET_SELF, &yylloc, $5);;
-		dp_on_semicolon(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "Parameters");
-	}
-	Parameters
-	{dp_on_field_end(GET_SELF, &yylloc, "Parameters"); dp_on_semicolon(GET_SELF, &yylloc);}
-	'{' {dp_on_field_begin(GET_SELF, &yylloc, "list"); dp_on_vector_begin(GET_SELF, &yylloc);}
-	FieldList
-	'}' {dp_on_field_end(GET_SELF, &yylloc, "list"); dp_on_vector_end(GET_SELF, &yylloc);}
-	';'
-	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "struct");dp_on_definition_end(GET_SELF, &yylloc);};
+	};
 	
 
 	
 FieldList: 
-	FieldList {dp_on_semicolon(GET_SELF, &yylloc);}
-	Field	
+	FieldList Field	
 |	
 	Field
 	
 
 Field : 
-	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		
-		dp_on_field_begin(GET_SELF, &yylloc, "condition");
-	}
-	FieldCondition 
-	{	dp_on_field_end(GET_SELF, &yylloc, "condition"); dp_on_semicolon(GET_SELF, &yylloc);}
-	Type
-	{dp_on_semicolon(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "Arguments");}
-	Arguments 
-	{dp_on_field_end(GET_SELF, &yylloc, "Arguments");dp_on_semicolon(GET_SELF, &yylloc);}
-	tok_identifier
-	{
-		dp_on_field_tok_identifier(GET_SELF, &yylloc, $8);
-	}
-	';'
-	{
-		dp_on_semicolon(GET_SELF, &yylloc);
-	}
-	UnixCommentOrNot
-	{
-		dp_on_struct_end(GET_SELF, &yylloc);
-
-		dp_on_vector_item_end(GET_SELF, &yylloc);
-	};
+	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot;
 
 FieldCondition:
 	{
-		dp_on_struct_begin(GET_SELF, &yylloc);;
 	}
 	Condition
 	{
-		dp_on_struct_end(GET_SELF, &yylloc);
 	}
 |
 	{
-		dp_on_null(GET_SELF, &yylloc);
 	};
 
 Condition : 
 	tok_if 	'(' FieldExpression	')'	
-|	tok_if
-	'!'
-	{
-		dp_on_field_begin(GET_SELF, &yylloc, "negation"); 
-		dp_on_bool(GET_SELF, &yylloc, hptrue);
-		dp_on_field_end(GET_SELF, &yylloc, "negation"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-	}
-	 '(' FieldExpression ')'
+|	tok_if '!' '(' FieldExpression ')'
 |	tok_if '(' tok_identifier tok_unequal tok_identifier ')'
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "negation"); 
-		dp_on_bool(GET_SELF, &yylloc, hptrue);
-		dp_on_field_end(GET_SELF, &yylloc, "negation"); 
-
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
-		dp_on_struct_begin(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
-		dp_on_bytes(GET_SELF, &yylloc, $3);
-		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
-		dp_on_string(GET_SELF, &yylloc, "==");
-		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
-		dp_on_bytes(GET_SELF, &yylloc, $5);
-		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
-
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	}
 |	tok_case tok_identifier ':'
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
-		dp_on_struct_begin(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
-		dp_on_string(GET_SELF, &yylloc, "switch");
-		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
-		dp_on_string(GET_SELF, &yylloc, "==");
-		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
-		dp_on_bytes(GET_SELF, &yylloc, $2);
-		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
-
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	};
 
 
 FieldExpression :
 	tok_identifier tok_equal tok_identifier
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
-		dp_on_struct_begin(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
-		dp_on_bytes(GET_SELF, &yylloc, $1);
-		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
-		dp_on_string(GET_SELF, &yylloc, "==");
-		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
-		dp_on_bytes(GET_SELF, &yylloc, $3);
-		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
-
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "expression"); 
 	}
-
 |	tok_identifier '&' tok_identifier
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "expression"); 
-		dp_on_struct_begin(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op0"); 
-		dp_on_bytes(GET_SELF, &yylloc, $1);
-		dp_on_field_end(GET_SELF, &yylloc, "op0"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "operator"); 
-		dp_on_string(GET_SELF, &yylloc, "&");
-		dp_on_field_end(GET_SELF, &yylloc, "operator"); 
-
-		dp_on_semicolon(GET_SELF, &yylloc);
-
-		dp_on_field_begin(GET_SELF, &yylloc, "op1"); 
-		dp_on_bytes(GET_SELF, &yylloc, $3);
-		dp_on_field_end(GET_SELF, &yylloc, "op1"); 
-
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "expression"); 	
 	}
 	;
 
 
 
 Type :
-	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "type");}
 	SimpleType
-	{dp_on_field_end(GET_SELF, &yylloc, "type");dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
-	$$ = $2;
+	{
+		$$ = $1;
+	}
+|	ContainerType
+	{
+		$$ = $1;
 	}
 	
-|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc);}
-	ContainerType
-	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
-	$$ = $2;
-	}
-	
-|	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc);}
-	ObjectType
-	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
-	$$ = $2;
+|	ObjectType
+	{
+		$$ = $1;
 	};
 
 ObjectType:
 	tok_identifier
    	{
-		dp_on_field_begin(GET_SELF, &yylloc, "type");
-		dp_on_bytes(GET_SELF, &yylloc, $1);
-		dp_on_field_end(GET_SELF, &yylloc, "type");
-		
 		dp_reduce_ObjectType_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 ContainerType:
 	tok_t_vector
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "vector");
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "vector");
-
 		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &yylloc, &$$);
 	}
 |	tok_t_string
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "string");
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "string");
-		
 		dp_reduce_ContainerType_tok_t_string(GET_SELF, &yylloc, &$$);
 	};
 
@@ -567,196 +310,111 @@ ContainerType:
 SimpleType:
 	tok_t_bool
 	{
-		dp_on_string(GET_SELF, &yylloc, "bool");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_char
 	{
-		dp_on_string(GET_SELF, &yylloc, "char");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_double
 	{
-		dp_on_string(GET_SELF, &yylloc, "double");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int8
 	{
-		dp_on_string(GET_SELF, &yylloc, "int8");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int16
 	{
-		dp_on_string(GET_SELF, &yylloc, "int16");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int32
 	{
-		dp_on_string(GET_SELF, &yylloc, "int32");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int64
 	{
-		dp_on_string(GET_SELF, &yylloc, "int64");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint8 
 	{
-		dp_on_string(GET_SELF, &yylloc, "uint8");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint16 
 	{
-		dp_on_string(GET_SELF, &yylloc, "uint16");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint32 
 	{
-		dp_on_string(GET_SELF, &yylloc, "uint32");
-		
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint64
 	{
-		dp_on_string(GET_SELF, &yylloc, "uint64");
-
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	};
 
 Parameters :
-	'<' 
-	{dp_on_vector_begin(GET_SELF, &yylloc);}
-	ParameterList
-	{dp_on_vector_end(GET_SELF, &yylloc);}
-	'>'
+	'<' ParameterList '>'
 	{
 	}
 |
 	{
-		dp_on_null(GET_SELF, &yylloc);
 	};
 	
 ParameterList:
-	ParameterList ',' {dp_on_semicolon(GET_SELF, &yylloc);} Parameter 
+	ParameterList ',' Parameter 
 |	
 	Parameter
 	
 	
 Parameter:
-	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		dp_on_struct_begin(GET_SELF, &yylloc);
-	}
-	Type {dp_on_semicolon(GET_SELF, &yylloc);}
+	Type
 	tok_identifier
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "name");
-		dp_on_bytes(GET_SELF, &yylloc, $4);
-		dp_on_field_end(GET_SELF, &yylloc, "name");
-
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 
 
 
 Arguments:
-	'<'
-	{dp_on_vector_begin(GET_SELF, &yylloc);}
-	ArgumentList
-	{dp_on_vector_end(GET_SELF, &yylloc);}
-	'>'
+	'<' ArgumentList '>'
 |
 	{
-		dp_on_null(GET_SELF, &yylloc);
 	};
 	
 ArgumentList:
-	ArgumentList ',' {dp_on_semicolon(GET_SELF, &yylloc);} Argument
+	ArgumentList ',' Argument
 |	Argument;
 	
 Argument:
 	tok_identifier
 	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "Identifier");
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "id");
-		dp_on_bytes(GET_SELF, &yylloc, $1);
-		dp_on_field_end(GET_SELF, &yylloc, "id");
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "Identifier");
-		dp_on_struct_end(GET_SELF, &yylloc);		
-		dp_on_vector_item_end(GET_SELF, &yylloc);
 	}
 |	{
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "SimpleType");
-		dp_on_struct_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "type");
 	}
 	SimpleType
 	{
-		dp_on_field_end(GET_SELF, &yylloc, "type");
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "SimpleType");
-		dp_on_struct_end(GET_SELF, &yylloc);
-		dp_on_vector_item_end(GET_SELF, &yylloc);
 	};
 
 UnixComment:
-	{dp_on_definition_begin(GET_SELF, &yylloc);dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);}
 	tok_unixcomment
 	{
-		dp_on_field_begin(GET_SELF, &yylloc, "text");
-		dp_on_string(GET_SELF, &yylloc, $2);
-		dp_on_field_end(GET_SELF, &yylloc, "text");
-
-		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
-		dp_on_definition_end(GET_SELF, &yylloc);
+		
 	};
 
 UnixCommentOrNot:
 	tok_unixcomment
 	{
-		dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "text");
-		dp_on_string(GET_SELF, &yylloc, $1);
-		dp_on_field_end(GET_SELF, &yylloc, "text");
-		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
 	}
 |
 	{
-		dp_on_tok_unixcomment_begin(GET_SELF, &yylloc);
-		dp_on_field_begin(GET_SELF, &yylloc, "text");
-		dp_on_null(GET_SELF, &yylloc);
-		dp_on_field_end(GET_SELF, &yylloc, "text");
-		dp_on_tok_unixcomment_end(GET_SELF, &yylloc);
+		
 	};
 
 TypeAnnotations:
-	'('
-	{dp_on_TypeAnnotations_begin(GET_SELF, &yylloc);}
-	TypeAnnotationList
-	{dp_on_TypeAnnotations_end(GET_SELF, &yylloc);}
-	')'
+	'('	TypeAnnotationList	')'
 |
     {
-		dp_on_TypeAnnotations_begin(GET_SELF, &yylloc);
-		dp_on_TypeAnnotations_switch(GET_SELF, &yylloc, NULL);
-		dp_on_TypeAnnotations_end(GET_SELF, &yylloc);
     };
 
 TypeAnnotationList:
