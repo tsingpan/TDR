@@ -75,6 +75,11 @@ void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE* data , SN_VALUE_TYPE
 			write_bool(self, data->b);
 			write_field_end(self, "b");
 			break;
+		case E_SNVT_DOUBLE:
+			write_field_begin(self, "d");
+			write_double(self, data->d);
+			write_field_end(self, "d");
+			break;
 		case E_SNVT_IDENTIFIER:
 			write_field_begin(self, "identifier");
 			write_string(self, data->identifier);

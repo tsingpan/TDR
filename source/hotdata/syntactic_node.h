@@ -24,12 +24,14 @@ typedef enum _SN_VALUE_TYPE
 {
 
 	E_SNVT_IDENTIFIER = 0 ,	
-	E_SNVT_BOOL = 1 ,
-	E_SNVT_INT64 = 2 ,
-	E_SNVT_UINT64 = 3 ,
-	E_SNVT_HEX_INT64 = 4 ,
-	E_SNVT_HEX_UINT64 = 5 ,
-	E_SNVT_CHAR = 6 ,
+	E_SNVT_CHAR = 1,
+	E_SNVT_DOUBLE = 2,
+	E_SNVT_BOOL = 3,
+	E_SNVT_INT64 = 4,
+	E_SNVT_UINT64 = 5,
+	E_SNVT_HEX_INT64 = 6,
+	E_SNVT_HEX_UINT64 = 7,
+	
 }SN_VALUE_TYPE;
 
 typedef union _UN_VALUE
@@ -40,6 +42,7 @@ typedef union _UN_VALUE
 	hpuint64 ui64;
 	hpuint64 hex_ui64;
 	hpbool b;
+	hpdouble d;
 	hpchar c;
 	hpchar identifier[MAX_STRING_LENGTH];
 }UN_VALUE;

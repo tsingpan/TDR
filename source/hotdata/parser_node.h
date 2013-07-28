@@ -16,6 +16,7 @@ typedef ST_TYPE PN_TYPE;
 typedef hpchar PN_CHAR;
 typedef ST_Import PN_IMPORT;
 typedef hpbytes PN_IDENTIFIER;
+typedef hpdouble PN_TOK_DOUBLE;
 
 union _ParserNode
 {
@@ -27,6 +28,8 @@ union _ParserNode
 	PN_IDENTIFIER sn_tok_identifier;
 
 	PN_CONST sn_const;
+
+	PN_TOK_DOUBLE pn_tok_double;
 
 
 	const char* sn_tok_unixcomment;

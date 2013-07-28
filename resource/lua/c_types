@@ -1,0 +1,39 @@
+function print_val(val)
+	if val.type == 0 then
+		io.write(val.val.identifier)
+	elseif val.type == 1 then
+		io.write("'")
+		if(val.val.c == '\n')then
+			io.write('\\n')
+		else
+			io.write(val.val.c)
+		end
+		io.write("'")
+	elseif val.type == 2 then
+		io.write(val.val.d)
+	elseif val.type == 3 then
+		io.write(val.val.b)
+	elseif val.type == 4 then
+		io.write(val.val.i64)
+	elseif val.type == 5 then
+		io.write(val.val.ui64)
+	elseif val.type == 6 then
+		io.write(val.val.hex_i64)
+	elseif val.type == 7 then
+		io.write(val.val.hex_ui64)
+	end
+end
+
+function on_const(const)
+	io.write('#define\t')
+	io.write(const.identifier)
+	io.write(' ')
+	print_val(const.val)
+	io.write('\n')
+end
+
+for key, value in pairs(hd['definition_list']) do
+	if(value.type == 1)then
+		on_const(value.definition.de_const)
+	end
+end

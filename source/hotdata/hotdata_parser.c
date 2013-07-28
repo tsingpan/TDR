@@ -562,6 +562,12 @@ void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 	current->val.ui64 = ui64;
 }
 
+void dp_reduce_Value_tok_double(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const double d)
+{
+	current->type = E_SNVT_DOUBLE;
+	current->val.d = d;
+}
+
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val)
 {
 	current->type = *type;

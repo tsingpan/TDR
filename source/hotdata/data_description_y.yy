@@ -94,6 +94,7 @@
 %type<sn_type> Type SimpleType ObjectType ContainerType
 %type<sn_value> Value
 %type<sn_const> Const
+%type<pn_tok_double> tok_double
 
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
@@ -214,6 +215,7 @@ Value :
 	}
 |	tok_double
 	{
+		dp_reduce_Value_tok_double(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_string
 	{

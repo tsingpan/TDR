@@ -1,0 +1,2 @@
+JSON = loadfile(lua_dir .. "json_lib.lua")();
+print(JSON:encode(hd))
