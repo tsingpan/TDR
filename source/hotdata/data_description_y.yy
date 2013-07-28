@@ -135,24 +135,9 @@ Definition :
 
 
 Import :
-	{
-		//dp_on_definition_begin(GET_SELF, &yylloc);
-				
-		//dp_on_field_begin(GET_SELF, &yylloc, "import");
-	}
 	tok_import
 	{
-		//首先规约这个语法节点
-		dp_reduce_Import_tok_import(GET_SELF, &yylloc, &$$, &$2);
-
-		//write_ST_Import(GET_WRITER, &$$);
-
-		//dp_on_field_end(GET_SELF, &yylloc, "import");
-		
-		//dp_on_definition_end(GET_SELF, &yylloc);
-
-		//执行这个节点的动作
-		//dp_dodo_import(GET_SELF, &yylloc, $2);
+		dp_reduce_Import_tok_import(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 
