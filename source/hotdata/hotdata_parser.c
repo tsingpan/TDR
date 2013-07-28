@@ -1033,24 +1033,34 @@ error_ret:
 	return;
 }
 
+void dp_reduce_Value_tok_char(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const PN_CHAR pn_char)
+{
+	current->type = E_SNVT_CHAR;
+	current->val.c = pn_char;
+}
+
 void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
 	current->type = E_SNVT_INT64;
+	current->val.i64;
 }
 
 void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
 	current->type = E_SNVT_HEX_INT64;
+	current->val.i64 = i64;
 }
 
 void dp_reduce_Value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
 	current->type = E_SNVT_UINT64;
+	current->val.ui64 = ui64;
 }
 
 void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
 {
 	current->type = E_SNVT_HEX_UINT64;
+	current->val.ui64 = ui64;
 }
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val)

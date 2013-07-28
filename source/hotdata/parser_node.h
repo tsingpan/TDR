@@ -13,6 +13,7 @@ typedef ST_DEFINITION PN_DEFINITION;
 typedef ST_Const PN_CONST;
 typedef ST_VALUE PN_VALUE;
 typedef ST_TYPE PN_TYPE;
+typedef hpchar PN_CHAR;
 typedef ST_Import PN_IMPORT;
 typedef hpbytes PN_IDENTIFIER;
 
@@ -36,7 +37,7 @@ union _ParserNode
 	hpuint64 sn_hex_uint64;
 	hpint64 sn_hex_int64;
 	hpstring sn_string;
-	hpchar sn_char;
+	PN_CHAR sn_char;
 	SN_SIMPLE_TYPE sn_st;
 	SN_CONTAINER_TYPE sn_ct;
 };

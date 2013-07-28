@@ -51,22 +51,39 @@ void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE* data , SN_VALUE_TYPE
 	{
 
 		case E_SNVT_INT64:
+			write_field_begin(self, "i64");
 			write_int64(self, data->i64);
+			write_field_end(self, "i64");
 			break;
 		case E_SNVT_HEX_INT64:
+			write_field_begin(self, "hex_i64");
 			write_int64(self, data->hex_i64);
+			write_field_end(self, "hex_i64");
 			break;
 		case E_SNVT_UINT64:
+			write_field_begin(self, "ui64");
 			write_uint64(self, data->ui64);
+			write_field_end(self, "ui64");
 			break;
 		case E_SNVT_HEX_UINT64:
+			write_field_begin(self, "hex_ui64");
 			write_uint64(self, data->hex_ui64);
+			write_field_end(self, "hex_ui64");
 			break;
 		case E_SNVT_BOOL:
+			write_field_begin(self, "b");
 			write_bool(self, data->b);
+			write_field_end(self, "b");
 			break;
 		case E_SNVT_IDENTIFIER:
-			write_string(self, &data->identifier);
+			write_field_begin(self, "identifier");
+			write_string(self, data->identifier);
+			write_field_end(self, "identifier");
+			break;
+		case E_SNVT_CHAR:
+			write_field_begin(self, "c");
+			write_char(self, data->c);
+			write_field_end(self, "c");
 			break;
 	}
 	write_struct_end(self, "UN_VALUE");
@@ -321,13 +338,19 @@ void write_UN_TypeAnnotation(HPAbstractWriter *self, const UN_TypeAnnotation* da
 	{
 
 		case E_TA_SWITCH:
+			write_field_begin(self, "ta_switch");
 			write_string(self, &data->ta_switch);
+			write_field_end(self, "ta_switch");
 			break;
 		case E_TA_LOWER_BOUND:
+			write_field_begin(self, "ta_lower_bound");
 			write_ST_VALUE(self, &data->ta_lower_bound);
+			write_field_end(self, "ta_lower_bound");
 			break;
 		case E_TA_UPPER_BOUND:
+			write_field_begin(self, "ta_upper_bound");
 			write_ST_VALUE(self, &data->ta_upper_bound);
+			write_field_end(self, "ta_upper_bound");
 			break;
 	}
 	write_struct_end(self, "UN_TypeAnnotation");

@@ -87,7 +87,9 @@
 %type<sn_hex_int64> tok_hex_int64
 %type<sn_uint64> tok_uint64
 %type<sn_hex_uint64> tok_hex_uint64
+%type<sn_char> tok_char
 %type<sn_tok_unixcomment> tok_unixcomment
+
 %type<sn_bool> tok_bool
 %type<sn_type> Type SimpleType ObjectType ContainerType
 %type<sn_value> Value
@@ -222,6 +224,7 @@ Value :
 	}
 |	tok_char
 	{
+		dp_reduce_Value_tok_char(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_identifier
 	{
