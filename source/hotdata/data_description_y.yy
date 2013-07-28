@@ -91,6 +91,7 @@
 %type<sn_bool> tok_bool
 %type<sn_type> Type SimpleType ObjectType ContainerType
 %type<sn_value> Value
+%type<sn_const> Const
 
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
@@ -131,7 +132,15 @@ Definition :
 
 		dp_do_import(GET_SELF, &yylloc, &$1);
 	}
-	| Const | Typedef | Struct | Union | Enum | UnixComment;
+|	Const
+	{
+		dp_reduce_Definition_Const(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+
+		//dp_on_vector_item_begin(GET_SELF, &yylloc);
+		//write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
+		//dp_on_vector_item_end(GET_SELF, &yylloc);
+	}
+| Typedef | Struct | Union | Enum | UnixComment;
 
 
 Import :
@@ -169,6 +178,9 @@ Const :
 
 		dp_on_definition_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "const");
+
+
+		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$3, &$5, &$9);
 	}
 
 
@@ -178,25 +190,25 @@ Value :
 	{
 		dp_on_value_tok_uint64(GET_SELF, &yylloc, $1);
 
-		dp_do_value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_uint64
 	{
 		dp_on_value_tok_hex_uint64(GET_SELF, &yylloc, $1);
 
-		dp_do_value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_int64
 	{
 		dp_on_value_tok_int64(GET_SELF, &yylloc, $1);
 
-		dp_do_value_tok_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_hex_int64
 	{
 		dp_on_value_tok_hex_int64(GET_SELF, &yylloc, $1);
 
-		dp_do_value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_bool
 	{
@@ -216,7 +228,7 @@ Value :
 		dp_on_value_tok_identifier(GET_SELF, &yylloc, $1);	
 		
 
-		dp_do_value_identifier(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_identifier(GET_SELF, &yylloc, &$$, $1);
 	}
 ;
 
@@ -502,16 +514,19 @@ Type :
 	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_begin(GET_SELF, &yylloc);dp_on_field_begin(GET_SELF, &yylloc, "type");}
 	SimpleType
 	{dp_on_field_end(GET_SELF, &yylloc, "type");dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "SimpleType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	$$ = $2;
 	}
 	
 |	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_begin(GET_SELF, &yylloc);}
 	ContainerType
 	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ContainerType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	$$ = $2;
 	}
 	
 |	{dp_on_field_begin(GET_SELF, &yylloc, "Type"); dp_on_struct_begin(GET_SELF, &yylloc); dp_on_field_begin(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_begin(GET_SELF, &yylloc);}
 	ObjectType
 	{dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "ObjectType"); dp_on_struct_end(GET_SELF, &yylloc); dp_on_field_end(GET_SELF, &yylloc, "Type"); $$ = $2;
+	$$ = $2;
 	};
 
 ObjectType:
@@ -550,67 +565,67 @@ SimpleType:
 	{
 		dp_on_string(GET_SELF, &yylloc, "bool");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_char
 	{
 		dp_on_string(GET_SELF, &yylloc, "char");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_double
 	{
 		dp_on_string(GET_SELF, &yylloc, "double");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int8
 	{
 		dp_on_string(GET_SELF, &yylloc, "int8");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int16
 	{
 		dp_on_string(GET_SELF, &yylloc, "int16");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int32
 	{
 		dp_on_string(GET_SELF, &yylloc, "int32");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_int64
 	{
 		dp_on_string(GET_SELF, &yylloc, "int64");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint8 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint8");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint16 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint16");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint32 
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint32");
 		
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_t_uint64
 	{
 		dp_on_string(GET_SELF, &yylloc, "uint64");
 
-		dp_do_simple_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
 	};
 
 Parameters :

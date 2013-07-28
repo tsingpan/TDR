@@ -401,6 +401,12 @@ void write_ST_Const(HPAbstractWriter *self, const ST_Const* data)
 
 		write_field_end(self, "type");
 
+		write_field_begin(self, "identifier");
+
+		write_string(self, data->identifier);
+
+		write_field_end(self, "identifier");
+
 		write_field_begin(self, "val");
 
 		write_ST_VALUE(self, &data->val);

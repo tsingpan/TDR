@@ -194,6 +194,7 @@ typedef struct _ST_Const
 {
 
 	ST_TYPE type;
+	hpchar identifier[MAX_STRING_LENGTH];
 	ST_VALUE val;
 }ST_Const;
 
