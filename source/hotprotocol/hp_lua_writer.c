@@ -11,15 +11,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-typedef struct _HP_LUA_WRITER
-{
-	HPAbstractWriter super;
-	lua_State *ls;
-};
 
-hpint32 lua_writer_init(HP_LUA_WRITER *self, void *lua_state)
+hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 {
-	self->ls = (lua_State*)lua_state;
+	self->ls = lua_state;
 
 	self->super.write_struct_begin = lua_write_struct_begin;
 	self->super.write_struct_end = lua_write_struct_end;
@@ -199,8 +194,6 @@ hpint32 lua_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 	return E_HP_NOERROR;
 }
 
-//warning ¸ç×øµÈlua5.2³öÂ¯
-#define lua_pushunsigned lua_pushinteger
 
 hpint32 lua_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {

@@ -5,9 +5,16 @@
 #include "hotprotocol/hp_abstract_writer.h"
 #include <stdio.h>
 
-typedef struct _HP_LUA_WRITER HP_LUA_WRITER;
+#include "lua.h"
 
-HP_API hpint32 lua_writer_init(HP_LUA_WRITER *self, void *lua_state);
+typedef struct _HP_LUA_WRITER
+{
+	HPAbstractWriter super;
+	lua_State *ls;
+}HP_LUA_WRITER;
+
+
+HP_API hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state);
 
 HP_API hpint32 lua_writer_fini(HP_LUA_WRITER *self);
 
