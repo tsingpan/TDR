@@ -939,16 +939,22 @@ void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const 
 }
 
 
-//do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring sn_tok_import)
+//Reduce
+void dp_reduce_Definition_Import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_IMPORT* pn_import)
 {
-	snprintf(current->package_name, sizeof(current->package_name), sn_tok_import);
+	pn_current->type = E_DT_IMPORT;
+	pn_current->definition.de_import = *pn_import;
 }
 
-void dp_dodo_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring sn_tok_import)
+void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import)
+{
+	snprintf(current->package_name, sizeof(current->package_name), *sn_tok_import);
+}
+
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IMPORT *pn_import)
 {
 	char file_name[1024];
-	snprintf(file_name, sizeof(file_name), "%s%s", sn_tok_import, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
+	snprintf(file_name, sizeof(file_name), "%s%s", pn_import->package_name, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
 	file_name[sizeof(file_name) - 1] = 0;
 
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)

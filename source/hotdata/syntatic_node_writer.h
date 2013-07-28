@@ -50,4 +50,8 @@ void write_ST_STRUCT(HPAbstractWriter *self, const ST_STRUCT* data);
 
 void write_ST_UNION(HPAbstractWriter *self, const ST_UNION* data);
 
+void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_DEFINITION_TYPE s);
+
+void write_ST_DEFINITION(HPAbstractWriter *self, const ST_DEFINITION* data);
+
 #endif//_H_syntactic_node_hd_writer_header

@@ -603,3 +603,40 @@ void write_ST_UNION(HPAbstractWriter *self, const ST_UNION* data)
 	write_struct_end(self , "ST_UNION");
 }
 
+void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_DEFINITION_TYPE s)
+{
+	write_struct_begin(self, "UN_DEFINITION");
+
+	switch (s)
+	{
+	case E_DT_IMPORT:
+		write_field_begin(self, "de_import");
+		write_ST_Import(self, &data->de_import);
+		write_field_end(self, "de_import");
+		break;
+	}
+
+	write_struct_end(self, "UN_DEFINITION");
+}
+
+
+void write_ST_DEFINITION(HPAbstractWriter *self, const ST_DEFINITION* data)
+{
+	write_struct_begin(self, "ST_DEFINITION");
+
+	write_field_begin(self, "type");
+
+	write_int32(self, data->type);
+
+	write_field_end(self, "type");
+
+
+	write_field_begin(self, "definition");
+
+	write_UN_DEFINITION(self, &data->definition, data->type);
+
+	write_field_end(self, "definition");
+
+
+	write_struct_end(self, "ST_DEFINITION");
+}

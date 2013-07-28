@@ -9,17 +9,21 @@
 
 typedef union _ParserNode ParserNode;
 
+typedef ST_DEFINITION PN_DEFINITION;
 typedef ST_VALUE PN_VALUE;
 typedef ST_TYPE PN_TYPE;
 typedef ST_Import PN_IMPORT;
 
 union _ParserNode
 {
-	PN_VALUE sn_value;	
-	PN_TYPE sn_type;
+//	PN_DEFINITION sn_definition;
 	PN_IMPORT sn_import;
-	hpbytes sn_tok_identifier;
 	hpstring sn_tok_import;
+
+
+	PN_VALUE sn_value;	
+	PN_TYPE sn_type;	
+	hpbytes sn_tok_identifier;	
 	const char* sn_tok_unixcomment;
 	hpbool sn_bool;
 	hpuint64 sn_uint64;

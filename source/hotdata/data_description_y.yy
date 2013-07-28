@@ -7,6 +7,7 @@
 #define YYERROR_VERBOSE
 #define GET_SELF HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
 #define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
+#define GET_DEFINITION HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
 
 %}
 %locations
@@ -77,6 +78,7 @@
 %token tok_t_vector
 
 
+%type<sn_definition> Definition
 %type<sn_import> Import
 %type<sn_tok_import> tok_import
 
@@ -117,28 +119,40 @@ DefinitionList :
 |	Definition ;
 
 Definition :
-	Import | Const | Typedef | Struct | Union | Enum | UnixComment;
+	Import
+	{
+		//规约这个节点
+		dp_reduce_Definition_Import(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+
+		dp_on_vector_item_begin(GET_SELF, &yylloc);
+		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
+		dp_on_vector_item_end(GET_SELF, &yylloc);
+
+
+		dp_do_import(GET_SELF, &yylloc, &$1);
+	}
+	| Const | Typedef | Struct | Union | Enum | UnixComment;
 
 
 Import :
 	{
-		dp_on_definition_begin(GET_SELF, &yylloc);
+		//dp_on_definition_begin(GET_SELF, &yylloc);
 				
-		dp_on_field_begin(GET_SELF, &yylloc, "import");
+		//dp_on_field_begin(GET_SELF, &yylloc, "import");
 	}
 	tok_import
 	{
 		//首先规约这个语法节点
-		dp_do_import(GET_SELF, &yylloc, &$$, $2);
+		dp_reduce_Import_tok_import(GET_SELF, &yylloc, &$$, &$2);
 
-		write_ST_Import(GET_WRITER, &$$);
+		//write_ST_Import(GET_WRITER, &$$);
 
-		dp_on_field_end(GET_SELF, &yylloc, "import");
+		//dp_on_field_end(GET_SELF, &yylloc, "import");
 		
-		dp_on_definition_end(GET_SELF, &yylloc);
+		//dp_on_definition_end(GET_SELF, &yylloc);
 
 		//执行这个节点的动作
-		dp_dodo_import(GET_SELF, &yylloc, $2);
+		//dp_dodo_import(GET_SELF, &yylloc, $2);
 	};
 
 

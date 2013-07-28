@@ -247,4 +247,31 @@ typedef struct _ST_UNION
 	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
 }ST_UNION;
 
+typedef enum _EN_DEFINITION_TYPE
+{
+	E_DT_IMPORT	= 0,
+	E_DT_CONST = 1,
+	E_DT_ENUM = 2,
+	E_DT_STRUCT = 3,
+	E_DT_UNION = 4,
+	E_DT_TYPEDEF = 5,
+	E_DT_UNIX_COMMENT = 6,
+}EN_DEFINITION_TYPE;
+
+typedef union _UN_DEFINITION
+{
+	ST_Import de_import;
+	ST_Const de_const;
+	ST_UNIX_COMMENT de_unix_comment;
+	ST_ENUM de_enum;
+	ST_STRUCT de_struct;
+	ST_UNION de_union;
+}UN_DEFINITION;
+
+typedef struct _ST_DEFINITION
+{
+	EN_DEFINITION_TYPE type;
+	UN_DEFINITION definition;
+}ST_DEFINITION;
+
 #endif//_H_syntactic_node_hd_types

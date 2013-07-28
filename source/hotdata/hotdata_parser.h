@@ -22,7 +22,7 @@ struct _DATA_PARSER
 {
 	SCANNER_STACK scanner_stack;
 	HPAbstractWriter *writer;
-	hpuint32 definition_list_num;
+	
 	hpint32 result[MAX_ERROR_NUM];
 	char result_str[MAX_ERROR_NUM][MAX_RESULT_STRING_LENGTH];
 	hpuint32 result_num;
@@ -37,6 +37,10 @@ struct _DATA_PARSER
 
 	//·ûºÅ±í
 	Trie *symbols;
+
+
+	PN_DEFINITION pn_definition;
+	hpuint32 definition_list_num;
 };
 
 hpint32 data_parser_init(DATA_PARSER *self);
@@ -133,9 +137,10 @@ void dp_on_struct_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const
 
 void dp_on_field_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const hpbytes sn_tok_identifier);
 
-//do
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring sn_tok_import);
-void dp_dodo_import(DATA_PARSER *self, const YYLTYPE *yylloc, const hpstring sn_tok_import);
+//Reduce
+void dp_reduce_Definition_Import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_IMPORT* pn_import);
+
+void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import);
 
 void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier);
 
@@ -153,6 +158,8 @@ void dp_do_simple_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *curren
 
 void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const hpbytes sn_tok_identifier);
 
+//do
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IMPORT *pn_import);
 /*
 //check
 void dp_check_constant_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,const SyntacticNode* sn_type, const hpbytes sn_tok_identifier);
