@@ -114,7 +114,7 @@ void write_ST_TYPE(HPAbstractWriter *self, const ST_TYPE* data)
 
 		write_field_begin(self, "type");
 
-		write_int32(self, &data->type);
+		write_int32(self, data->type);
 
 		write_field_end(self, "type");
 

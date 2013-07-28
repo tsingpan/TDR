@@ -110,40 +110,70 @@
 
 Document :
 	{
-		dp_on_document_begin(GET_SELF, &yylloc);		
+		write_struct_begin(GET_WRITER, "ST_DOCUMENT");
+
+		write_field_begin(GET_WRITER, "file_name");
+		write_string(GET_WRITER, GET_SELF->file_name);
+		write_field_end(GET_WRITER, "file_name");
+
+		write_field_begin(GET_WRITER, "definition_list");
+		write_vector_begin(GET_WRITER);
 	}
 	DefinitionList
 	{
-		dp_on_document_end(GET_SELF, &yylloc);
+		write_vector_end(GET_WRITER);
+		write_field_end(GET_WRITER, "definition_list");
+
+		write_field_begin(GET_WRITER, "definition_list_num");
+		write_uint32(GET_WRITER, GET_SELF->definition_list_num);
+		write_field_end(GET_WRITER, "definition_list_num");
+		write_struct_end(GET_WRITER, "ST_DOCUMENT");
 	};
 
 DefinitionList :
-	DefinitionList Definition 
-|	Definition ;
+	DefinitionList Definition
+	{
+		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
+		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+
+		++GET_SELF->definition_list_num;
+
+		dp_do_Definition(GET_SELF, &yylloc, &GET_DEFINITION);
+	}
+|	{
+	};
 
 Definition :
 	Import
 	{
 		dp_reduce_Definition_Import(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
-		
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-		dp_on_vector_item_end(GET_SELF, &yylloc);
-		
-
-		dp_do_import(GET_SELF, &yylloc, &$1);
 	}
 |	Const
 	{
 		dp_reduce_Definition_Const(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
-		/*
-		dp_on_vector_item_begin(GET_SELF, &yylloc);
-		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-
-		dp_on_vector_item_end(GET_SELF, &yylloc);
-		*/
 	}
-| Typedef | Struct | Union | Enum | UnixComment;
+| Typedef
+	{
+		GET_DEFINITION.type = E_DT_TYPEDEF;
+	}
+| Struct
+	{
+		GET_DEFINITION.type = E_DT_STRUCT;
+	}
+| Union
+	{
+		GET_DEFINITION.type = E_DT_UNION;
+	}
+| Enum
+	{
+		GET_DEFINITION.type = E_DT_ENUM;
+	}
+| UnixComment
+	{
+		GET_DEFINITION.type = E_DT_UNIX_COMMENT;
+	}
+;
 
 
 Import :
@@ -439,7 +469,6 @@ TypeAnnotation:
 	}
 |	tok_switch '=' tok_identifier
 	{
-		dp_on_TypeAnnotations_switch(GET_SELF, &yylloc, &$3);
 	}
 |	;
 
