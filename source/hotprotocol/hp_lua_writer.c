@@ -199,6 +199,8 @@ hpint32 lua_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 	return E_HP_NOERROR;
 }
 
+//warning ¸ç×øµÈlua5.2³öÂ¯
+#define lua_pushunsigned lua_pushinteger
 
 hpint32 lua_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {
@@ -213,6 +215,7 @@ hpint32 lua_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
 	lua_pushunsigned(self->ls, val);
 	return E_HP_NOERROR;
 }
+
 
 hpint32 lua_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
 {
