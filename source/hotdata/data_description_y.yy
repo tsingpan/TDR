@@ -521,7 +521,7 @@ ObjectType:
 		dp_on_bytes(GET_SELF, &yylloc, $1);
 		dp_on_field_end(GET_SELF, &yylloc, "type");
 		
-		dp_do_type_object(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_ObjectType_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 ContainerType:
@@ -532,7 +532,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "vector");
 
-		dp_do_container_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &yylloc, &$$);
 	}
 |	tok_t_string
 	{
@@ -541,7 +541,7 @@ ContainerType:
 		dp_on_struct_end(GET_SELF, &yylloc);
 		dp_on_field_end(GET_SELF, &yylloc, "string");
 		
-		dp_do_container_type(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_ContainerType_tok_t_string(GET_SELF, &yylloc, &$$);
 	};
 
 	

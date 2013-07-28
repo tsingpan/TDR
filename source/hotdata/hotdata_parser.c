@@ -951,16 +951,53 @@ void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IM
 	snprintf(current->package_name, sizeof(current->package_name), *sn_tok_import);
 }
 
-void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IMPORT *pn_import)
+void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier)
 {
-	char file_name[1024];
-	snprintf(file_name, sizeof(file_name), "%s%s", pn_import->package_name, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
-	file_name[sizeof(file_name) - 1] = 0;
+	hpuint32 i;
+	char id[1024];
+	PN_TYPE *type;
 
-	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	current->type = E_SNT_OBJECT;
+
+	for(i = 0; i < tok_identifier->len; ++i)
 	{
-		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
+		id[i] = tok_identifier->ptr[i];
 	}
+	id[i] = 0;
+	strncpy(current->ot, id, MAX_STRING_LENGTH);
+/*
+	if(!trie_retrieve(self->typedef_identifier, id, type))
+	{
+		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
+		goto done;
+	}
+	*/
+done:
+	return;
+}
+
+void dp_reduce_ContainerType_tok_t_vector(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = E_CT_VECTOR;
+}
+
+void dp_reduce_ContainerType_tok_t_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = E_CT_STRING;
+}
+
+void dp_do_simple_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_SIMPLE_TYPE type)
+{
+	current->type = E_SNT_SIMPLE;
+	current->st = type;
+}
+
+void dp_do_container_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_CONTAINER_TYPE type)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = type;
 }
 
 void dp_do_value_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier)
@@ -1015,42 +1052,19 @@ void dp_do_value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VAL
 	current->type = E_SNVT_HEX_UINT64;
 }
 
-void dp_do_simple_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_SIMPLE_TYPE type)
+//do
+void dp_do_import(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IMPORT *pn_import)
 {
-	current->type = E_SNT_SIMPLE;
-	current->st = type;
-}
+	char file_name[1024];
+	snprintf(file_name, sizeof(file_name), "%s%s", pn_import->package_name, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
+	file_name[sizeof(file_name) - 1] = 0;
 
-void dp_do_container_type(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_CONTAINER_TYPE type)
-{
-	current->type = E_SNT_CONTAINER;
-	current->ct = type;
-}
-
-void dp_do_type_object(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const hpbytes sn_tok_identifier)
-{
-	hpuint32 i;
-	char id[1024];
-	PN_TYPE *type;
-
-	current->type = E_SNT_OBJECT;
-
-	for(i = 0; i < sn_tok_identifier.len; ++i)
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 	{
-		id[i] = sn_tok_identifier.ptr[i];
+		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
 	}
-	id[i] = 0;
-	strncpy(current->ot, id, MAX_STRING_LENGTH);
-/*
-	if(!trie_retrieve(self->typedef_identifier, id, type))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
-		goto done;
-	}
-	*/
-done:
-	return;
 }
+
 
 /*
 //check
