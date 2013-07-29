@@ -190,9 +190,7 @@ Definition :
 	{
 		GET_DEFINITION.type = E_DT_UNIX_COMMENT;
 		GET_DEFINITION.definition.de_unix_comment = $1;
-	}
-;
-
+	};
 
 Import :
 	tok_import
@@ -200,6 +198,11 @@ Import :
 		dp_reduce_Import_tok_import(GET_SELF, &yylloc, &$$, &$1);
 	};
 
+Typedef :
+	tok_typedef Type Arguments tok_identifier ';'
+	{
+		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &yylloc, &$$, &$2, &$3, &$4);
+	};
 
 Const :
 	tok_const Type tok_identifier
@@ -211,7 +214,7 @@ Const :
 		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$6);
 		
 		dp_check_constant_value(GET_SELF, &yylloc, &$2, &$3, &$6);
-		
+				
 		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$3, &$6);
 	}
 
@@ -253,15 +256,9 @@ Value :
 |	tok_identifier
 	{
 		dp_reduce_Value_tok_identifier(GET_SELF, &yylloc, &$$, $1);
-	}
-;
-
-Typedef :
-	tok_typedef Type Arguments tok_identifier ';'
-	{
-		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &yylloc, &$$, &$2, &$3, &$4);
 	};
-	
+
+
 Enum :
 	tok_enum TypeAnnotations tok_identifier	'{' EnumDefList '}' ';'
 	{
@@ -329,7 +326,7 @@ FieldList:
 		GET_SELF->pn_field_list.field_list_num = 0;
 		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
 		++(GET_SELF->pn_field_list.field_list_num);
-	}
+	};
 	
 
 Field : 
@@ -365,7 +362,6 @@ Condition :
 		$$.exp = $4;
 		$$.exp.neg = hptrue;
 	}
-
 |	tok_if '(' Value tok_unequal Value ')'
 	{
 		$$.exp.neg = hptrue;
@@ -410,8 +406,7 @@ Type :
 |	ContainerType
 	{
 		$$ = $1;
-	}
-	
+	}	
 |	ObjectType
 	{
 		$$ = $1;
@@ -503,7 +498,7 @@ ParameterList:
 		$$.par_list_num = 0;
 		$$.par_list[$$.par_list_num] = $1;
 		++$$.par_list_num;
-	}
+	};
 	
 	
 Parameter:
@@ -535,8 +530,7 @@ ArgumentList:
 |	Argument
 	{
 		dp_reduce_ArgumentList_Argument(GET_SELF, &yylloc, &$$, &$1);
-	}
-	;
+	};
 	
 Argument:
 	tok_identifier
