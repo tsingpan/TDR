@@ -12,13 +12,12 @@
 #define MAX_COMMENT_LENGTH 1024
 #endif//MAX_COMMENT_LENGTH
 
-typedef struct _ST_UNIX_COMMENT_OR_NOT
+typedef struct _ST_UNIX_COMMENT
 {
 
 	hpbool empty;
-	hpuint32 len;
 	hpchar text[MAX_COMMENT_LENGTH];
-}ST_UNIX_COMMENT_OR_NOT;
+}ST_UNIX_COMMENT;
 
 typedef enum _SN_VALUE_TYPE
 {
@@ -161,34 +160,27 @@ typedef struct _ST_FIELD
 	ST_TYPE type;
 	ST_ARGUMENTS args;
 	hpchar identifier[MAX_IDENTIFIER_LENGTH];
-	ST_UNIX_COMMENT_OR_NOT comment;
+	ST_UNIX_COMMENT comment;
 }ST_FIELD;
 
 #ifndef MAX_TA_LIST_NUM
-#define MAX_TA_LIST_NUM 1024
+#define MAX_TA_LIST_NUM 4
 #endif//MAX_TA_LIST_NUM
 
 typedef enum _TA_TYPE
 {
 
 	E_TA_SWITCH = 0 ,
-	E_TA_LOWER_BOUND = 1 ,
-	E_TA_UPPER_BOUND = 2 ,
+	E_TA_UNIQUE = 1 ,
+	E_TA_LOWER_BOUND = 2 ,
+	E_TA_UPPER_BOUND = 3 ,
 }TA_TYPE;
-
-typedef union _UN_TypeAnnotation
-{
-
-	hpchar ta_switch[MAX_IDENTIFIER_LENGTH];
-	ST_VALUE ta_lower_bound;
-	ST_VALUE ta_upper_bound;
-}UN_TypeAnnotation;
 
 typedef struct _ST_TypeAnnotation
 {
 
 	TA_TYPE type;
-	UN_TypeAnnotation ta;
+	ST_VALUE val;
 }ST_TypeAnnotation;
 
 typedef struct _ST_TypeAnnotations
@@ -213,19 +205,12 @@ typedef struct _ST_Const
 	ST_VALUE val;
 }ST_Const;
 
-typedef struct _ST_UNIX_COMMENT
-{
-
-	hpuint32 len;
-	hpchar text[MAX_COMMENT_LENGTH];
-}ST_UNIX_COMMENT;
-
 typedef struct _ST_ENUM_DEF
 {
 
 	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 	ST_VALUE val;
-	ST_UNIX_COMMENT_OR_NOT comment;
+	ST_UNIX_COMMENT comment;
 }ST_ENUM_DEF;
 
 #ifndef MAX_ENUM_DEF_LIST_NUM

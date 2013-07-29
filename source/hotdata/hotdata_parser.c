@@ -41,13 +41,13 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
-
+done:
 	for(i = 0;i < self->result_num; ++i)
 	{
 		fprintf(stderr, self->result_str[i]);
 		fputc('\n', stderr);
 	}
-done:
+
 	if(self->result_num == 0)
 	{
 		return E_HP_NOERROR;

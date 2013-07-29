@@ -5,7 +5,7 @@
 #include "syntatic_node_writer.h"
 #include <string.h>
 
-void write_ST_UNIX_COMMENT_OR_NOT(HPAbstractWriter *self, const ST_UNIX_COMMENT_OR_NOT* data)
+void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data)
 { 
 	write_struct_begin(self, "ST_UNIX_COMMENT_OR_NOT");
 
@@ -14,31 +14,10 @@ void write_ST_UNIX_COMMENT_OR_NOT(HPAbstractWriter *self, const ST_UNIX_COMMENT_
 		write_bool(self, data->empty);
 
 		write_field_end(self, "empty");
-
-		write_field_begin(self, "len");
-
-		write_uint32(self, data->len);
-
-		write_field_end(self, "len");
+		
 
 	write_field_begin(self, "text");
-	write_vector_begin(self);
-	{	
-		hpuint32 i;
-		for(i = 0; i < MAX_COMMENT_LENGTH; ++i)
-		{
-			if( i == data->len )
-			{
-				break;
-			}
-			write_vector_item_begin(self, i);
-
-			write_char(self, &data->text);
-
-			write_vector_item_end(self, i);
-		}
-	}
-	write_vector_end(self);
+	write_string(self, &data->text);
 	write_field_end(self, "text");
 
 	write_struct_end(self , "ST_UNIX_COMMENT_OR_NOT");
@@ -346,53 +325,29 @@ void write_ST_FIELD(HPAbstractWriter *self, const ST_FIELD* data)
 
 		write_field_begin(self, "comment");
 
-		write_ST_UNIX_COMMENT_OR_NOT(self, &data->comment);
+		write_ST_UNIX_COMMENT(self, &data->comment);
 
 		write_field_end(self, "comment");
 
 	write_struct_end(self , "ST_FIELD");
 }
 
-void write_UN_TypeAnnotation(HPAbstractWriter *self, const UN_TypeAnnotation* data , TA_TYPE s)
-{
-	write_struct_begin(self, "UN_TypeAnnotation");
-	switch(s)
-	{
-
-		case E_TA_SWITCH:
-			write_field_begin(self, "ta_switch");
-			write_string(self, &data->ta_switch);
-			write_field_end(self, "ta_switch");
-			break;
-		case E_TA_LOWER_BOUND:
-			write_field_begin(self, "ta_lower_bound");
-			write_ST_VALUE(self, &data->ta_lower_bound);
-			write_field_end(self, "ta_lower_bound");
-			break;
-		case E_TA_UPPER_BOUND:
-			write_field_begin(self, "ta_upper_bound");
-			write_ST_VALUE(self, &data->ta_upper_bound);
-			write_field_end(self, "ta_upper_bound");
-			break;
-	}
-	write_struct_end(self, "UN_TypeAnnotation");
-}
 
 void write_ST_TypeAnnotation(HPAbstractWriter *self, const ST_TypeAnnotation* data)
-{ 
+{
 	write_struct_begin(self, "ST_TypeAnnotation");
 
 		write_field_begin(self, "type");
 
-		//write_TA_TYPE(self, &data->type);
+		write_int32(self, data->type);
 
 		write_field_end(self, "type");
 
-		write_field_begin(self, "ta");
+		write_field_begin(self, "val");
 
-		//write_UN_TypeAnnotation(self, &data->ta, data->type, data->MAX_TA_LIST_NUM);
+		write_ST_VALUE(self, &data->val);
 
-		write_field_end(self, "ta");
+		write_field_end(self, "val");
 
 	write_struct_end(self , "ST_TypeAnnotation");
 }
@@ -468,38 +423,6 @@ void write_ST_Const(HPAbstractWriter *self, const ST_Const* data)
 	write_struct_end(self , "ST_Const");
 }
 
-void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data)
-{ 
-	write_struct_begin(self, "ST_UNIX_COMMENT");
-
-		write_field_begin(self, "len");
-
-		write_uint32(self, data->len);
-
-		write_field_end(self, "len");
-
-	write_field_begin(self, "text");
-	write_vector_begin(self);
-	{	
-		hpuint32 i;
-		for(i = 0; i < MAX_COMMENT_LENGTH; ++i)
-		{
-			if( i == data->len )
-			{
-				break;
-			}
-			write_vector_item_begin(self, i);
-
-			write_char(self, &data->text);
-
-			write_vector_item_end(self, i);
-		}
-	}
-	write_vector_end(self);
-	write_field_end(self, "text");
-
-	write_struct_end(self , "ST_UNIX_COMMENT");
-}
 
 void write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF* data)
 { 
@@ -519,7 +442,7 @@ void write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF* data)
 
 		write_field_begin(self, "comment");
 
-		write_ST_UNIX_COMMENT_OR_NOT(self, &data->comment);
+		write_ST_UNIX_COMMENT(self, &data->comment);
 
 		write_field_end(self, "comment");
 
@@ -700,6 +623,11 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_field_begin(self, "de_typedef");
 		write_ST_TYPEDEF(self, &data->de_typedef);
 		write_field_end(self, "de_typedef");
+		break;
+	case E_DT_UNIX_COMMENT:
+		write_field_begin(self, "de_unix_comment");
+		write_ST_UNIX_COMMENT(self, &data->de_unix_comment);
+		write_field_end(self, "de_unix_comment");
 		break;
 	default:
 		break;

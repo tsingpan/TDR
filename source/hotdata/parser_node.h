@@ -21,6 +21,9 @@ typedef hpdouble PN_TOK_DOUBLE;
 typedef hpstring PN_TOK_STRING;
 typedef ST_ARGUMENT PN_ARGUMENT;
 typedef ST_ARGUMENTS PN_ARGUMENTS;
+typedef ST_TypeAnnotation PN_TypeAnnotation;
+typedef ST_TypeAnnotations PN_TypeAnnotations;
+typedef ST_UNIX_COMMENT PN_UNIX_COMMENT;
 
 union _ParserNode
 {
@@ -53,6 +56,11 @@ union _ParserNode
 	SN_CONTAINER_TYPE sn_ct;
 
 	PN_TYPEDEF sn_typedef;
+
+	PN_TypeAnnotation sn_type_annotation;
+	PN_TypeAnnotations sn_type_annotations;
+
+	PN_UNIX_COMMENT sn_unix_comment;
 };
 
 

@@ -8,7 +8,7 @@
 #include "syntactic_node.h"
 
 
-void write_ST_UNIX_COMMENT_OR_NOT(HPAbstractWriter *self, const ST_UNIX_COMMENT_OR_NOT* data);
+void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data);
 
 void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE* data ,SN_VALUE_TYPE s);
 
@@ -30,8 +30,6 @@ void write_ST_CONDITION(HPAbstractWriter *self, const ST_CONDITION* data);
 
 void write_ST_FIELD(HPAbstractWriter *self, const ST_FIELD* data);
 
-void write_UN_TypeAnnotation(HPAbstractWriter *self, const UN_TypeAnnotation* data ,TA_TYPE s);
-
 void write_ST_TypeAnnotation(HPAbstractWriter *self, const ST_TypeAnnotation* data);
 
 void write_ST_TypeAnnotations(HPAbstractWriter *self, const ST_TypeAnnotations* data);
@@ -39,8 +37,6 @@ void write_ST_TypeAnnotations(HPAbstractWriter *self, const ST_TypeAnnotations* 
 void write_ST_Import(HPAbstractWriter *self, const ST_Import* data);
 
 void write_ST_Const(HPAbstractWriter *self, const ST_Const* data);
-
-void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data);
 
 void write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF* data);
 
