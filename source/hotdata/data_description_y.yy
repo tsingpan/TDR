@@ -209,6 +209,10 @@ Const :
 	'=' Value ';'
 	{
 		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$6);
+		
+		dp_check_constant_value(GET_SELF, &yylloc, &$2, &$3, &$6);
+		
+		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$3, &$6);
 	}
 
 
