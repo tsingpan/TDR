@@ -110,6 +110,11 @@
 
 %type<sn_enum_def> EnumDef
 
+%type<sn_parameter> Parameter
+%type<sn_parameters> Parameters ParameterList
+
+%type<sn_expression> FieldExpression
+%type<sn_condition> Condition FieldCondition
 
 
 
@@ -304,33 +309,60 @@ FieldList:
 Field : 
 	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot;
 
-FieldCondition:
-	{
-	}
+FieldCondition:	
 	Condition
 	{
-	}
+		$$ = $1;
+	}	
 |
 	{
+		$$.empty = hptrue;
 	};
 
 Condition : 
 	tok_if 	'(' FieldExpression	')'	
-|	tok_if '!' '(' FieldExpression ')'
-|	tok_if '(' tok_identifier tok_unequal tok_identifier ')'
 	{
+		$$.empty = hpfalse;
+		$$.exp = $3;
 	}
-|	tok_case tok_identifier ':'
+|	tok_if '!' '(' FieldExpression ')'
 	{
+		$$.empty = hpfalse;
+		$$.exp = $4;
+		$$.exp.neg = hptrue;
+	}
+
+|	tok_if '(' Value tok_unequal Value ')'
+	{
+		$$.exp.neg = hptrue;
+		$$.exp.op0 = $3;
+		snprintf($$.exp.oper, MAX_IDENTIFIER_LENGTH, "==");
+		$$.exp.op1 = $5;
+	}
+|	tok_case Value ':'
+	{
+		$$.exp.neg = hpfalse;
+		$$.exp.op1.type = E_SNVT_IDENTIFIER;
+		snprintf($$.exp.op1.val.identifier, MAX_IDENTIFIER_LENGTH, "s");
+		snprintf($$.exp.oper, MAX_IDENTIFIER_LENGTH, "==");
+		$$.exp.op1 = $2;
 	};
 
 
 FieldExpression :
-	tok_identifier tok_equal tok_identifier
+	Value tok_equal Value
 	{
+		$$.neg = hpfalse;
+		$$.op0 = $1;
+		snprintf($$.oper, MAX_IDENTIFIER_LENGTH, "==");
+		$$.op1 = $3;
 	}
-|	tok_identifier '&' tok_identifier
+|	Value '&' Value
 	{
+		$$.neg = hpfalse;
+		$$.op0 = $1;
+		snprintf($$.oper, MAX_IDENTIFIER_LENGTH, "&");
+		$$.op1 = $3;
 	}
 	;
 
@@ -417,21 +449,35 @@ SimpleType:
 Parameters :
 	'<' ParameterList '>'
 	{
+		$$ = $2;
 	}
 |
 	{
+		$$.par_list_num = 0;
 	};
 	
 ParameterList:
 	ParameterList ',' Parameter 
+	{
+		$$ = $1;
+		$$.par_list[$$.par_list_num] = $3;
+		++$$.par_list_num;
+	}
 |	
 	Parameter
+	{
+		$$.par_list_num = 0;
+		$$.par_list[$$.par_list_num] = $1;
+		++$$.par_list_num;
+	}
 	
 	
 Parameter:
-	Type
-	tok_identifier
+	Type tok_identifier
 	{
+		$$.type = $1;
+		memcpy($$.identifier, $2.ptr, $2.len);
+		$$.identifier[$2.len] = 0;
 	};
 
 

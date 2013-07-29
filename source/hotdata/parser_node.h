@@ -26,6 +26,10 @@ typedef ST_TypeAnnotations PN_TypeAnnotations;
 typedef ST_UNIX_COMMENT PN_UNIX_COMMENT;
 typedef ST_ENUM_DEF PN_ENUM_DEF;
 typedef ST_ENUM PN_ENUM;
+typedef ST_Parameter PN_Parameter;
+typedef ST_Parameters PN_Parameters;
+typedef ST_Expression PN_Expression;
+typedef ST_CONDITION PN_CONDITION;
 
 union _ParserNode
 {
@@ -65,6 +69,11 @@ union _ParserNode
 	PN_UNIX_COMMENT sn_unix_comment;
 
 	PN_ENUM_DEF sn_enum_def;
+	PN_Parameter sn_parameter;
+	PN_Parameters sn_parameters;
+
+	PN_Expression sn_expression;
+	PN_CONDITION sn_condition;
 };
 
 

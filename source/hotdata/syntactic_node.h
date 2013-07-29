@@ -96,7 +96,7 @@ typedef struct _ST_TYPE
 }ST_TYPE;
 
 #ifndef MAX_PARAMETER_NUM
-#define MAX_PARAMETER_NUM 1024
+#define MAX_PARAMETER_NUM 16
 #endif//MAX_PARAMETER_NUM
 
 typedef struct _ST_Parameter
@@ -141,9 +141,9 @@ typedef struct _ST_Expression
 {
 
 	hpbool neg;
-	hpchar op0[MAX_IDENTIFIER_LENGTH];
+	ST_VALUE op0;
 	hpchar oper[MAX_IDENTIFIER_LENGTH];
-	hpchar op1[MAX_IDENTIFIER_LENGTH];
+	ST_VALUE op1;
 }ST_Expression;
 
 typedef struct _ST_CONDITION

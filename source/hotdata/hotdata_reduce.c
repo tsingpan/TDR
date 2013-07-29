@@ -79,7 +79,7 @@ void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 		id[i] = sn_identifier.ptr[i];
 	}
 	id[i] = 0;
-
+/*
 	if(!trie_retrieve(self->symbols, id, &data))
 	{
 		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);

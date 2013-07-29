@@ -257,19 +257,19 @@ void write_ST_Expression(HPAbstractWriter *self, const ST_Expression* data)
 
 	write_field_begin(self, "op0");
 
-		write_string(self, &data->op0);
+		write_ST_VALUE(self, &data->op0);
 
 	write_field_end(self, "op0");
 
-	write_field_begin(self, "operator");
+	write_field_begin(self, "oper");
 
-		write_string(self, &data->op0);
+		write_string(self, &data->oper);
 
-	write_field_end(self, "operator");
+	write_field_end(self, "oper");
 
 	write_field_begin(self, "op1");
 
-		write_string(self, &data->op1);
+		write_ST_VALUE(self, &data->op1);
 
 	write_field_end(self, "op1");
 
