@@ -50,10 +50,16 @@ function on_typedef(typedef)
 	io.write('\n')
 end
 
+function on_enum(enum)
+
+end
+
 for key, value in pairs(hd['definition_list']) do
 	if(value.type == 1)then
 		on_const(value.definition.de_const)
 	elseif(value.type == 5)then
 		on_typedef(value.definition.de_typedef)
+	elseif(value.type == 2)then
+		on_enum(value.definition.de_enum)
 	end
 end
