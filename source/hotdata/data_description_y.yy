@@ -1,5 +1,4 @@
 %{
-//todo这里生成的json， 最好也用hotdata格式描述， 不过目前有些难度， 主要是因为没有树形容器
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
 
@@ -96,6 +95,7 @@
 %type<sn_value> Value
 %type<sn_const> Const
 %type<pn_tok_double> tok_double
+%type<sn_string> tok_string
 
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
@@ -212,7 +212,7 @@ Value :
 	}
 |	tok_bool
 	{
-	
+		dp_reduce_Value_tok_bool(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_double
 	{
@@ -220,6 +220,7 @@ Value :
 	}
 |	tok_string
 	{
+		dp_reduce_Value_tok_string(GET_SELF, &yylloc, &$$, $1);
 	}
 |	tok_char
 	{

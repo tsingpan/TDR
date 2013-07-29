@@ -90,6 +90,11 @@ void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE* data , SN_VALUE_TYPE
 			write_char(self, data->c);
 			write_field_end(self, "c");
 			break;
+		case E_SNVT_STRING:
+			write_field_begin(self, "str");
+			write_string(self, data->str);
+			write_field_end(self, "str");
+			break;
 	}
 	write_struct_end(self, "UN_VALUE");
 }

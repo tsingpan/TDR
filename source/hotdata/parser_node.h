@@ -17,6 +17,7 @@ typedef hpchar PN_CHAR;
 typedef ST_Import PN_IMPORT;
 typedef hpbytes PN_IDENTIFIER;
 typedef hpdouble PN_TOK_DOUBLE;
+typedef hpstring PN_TOK_STRING;
 
 union _ParserNode
 {

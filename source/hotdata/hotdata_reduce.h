@@ -34,6 +34,10 @@ void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 
 void dp_reduce_Value_tok_double(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const double d);
 
+void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbool b);
+
+void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpstring str);
+
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val);
 

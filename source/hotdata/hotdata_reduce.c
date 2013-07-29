@@ -130,6 +130,18 @@ void dp_reduce_Value_tok_double(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VAL
 	current->val.d = d;
 }
 
+void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbool b)
+{
+	current->type = E_SNVT_BOOL;
+	current->val.b = b;
+}
+
+void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpstring str)
+{
+	current->type = E_SNVT_STRING;
+	current->val.str = str;
+}
+
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val)
 {
 	current->type = *type;
