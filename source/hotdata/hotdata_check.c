@@ -1,10 +1,12 @@
 #include "hotdata_check.h"
+#include "hotdata_symbols.h"
+#include <string.h>
 
 void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
 	char id[1024];
 	hpuint32 i;
-	hpuint32 data;
+	void *data;
 
 	for(i = 0; i < tok_identifier->len; ++i)
 	{
@@ -20,12 +22,14 @@ void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, con
 
 void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const PN_VALUE *pn_value)
 {
-	PN_VALUE *ptr = (PN_VALUE*)malloc(sizeof(PN_VALUE));
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
 	char id[1024];
 	memcpy(id, tok_identifier->ptr, tok_identifier->len);
 	id[tok_identifier->len] = 0;
 
-	*ptr = *pn_value;
+	ptr->type = EN_HST_VALUE;
+	ptr->body.val = *pn_value;
 
 	if(!trie_store(self->constant_symbols, id, ptr))
 	{
@@ -37,16 +41,25 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
 {
 	char id[1024];
-	hpuint32 i;
 	const ST_VALUE* val = NULL;
 	size_t size;
 
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		if(!trie_retrieve(self->constant_symbols, sn_value->val.identifier, &val))
+		const HOTDATA_SYMBOLS *ptr;
+		if(!trie_retrieve(self->constant_symbols, sn_value->val.identifier, &ptr))
 		{
 			dp_error(self, yylloc, E_SID_ERROR, id);
+			goto done;
 		}
+
+		if(ptr->type != EN_HST_VALUE)
+		{
+			dp_error(self, yylloc, E_SID_ERROR, id);
+			goto done;
+		}
+
+		val = &ptr->body.val;
 	}
 	else
 	{
