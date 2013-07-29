@@ -285,12 +285,16 @@ void write_ST_CONDITION(HPAbstractWriter *self, const ST_CONDITION* data)
 		write_bool(self, data->empty);
 
 		write_field_end(self, "empty");
+		if(!data->empty)
+		{
+			write_field_begin(self, "exp");
 
-		write_field_begin(self, "exp");
+			write_ST_Expression(self, &data->exp);
 
-		write_ST_Expression(self, &data->exp);
+			write_field_end(self, "exp");
+		}
 
-		write_field_end(self, "exp");
+		
 
 	write_struct_end(self , "ST_CONDITION");
 }
@@ -490,6 +494,39 @@ void write_ST_ENUM(HPAbstractWriter *self, const ST_ENUM* data)
 	write_struct_end(self , "ST_ENUM");
 }
 
+void write_ST_FIELD_LIST(HPAbstractWriter *self, const ST_FIELD_LIST* data)
+{
+	write_struct_begin(self , "ST_FIELD_LIST");
+
+	write_field_begin(self, "field_list_num");
+
+	write_uint32(self, data->field_list_num);
+
+	write_field_end(self, "field_list_num");
+
+	write_field_begin(self, "field_list");
+	write_vector_begin(self);
+	{	
+		hpuint32 i;
+		for(i = 0; i < MAX_FIELD_LIST_NUM; ++i)
+		{
+			if( i == data->field_list_num )
+			{
+				break;
+			}
+			write_vector_item_begin(self, i);
+
+			write_ST_FIELD(self, &data->field_list);
+
+			write_vector_item_end(self, i);
+		}
+	}
+	write_vector_end(self);
+	write_field_end(self, "field_list");
+
+	write_struct_end(self , "ST_FIELD_LIST");
+}
+
 void write_ST_STRUCT(HPAbstractWriter *self, const ST_STRUCT* data)
 { 
 	write_struct_begin(self, "ST_STRUCT");
@@ -512,31 +549,15 @@ void write_ST_STRUCT(HPAbstractWriter *self, const ST_STRUCT* data)
 
 		write_field_end(self, "parameters");
 
-		write_field_begin(self, "field_list_num");
-
-		write_uint32(self, data->field_list_num);
-
-		write_field_end(self, "field_list_num");
 
 	write_field_begin(self, "field_list");
-	write_vector_begin(self);
-	{	
-		hpuint32 i;
-		for(i = 0; i < MAX_FIELD_LIST_NUM; ++i)
-		{
-			if( i == data->field_list_num )
-			{
-				break;
-			}
-			write_vector_item_begin(self, i);
 
-			write_ST_FIELD(self, &data->field_list);
+	write_ST_FIELD_LIST(self, &data->field_list);
 
-			write_vector_item_end(self, i);
-		}
-	}
-	write_vector_end(self);
 	write_field_end(self, "field_list");
+		
+
+		
 
 	write_struct_end(self , "ST_STRUCT");
 }
@@ -563,31 +584,11 @@ void write_ST_UNION(HPAbstractWriter *self, const ST_UNION* data)
 
 		write_field_end(self, "parameters");
 
-		write_field_begin(self, "field_list_num");
+		write_field_begin(self, "field_list");
 
-		write_uint32(self, data->field_list_num);
+		write_ST_FIELD_LIST(self, &data->field_list);
 
-		write_field_end(self, "field_list_num");
-
-	write_field_begin(self, "field_list");
-	write_vector_begin(self);
-	{	
-		hpuint32 i;
-		for(i = 0; i < MAX_FIELD_LIST_NUM; ++i)
-		{
-			if( i == data->field_list_num )
-			{
-				break;
-			}
-			write_vector_item_begin(self, i);
-
-			write_ST_FIELD(self, &data->field_list);
-
-			write_vector_item_end(self, i);
-		}
-	}
-	write_vector_end(self);
-	write_field_end(self, "field_list");
+		write_field_end(self, "field_list");
 
 	write_struct_end(self , "ST_UNION");
 }
@@ -641,6 +642,16 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_field_begin(self, "de_enum");
 		write_ST_ENUM(self, &data->de_enum);
 		write_field_end(self, "de_enum");
+		break;
+	case E_DT_STRUCT:
+		write_field_begin(self, "de_struct");
+		write_ST_STRUCT(self, &data->de_struct);
+		write_field_end(self, "de_struct");
+		break;
+	case E_DT_UNION:
+		write_field_begin(self, "de_union");
+		write_ST_UNION(self, &data->de_union);
+		write_field_end(self, "de_union");
 		break;
 	default:
 		break;

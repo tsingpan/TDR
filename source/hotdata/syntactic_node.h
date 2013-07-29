@@ -229,14 +229,19 @@ typedef struct _ST_ENUM
 #define MAX_FIELD_LIST_NUM 65536
 #endif//MAX_FIELD_LIST_NUM
 
+typedef struct _ST_FIELD_LIST
+{
+	hpuint32 field_list_num;
+	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
+}ST_FIELD_LIST;
+
 typedef struct _ST_STRUCT
 {
 
 	ST_TypeAnnotations ta;
 	hpchar name[MAX_IDENTIFIER_LENGTH];
 	ST_Parameters parameters;
-	hpuint32 field_list_num;
-	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
+	ST_FIELD_LIST field_list;
 }ST_STRUCT;
 
 typedef struct _ST_UNION
@@ -245,8 +250,7 @@ typedef struct _ST_UNION
 	ST_TypeAnnotations ta;
 	hpchar name[MAX_IDENTIFIER_LENGTH];
 	ST_Parameters parameters;
-	hpuint32 field_list_num;
-	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
+	ST_FIELD_LIST field_list;
 }ST_UNION;
 
 typedef struct _ST_TYPEDEF

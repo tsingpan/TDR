@@ -235,6 +235,7 @@ int main(int argc, char **argv)
 	load_language(&language_lib, language_path);
 
 	
+	
 
 	L = luaL_newstate();
 	luaL_openlibs(L);

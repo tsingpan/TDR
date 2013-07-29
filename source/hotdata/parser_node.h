@@ -30,6 +30,8 @@ typedef ST_Parameter PN_Parameter;
 typedef ST_Parameters PN_Parameters;
 typedef ST_Expression PN_Expression;
 typedef ST_CONDITION PN_CONDITION;
+typedef ST_FIELD PN_FIELD;
+typedef ST_FIELD_LIST PN_FIELD_LIST;
 
 union _ParserNode
 {
@@ -74,6 +76,7 @@ union _ParserNode
 
 	PN_Expression sn_expression;
 	PN_CONDITION sn_condition;
+
 };
 
 

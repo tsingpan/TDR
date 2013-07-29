@@ -118,7 +118,6 @@
 
 
 
-
 %left '='
 
 
@@ -290,24 +289,51 @@ EnumDef :
 Union :
 	tok_union TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
 	{
+		GET_DEFINITION.definition.de_union.ta = $2;
+		memcpy(GET_DEFINITION.definition.de_union.name, $3.ptr, $3.len);
+		GET_DEFINITION.definition.de_union.name[$3.len] = 0;
+		GET_DEFINITION.definition.de_union.parameters = $4;
+		GET_DEFINITION.definition.de_union.field_list = GET_SELF->pn_field_list;
 	};
 	
 	
 Struct : 
 	tok_struct TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
 	{
+		GET_DEFINITION.definition.de_struct.ta = $2;
+		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
+		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
+		GET_DEFINITION.definition.de_struct.parameters = $4;
+		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
 	};
 	
 
 	
 FieldList: 
-	FieldList Field	
+	FieldList Field
+	{
+		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
+		++(GET_SELF->pn_field_list.field_list_num);
+	}
 |	
 	Field
+	{
+		GET_SELF->pn_field_list.field_list_num = 0;
+		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
+		++(GET_SELF->pn_field_list.field_list_num);
+	}
 	
 
 Field : 
-	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot;
+	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot
+	{		
+		GET_SELF->pn_field.condition = $1;
+		GET_SELF->pn_field.type = $2;
+		GET_SELF->pn_field.args = $3;
+		memcpy(GET_SELF->pn_field.identifier, $4.ptr, $4.len);
+		GET_SELF->pn_field.identifier[$4.len] = 0;		
+		GET_SELF->pn_field.comment = $6;
+	};
 
 FieldCondition:	
 	Condition
