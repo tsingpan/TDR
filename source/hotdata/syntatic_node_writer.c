@@ -212,11 +212,23 @@ void write_ST_ARGUMENT(HPAbstractWriter *self, const ST_ARGUMENT* data)
 { 
 	write_struct_begin(self, "ST_ARGUMENT");
 
-	write_field_begin(self, "id");
+	if(data->type == E_AT_IDENTIFIER)
+	{
+		write_field_begin(self, "id");
 
 		write_string(self, &data->id);
 
-	write_field_end(self, "id");
+		write_field_end(self, "id");
+	}
+	else if(data->type == E_AT_SIMPLE_TYPE)
+	{
+		write_field_begin(self, "st");
+
+		write_ST_TYPE(self, &data->st);
+
+		write_field_end(self, "st");
+	}
+	
 
 	write_struct_end(self , "ST_ARGUMENT");
 }
@@ -649,6 +661,25 @@ void write_ST_UNION(HPAbstractWriter *self, const ST_UNION* data)
 	write_struct_end(self , "ST_UNION");
 }
 
+void write_ST_TYPEDEF(HPAbstractWriter *self, const ST_TYPEDEF* data)
+{
+	write_struct_begin(self , "ST_TYPEDEF");
+
+	write_field_begin(self, "type");
+	write_ST_TYPE(self, &data->type);
+	write_field_end(self, "type");
+
+	write_field_begin(self, "arguments");
+	write_ST_ARGUMENTS(self, &data->arguments);
+	write_field_end(self, "arguments");
+
+	write_field_begin(self, "name");
+	write_string(self, data->name);
+	write_field_end(self, "name");
+
+	write_struct_end(self , "ST_TYPEDEF");
+}
+
 void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_DEFINITION_TYPE s)
 {
 	write_struct_begin(self, "UN_DEFINITION");
@@ -664,6 +695,11 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_field_begin(self, "de_const");
 		write_ST_Const(self, &data->de_const);
 		write_field_end(self, "de_const");
+		break;
+	case E_DT_TYPEDEF:
+		write_field_begin(self, "de_typedef");
+		write_ST_TYPEDEF(self, &data->de_typedef);
+		write_field_end(self, "de_typedef");
 		break;
 	default:
 		break;

@@ -14,6 +14,12 @@ void dp_reduce_Definition_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEF
 
 }
 
+void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_TYPEDEF* pn_typedef)
+{
+	pn_current->type = E_DT_TYPEDEF;
+	pn_current->definition.de_typedef = *pn_typedef;
+}
+
 void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import)
 {
 	snprintf(current->package_name, sizeof(current->package_name), *sn_tok_import);
@@ -32,7 +38,7 @@ void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yyllo
 		id[i] = tok_identifier->ptr[i];
 	}
 	id[i] = 0;
-	strncpy(current->ot, id, MAX_STRING_LENGTH);
+	strncpy(current->ot, id, MAX_IDENTIFIER_LENGTH);
 /*
 	if(!trie_retrieve(self->typedef_identifier, id, type))
 	{
@@ -150,4 +156,40 @@ void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current
 	current->identifier[identifier->len] = 0;
 	
 	current->val = *val;
+}
+
+void dp_reduce_Argument_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENT* current, const PN_IDENTIFIER *tok_identifier)
+{
+	current->type = E_AT_IDENTIFIER;
+
+	memcpy(current->id, tok_identifier->ptr, tok_identifier->len);
+	current->id[tok_identifier->len] = 0;
+}
+
+void dp_reduce_Argument_SimpleType(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENT* current, const PN_TYPE *pn_type)
+{
+	current->type = E_AT_SIMPLE_TYPE;
+	current->st = *pn_type;
+}
+
+void dp_reduce_ArgumentList_Argument(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENTS* current, const PN_ARGUMENT *pn_argument)
+{
+	current->arg_list_num = 0;
+	current->arg_list[current->arg_list_num] = *pn_argument;
+	++(current->arg_list_num);
+}
+
+void dp_reduce_ArgumentList_ArgumentList_Argument(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENTS* current, const PN_ARGUMENTS* argument_list, const PN_ARGUMENT *pn_argument)
+{
+	*current = *argument_list;
+	current->arg_list[current->arg_list_num] = *pn_argument;
+	++(current->arg_list_num);
+}
+
+void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPEDEF *current, PN_TYPE* type, const PN_ARGUMENTS* arguments, const PN_IDENTIFIER *tok_identifier)
+{
+	current->type = *type;
+	current->arguments = *arguments;
+	memcpy(current->name, tok_identifier->ptr, tok_identifier->len);
+	current->name[tok_identifier->len] = 0;
 }

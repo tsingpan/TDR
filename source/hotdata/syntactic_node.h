@@ -4,9 +4,9 @@
 #include "hotpot/hp_platform.h"
 
 
-#ifndef MAX_STRING_LENGTH
-#define MAX_STRING_LENGTH 1024
-#endif//MAX_STRING_LENGTH
+#ifndef MAX_IDENTIFIER_LENGTH
+#define MAX_IDENTIFIER_LENGTH 128
+#endif//MAX_IDENTIFIER_LENGTH
 
 #ifndef MAX_COMMENT_LENGTH
 #define MAX_COMMENT_LENGTH 1024
@@ -46,7 +46,7 @@ typedef union _UN_VALUE
 	hpbool b;
 	hpdouble d;
 	hpchar c;
-	hpchar identifier[MAX_STRING_LENGTH];
+	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 }UN_VALUE;
 
 typedef struct _ST_VALUE
@@ -93,7 +93,7 @@ typedef struct _ST_TYPE
 	SN_TYPE type;
 	SN_SIMPLE_TYPE st;
 	SN_CONTAINER_TYPE ct;
-	hpchar ot[MAX_STRING_LENGTH];
+	hpchar ot[MAX_IDENTIFIER_LENGTH];
 }ST_TYPE;
 
 #ifndef MAX_PARAMETER_NUM
@@ -104,7 +104,7 @@ typedef struct _ST_Parameter
 {
 
 	ST_TYPE type;
-	hpchar identifier[MAX_STRING_LENGTH];
+	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 }ST_Parameter;
 
 typedef struct _ST_Parameters
@@ -118,10 +118,17 @@ typedef struct _ST_Parameters
 #define MAX_ARGUMENT_NUM 16
 #endif//MAX_ARGUMENT_NUM
 
+typedef enum _EN_ARGUMENT_TYPE
+{
+	E_AT_IDENTIFIER = 0,
+	E_AT_SIMPLE_TYPE = 1,
+}EN_ARGUMENT_TYPE;
+
 typedef struct _ST_ARGUMENT
 {
-
-	hpchar id[MAX_STRING_LENGTH];
+	EN_ARGUMENT_TYPE type;
+	hpchar id[MAX_IDENTIFIER_LENGTH];
+	ST_TYPE st;
 }ST_ARGUMENT;
 
 typedef struct _ST_ARGUMENTS
@@ -135,9 +142,9 @@ typedef struct _ST_Expression
 {
 
 	hpbool neg;
-	hpchar op0[MAX_STRING_LENGTH];
-	hpchar oper[MAX_STRING_LENGTH];
-	hpchar op1[MAX_STRING_LENGTH];
+	hpchar op0[MAX_IDENTIFIER_LENGTH];
+	hpchar oper[MAX_IDENTIFIER_LENGTH];
+	hpchar op1[MAX_IDENTIFIER_LENGTH];
 }ST_Expression;
 
 typedef struct _ST_CONDITION
@@ -153,7 +160,7 @@ typedef struct _ST_FIELD
 	ST_CONDITION condition;
 	ST_TYPE type;
 	ST_ARGUMENTS args;
-	hpchar identifier[MAX_STRING_LENGTH];
+	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 	ST_UNIX_COMMENT_OR_NOT comment;
 }ST_FIELD;
 
@@ -172,7 +179,7 @@ typedef enum _TA_TYPE
 typedef union _UN_TypeAnnotation
 {
 
-	hpchar ta_switch[MAX_STRING_LENGTH];
+	hpchar ta_switch[MAX_IDENTIFIER_LENGTH];
 	ST_VALUE ta_lower_bound;
 	ST_VALUE ta_upper_bound;
 }UN_TypeAnnotation;
@@ -191,17 +198,18 @@ typedef struct _ST_TypeAnnotations
 	ST_TypeAnnotation ta_list[MAX_TA_LIST_NUM];
 }ST_TypeAnnotations;
 
+#define MAX_PACKAGE_NAME_LENGTH 1024
 typedef struct _ST_Import
 {
 
-	hpchar package_name[MAX_STRING_LENGTH];
+	hpchar package_name[MAX_PACKAGE_NAME_LENGTH];
 }ST_Import;
 
 typedef struct _ST_Const
 {
 
 	ST_TYPE type;
-	hpchar identifier[MAX_STRING_LENGTH];
+	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 	ST_VALUE val;
 }ST_Const;
 
@@ -215,7 +223,7 @@ typedef struct _ST_UNIX_COMMENT
 typedef struct _ST_ENUM_DEF
 {
 
-	hpchar identifier[MAX_STRING_LENGTH];
+	hpchar identifier[MAX_IDENTIFIER_LENGTH];
 	ST_VALUE val;
 	ST_UNIX_COMMENT_OR_NOT comment;
 }ST_ENUM_DEF;
@@ -239,7 +247,7 @@ typedef struct _ST_STRUCT
 {
 
 	ST_TypeAnnotations ta;
-	hpchar name[MAX_STRING_LENGTH];
+	hpchar name[MAX_IDENTIFIER_LENGTH];
 	ST_Parameters parameters;
 	hpuint32 field_list_num;
 	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
@@ -249,11 +257,18 @@ typedef struct _ST_UNION
 {
 
 	ST_TypeAnnotations ta;
-	hpchar name[MAX_STRING_LENGTH];
+	hpchar name[MAX_IDENTIFIER_LENGTH];
 	ST_Parameters parameters;
 	hpuint32 field_list_num;
 	ST_FIELD field_list[MAX_FIELD_LIST_NUM];
 }ST_UNION;
+
+typedef struct _ST_TYPEDEF
+{
+	ST_TYPE type;
+	ST_ARGUMENTS arguments;
+	hpchar name[MAX_IDENTIFIER_LENGTH];
+}ST_TYPEDEF;
 
 typedef enum _EN_DEFINITION_TYPE
 {
@@ -274,6 +289,7 @@ typedef union _UN_DEFINITION
 	ST_ENUM de_enum;
 	ST_STRUCT de_struct;
 	ST_UNION de_union;
+	ST_TYPEDEF de_typedef;
 }UN_DEFINITION;
 
 typedef struct _ST_DEFINITION

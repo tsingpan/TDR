@@ -13,11 +13,14 @@ typedef ST_DEFINITION PN_DEFINITION;
 typedef ST_Const PN_CONST;
 typedef ST_VALUE PN_VALUE;
 typedef ST_TYPE PN_TYPE;
+typedef ST_TYPEDEF PN_TYPEDEF;
 typedef hpchar PN_CHAR;
 typedef ST_Import PN_IMPORT;
 typedef hpbytes PN_IDENTIFIER;
 typedef hpdouble PN_TOK_DOUBLE;
 typedef hpstring PN_TOK_STRING;
+typedef ST_ARGUMENT PN_ARGUMENT;
+typedef ST_ARGUMENTS PN_ARGUMENTS;
 
 union _ParserNode
 {
@@ -43,7 +46,13 @@ union _ParserNode
 	hpstring sn_string;
 	PN_CHAR sn_char;
 	SN_SIMPLE_TYPE sn_st;
+
+
+	PN_ARGUMENT sn_argument;
+	PN_ARGUMENTS sn_arguments;
 	SN_CONTAINER_TYPE sn_ct;
+
+	PN_TYPEDEF sn_typedef;
 };
 
 

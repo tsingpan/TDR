@@ -37,8 +37,23 @@ function on_const(const)
 	io.write('\n')
 end
 
+function on_typedef(typedef)
+	io.write('typedef')
+	io.write(' ')
+	if(typedef.type.type == 0)then
+		if(typedef.type.st == 4)then
+			io.write('hpuint8')
+		end
+	end
+	io.write(' ')
+	io.write(typedef.name)
+	io.write('\n')
+end
+
 for key, value in pairs(hd['definition_list']) do
 	if(value.type == 1)then
 		on_const(value.definition.de_const)
+	elseif(value.type == 5)then
+		on_typedef(value.definition.de_typedef)
 	end
 end

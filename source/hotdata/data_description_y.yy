@@ -96,10 +96,13 @@
 %type<sn_const> Const
 %type<pn_tok_double> tok_double
 %type<sn_string> tok_string
+%type<sn_typedef> Typedef
 
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
 
+%type<sn_argument> Argument
+%type<sn_arguments> Arguments ArgumentList
 
 
 
@@ -157,7 +160,7 @@ Definition :
 	}
 | Typedef
 	{
-		GET_DEFINITION.type = E_DT_TYPEDEF;
+		dp_reduce_Definition_Typedef(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
 	}
 | Struct
 	{
@@ -235,6 +238,7 @@ Value :
 Typedef :
 	tok_typedef Type Arguments tok_identifier ';'
 	{
+		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &yylloc, &$$, &$2, &$3, &$4);
 	};
 	
 Enum :
@@ -412,22 +416,33 @@ Parameter:
 
 Arguments:
 	'<' ArgumentList '>'
+	{
+		$$ = $2;
+	}
 |
 	{
+		$$.arg_list_num = 0;
 	};
 	
 ArgumentList:
 	ArgumentList ',' Argument
-|	Argument;
+	{
+		dp_reduce_ArgumentList_ArgumentList_Argument(GET_SELF, &yylloc, &$$, &$1, &$3);
+	}
+|	Argument
+	{
+		dp_reduce_ArgumentList_Argument(GET_SELF, &yylloc, &$$, &$1);
+	}
+	;
 	
 Argument:
 	tok_identifier
 	{
+		dp_reduce_Argument_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
 	}
-|	{
-	}
-	SimpleType
+|	SimpleType
 	{
+		dp_reduce_Argument_SimpleType(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 UnixComment:

@@ -10,6 +10,8 @@ void dp_reduce_Definition_Import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DE
 
 void dp_reduce_Definition_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_CONST* pn_const);
 
+void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_TYPEDEF* pn_typedef);
+
 void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import);
 
 void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier);
@@ -40,5 +42,16 @@ void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VAL
 
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val);
+
+void dp_reduce_Argument_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENT* current, const PN_IDENTIFIER *tok_identifier);
+
+void dp_reduce_Argument_SimpleType(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENT* current, const PN_TYPE *pn_type);
+
+void dp_reduce_ArgumentList_Argument(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENTS* current, const PN_ARGUMENT *pn_argument);
+
+void dp_reduce_ArgumentList_ArgumentList_Argument(DATA_PARSER *self, const YYLTYPE *yylloc, PN_ARGUMENTS* current, const PN_ARGUMENTS* argument_list, const PN_ARGUMENT *pn_argument);
+
+void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPEDEF *current, PN_TYPE* type, const PN_ARGUMENTS* arguments, const PN_IDENTIFIER *tok_identifier);
+
 
 #endif //_H_HOTDATA_REDUCE
