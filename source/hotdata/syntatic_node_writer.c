@@ -453,6 +453,14 @@ void write_ST_ENUM(HPAbstractWriter *self, const ST_ENUM* data)
 { 
 	write_struct_begin(self, "ST_ENUM");
 
+	write_field_begin(self, "name");
+	write_string(self, data->name);
+	write_field_end(self, "name");
+
+	write_field_begin(self, "type_annotations");
+	write_ST_TypeAnnotations(self, &data->type_annotations);
+	write_field_end(self, "type_annotations");
+
 		write_field_begin(self, "enum_def_list_num");
 
 		write_uint32(self, data->enum_def_list_num);
@@ -628,6 +636,11 @@ void write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION* data, EN_D
 		write_field_begin(self, "de_unix_comment");
 		write_ST_UNIX_COMMENT(self, &data->de_unix_comment);
 		write_field_end(self, "de_unix_comment");
+		break;
+	case E_DT_ENUM:
+		write_field_begin(self, "de_enum");
+		write_ST_ENUM(self, &data->de_enum);
+		write_field_end(self, "de_enum");
 		break;
 	default:
 		break;

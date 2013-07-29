@@ -219,7 +219,8 @@ typedef struct _ST_ENUM_DEF
 
 typedef struct _ST_ENUM
 {
-
+	hpchar name[MAX_IDENTIFIER_LENGTH];
+	ST_TypeAnnotations type_annotations;
 	hpuint32 enum_def_list_num;
 	ST_ENUM_DEF enum_def_list[MAX_ENUM_DEF_LIST_NUM];
 }ST_ENUM;

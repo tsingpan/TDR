@@ -108,6 +108,9 @@
 %type<sn_arguments> Arguments ArgumentList
 
 
+%type<sn_enum_def> EnumDef
+
+
 
 
 
@@ -250,18 +253,32 @@ Typedef :
 Enum :
 	tok_enum TypeAnnotations tok_identifier	'{' EnumDefList '}' ';'
 	{
-	
+		GET_DEFINITION.definition.de_enum.type_annotations = $2;
+		memcpy(GET_DEFINITION.definition.de_enum.name, $3.ptr, $3.len);
+		GET_DEFINITION.definition.de_enum.name[$3.len] = 0;
 	};
     
 EnumDefList : 
 	EnumDefList EnumDef
+	{
+		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
+		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
+	}
 |	
 	EnumDef
+	{
+		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
+		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $1;
+		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
+	}
 	
 EnumDef : 
 	tok_identifier '=' Value ',' UnixCommentOrNot
 	{
-
+		memcpy($$.identifier, $1.ptr, $1.len);
+		$$.identifier[$1.len] = 0;
+		$$.val = $3;
+		$$.comment = $5;
 	};
     
 
