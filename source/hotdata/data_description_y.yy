@@ -16,7 +16,7 @@
 
 #include "hotpot/hp_value.h"
 #include "hotscript/hotlex.h"
-
+#include "hotdata_check.h"
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"
 
@@ -202,9 +202,13 @@ Import :
 
 
 Const :
-	tok_const Type tok_identifier '=' Value ';'
+	tok_const Type tok_identifier
 	{
-		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
+		dp_check_Const_tok_identifier(GET_SELF, &yylloc, &$3);
+	}
+	'=' Value ';'
+	{
+		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$6);
 	}
 
 
