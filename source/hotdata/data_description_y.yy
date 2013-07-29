@@ -19,6 +19,7 @@
 #include "hotscript/hotlex.h"
 
 #include "hotdata_parser.h"
+#include "hotdata_reduce.h"
 
 #define YYMALLOC
 #define YYFREE
