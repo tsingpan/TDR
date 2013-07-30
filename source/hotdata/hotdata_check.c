@@ -37,46 +37,74 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 	}
 }
 
-
-void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
+static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
 {
-	char id[1024];
-	const ST_VALUE* val = NULL;
-	size_t size;
+	if(sn_type->type == E_SNT_SIMPLE)
+	{
+		return sn_type;
+	}
+	else if(sn_type->type == E_SNT_OBJECT)
+	{
+		const HOTDATA_SYMBOLS *ptr;
 
+		if(!trie_retrieve(self->constant_symbols, sn_type->ot, (void**)&ptr))
+		{
+			return NULL;
+		}
+		if(ptr->type != EN_HST_TYPE)
+		{
+			return NULL;
+		}
+		return &ptr->body.type;
+	}
+	else
+	{
+		return sn_type;
+	}
+}
+
+static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
+{
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
 		const HOTDATA_SYMBOLS *ptr;
-		if(!trie_retrieve(self->constant_symbols, sn_value->val.identifier, &ptr))
+		if(!trie_retrieve(self->constant_symbols, sn_value->val.identifier, (void**)&ptr))
 		{
-			dp_error(self, yylloc, E_SID_ERROR, id);
-			goto done;
+			return NULL;
 		}
 
 		if(ptr->type != EN_HST_VALUE)
 		{
-			dp_error(self, yylloc, E_SID_ERROR, id);
-			goto done;
+			return NULL;
 		}
 
-		val = &ptr->body.val;
+		return &ptr->body.val;
 	}
 	else
 	{
-		val = sn_value;
+		return sn_value;
 	}
+}
 
-	if(val == NULL)
+void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
+{
+	char id[1024];
+	const ST_VALUE* val = get_value(self, sn_value);
+	const ST_TYPE* type = get_type(self, sn_type);
+	size_t size;
+
+	if((type == NULL) || (val == NULL))
 	{
+		dp_error(self, yylloc, E_SID_ERROR, id);
 		goto done;
 	}
 
 	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	tok_identifier->ptr[tok_identifier->len] = 0;
-
-	if(sn_type->type == E_SNT_SIMPLE)
+	tok_identifier->ptr[tok_identifier->len] = 0;	
+	
+	if(type->type == E_SNT_SIMPLE)
 	{
-		switch(sn_type->st)
+		switch(type->st)
 		{
 		case E_ST_INT8:
 			size = sizeof(hpint8);
@@ -136,13 +164,13 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 			goto done;
 		}
 	}
-	else if(sn_type->type == E_SNT_OBJECT)
+	else if(type->type == E_SNT_OBJECT)
 	{
 		dp_error(self, yylloc, E_SID_ERROR, id);
 	}
-	else if(sn_type->type == E_SNT_CONTAINER)
+	else if(type->type == E_SNT_CONTAINER)
 	{
-		if(sn_type->ct == E_CT_STRING)
+		if(type->ct == E_CT_STRING)
 		{
 			if(sn_value->type != E_SNVT_STRING)
 			{
@@ -162,14 +190,15 @@ done:
 void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
 {
 	HOTDATA_SYMBOLS *symbol = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
-	symbol->type = EN_HST_TYPE;
-	symbol->body.type = sn_typedef->type;
-
-	if((sn_typedef->type.type != E_SNT_SIMPLE) && (sn_typedef->type.type != E_SNT_OBJECT))
+	const ST_TYPE*type = get_type(self, &sn_typedef->type);
+	if(type == NULL)
 	{
-		dp_error(self, yylloc, E_SID_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE);
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
 	}
 
+	symbol->type = EN_HST_TYPE;
+	symbol->body.type = *type;
 
 	if(!trie_store_if_absent(self->constant_symbols, sn_typedef->name, symbol))
 	{
