@@ -2,6 +2,62 @@
 #include "hotdata_symbols.h"
 #include <string.h>
 
+static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const char* name)
+{
+	const HOTDATA_SYMBOLS *symbol;
+	char global_name[MAX_IDENTIFIER_LENGTH * 2];
+
+	if(self->domain[0])
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+
+	if(!trie_retrieve(self->hotdata_symbols, global_name, (void**)&symbol))
+	{
+		if(!trie_retrieve(self->hotdata_symbols, name, (void**)&symbol))
+		{
+			return NULL;
+		}
+	}
+	return symbol;
+}
+
+static const HOTDATA_SYMBOLS* dp_find_symbol(DATA_PARSER *self, const PN_IDENTIFIER* tok_identifier)
+{
+	const HOTDATA_SYMBOLS *symbol;
+	char name[MAX_IDENTIFIER_LENGTH];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return dp_find_symbol_by_string(self, name);
+}
+
+static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identifier, const HOTDATA_SYMBOLS *symbol)
+{
+	char name[MAX_IDENTIFIER_LENGTH];
+	char global_name[MAX_IDENTIFIER_LENGTH * 2];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	if(self->domain[0])
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+	
+	if(!trie_store_if_absent(self->hotdata_symbols, global_name, (void**)&symbol))
+	{
+		E_HP_ERROR;
+	}
+	return E_HP_NOERROR;
+}
+
+
 void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
 	char id[MAX_IDENTIFIER_LENGTH];
@@ -10,7 +66,7 @@ void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, con
 	memcpy(id, tok_identifier->ptr, tok_identifier->len);
 	id[tok_identifier->len] = 0;
 
-	if(trie_retrieve(self->constant_symbols, id, &data))
+	if(dp_find_symbol(self, tok_identifier) != NULL)
 	{
 		dp_error(self, yylloc, E_SID_SYMBOL_REDEFINITION, id);
 	}
@@ -27,7 +83,7 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 	ptr->type = EN_HST_VALUE;
 	ptr->body.val = *pn_value;
 
-	if(!trie_store(self->constant_symbols, id, ptr))
+	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
 		dp_error(self, yylloc, E_SID_ERROR, id);
 	}
@@ -41,18 +97,19 @@ static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
 	}
 	else if(sn_type->type == E_SNT_OBJECT)
 	{
-		const HOTDATA_SYMBOLS *ptr;
-
-		if(!trie_retrieve(self->constant_symbols, sn_type->ot, (void**)&ptr))
+		const HOTDATA_SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_type->ot);
+		if(ptr == NULL)
 		{
 			return NULL;
 		}
-		//可能因用的是一个struct或者union
-		if(ptr->type != EN_HST_TYPE)
+		if(ptr->type == EN_HST_TYPE)
+		{
+			return &ptr->body.type;
+		}
+		else
 		{
 			return sn_type;
 		}
-		return &ptr->body.type;
 	}
 	else
 	{
@@ -64,18 +121,20 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		const HOTDATA_SYMBOLS *ptr;
-		if(!trie_retrieve(self->constant_symbols, sn_value->val.identifier, (void**)&ptr))
+		const HOTDATA_SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_value->val.identifier);
+		if(ptr == NULL)
 		{
 			return NULL;
 		}
 
-		if(ptr->type != EN_HST_VALUE)
+		if(ptr->type == EN_HST_VALUE)
+		{
+			return &ptr->body.val;
+		}
+		else
 		{
 			return NULL;
 		}
-
-		return &ptr->body.val;
 	}
 	else
 	{
@@ -197,12 +256,17 @@ void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF
 	symbol->type = EN_HST_TYPE;
 	symbol->body.type = *type;
 
-	if(!trie_store_if_absent(self->constant_symbols, sn_typedef->name, symbol))
+	if(!trie_store_if_absent(self->hotdata_symbols, sn_typedef->name, symbol))
 	{
 		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, sn_typedef->name);
 		goto done;
 	}
 
 done:
+	return;
+}
+
+void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
 	return;
 }

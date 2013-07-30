@@ -28,7 +28,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	alpha_map_add_range(alpha_map, 'A', 'Z');
 	alpha_map_add_range(alpha_map, '0', '9');
 	alpha_map_add_range(alpha_map, '_', '_');
-	self->constant_symbols = trie_new(alpha_map);
+	self->hotdata_symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
 	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
@@ -433,6 +433,7 @@ hpint32 data_parser_init(DATA_PARSER *self)
 	scanner_stack_init(&self->scanner_stack);
 	self->result_num = 0;
 	self->definition_list_num = 0;
+	self->domain[0] = 0;
 
 	return E_HP_NOERROR;
 }

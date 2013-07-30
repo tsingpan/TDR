@@ -32,7 +32,8 @@ struct _DATA_PARSER
 	char file_name[MAX_FILE_NAME_LENGTH];
 
 	//·ûºÅ±í
-	Trie *constant_symbols;
+	Trie *hotdata_symbols;
+	char domain[MAX_FILE_NAME_LENGTH];
 
 
 	PN_DEFINITION pn_definition;

@@ -284,12 +284,16 @@ EnumDefList :
 	}
 	
 EnumDef : 
-	tok_identifier '=' Value ',' UnixCommentOrNot
+	tok_identifier 
+	{
+		dp_check_EnumDef_tok_identifier(GET_SELF, &yylloc, &$1);
+	}
+	'=' Value ',' UnixCommentOrNot
 	{
 		memcpy($$.identifier, $1.ptr, $1.len);
 		$$.identifier[$1.len] = 0;
-		$$.val = $3;
-		$$.comment = $5;
+		$$.val = $4;
+		$$.comment = $6;
 	};
     
 
