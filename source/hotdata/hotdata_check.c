@@ -51,9 +51,10 @@ static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
 		{
 			return NULL;
 		}
+		//可能因用的是一个struct或者union
 		if(ptr->type != EN_HST_TYPE)
 		{
-			return NULL;
+			return sn_type;
 		}
 		return &ptr->body.type;
 	}
