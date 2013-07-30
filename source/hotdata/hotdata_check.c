@@ -4,15 +4,11 @@
 
 void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
-	char id[1024];
-	hpuint32 i;
+	char id[MAX_IDENTIFIER_LENGTH];
 	void *data;
 
-	for(i = 0; i < tok_identifier->len; ++i)
-	{
-		id[i] = tok_identifier->ptr[i];
-	}
-	id[i] = 0;
+	memcpy(id, tok_identifier->ptr, tok_identifier->len);
+	id[tok_identifier->len] = 0;
 
 	if(trie_retrieve(self->constant_symbols, id, &data))
 	{
@@ -89,7 +85,7 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 
 void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
 {
-	char id[1024];
+	char id[MAX_IDENTIFIER_LENGTH];
 	const ST_VALUE* val = get_value(self, sn_value);
 	const ST_TYPE* type = get_type(self, sn_type);
 	size_t size;
@@ -101,7 +97,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 	}
 
 	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	tok_identifier->ptr[tok_identifier->len] = 0;	
+	id[tok_identifier->len] = 0;	
 	
 	if(type->type == E_SNT_SIMPLE)
 	{
