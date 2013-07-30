@@ -158,3 +158,25 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 done:
 	return;
 }
+
+void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
+{
+	HOTDATA_SYMBOLS *symbol = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+	symbol->type = EN_HST_TYPE;
+	symbol->body.type = sn_typedef->type;
+
+	if((sn_typedef->type.type != E_SNT_SIMPLE) && (sn_typedef->type.type != E_SNT_OBJECT))
+	{
+		dp_error(self, yylloc, E_SID_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE);
+	}
+
+
+	if(!trie_store_if_absent(self->constant_symbols, sn_typedef->name, symbol))
+	{
+		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, sn_typedef->name);
+		goto done;
+	}
+
+done:
+	return;
+}

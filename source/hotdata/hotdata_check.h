@@ -12,4 +12,6 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 
 void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value);
 
+void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef);
+
 #endif //_H_HOTDATA_CHECK

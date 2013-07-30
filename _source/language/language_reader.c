@@ -51,6 +51,10 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		{
 			*sid = E_SID_SYMBOL_REDEFINITION;
 		}
+		else if(strcmp(enum_name, "E_SID_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE") == 0)
+		{
+			*sid = E_SID_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE;
+		}
 	}
 
 	read_enum(self, (hpint32*)sid);

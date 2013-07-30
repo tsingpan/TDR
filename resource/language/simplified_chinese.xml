@@ -1,5 +1,5 @@
 <LanguageLib>
-	<str_num>10</str_num>
+	<str_num>11</str_num>
 	<str>
 		<[0]>
 			<sid>E_SID_NOERROR</sid>
@@ -41,5 +41,9 @@
 			<sid>E_SID_SYMBOL_REDEFINITION</sid>
 			<str>符号[%s]重定义</str>
 		</[9]>
+		<[10]>
+			<sid>E_SID_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE</sid>
+			<str>typedef只可以支持简单类型和对象类型</str>
+		</[10]>
 	<str>
 </LanguageLib>
