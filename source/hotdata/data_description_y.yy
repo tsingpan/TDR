@@ -312,13 +312,27 @@ EnumDef :
     
 
 Union :
-	tok_union TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
+	tok_union TypeAnnotations 
 	{
 		GET_DEFINITION.definition.de_union.ta = $2;
-		memcpy(GET_DEFINITION.definition.de_union.name, $3.ptr, $3.len);
-		GET_DEFINITION.definition.de_union.name[$3.len] = 0;
-		GET_DEFINITION.definition.de_union.parameters = $4;
+	}
+	tok_identifier
+	{
+		memcpy(GET_DEFINITION.definition.de_union.name, $4.ptr, $4.len);
+		GET_DEFINITION.definition.de_union.name[$4.len] = 0;
+	}
+	Parameters
+	{
+		GET_DEFINITION.definition.de_union.parameters = $6;
+		
+		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
+	}
+	'{' FieldList
+	{
 		GET_DEFINITION.definition.de_union.field_list = GET_SELF->pn_field_list;
+	}
+	'}' ';'
+	{		
 	};
 	
 	
@@ -351,7 +365,7 @@ FieldList:
 
 Field : 
 	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot
-	{		
+	{
 		GET_SELF->pn_field.condition = $1;
 		GET_SELF->pn_field.type = $2;
 		GET_SELF->pn_field.args = $3;

@@ -492,3 +492,31 @@ void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *
 done:
 	return;
 }
+
+void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
+{
+	hpuint32 i, j;
+	for(i = 0; i < de_union->ta.ta_list_num; ++i)
+	{
+		if(de_union->ta.ta_list[i].type == E_TA_SWITCH)
+		{
+			hpbool found = hpfalse;
+			for(j = 0; j < de_union->parameters.par_list_num; ++j)
+			{
+				if(strcmp(de_union->parameters.par_list[j].identifier, de_union->ta.ta_list[i].val.val.identifier) == 0)
+				{
+					found = hptrue;
+					break;
+				}
+			}
+			if(!found)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+		}
+	}
+
+done:
+	return;
+}

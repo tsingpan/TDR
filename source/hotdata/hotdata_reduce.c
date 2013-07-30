@@ -72,13 +72,11 @@ void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 {
 	hpuint32 data;
 	hpuint32 i;
-	char id[1024];
 
-	for(i = 0; i < sn_identifier.len; ++i)
-	{
-		id[i] = sn_identifier.ptr[i];
-	}
-	id[i] = 0;
+	current->type = E_SNVT_IDENTIFIER;
+	memcpy(current->val.identifier, sn_identifier.ptr, sn_identifier.len);
+	current->val.identifier[sn_identifier.len] = 0;
+
 /*
 	if(!trie_retrieve(self->symbols, id, &data))
 	{
@@ -92,7 +90,7 @@ void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 		goto error_ret;
 	}
 */
-	current->type = E_SNVT_IDENTIFIER;
+	
 done:
 	return;
 error_ret:
