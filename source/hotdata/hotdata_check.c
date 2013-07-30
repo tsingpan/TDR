@@ -28,7 +28,6 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const 
 
 static const HOTDATA_SYMBOLS* dp_find_symbol(DATA_PARSER *self, const PN_IDENTIFIER* tok_identifier)
 {
-	const HOTDATA_SYMBOLS *symbol;
 	char name[MAX_IDENTIFIER_LENGTH];
 	memcpy(name, tok_identifier->ptr, tok_identifier->len);
 	name[tok_identifier->len] = 0;
@@ -55,38 +54,6 @@ static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identi
 		E_HP_ERROR;
 	}
 	return E_HP_NOERROR;
-}
-
-
-void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
-{
-	char id[MAX_IDENTIFIER_LENGTH];
-	void *data;
-
-	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	id[tok_identifier->len] = 0;
-
-	if(dp_find_symbol(self, tok_identifier) != NULL)
-	{
-		dp_error(self, yylloc, E_SID_SYMBOL_REDEFINITION, id);
-	}
-}
-
-void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const PN_VALUE *pn_value)
-{
-	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
-
-	char id[1024];
-	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	id[tok_identifier->len] = 0;
-
-	ptr->type = EN_HST_VALUE;
-	ptr->body.val = *pn_value;
-
-	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
-	{
-		dp_error(self, yylloc, E_SID_ERROR, id);
-	}
 }
 
 static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
@@ -140,6 +107,44 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 	{
 		return sn_value;
 	}
+}
+
+void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	char id[MAX_IDENTIFIER_LENGTH];
+
+	memcpy(id, tok_identifier->ptr, tok_identifier->len);
+	id[tok_identifier->len] = 0;
+
+	if(dp_find_symbol(self, tok_identifier) != NULL)
+	{
+		dp_error(self, yylloc, E_SID_SYMBOL_REDEFINITION, id);
+	}
+}
+
+void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const PN_VALUE *pn_value)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+	const PN_VALUE *val = get_value(self, pn_value);
+	char id[1024];
+	memcpy(id, tok_identifier->ptr, tok_identifier->len);
+	id[tok_identifier->len] = 0;
+
+	if(val == NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+	ptr->type = EN_HST_VALUE;
+	ptr->body.val = *val;
+
+	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR, id);
+	}
+done:
+	return;
 }
 
 void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
@@ -266,7 +271,185 @@ done:
 	return;
 }
 
+void dp_check_domain_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	memcpy(self->domain, tok_identifier->ptr, tok_identifier->len);
+	self->domain[tok_identifier->len] = 0;
+}
+
+void dp_check_domain_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	self->domain[0] = 0;
+}
+
+void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
+	if(symbol != NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+done:
+	return;
+}
+
 void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
+	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
+	if(symbol != NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+done:
+	return;
+}
+
+void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+{
+	const PN_TypeAnnotations *ta = &self->pn_definition.definition.de_enum.type_annotations;
+	hpuint32 i, j;
+	hpint64 i64;
+	val = get_value(self, val);
+	if(val == NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+	if(val->type == E_SNVT_INT64)
+	{
+		i64 = val->val.i64;
+	}
+	else if(val->type == E_SNVT_HEX_INT64)
+	{
+		i64 = val->val.hex_i64;		
+	}
+	else
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+	for(i = 0;i < ta->ta_list_num; ++i)
+	{
+		switch(ta->ta_list[i].type)
+		{
+		case E_TA_UNIQUE:
+			//检查值的类型
+			if(!ta->ta_list[i].val.val.b)
+			{
+				break;
+			}
+			for(j = 0; j < self->pn_definition.definition.de_enum.enum_def_list_num; ++j)
+			{
+				ST_VALUE *_val = &self->pn_definition.definition.de_enum.enum_def_list[j].val;
+				hpint64 _i64;
+				if(_val->type == E_SNVT_HEX_INT64)
+				{
+					_i64 = _val->val.hex_i64;
+				}
+				else
+				{
+					_i64 = _val->val.i64;
+				}
+				if(i64 == _i64)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+			break;
+		case E_TA_LOWER_BOUND:
+			{
+				ST_VALUE *_val = val;
+				hpint64 _i64;
+				const PN_VALUE *lower_bound = get_value(self, &ta->ta_list[i].val);
+				hpint64 li64;
+				if(lower_bound == NULL)
+				{
+					break;
+				}
+
+				if(lower_bound->type == E_SNVT_INT64)
+				{
+					li64 = lower_bound->val.i64;
+				}
+				else if(lower_bound->type == E_SNVT_HEX_INT64)
+				{
+					li64 = lower_bound->val.hex_i64;
+				}
+				else
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+
+				
+				if(_val->type == E_SNVT_HEX_INT64)
+				{
+					_i64 = _val->val.hex_i64;
+				}
+				else
+				{
+					_i64 = _val->val.i64;
+				}
+				if(_i64 < li64)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+
+				break;
+			}
+		case E_TA_UPPER_BOUND:
+			{
+				ST_VALUE *_val = val;
+				hpint64 _i64;
+				const PN_VALUE *upper_bound = get_value(self, &ta->ta_list[i].val);
+				hpint64 upi64;
+				if(upper_bound == NULL)
+				{
+					break;
+				}
+
+				if(upper_bound->type == E_SNVT_INT64)
+				{
+					upi64 = upper_bound->val.i64;
+				}
+				else if(upper_bound->type == E_SNVT_HEX_INT64)
+				{
+					upi64 = upper_bound->val.hex_i64;
+				}
+				else
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+
+
+				if(_val->type == E_SNVT_HEX_INT64)
+				{
+					_i64 = _val->val.hex_i64;
+				}
+				else
+				{
+					_i64 = _val->val.i64;
+				}
+				if(_i64 >= upi64)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+
+				break;
+			}
+		}
+	}
+
+done:
 	return;
 }

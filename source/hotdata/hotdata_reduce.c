@@ -109,7 +109,7 @@ void dp_reduce_Value_tok_char(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE
 void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
 {
 	current->type = E_SNVT_INT64;
-	current->val.i64;
+	current->val.i64 = i64;
 }
 
 void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)

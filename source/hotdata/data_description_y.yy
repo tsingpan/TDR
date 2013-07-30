@@ -262,14 +262,24 @@ Value :
 
 
 Enum :
-	tok_enum TypeAnnotations tok_identifier	'{' EnumDefList '}' ';'
+	tok_enum TypeAnnotations
 	{
 		GET_DEFINITION.definition.de_enum.type_annotations = $2;
-		memcpy(GET_DEFINITION.definition.de_enum.name, $3.ptr, $3.len);
-		GET_DEFINITION.definition.de_enum.name[$3.len] = 0;
-	};
+	}
+	tok_identifier	
+	{
+		memcpy(GET_DEFINITION.definition.de_enum.name, $4.ptr, $4.len);
+		GET_DEFINITION.definition.de_enum.name[$4.len] = 0;
+		
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$4);
+		
+		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
+	}
+	'{' EnumDefList '}'
+	{ dp_check_domain_end(GET_SELF, &yylloc); }
+	';';
     
-EnumDefList : 
+EnumDefList :
 	EnumDefList EnumDef
 	{
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
@@ -289,7 +299,11 @@ EnumDef :
 		dp_check_EnumDef_tok_identifier(GET_SELF, &yylloc, &$1);
 	}
 	'=' Value ',' UnixCommentOrNot
-	{
+	{	
+		dp_check_EnumDef_Value(GET_SELF, &yylloc, &$4);
+		
+		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$1, &$4);		
+		
 		memcpy($$.identifier, $1.ptr, $1.len);
 		$$.identifier[$1.len] = 0;
 		$$.val = $4;
@@ -598,12 +612,12 @@ TypeAnnotation:
     }
 |	tok_lower_bound '=' Value
 	{
-		$$.type = E_TA_UPPER_BOUND;
+		$$.type = E_TA_LOWER_BOUND;
 		$$.val = $3;
 	}
 |	tok_upper_bound '=' Value
 	{
-		$$.type = E_TA_LOWER_BOUND;
+		$$.type = E_TA_UPPER_BOUND;
 		$$.val = $3;
 	}
 |	tok_switch '=' Value
