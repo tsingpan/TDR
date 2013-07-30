@@ -4,6 +4,8 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error_msg.h"
 
+#include <stdarg.h>
+
 
 typedef struct YYLTYPE
 {

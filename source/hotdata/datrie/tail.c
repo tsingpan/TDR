@@ -136,7 +136,7 @@ tail_fread (FILE *file)
     {
         goto exit_tail_created;
     }
-    if (t->num_tails > SIZE_MAX / sizeof (TailBlock))
+    if (t->num_tails > 0xFFFFFFFF / sizeof (TailBlock))
         goto exit_tail_created;
     t->tails = (TailBlock *) malloc (t->num_tails * sizeof (TailBlock));
     if (!t->tails)
