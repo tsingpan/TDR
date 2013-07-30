@@ -123,7 +123,7 @@ void write_ST_TYPE(HPAbstractWriter *self, const ST_TYPE* data)
 			write_field_end(self, "ct");
 		}
 
-		if (data->type == E_SNT_OBJECT)
+		if (data->type == E_SNT_REFER)
 		{
 			write_field_begin(self, "ot");
 				write_string(self, data->ot);

@@ -95,7 +95,7 @@ static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
 	{
 		return sn_type;
 	}
-	else if(sn_type->type == E_SNT_OBJECT)
+	else if(sn_type->type == E_SNT_REFER)
 	{
 		const HOTDATA_SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_type->ot);
 		if(ptr == NULL)
@@ -220,7 +220,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 			goto done;
 		}
 	}
-	else if(type->type == E_SNT_OBJECT)
+	else if(type->type == E_SNT_REFER)
 	{
 		dp_error(self, yylloc, E_SID_ERROR, id);
 	}

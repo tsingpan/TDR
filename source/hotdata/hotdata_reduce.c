@@ -31,7 +31,7 @@ void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yyllo
 	char id[1024];
 	PN_TYPE *type;
 
-	current->type = E_SNT_OBJECT;
+	current->type = E_SNT_REFER;
 
 	for(i = 0; i < tok_identifier->len; ++i)
 	{

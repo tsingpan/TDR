@@ -83,7 +83,7 @@ typedef enum _SN_TYPE
 
 	E_SNT_SIMPLE = 0 ,
 	E_SNT_CONTAINER = 1 ,
-	E_SNT_OBJECT = 2 ,
+	E_SNT_REFER = 2 ,
 }SN_TYPE;
 
 typedef struct _ST_TYPE
