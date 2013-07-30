@@ -453,3 +453,42 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 done:
 	return;
 }
+
+
+void dp_check_TypeAnnotation_tok_unique_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+{
+	if(val->type != E_SNVT_BOOL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+	
+done:
+	return;
+}
+
+void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+{
+	val = get_value(self, val);
+	if((val == NULL) || (val->type != E_SNVT_INT64))
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+done:
+	return;
+}
+
+
+void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+{
+	if(val->type != E_SNVT_IDENTIFIER)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+done:
+	return;
+}

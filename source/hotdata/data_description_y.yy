@@ -612,16 +612,22 @@ TypeAnnotation:
     }
 |	tok_lower_bound '=' Value
 	{
+		dp_check_TypeAnnotation_bound_Value(GET_SELF, &yylloc, &$3);
+		
 		$$.type = E_TA_LOWER_BOUND;
 		$$.val = $3;
 	}
 |	tok_upper_bound '=' Value
 	{
+		dp_check_TypeAnnotation_bound_Value(GET_SELF, &yylloc, &$3);
+		
 		$$.type = E_TA_UPPER_BOUND;
 		$$.val = $3;
 	}
 |	tok_switch '=' Value
 	{
+		dp_check_TypeAnnotation_tok_switch_Value(GET_SELF, &yylloc, &$3);
+	
 		$$.type = E_TA_SWITCH;
 		$$.val = $3;
 	};

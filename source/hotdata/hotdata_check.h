@@ -24,4 +24,10 @@ void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, c
 
 void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
 
+void dp_check_TypeAnnotation_tok_unique_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
+
+void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
+
+void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
+
 #endif //_H_HOTDATA_CHECK
