@@ -607,6 +607,8 @@ TypeAnnotationList:
 TypeAnnotation:
 	tok_unique '=' Value
     {
+		dp_check_TypeAnnotation_tok_unique_Value(GET_SELF, &yylloc, &$3);
+    
 		$$.type = E_TA_UNIQUE;
 		$$.val = $3;
     }
