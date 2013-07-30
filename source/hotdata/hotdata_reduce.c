@@ -186,10 +186,9 @@ void dp_reduce_ArgumentList_ArgumentList_Argument(DATA_PARSER *self, const YYLTY
 	++(current->arg_list_num);
 }
 
-void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPEDEF *current, PN_TYPE* type, const PN_ARGUMENTS* arguments, const PN_IDENTIFIER *tok_identifier)
+void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPEDEF *current, PN_TYPE* type, const PN_IDENTIFIER *tok_identifier)
 {
 	current->type = *type;
-	current->arguments = *arguments;
 	memcpy(current->name, tok_identifier->ptr, tok_identifier->len);
 	current->name[tok_identifier->len] = 0;
 }

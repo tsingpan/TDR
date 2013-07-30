@@ -102,6 +102,9 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		case E_ST_UINT64:
 			size = sizeof(hpuint64);
 			break;
+		case E_ST_CHAR:
+		case E_ST_DOUBLE:
+			goto done;
 		default:
 			dp_error(self, yylloc, (hpint32)E_HP_INVALID_CONSTANCE_TYPE);
 			goto done;

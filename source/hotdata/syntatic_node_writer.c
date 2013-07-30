@@ -601,10 +601,6 @@ void write_ST_TYPEDEF(HPAbstractWriter *self, const ST_TYPEDEF* data)
 	write_ST_TYPE(self, &data->type);
 	write_field_end(self, "type");
 
-	write_field_begin(self, "arguments");
-	write_ST_ARGUMENTS(self, &data->arguments);
-	write_field_end(self, "arguments");
-
 	write_field_begin(self, "name");
 	write_string(self, data->name);
 	write_field_end(self, "name");

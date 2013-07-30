@@ -256,7 +256,6 @@ typedef struct _ST_UNION
 typedef struct _ST_TYPEDEF
 {
 	ST_TYPE type;
-	ST_ARGUMENTS arguments;
 	hpchar name[MAX_IDENTIFIER_LENGTH];
 }ST_TYPEDEF;
 
