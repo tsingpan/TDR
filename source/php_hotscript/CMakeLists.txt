@@ -2,27 +2,37 @@ PROJECT(PHP_HotScript)
 
 FILE(GLOB_RECURSE FILE_LIST *.h *.c)
 
+if(WIN32)
 INCLUDE_DIRECTORIES(
 	${INCLUDE}
-	$ENV{PHP-DEVEL_DIR}/include/
-	$ENV{PHP-DEVEL_DIR}/include/main
-	$ENV{PHP-DEVEL_DIR}/include/Zend
-	$ENV{PHP-DEVEL_DIR}/include/TSRM
+	$ENV{PHP_DEVEL_DIR}/include/
+	$ENV{PHP_DEVEL_DIR}/include/main
+	$ENV{PHP_DEVEL_DIR}/include/Zend
+	$ENV{PHP_DEVEL_DIR}/include/TSRM
 	)
-
 ADD_DEFINITIONS(-DZEND_WIN32)
 ADD_DEFINITIONS(-DPHP_WIN32)
+ELSE()
+INCLUDE_DIRECTORIES(
+	${INCLUDE}
+	/usr/local/include/php
+	/usr/local/include/php/main
+	/usr/local/include/php/Zend
+	/usr/local/include/php/TSRM
+	)
+ENDIF(WIN32)
+
 ADD_DEFINITIONS(-DZEND_DEBUG=0)
-ADD_DEFINITIONS(-DZTS=1)
 ADD_DEFINITIONS(-DHOTSCRIPT_EXPORTS)
 ADD_DEFINITIONS(-DCOMPILE_DL_HOTSCRIPT)
 
 
 ADD_LIBRARY(PHP_HotScript SHARED ${FILE_LIST})
 SET_TARGET_PROPERTIES(PHP_HotScript PROPERTIES OUTPUT_NAME php_hotscript)
-TARGET_LINK_LIBRARIES(PHP_HotScript HotScript HotError HotProtocol HotPot $ENV{PHP-DEVEL_DIR}/lib/php5ts.lib)
 if(WIN32)
+	TARGET_LINK_LIBRARIES(PHP_HotScript HotScript HotError HotProtocol HotPot $ENV{PHP_DEVEL_DIR}/lib/php5ts.lib)
 	INSTALL(TARGETS PHP_HotScript RUNTIME DESTINATION ${BINARY_PATH})
 else(WIN32)
+	TARGET_LINK_LIBRARIES(PHP_HotScript HotScript HotError HotProtocol HotPot /usr/lib/apache2/modules/libphp5.so)
 	INSTALL(TARGETS PHP_HotScript LIBRARY DESTINATION ${BINARY_PATH})
 endif(WIN32)

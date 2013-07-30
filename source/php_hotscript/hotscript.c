@@ -293,7 +293,7 @@ hpint32 zval_ob_read_field_begin(HPAbstractReader *super, const char *var_name)
 #ifdef ZTS
 	data = zend_read_property(zend_get_class_entry(zv, self->tsrm_ls), zv, var_name, strlen(var_name) + 1, 0, self->tsrm_ls);
 #else
-	data = zend_read_property(zend_get_class_entry(zv), zv, var_name, len, 0);
+	data = zend_read_property(zend_get_class_entry(zv), zv, var_name, strlen(var_name) + 1, 0);
 #endif
 
 	if(Z_TYPE_P(data) == IS_NULL)
