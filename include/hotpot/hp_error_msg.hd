@@ -1,4 +1,4 @@
-import "hotpot/hp_error.hd"
+import "hotpot/hp_error_code.hd"
 
 const uint32 MAX_ERROR_LIST_NUM = 65536;
 const uint32 MAX_ERROR_MSG_LENGTH = 1024;
