@@ -278,7 +278,10 @@ Enum :
 	}
 	'{' EnumDefList '}'
 	{ }
-	';';
+	';'
+	{
+		dp_check_Enum_Add(GET_SELF, &yylloc, &$4);
+	};
     
 EnumDefList :
 	EnumDefList EnumDef
@@ -313,22 +316,26 @@ EnumDef :
     
 
 Union :
-	tok_union TypeAnnotations 
+	tok_union
 	{
-		GET_DEFINITION.definition.de_union.ta = $2;
+		dp_check_Union_begin(GET_SELF, &yylloc);
+	}
+	TypeAnnotations 
+	{
+		GET_DEFINITION.definition.de_union.ta = $3;
 	}
 	tok_identifier
 	{
-		memcpy(GET_DEFINITION.definition.de_union.name, $4.ptr, $4.len);
-		GET_DEFINITION.definition.de_union.name[$4.len] = 0;
+		memcpy(GET_DEFINITION.definition.de_union.name, $5.ptr, $5.len);
+		GET_DEFINITION.definition.de_union.name[$5.len] = 0;
 		
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$4);
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$5);
 		
-		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
+		dp_check_domain_begin(GET_SELF, &yylloc, &$5);
 	}
 	Parameters
 	{
-		GET_DEFINITION.definition.de_union.parameters = $6;
+		GET_DEFINITION.definition.de_union.parameters = $7;
 		
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
 		
@@ -340,25 +347,42 @@ Union :
 	}
 	'}'
 	{
-		dp_check_domain_end(GET_SELF, &yylloc, &$4);
+		dp_check_domain_end(GET_SELF, &yylloc, &$5);
 	}
 	';'
 	{
+		dp_check_Union_end(GET_SELF, &yylloc);
+
+		dp_check_Union_Add(GET_SELF, &yylloc, &$5);
 	};
 	
 	
 Struct : 
-	tok_struct TypeAnnotations tok_identifier Parameters 	
+	tok_struct
+	{
+		dp_check_Struct_begin(GET_SELF, &yylloc);
+	}
+	TypeAnnotations tok_identifier
+	{
+		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
+	}
+	Parameters
 	{
 		GET_SELF->pn_field_list.field_list_num = 0;
 	}
 	'{' FieldList '}' ';'
 	{
-		GET_DEFINITION.definition.de_struct.ta = $2;
-		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
-		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
-		GET_DEFINITION.definition.de_struct.parameters = $4;
+		dp_check_domain_end(GET_SELF, &yylloc, &$4);
+
+		GET_DEFINITION.definition.de_struct.ta = $3;
+		memcpy(GET_DEFINITION.definition.de_struct.name, $4.ptr, $4.len);
+		GET_DEFINITION.definition.de_struct.name[$4.len] = 0;
+		GET_DEFINITION.definition.de_struct.parameters = $6;
 		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
+
+		dp_check_Struct_end(GET_SELF, &yylloc);
+
+		dp_check_Struct_Add(GET_SELF, &yylloc, &$4);
 	};
 	
 
@@ -379,14 +403,20 @@ FieldList:
 	
 
 Field : 
-	FieldCondition Type Arguments tok_identifier ';' UnixCommentOrNot
+	FieldCondition Type Arguments tok_identifier
+	{
+		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$4);
+	}
+	';' UnixCommentOrNot
 	{
 		GET_SELF->pn_field.condition = $1;
 		GET_SELF->pn_field.type = $2;
 		GET_SELF->pn_field.args = $3;
 		memcpy(GET_SELF->pn_field.identifier, $4.ptr, $4.len);
 		GET_SELF->pn_field.identifier[$4.len] = 0;		
-		GET_SELF->pn_field.comment = $6;
+		GET_SELF->pn_field.comment = $7;
+
+		dp_check_Field_add(GET_SELF, &yylloc, &GET_SELF->pn_field);
 	};
 
 FieldCondition:	
@@ -415,33 +445,49 @@ Condition :
 	{
 		$$.exp.neg = hptrue;
 		$$.exp.op0 = $3;
-		snprintf($$.exp.oper, MAX_IDENTIFIER_LENGTH, "==");
+		$$.exp.oper = E_EO_EQUAL;
 		$$.exp.op1 = $5;
+
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$3);
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$5);
 	}
 |	tok_case Value ':'
 	{
-		$$.exp.neg = hpfalse;
-		$$.exp.op1.type = E_SNVT_IDENTIFIER;
-		snprintf($$.exp.op1.val.identifier, MAX_IDENTIFIER_LENGTH, "s");
-		snprintf($$.exp.oper, MAX_IDENTIFIER_LENGTH, "==");
-		$$.exp.op1 = $2;
+		dp_reduce_Condition_tok_case(GET_SELF, &yylloc, &$$, &$2);
+
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$$.exp.op0);
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$2);
 	};
 
 
 FieldExpression :
-	Value tok_equal Value
+	Value
 	{
-		$$.neg = hpfalse;
-		$$.op0 = $1;
-		snprintf($$.oper, MAX_IDENTIFIER_LENGTH, "==");
-		$$.op1 = $3;
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$1);
 	}
-|	Value '&' Value
+	tok_equal
+	Value
 	{
 		$$.neg = hpfalse;
 		$$.op0 = $1;
-		snprintf($$.oper, MAX_IDENTIFIER_LENGTH, "&");
-		$$.op1 = $3;
+		$$.oper = E_EO_EQUAL;
+		$$.op1 = $4;
+
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$4);
+	}
+|	Value
+	{
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$1);
+	}
+	'&'
+	Value
+	{
+		$$.neg = hpfalse;
+		$$.op0 = $1;
+		$$.oper = E_EO_AND;
+		$$.op1 = $4;
+
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$4);
 	}
 	;
 

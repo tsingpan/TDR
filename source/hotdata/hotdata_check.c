@@ -70,7 +70,7 @@ static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const 
 {
 	char global_name[MAX_IDENTIFIER_LENGTH * 2];
 
-	//printf("save %s : %x\n", name, symbol);
+	
 
 	if(self->domain[0])
 	{
@@ -81,6 +81,7 @@ static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const 
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
 	}
 
+	//printf("save %s : %x\n", global_name, symbol);
 	if(!trie_store_if_absent(self->hotdata_symbols, global_name, symbol))
 	{
 		E_HP_ERROR;
@@ -350,6 +351,7 @@ done:
 	return;
 }
 
+
 void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol_local(self, tok_identifier);
@@ -586,6 +588,181 @@ void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 		}
 	}
 
+done:
+	return;
+}
+
+void dp_check_Union_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	self->in_union = hptrue;
+}
+
+void dp_check_Union_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	self->in_union = hpfalse;
+}
+
+void dp_check_Struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	self->in_struct = hptrue;
+}
+
+void dp_check_Struct_end(DATA_PARSER *self, const YYLTYPE *yylloc)
+{
+	self->in_struct = hpfalse;
+}
+
+static void dp_check_expression_value_type(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *type)
+{
+	const PN_TYPE *pn_type = get_type(self, type);
+	if(pn_type == NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+	if(pn_type->type == E_SNT_SIMPLE)
+	{
+		if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_BOOL))
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+	}
+	else if(pn_type->type == E_SNT_REFER)
+	{
+		const HOTDATA_SYMBOLS *symbols = dp_find_symbol_by_string(self, pn_type->ot);
+		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+	}
+	else
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+done:
+	return;
+}
+
+void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
+{
+	switch(val->type)
+	{
+	case E_SNVT_IDENTIFIER:
+		{
+			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, val->val.identifier);
+			if(symbol == NULL)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+			
+			switch(symbol->type)
+			{
+			case EN_HST_VALUE:
+				{
+					const PN_VALUE *val = get_value(self, &symbol->body.val);
+					if(val == NULL)
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+
+					if((val->type != E_SNVT_INT64) && (val->type != E_SNVT_UINT64)
+						&& (val->type != E_SNVT_HEX_INT64) && (val->type != E_SNVT_HEX_UINT64))
+					{					
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+					break;
+				}
+			case EN_HST_FIELD:
+				{
+					dp_check_expression_value_type(self, yylloc, &symbol->body.field.type);
+					break;
+				}
+			case EN_HST_PARAMETER:
+				{
+					dp_check_expression_value_type(self, yylloc, &symbol->body.para.type);
+					break;
+				}
+			default:
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+
+			break;
+		}
+	case E_SNVT_INT64:
+	case E_SNVT_UINT64:
+	case E_SNVT_HEX_INT64:
+	case E_SNVT_HEX_UINT64:
+		break;
+	default:
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+done:
+	return;
+}
+
+void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	ptr->type = EN_HST_FIELD;
+	ptr->body.field = *pn_field;
+
+	if(dp_save_symbol_string(self, pn_field->identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR);
+	}
+done:
+	return;
+}
+
+
+void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	ptr->type = EN_HST_ENUM;
+
+	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR);
+	}
+done:
+	return;
+}
+
+void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	ptr->type = EN_HST_STRUCT;
+
+	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR);
+	}
+done:
+	return;
+}
+
+void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	ptr->type = EN_HST_UNION;
+
+	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR);
+	}
 done:
 	return;
 }

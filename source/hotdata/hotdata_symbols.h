@@ -8,6 +8,10 @@ typedef enum _HOTDATA_SYMBOLS_TYPE
 	EN_HST_VALUE = 0,
 	EN_HST_TYPE = 1,
 	EN_HST_PARAMETER = 2,
+	EN_HST_FIELD = 3,
+	EN_HST_ENUM = 4,
+	EN_HST_STRUCT = 5,
+	EN_HST_UNION = 6,
 }HOTDATA_SYMBOLS_TYPE;
 
 typedef union _HOTDATA_SYMBOLS_BODY
@@ -15,6 +19,7 @@ typedef union _HOTDATA_SYMBOLS_BODY
 	ST_VALUE val;
 	ST_TYPE type;
 	ST_Parameter para;
+	ST_FIELD field;
 }HOTDATA_SYMBOLS_BODY;
 
 typedef struct _HOTDATA_SYMBOLS

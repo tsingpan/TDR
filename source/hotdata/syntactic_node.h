@@ -65,9 +65,9 @@ typedef enum _SN_SIMPLE_TYPE
 	E_ST_UINT8 = 4 ,
 	E_ST_UINT16 = 5 ,
 	E_ST_UINT32 = 6 ,
-	E_ST_UINT64 = 7 ,
-	E_ST_CHAR = 8 ,
-	E_ST_BOOL = 9 ,
+	E_ST_UINT64 = 7 ,	
+	E_ST_BOOL = 8 ,
+	E_ST_CHAR = 9 ,
 	E_ST_DOUBLE = 10 ,
 }SN_SIMPLE_TYPE;
 
@@ -137,12 +137,18 @@ typedef struct _ST_ARGUMENTS
 	ST_ARGUMENT arg_list[MAX_ARGUMENT_NUM];
 }ST_ARGUMENTS;
 
+typedef enum _ST_EXPRESSION_OPER
+{
+	E_EO_AND,
+	E_EO_EQUAL,
+}ST_EXPRESSION_OPER;
+
 typedef struct _ST_Expression
 {
 
 	hpbool neg;
 	ST_VALUE op0;
-	hpchar oper[MAX_IDENTIFIER_LENGTH];
+	ST_EXPRESSION_OPER oper;
 	ST_VALUE op1;
 }ST_Expression;
 

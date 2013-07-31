@@ -40,6 +40,8 @@ struct _DATA_PARSER
 	PN_FIELD_LIST pn_field_list;
 	PN_FIELD pn_field;
 	hpuint32 definition_list_num;
+	hpbool in_union;
+	hpbool in_struct;
 };
 
 hpint32 data_parser_init(DATA_PARSER *self);

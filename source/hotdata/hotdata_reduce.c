@@ -190,3 +190,31 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YY
 	memcpy(current->name, tok_identifier->ptr, tok_identifier->len);
 	current->name[tok_identifier->len] = 0;
 }
+
+void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONDITION *current, const PN_VALUE *val)
+{
+	hpuint32 i;
+	const ST_TypeAnnotations *ta = NULL;
+
+	if(self->in_struct)
+	{
+		ta = &self->pn_definition.definition.de_struct.ta;
+	}
+	else
+	{
+		ta = &self->pn_definition.definition.de_union.ta;
+	}
+
+	current->exp.neg = hpfalse;
+	current->exp.op0.type = E_SNVT_IDENTIFIER;		
+	snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, "s");
+	for(i = 0; i < ta->ta_list_num; ++i)
+	{
+		if(ta->ta_list[i].type == E_TA_SWITCH)
+		{
+			snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, ta->ta_list[i].val.val.identifier);			
+		}
+	}
+	current->exp.oper = E_EO_AND;
+	current->exp.op1 = *val;
+}

@@ -36,4 +36,22 @@ void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *
 
 void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
+void dp_check_Union_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_check_Union_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_check_Struct_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_check_Struct_end(DATA_PARSER *self, const YYLTYPE *yylloc);
+
+void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
+
+void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field);
+
+void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
+
+void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
+
+void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
+
 #endif //_H_HOTDATA_CHECK

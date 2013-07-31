@@ -53,5 +53,7 @@ void dp_reduce_ArgumentList_ArgumentList_Argument(DATA_PARSER *self, const YYLTY
 
 void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPEDEF *current, PN_TYPE* type, const PN_IDENTIFIER *tok_identifier);
 
+void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONDITION *current, const PN_VALUE *val);
+
 
 #endif //_H_HOTDATA_REDUCE

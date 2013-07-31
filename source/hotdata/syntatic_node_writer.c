@@ -155,7 +155,7 @@ void write_ST_Parameter(HPAbstractWriter *self, const ST_Parameter* data)
 }
 
 void write_ST_Parameters(HPAbstractWriter *self, const ST_Parameters* data)
-{ 
+{
 	write_struct_begin(self, "ST_Parameters");
 
 		write_field_begin(self, "par_list_num");
@@ -263,7 +263,7 @@ void write_ST_Expression(HPAbstractWriter *self, const ST_Expression* data)
 
 	write_field_begin(self, "oper");
 
-		write_string(self, &data->oper);
+		write_int32(self, data->oper);
 
 	write_field_end(self, "oper");
 
