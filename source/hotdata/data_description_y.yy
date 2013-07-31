@@ -416,6 +416,7 @@ Field :
 		GET_SELF->pn_field.identifier[$4.len] = 0;		
 		GET_SELF->pn_field.comment = $7;
 
+		dp_check_Field(GET_SELF, &yylloc, &GET_SELF->pn_field);
 		dp_check_Field_add(GET_SELF, &yylloc, &GET_SELF->pn_field);
 	};
 

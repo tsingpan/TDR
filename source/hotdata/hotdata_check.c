@@ -709,6 +709,21 @@ done:
 	return;
 }
 
+void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
+{
+	if(pn_field->type.type == E_SNT_SIMPLE)
+	{
+		if(pn_field->args.arg_list_num != 0)
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+	}
+
+done:
+	return;
+}
+
 void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));

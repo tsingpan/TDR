@@ -46,6 +46,8 @@ void dp_check_Struct_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
 void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
 
+void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field);
+
 void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field);
 
 void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
