@@ -709,6 +709,68 @@ done:
 	return;
 }
 
+static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_ARGUMENTS *args, hpuint32 start_index)
+{
+	hpuint32 i;
+	for(i = start_index; i < args->arg_list_num; ++i)
+	{
+		if(args->arg_list[i].type == E_AT_IDENTIFIER)
+		{
+			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, args->arg_list[i].id);
+			if(symbol == NULL)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+
+			if(symbol->type == EN_HST_VALUE)
+			{
+				if(!((symbol->body.val.type >= E_SNVT_BOOL) && (symbol->body.val.type <= E_SNVT_HEX_UINT64)))
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+			else if(symbol->type == EN_HST_PARAMETER)
+			{
+			}
+			else if(symbol->type == EN_HST_FIELD)
+			{
+				if(symbol->body.field.type.type == E_SNT_SIMPLE)
+				{
+					if(!((symbol->body.field.type.type >= E_SNVT_BOOL) && (symbol->body.type.type <= E_SNVT_HEX_UINT64)))
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+				}
+				else if(symbol->body.field.type.type == E_SNT_REFER)
+				{
+
+				}
+				else
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+			else
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+		}
+		else
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+	}
+
+done:
+	return;
+}
+
 void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
 {
 	if(pn_field->type.type == E_SNT_SIMPLE)
@@ -717,6 +779,155 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 		{
 			dp_error(self, yylloc, E_HP_ERROR);
 			goto done;
+		}
+	}
+	else if(pn_field->type.type == E_SNT_REFER)
+	{
+		dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
+	}
+	else if(pn_field->type.type == E_SNT_CONTAINER)
+	{
+		switch(pn_field->type.ct)
+		{
+		case E_CT_VECTOR:
+			if(pn_field->args.arg_list_num < 3)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+
+			if(pn_field->args.arg_list[0].type == E_AT_IDENTIFIER)
+			{
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].id);
+				if(symbol == NULL)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+				if(symbol->type == EN_HST_TYPE)
+				{
+					const ST_TYPE *type = get_type(self, &symbol->body.type);
+					if(type == NULL)
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+					if(type->type == E_SNT_SIMPLE)
+					{
+						if(pn_field->args.arg_list_num != 3)
+						{
+							dp_error(self, yylloc, E_HP_ERROR);
+							goto done;
+						}
+					}
+					else if(type->type == E_SNT_REFER)
+					{
+						dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
+					}
+				}
+				else if(symbol->type == EN_HST_ENUM)
+				{
+					if(pn_field->args.arg_list_num != 3)
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+				}
+				else if(symbol->type == EN_HST_STRUCT)
+				{
+					dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
+				}
+				else if(symbol->type == EN_HST_UNION)
+				{
+					dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
+				}
+			}
+			else if(pn_field->args.arg_list[0].type == E_AT_SIMPLE_TYPE)
+			{
+				if(pn_field->args.arg_list_num != 3)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+
+
+			if(pn_field->args.arg_list[1].type == E_AT_IDENTIFIER)
+			{
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[1].id);
+				if(symbol == NULL)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+				if(symbol->type == EN_HST_VALUE)
+				{
+					if((symbol->body.val.type >= E_SNVT_INT64) && (symbol->body.val.type <= E_SNVT_HEX_UINT64))
+					{
+
+					}
+					else
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+				}
+				else
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+			else
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+
+			if(pn_field->args.arg_list[2].type != E_AT_IDENTIFIER)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+			break;
+		case E_CT_STRING:
+			if(pn_field->args.arg_list_num != 1)
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+			if(pn_field->args.arg_list[0].type == E_AT_IDENTIFIER)
+			{
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].id);
+				if(symbol == NULL)
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+				if(symbol->type == EN_HST_VALUE)
+				{
+					if((symbol->body.val.type >= E_SNVT_INT64) && (symbol->body.val.type <= E_SNVT_HEX_UINT64))
+					{
+
+					}
+					else
+					{
+						dp_error(self, yylloc, E_HP_ERROR);
+						goto done;
+					}
+				}
+				else
+				{
+					dp_error(self, yylloc, E_HP_ERROR);
+					goto done;
+				}
+			}
+			else
+			{
+				dp_error(self, yylloc, E_HP_ERROR);
+				goto done;
+			}
+			break;
 		}
 	}
 
