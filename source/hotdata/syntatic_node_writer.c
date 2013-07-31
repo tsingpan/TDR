@@ -6,7 +6,7 @@
 #include <string.h>
 
 void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data)
-{ 
+{
 	write_struct_begin(self, "ST_UNIX_COMMENT_OR_NOT");
 
 		write_field_begin(self, "empty");
