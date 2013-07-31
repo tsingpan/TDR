@@ -6,7 +6,7 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const 
 {
 	const HOTDATA_SYMBOLS *symbol;
 	char global_name[MAX_IDENTIFIER_LENGTH * 2];
-
+	
 	if(self->domain[0])
 	{
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
@@ -23,6 +23,8 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const 
 			return NULL;
 		}
 	}
+
+	//printf("find: %s : %x\n", name, symbol);
 	return symbol;
 }
 
@@ -67,6 +69,9 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_local(DATA_PARSER *self, const PN_I
 static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const HOTDATA_SYMBOLS *symbol)
 {
 	char global_name[MAX_IDENTIFIER_LENGTH * 2];
+
+	//printf("save %s : %x\n", name, symbol);
+
 	if(self->domain[0])
 	{
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
@@ -76,7 +81,7 @@ static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const 
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
 	}
 
-	if(!trie_store_if_absent(self->hotdata_symbols, global_name, (void**)&symbol))
+	if(!trie_store_if_absent(self->hotdata_symbols, global_name, symbol))
 	{
 		E_HP_ERROR;
 	}
@@ -126,7 +131,7 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 	{
 		const HOTDATA_SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_value->val.identifier);
 		if(ptr == NULL)
-		{
+		{	
 			return NULL;
 		}
 
@@ -135,7 +140,7 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 			return &ptr->body.val;
 		}
 		else
-		{
+		{			
 			return NULL;
 		}
 	}
@@ -174,7 +179,7 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 
 	ptr->type = EN_HST_VALUE;
 	ptr->body.val = *val;
-
+	
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
 		dp_error(self, yylloc, E_SID_ERROR, id);
@@ -296,8 +301,7 @@ void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF
 
 	symbol->type = EN_HST_TYPE;
 	symbol->body.type = *type;
-
-	if(!trie_store_if_absent(self->hotdata_symbols, sn_typedef->name, symbol))
+	if(dp_save_symbol_string(self, sn_typedef->name, symbol) != E_HP_NOERROR)
 	{
 		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, sn_typedef->name);
 		goto done;
@@ -534,6 +538,7 @@ done:
 void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
 {
 	val = get_value(self, val);
+
 	if((val == NULL) || (val->type != E_SNVT_INT64))
 	{
 		dp_error(self, yylloc, E_HP_ERROR);
