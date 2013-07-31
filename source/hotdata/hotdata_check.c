@@ -34,12 +34,12 @@ static const HOTDATA_SYMBOLS* dp_find_symbol(DATA_PARSER *self, const PN_IDENTIF
 	return dp_find_symbol_by_string(self, name);
 }
 
-static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identifier, const HOTDATA_SYMBOLS *symbol)
+
+static const HOTDATA_SYMBOLS* dp_find_symbol_by_string_local(DATA_PARSER *self, const char* name)
 {
-	char name[MAX_IDENTIFIER_LENGTH];
+	const HOTDATA_SYMBOLS *symbol;
 	char global_name[MAX_IDENTIFIER_LENGTH * 2];
-	memcpy(name, tok_identifier->ptr, tok_identifier->len);
-	name[tok_identifier->len] = 0;
+
 	if(self->domain[0])
 	{
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
@@ -48,12 +48,48 @@ static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identi
 	{
 		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
 	}
-	
+
+	if(!trie_retrieve(self->hotdata_symbols, global_name, (void**)&symbol))
+	{
+		return NULL;
+	}
+	return symbol;
+}
+
+static const HOTDATA_SYMBOLS* dp_find_symbol_local(DATA_PARSER *self, const PN_IDENTIFIER* tok_identifier)
+{
+	char name[MAX_IDENTIFIER_LENGTH];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return dp_find_symbol_by_string_local(self, name);
+}
+
+static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const HOTDATA_SYMBOLS *symbol)
+{
+	char global_name[MAX_IDENTIFIER_LENGTH * 2];
+	if(self->domain[0])
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+
 	if(!trie_store_if_absent(self->hotdata_symbols, global_name, (void**)&symbol))
 	{
 		E_HP_ERROR;
 	}
 	return E_HP_NOERROR;
+}
+
+static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identifier, const HOTDATA_SYMBOLS *symbol)
+{
+	char name[MAX_IDENTIFIER_LENGTH];
+	char global_name[MAX_IDENTIFIER_LENGTH * 2];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return dp_save_symbol_string(self, name, symbol);
 }
 
 static const ST_TYPE* get_type(DATA_PARSER *self, const ST_TYPE* sn_type)
@@ -282,9 +318,37 @@ void dp_check_domain_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	self->domain[0] = 0;
 }
 
+void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_Parameter *pn_parameter)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	ptr->type = EN_HST_PARAMETER;
+	ptr->body.para = *pn_parameter;
+
+	if(dp_save_symbol_string(self, pn_parameter->identifier, ptr) != E_HP_NOERROR)
+	{
+		dp_error(self, yylloc, E_SID_ERROR);
+	}
+done:
+	return;
+}
+
 void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
 {
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
+	if(symbol != NULL)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+done:
+	return;
+}
+
+void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+{
+	const HOTDATA_SYMBOLS *symbol = dp_find_symbol_local(self, tok_identifier);
 	if(symbol != NULL)
 	{
 		dp_error(self, yylloc, E_HP_ERROR);
@@ -365,7 +429,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 			break;
 		case E_TA_LOWER_BOUND:
 			{
-				ST_VALUE *_val = val;
+				const ST_VALUE *_val = val;
 				hpint64 _i64;
 				const PN_VALUE *lower_bound = get_value(self, &ta->ta_list[i].val);
 				hpint64 li64;
@@ -407,7 +471,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 			}
 		case E_TA_UPPER_BOUND:
 			{
-				ST_VALUE *_val = val;
+				const ST_VALUE *_val = val;
 				hpint64 _i64;
 				const PN_VALUE *upper_bound = get_value(self, &ta->ta_list[i].val);
 				hpint64 upi64;

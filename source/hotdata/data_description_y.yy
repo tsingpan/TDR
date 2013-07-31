@@ -274,6 +274,8 @@ Enum :
 		dp_check_tok_identifier(GET_SELF, &yylloc, &$4);
 		
 		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
+		
+		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
 	}
 	'{' EnumDefList '}'
 	{ dp_check_domain_end(GET_SELF, &yylloc); }
@@ -320,24 +322,36 @@ Union :
 	{
 		memcpy(GET_DEFINITION.definition.de_union.name, $4.ptr, $4.len);
 		GET_DEFINITION.definition.de_union.name[$4.len] = 0;
+		
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$4);
+		
+		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
 	}
 	Parameters
 	{
+		dp_check_domain_end(GET_SELF, &yylloc, &$4);
+		
 		GET_DEFINITION.definition.de_union.parameters = $6;
 		
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
+		
+		GET_SELF->pn_field_list.field_list_num = 0;
 	}
 	'{' FieldList
 	{
 		GET_DEFINITION.definition.de_union.field_list = GET_SELF->pn_field_list;
 	}
 	'}' ';'
-	{		
+	{
 	};
 	
 	
 Struct : 
-	tok_struct TypeAnnotations tok_identifier Parameters '{' FieldList '}' ';'
+	tok_struct TypeAnnotations tok_identifier Parameters 	
+	{
+		GET_SELF->pn_field_list.field_list_num = 0;
+	}
+	'{' FieldList '}' ';'
 	{
 		GET_DEFINITION.definition.de_struct.ta = $2;
 		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
@@ -541,6 +555,10 @@ Parameter:
 		$$.type = $1;
 		memcpy($$.identifier, $2.ptr, $2.len);
 		$$.identifier[$2.len] = 0;
+		
+		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$2);
+		
+		dp_check_Parameter_add(GET_SELF, &yylloc, &$$);
 	};
 
 

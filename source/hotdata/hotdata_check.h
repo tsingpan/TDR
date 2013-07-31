@@ -18,7 +18,11 @@ void dp_check_domain_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_ID
 
 void dp_check_domain_end(DATA_PARSER *self, const YYLTYPE *yylloc);
 
+void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_Parameter *pn_parameter);
+
 void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
+
+void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
 
 void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
 
