@@ -46,7 +46,7 @@ struct _SCANNER
 	hpuint32 yycolumn;
 };
 
-#define MAX_BUFF_SIZE 1000000
+#define MAX_LEX_BUFF_SIZE 1000000
 #define MAX_SCANNER_STACK_DEEP 1024
 #define MAX_RESULT_STRING_LENGTH 1024
 #define MAX_INCLUDE_PATH 1024
@@ -62,7 +62,7 @@ typedef struct _SCANNER_STACK
 
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
-	YYCTYPE buff[MAX_BUFF_SIZE];
+	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
 };
 
 hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);

@@ -36,8 +36,6 @@ typedef struct tagJSON_PARSER_STACK_NODE
 	FILE *f;
 }JSON_PARSER_STACK_NODE;
 
-#define MAX_BUFF_SIZE 1024
-
 typedef struct tagJSON_PARSER JSON_PARSER;
 struct tagJSON_PARSER
 {

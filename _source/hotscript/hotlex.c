@@ -250,7 +250,7 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 hpint32 scanner_stack_init(SCANNER_STACK *self)
 {
 	self->buff_curr = self->buff;
-	self->buff_limit = self->buff + MAX_BUFF_SIZE;
+	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 	self->include_path_tail = 0;
 

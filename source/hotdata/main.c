@@ -47,20 +47,16 @@ void help()
 	fprintf(stderr, "Usage: thrift [options] file\n");
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version					Print the compiler version\n");
-	fprintf(stderr, "  -hs filename				Set the template file\n");
+	fprintf(stderr, "  -lua filename			Run the lua script\n");
 	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
-	fprintf(stderr, "  -j dir					set json output path\n");
-fprintf(stderr, "  -o dir					set output path\n");
 }
 
 
 LanguageLib language_lib;
 DATA_PARSER dp;
-HP_JSON_WRITER jw;
+
 char lua_file_name[HP_MAX_FILE_PATH_LENGTH];
-char luaprev_file_name[HP_MAX_FILE_PATH_LENGTH];
-HotObjectReader reader;
-HotObjectWriter writer;
+HP_LUA_WRITER writer;
 SCRIPT_PARSER sp;
 const char *json_input = NULL;
 FILE* output_file = NULL;
@@ -81,7 +77,6 @@ void script_putc(HotVM *self, char c)
 void get_real_file_path()
 {
 	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clua%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-	//strncpy(real_script_path, root_dir, HP_MAX_FILE_PATH_LENGTH);
 
 	if(access(lua_file_name, 00) == 0)
 	{
@@ -100,9 +95,6 @@ SCRIPT_PARSER sp;
 int main(int argc, char **argv)
 {
 	int i;
-	int count = 0;
-	HotObject *obj = hotobject_new();
-	hpuint32 len;
 	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
 	
@@ -141,31 +133,7 @@ int main(int argc, char **argv)
 		{
 			version();
 			goto ERROR_RET;
-		}
-		/*
-		else if (strcmp(arg, "-hs") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			strncpy(file_name, arg, HP_MAX_FILE_PATH_LENGTH);
-		}
-		*/
-		else if (strcmp(arg, "-luaprev") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			strncpy(luaprev_file_name, arg, HP_MAX_FILE_PATH_LENGTH);
-		}
+		}				
 		else if (strcmp(arg, "-lua") == 0)
 		{
 			arg = argv[++i];
@@ -187,42 +155,7 @@ int main(int argc, char **argv)
 				goto ERROR_RET;
 			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
-		}
-		else if(strcmp(arg, "-jout") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			json_output_file = fopen(arg, "wb");
-		}
-		/*
-		else if(strcmp(arg, "-jin") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			json_input = arg;
 		}		
-		else if(strcmp(arg, "-o") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			output_file = fopen(arg, "wb");
-		}
-		*/
 		else
 		{
 			fprintf(stderr, "Unrecognized option: %s\n", arg);
@@ -245,14 +178,9 @@ int main(int argc, char **argv)
 
 	lua_pushstring(L, lua_dir);
 	lua_setglobal( L, "lua_dir" );
-
-	if(luaprev_file_name[0])
-	{
-		luaL_dofile(L, luaprev_file_name);
-	}
+	
 
 	lua_writer_init(&writer, L);
-	//hotobject_writer_init(&writer, obj);
 	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
 	{
 		goto ERROR_RET;
@@ -268,47 +196,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, error);
 		}
 	}
-
 	
-	if(json_output_file != NULL)
-	{
-		ddekit_json_encoding_writer_init(&jw, json_output_file);
-
-		if(data_parser(&dp, argv[i], &jw.super, &language_lib) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-		fclose(json_output_file);
-		json_output_file = NULL;
-	}
-	
-
-
-
-	
-
-	/*
-	if(json_input)
-	{
-		if(json_parser(&jp, json_input, obj, &sp) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-	}
-	
-	
-	
-	if(output_file)
-	{
-		hotobject_reader_init(&reader, obj);
-		get_real_file_path();
-		if(script_parser(&sp, real_script_path, &reader.super, output_file, script_putc) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
-	}
-	*/
-	hotobject_free(obj);
 
 	return 0;
 ERROR_RET:

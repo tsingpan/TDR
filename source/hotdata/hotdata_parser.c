@@ -31,6 +31,13 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->hotdata_symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
+	if(file_name == NULL)
+	{
+		self->result[0] = E_HP_ERROR;
+		self->result_num = 1;		
+		goto done;
+	}
+
 	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 	{
