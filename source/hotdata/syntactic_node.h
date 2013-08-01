@@ -139,8 +139,8 @@ typedef struct _ST_ARGUMENTS
 
 typedef enum _ST_EXPRESSION_OPER
 {
-	E_EO_AND,
-	E_EO_EQUAL,
+	E_EO_AND = 0,
+	E_EO_EQUAL  =1,
 }ST_EXPRESSION_OPER;
 
 typedef struct _ST_Expression

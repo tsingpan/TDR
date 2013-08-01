@@ -1,7 +1,9 @@
+loadfile(lua_dir .. "lib/syntactic_node.lua")();
+
 function print_val(val)
-	if val.type == 0 then
+	if val.type == E_SNVT_IDENTIFIER then
 		io.write(val.val.identifier)
-	elseif val.type == 1 then
+	elseif val.type == E_SNVT_BOOL then
 		io.write("'")
 		if(val.val.c == '\n')then
 			io.write('\\n')
