@@ -17,7 +17,7 @@ void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data)
 		
 
 	write_field_begin(self, "text");
-	write_string(self, &data->text);
+	write_string(self, data->text);
 	write_field_end(self, "text");
 
 	write_struct_end(self , "ST_UNIX_COMMENT_OR_NOT");
@@ -147,7 +147,7 @@ void write_ST_Parameter(HPAbstractWriter *self, const ST_Parameter* data)
 
 	write_field_begin(self, "identifier");
 
-		write_string(self, &data->identifier);
+		write_string(self, data->identifier);
 
 	write_field_end(self, "identifier");
 
@@ -176,7 +176,7 @@ void write_ST_Parameters(HPAbstractWriter *self, const ST_Parameters* data)
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_Parameter(self, &data->par_list);
+			write_ST_Parameter(self, &data->par_list[i]);
 
 			write_vector_item_end(self, i);
 		}
@@ -195,7 +195,7 @@ void write_ST_ARGUMENT(HPAbstractWriter *self, const ST_ARGUMENT* data)
 	{
 		write_field_begin(self, "id");
 
-		write_string(self, &data->id);
+		write_string(self, data->id);
 
 		write_field_end(self, "id");
 	}
@@ -234,7 +234,7 @@ void write_ST_ARGUMENTS(HPAbstractWriter *self, const ST_ARGUMENTS* data)
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_ARGUMENT(self, &data->arg_list);
+			write_ST_ARGUMENT(self, &data->arg_list[i]);
 
 			write_vector_item_end(self, i);
 		}
@@ -323,7 +323,7 @@ void write_ST_FIELD(HPAbstractWriter *self, const ST_FIELD* data)
 
 	write_field_begin(self, "identifier");
 
-		write_string(self, &data->identifier);
+		write_string(self, data->identifier);
 
 	write_field_end(self, "identifier");
 
@@ -378,7 +378,7 @@ void write_ST_TypeAnnotations(HPAbstractWriter *self, const ST_TypeAnnotations* 
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_TypeAnnotation(self, &data->ta_list);
+			write_ST_TypeAnnotation(self, &data->ta_list[i]);
 
 			write_vector_item_end(self, i);
 		}
@@ -395,7 +395,7 @@ void write_ST_Import(HPAbstractWriter *self, const ST_Import* data)
 
 	write_field_begin(self, "package_name");
 
-		write_string(self, &data->package_name);
+		write_string(self, data->package_name);
 
 	write_field_end(self, "package_name");
 
@@ -434,7 +434,7 @@ void write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF* data)
 
 	write_field_begin(self, "identifier");
 
-		write_string(self, &data->identifier);
+		write_string(self, data->identifier);
 
 	write_field_end(self, "identifier");
 
@@ -454,7 +454,7 @@ void write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF* data)
 }
 
 void write_ST_ENUM(HPAbstractWriter *self, const ST_ENUM* data)
-{ 
+{
 	write_struct_begin(self, "ST_ENUM");
 
 	write_field_begin(self, "name");
@@ -483,7 +483,7 @@ void write_ST_ENUM(HPAbstractWriter *self, const ST_ENUM* data)
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_ENUM_DEF(self, &data->enum_def_list);
+			write_ST_ENUM_DEF(self, &data->enum_def_list[i]);
 
 			write_vector_item_end(self, i);
 		}
@@ -516,7 +516,7 @@ void write_ST_FIELD_LIST(HPAbstractWriter *self, const ST_FIELD_LIST* data)
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_FIELD(self, &data->field_list);
+			write_ST_FIELD(self, &data->field_list[i]);
 
 			write_vector_item_end(self, i);
 		}
@@ -539,7 +539,7 @@ void write_ST_STRUCT(HPAbstractWriter *self, const ST_STRUCT* data)
 
 	write_field_begin(self, "name");
 
-		write_string(self, &data->name);
+		write_string(self, data->name);
 
 	write_field_end(self, "name");
 
@@ -574,7 +574,7 @@ void write_ST_UNION(HPAbstractWriter *self, const ST_UNION* data)
 
 	write_field_begin(self, "name");
 
-		write_string(self, &data->name);
+		write_string(self, data->name);
 
 	write_field_end(self, "name");
 
