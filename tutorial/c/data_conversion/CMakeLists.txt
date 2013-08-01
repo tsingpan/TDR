@@ -17,11 +17,11 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
 	COMMAND ${HOTDATA_EXECUTABLE} -lua c_types ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_types.h
 
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr ifiles={'proto_types.h'} -lua c_reader_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.h
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr ifiles={'proto_types.h','proto_reader.h'} -lua c_reader ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.c
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr ifiles={'proto_types.h'} -lua c_writer_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.h
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr ifiles={'proto_types.h','proto_writer.h'} -lua c_writer ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.c
+	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h'}\" -lua c_reader_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.h
+	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h','proto_reader.h'}\" -lua c_reader ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.c
+	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h'}\" -lua c_writer_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.h
+	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h','proto_writer.h'}\" -lua c_writer ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.c
 )
 
 ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})
-TARGET_LINK_LIBRARIES(data_conversion ${HOTPOT_LIBRARIES} ${HOTPROTOCOL_LIBRARIES})
+TARGET_LINK_LIBRARIES(data_conversion ${HOTSCRIPT_LIBRARIES} ${HOTERROR_LIBRARIES} ${HOTPROTOCOL_LIBRARIES} ${HOTPOT_LIBRARIES})
