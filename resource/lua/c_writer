@@ -136,6 +136,9 @@ function main(hd)
 	if(c_types_file)then
 		io.write('#include \"' .. c_types_file .. '\"\n')
 	end
+	if(c_writer_header_file)then
+		io.write('#include \"' .. c_writer_header_file .. '\"\n')
+	end
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_CONST)then
 			on_const(value.definition.de_const)
