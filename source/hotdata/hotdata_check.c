@@ -300,6 +300,12 @@ void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF
 		goto done;
 	}
 
+	if(type->type == E_SNT_CONTAINER)
+	{
+		dp_error(self, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
 	symbol->type = EN_HST_TYPE;
 	symbol->body.type = *type;
 	if(dp_save_symbol_string(self, sn_typedef->name, symbol) != E_HP_NOERROR)

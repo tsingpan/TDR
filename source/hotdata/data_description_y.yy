@@ -203,6 +203,7 @@ Typedef :
 	{
 		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &yylloc, &$$, &$2, &$3);
 
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		dp_check_Typedef(GET_SELF, &yylloc, &$$);
 	};
 
