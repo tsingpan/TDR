@@ -94,7 +94,7 @@ int main(hpuint32 argc, char **argv)
 	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
 	
-	option_end = 0;
+	option_end = 0xffffffff;
 	//首先获得根目录
 	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HotPot_Dir"));
 	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
@@ -107,7 +107,7 @@ int main(hpuint32 argc, char **argv)
 
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);
 	data_parser_init(&dp);
-	for (i = 1; i < argc - 1; ++i)
+	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
 
