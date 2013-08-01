@@ -55,12 +55,8 @@ void help()
 LanguageLib language_lib;
 DATA_PARSER dp;
 
-char lua_file_name[HP_MAX_FILE_PATH_LENGTH];
 HP_LUA_WRITER writer;
 SCRIPT_PARSER sp;
-const char *json_input = NULL;
-FILE* output_file = NULL;
-FILE* json_output_file = NULL;
 
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
@@ -74,17 +70,17 @@ void script_putc(HotVM *self, char c)
 	fputc(c, (FILE*)self->user_data);
 }
 
-void get_real_file_path()
+void get_real_file_path(const char *file_name)
 {
 	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clua%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 
-	if(access(lua_file_name, 00) == 0)
+	if(access(file_name, 00) == 0)
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", lua_file_name);		
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", file_name);		
 	}
 	else
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, lua_file_name);
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, file_name);
 	}
 }
 
@@ -92,15 +88,13 @@ void get_real_file_path()
 JSON_PARSER jp;
 SCRIPT_PARSER sp;
 
-int main(int argc, char **argv)
+int main(hpuint32 argc, char **argv)
 {
-	int i;
+	hpuint32 i, j, option_end;
 	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
 	
-
-	
-	
+	option_end = 0;
 	//首先获得根目录
 	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HotPot_Dir"));
 	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
@@ -112,7 +106,6 @@ int main(int argc, char **argv)
 #endif//_DEBUG
 
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);
-
 	data_parser_init(&dp);
 	for (i = 1; i < argc - 1; ++i)
 	{
@@ -133,17 +126,6 @@ int main(int argc, char **argv)
 		{
 			version();
 			goto ERROR_RET;
-		}				
-		else if (strcmp(arg, "-lua") == 0)
-		{
-			arg = argv[++i];
-			if (arg == NULL)
-			{
-				fprintf(stderr, "Missing template file specification\n");
-				usage();
-				goto ERROR_RET;
-			}
-			strncpy(lua_file_name, arg, HP_MAX_FILE_PATH_LENGTH);
 		}
 		else if (strcmp(arg, "-i") == 0)
 		{
@@ -155,12 +137,19 @@ int main(int argc, char **argv)
 				goto ERROR_RET;
 			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
-		}		
+		}
+		else if (strcmp(arg, "-lua") == 0)
+		{
+			++i;
+		}
+		else if (strcmp(arg, "-luastr") == 0)
+		{
+			++i;
+		}
 		else
 		{
-			fprintf(stderr, "Unrecognized option: %s\n", arg);
-			usage();
-			goto ERROR_RET;
+			option_end = i;
+			break;
 		}
 	}
 
@@ -182,23 +171,50 @@ int main(int argc, char **argv)
 	lua_setglobal( L, "lua_dir" );
 
 
-	lua_writer_init(&writer, L);
-	if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
-	{
-		goto ERROR_RET;
-	}
 
-	if(lua_file_name[0])
+	for(i = option_end; i < argc; ++i)
 	{
-		lua_setglobal( L, "hd" );
-		get_real_file_path();
-		if(luaL_dofile(L, real_script_path) != 0)
+		lua_writer_init(&writer, L);
+		if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
 		{
-			const char* error = lua_tostring(L, -1);
-			fprintf(stderr, error);
+			goto ERROR_RET;
+		}
+		lua_setglobal( L, "hd" );
+
+		for(j = 1; j < option_end; ++j)
+		{
+			char* arg;
+
+			arg = strtok(argv[j], " ");
+			// Treat double dashes as single dashes
+			if (arg[0] == '-' && arg[1] == '-')
+			{
+				++arg;
+			}
+
+			if (strcmp(arg, "-lua") == 0)
+			{
+				arg = argv[++j];
+				get_real_file_path(arg);
+				if(luaL_dofile(L, real_script_path) != 0)
+				{
+					const char* error = lua_tostring(L, -1);
+					fprintf(stderr, error);
+					goto ERROR_RET;
+				}
+			}
+			else if (strcmp(arg, "-luastr") == 0)
+			{
+				arg = argv[++j];
+				if(luaL_dostring(L, arg) != 0)
+				{
+					const char* error = lua_tostring(L, -1);
+					fprintf(stderr, error);
+					goto ERROR_RET;
+				}
+			}
 		}
 	}
-	
 
 	return 0;
 ERROR_RET:

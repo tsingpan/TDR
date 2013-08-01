@@ -1,326 +1,156 @@
-#include "hotpot/hp_platform.h"
-#include "hotprotocol/hp_abstract_writer.h"
+loadfile(lua_dir .. "lib/syntactic_node.lua")();
+function print_val(val)
+	if val.type == E_SNVT_IDENTIFIER then
+		io.write(val.val.identifier)
+	elseif val.type == E_SNVT_CHAR then
+		io.write("'")
+		if(val.val.c == '\n')then
+			io.write('\\n')
+		else
+			io.write(val.val.c)
+		end
+		io.write("'")
+	elseif val.type == E_SNVT_DOUBLE then
+		io.write(val.val.d)
+	elseif val.type == E_SNVT_BOOL then
+		io.write(val.val.b)
+	elseif val.type == E_SNVT_STRING then
+		--需要处理字符串中的转义
+		io.write('"')
+		io.write(val.val.str)
+		io.write('"')
+	elseif val.type == E_SNVT_INT64 then
+		io.write(val.val.i64)
+	elseif val.type == E_SNVT_UINT64 then
+		io.write(val.val.ui64)
+	elseif val.type == E_SNVT_HEX_INT64 then
+		io.write(val.val.hex_i64)
+	elseif val.type == E_SNVT_HEX_UINT64 then
+		io.write(val.val.hex_ui64)
+	end
+end
 
-#include "<%$types_file%>"
-#include "<%$writer_header_file%>"
-#include <string.h>
-<%
-	$DefinitionList
-	[
-		$*
-		{
-			$import
-			{
-%>
-#include "<%$package_name%>.h"
-<%
-			}
-			$comment
-			{
-%>
-//<% $text %>
-<%
-			}
+function on_const(const)
+	io.write('#define\t')
+	io.write(const.identifier)
+	io.write(' ')
+	print_val(const.val)
+	io.write('\n')
+end
 
-			$struct
-			{
-%>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>)
-{ 
-	write_struct_begin(self, "<%$name%>");
-<%				$list
-				[
-					$*
-					{
-						$Type
-						{
-							$ContainerType
-							{
-								$vector
-								{%>
-	write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
-	write_vector_begin(self);
-	{	
-		hpuint32 i;
-		for(i = 0; i < <%$Arguments[$1{$Identifier{$id}}]%>; ++i)
-		{
-			if( i == data-><%$Arguments[$2{$Identifier{$id}}]%> )
-			{
-				break;
-			}
-			write_vector_item_begin(self, i);
-<%								}
-								$string
-								{%>
-	write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
-<%								}
-							}
-						$ObjectType
-						{%>
-		write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
-<%						}
-						$SimpleType
-						{%>
-		write_field_begin(self, "<%$name%>", strlen("<%$name%>"));
-<%						}
-					}%>
-		<%
-						$condition
-						{
-							$expression
-							{
-								'if ' $negation{'(!'} '(' $op0 ' ' $operator ' ' $op1 ')' $negation{')'}
-							' '
-							}
-						}
-						$Type
-						{
-							$ContainerType
-							{
-								$vector
-								{
-									'\t'
-								}
-							}
-						}%>write_<%
-						$Type
-						{
-							$SimpleType{$type}
-							$ObjectType{$type}
-							$ContainerType
-							{
-								$vector
-								{
-									$Arguments
-									[
-										$0
-										{
-											$Identifier
-											{
-												$id
-											}
-											$SimpleType
-											{
-												$type
-											}
-										}
-									]
-								}
-								$string
-								{
-									'string'
-								}
-							}
-						}%>(self, <%
-						$Type
-						{
-							$ContainerType
-							{
-								'&data->'
-							}
-							$ObjectType
-							{
-								'&data->'
-							}
-							$SimpleType
-							{
-								'data->'
-							}
-							$name
-						}
-						$Type
-						{
-							$ObjectType
-							{
-								$Arguments
-								[
-									$*
-									{
-										', data->'
-										$Identifier{$id}
-									}
-								]
-							}
-							$ContainerType
-							{
-								$vector
-								{
-									$Arguments
-									[
-										$3+
-										{
-											', '
-											$Identifier
-											{
-												'data->'
-												$id
-											}
-										}
-									]
-								}
-							}
-						}%>);
-<%						$Type
-						{
-							$ContainerType
-							{
-								$vector
-								{%>
-			write_vector_item_end(self, i);
-		}
-	}
-	write_vector_end(self);
-	write_field_end(self, "<%$name%>", strlen("<%$name%>"));
-<%								}
-								$string
-								{%>
-	write_field_end(self, "<%$name%>", strlen("<%$name%>"));
-<%								}
-							}
-							$ObjectType
-							{%>
-		write_field_end(self, "<%$name%>", strlen("<%$name%>"));
-<%							}
-							$SimpleType
-							{%>
-		write_field_end(self, "<%$name%>", strlen("<%$name%>"));
-<%							}
-						}
-					}
-				]
-%>
-	write_struct_end(self , "<%$name%>");
-}
-<%
-			}
+function print_type(type, args)
+	if(type.type == E_SNT_SIMPLE)then
+		if(type.st == E_ST_CHAR)then
+			io.write('hpchar')
+		elseif(type.st == E_ST_DOUBLE)then
+			io.write('hpdouble')
+		elseif(type.st == E_ST_BOOL)then
+			io.write('hpbool')
+		elseif(type.st == E_ST_INT8)then
+			io.write('hpint8')
+		elseif(type.st == E_ST_INT16)then
+			io.write('hpint16')
+		elseif(type.st == E_ST_INT32)then
+			io.write('hpint32')
+		elseif(type.st == E_ST_INT64)then
+			io.write('hpint64')
+		elseif(type.st == E_ST_UINT8)then
+			io.write('hpuint8')
+		elseif(type.st == E_ST_UINT16)then
+			io.write('hpuint16')
+		elseif(type.st == E_ST_UINT32)then
+			io.write('hpuint32')
+		elseif(type.st == E_ST_UINT64)then
+			io.write('hpuint64')
+		end
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			io.write(args.arg_list[1].ot)
+		elseif(type.ct == E_CT_STRING)then
+			io.write('hpchar')
+		end
+	elseif(type.type == E_SNT_REFER)then
+		io.write(type.ot);
+	end
+end
 
-			$union
-			{
-%>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% 
-				$Parameters
-				[
-					$*
-					{
-						' , hp'
-						$Type
-						{
-							$SimpleType
-							{
-								$type
-							}
-							$ObjectType
-							{
-								$type
-							}
-							$ContainerType
-							{
-								$type
-							}
-						}
-						' '
-						$name
-					}
-				]%>)
-{
-	write_struct_begin(self, "<%$name%>");
-	switch(<% $TypeAnnotations[$*{$switch}] %>)
-	{
-<%				$list
-				[
-					$*
-					{
-%>
-		case <% $condition{$expression{$op1}}%>:
-			write_<%
-						$Type
-						{
-							$SimpleType{$type}
-							$ObjectType{$type}
-							$ContainerType
-							{
-								$vector
-								{
-									$Arguments
-									[
-										$0
-										{
-											$Identifier
-											{
-												$id
-											}
-											$SimpleType
-											{
-												$type
-											}
-										}
-									]
-								}
-								$string{'string'}
-							}
-	}
-%>(self, <%
-						$Type
-						{
-							$ContainerType
-							{
-								'&data->'
-							}
-							$ObjectType
-							{
-								'&data->'
-							}
-							$SimpleType
-							{
-								'data->'
-							}
-							$name
-						}
-						$Type
-						{
-							$ObjectType
-							{
-								$Arguments
-								[
-									$*
-									{
-										', data->'
-										$Identifier
-										{
-											$id
-										}
-									}
-								]
-							}
-							$ContainerType
-							{
-								$vector
-								{
-									$Arguments
-									[
-										$3+
-										{
-											', '
-											$Identifier
-											{
-												'data->'
-												$id
-											}
-										}
-									]
-								}
-							}
-						}%>);
-			break;<%
-					}
-				]
-%>
-	}
-	write_struct_end(self, "<%$name%>");
-}
-<%
-			}
+function on_typedef(typedef)
+	io.write('typedef')
+	io.write(' ')
+	print_type(typedef.type, nil)
+	io.write(' ')
+	io.write(typedef.name)
+	io.write(';\n')
+end
 
-		}
-	]
-%>
+function on_enum(enum)
+	io.write('typedef enum _' .. enum.name)
+	io.write('\n')
+	io.write('{\n')
+	for key, value in pairs(enum.enum_def_list) do
+		io.write('\t' .. value.identifier .. ' = ')
+		print_val(value.val)
+		io.write(',\n')
+	end
+	io.write('}' .. enum.name .. ';\n')
+end
+
+function on_object(type_name, object)
+	io.write('typedef ' .. type_name .. ' _' .. object.name)
+	io.write('\n')
+	io.write('{\n')
+	for key, value in pairs(object.field_list.field_list) do
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('\thpuint32 ')
+				io.write(value.args.arg_list[3].ot)
+				io.write(';\n')
+			end
+		end
+
+		io.write('\t')
+		print_type(value.type, value.args)
+		io.write(' ')
+		io.write(value.identifier)
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('[')
+				io.write(value.args.arg_list[2].ot)
+				io.write(']')
+			elseif(value.type.ct == E_CT_STRING)then
+				io.write('[')
+				io.write(value.args.arg_list[1].ot)
+				io.write(']')
+			end
+		end
+		io.write(';\n')
+	end
+	io.write('}' .. object.name .. ';\n')
+end
+
+function main(hd)
+	file_tag = hd.file_name
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_')
+	io.write('#ifndef ' .. file_tag .. '\n')
+	io.write('#define ' .. file_tag .. '\n')
+	if(c_types_file)then
+		io.write('#include \"' .. c_types_file .. '\"\n')
+	end
+	for key, value in pairs(hd['definition_list']) do
+		if(value.type == E_DT_CONST)then
+			on_const(value.definition.de_const)
+		elseif(value.type == E_DT_TYPEDEF)then
+			on_typedef(value.definition.de_typedef)
+		elseif(value.type == E_DT_ENUM)then
+			on_enum(value.definition.de_enum)
+		elseif(value.type == E_DT_STRUCT)then
+			on_object('struct', value.definition.de_struct)
+		elseif(value.type == E_DT_UNION)then
+			on_object('union', value.definition.de_union)
+		end
+	end
+	io.write('#endif//' .. file_tag .. '\n')
+end
+
+main(hd)
+

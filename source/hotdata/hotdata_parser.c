@@ -18,8 +18,6 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	self->language_lib = language_lib;
 	self->writer = writer;	
 	self->result_num = 0;
-	//self->symbol_list_num = 0;
-
 	
 
 	alpha_map = alpha_map_new();
