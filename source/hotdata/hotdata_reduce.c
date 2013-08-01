@@ -143,7 +143,7 @@ void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE
 void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpstring str)
 {
 	current->type = E_SNVT_STRING;
-	current->val.str = str;
+	strncpy(current->val.str, str, MAX_IDENTIFIER_LENGTH);
 }
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val)

@@ -92,7 +92,7 @@ function on_enum(enum)
 		print_val(value.val)
 		io.write(',\n')
 	end
-	io.write('}' .. enum.name .. '\n')
+	io.write('}' .. enum.name .. ';\n')
 end
 
 function on_object(type_name, object)
@@ -111,16 +111,28 @@ function on_object(type_name, object)
 		io.write('\t')
 		print_type(value.type, value.args)
 		io.write(' ')
-		io.write(value.identifier .. ';\n')
+		io.write(value.identifier)
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('[')
+				io.write(value.args.arg_list[2].ot)
+				io.write(']')
+			elseif(value.type.ct == E_CT_STRING)then
+				io.write('[')
+				io.write(value.args.arg_list[1].ot)
+				io.write(']')
+			end
+		end
+		io.write(';\n')
 	end
-	io.write('}' .. object.name .. '\n')
+	io.write('}' .. object.name .. ';\n')
 end
 
 function main(hd)
 	file_tag = hd.file_name
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_')
-	io.write('#ifndef ' .. file_tag)
-	io.write('#define ' .. file_tag)
+	io.write('#ifndef ' .. file_tag .. '\n')
+	io.write('#define ' .. file_tag .. '\n')
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_CONST)then
 			on_const(value.definition.de_const)
@@ -134,8 +146,7 @@ function main(hd)
 			on_object('union', value.definition.de_union)
 		end
 	end
-	io.write('#endif//' .. file_tag)
-	io.write('\n')
+	io.write('#endif//' .. file_tag .. '\n')
 end
 
 main(hd)
