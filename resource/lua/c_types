@@ -116,17 +116,26 @@ function on_object(type_name, object)
 	io.write('}' .. object.name .. '\n')
 end
 
-for key, value in pairs(hd['definition_list']) do
-	if(value.type == E_DT_CONST)then
-		on_const(value.definition.de_const)
-	elseif(value.type == E_DT_TYPEDEF)then
-		on_typedef(value.definition.de_typedef)
-	elseif(value.type == E_DT_ENUM)then
-		on_enum(value.definition.de_enum)
-	elseif(value.type == E_DT_STRUCT)then
-		on_object('struct', value.definition.de_struct)
-	elseif(value.type == E_DT_UNION)then
-		on_object('union', value.definition.de_union)
+function main(hd)
+	file_tag = hd.file_name
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_')
+	io.write('#ifndef ' .. file_tag)
+	io.write('#define ' .. file_tag)
+	for key, value in pairs(hd['definition_list']) do
+		if(value.type == E_DT_CONST)then
+			on_const(value.definition.de_const)
+		elseif(value.type == E_DT_TYPEDEF)then
+			on_typedef(value.definition.de_typedef)
+		elseif(value.type == E_DT_ENUM)then
+			on_enum(value.definition.de_enum)
+		elseif(value.type == E_DT_STRUCT)then
+			on_object('struct', value.definition.de_struct)
+		elseif(value.type == E_DT_UNION)then
+			on_object('union', value.definition.de_union)
+		end
 	end
+	io.write('#endif//' .. file_tag)
+	io.write('\n')
 end
 
+main(hd)
