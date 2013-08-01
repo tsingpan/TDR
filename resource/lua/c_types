@@ -65,7 +65,7 @@ function print_type(type, args)
 		end
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			io.write(args.arg_list[0].id)
+			io.write(args.arg_list[1].ot)
 		elseif(type.ct == E_CT_STRING)then
 			io.write('hpchar')
 		end
@@ -84,7 +84,7 @@ function on_typedef(typedef)
 end
 
 function on_enum(enum)
-	io.write('enum ' .. enum.name)
+	io.write('typedef enum _' .. enum.name)
 	io.write('\n')
 	io.write('{\n')
 	for key, value in pairs(enum.enum_def_list) do
@@ -92,19 +92,28 @@ function on_enum(enum)
 		print_val(value.val)
 		io.write(',\n')
 	end
-	io.write('}\n')
+	io.write('}' .. enum.name .. '\n')
 end
 
-function on_struct(struct)
-	io.write('struct ' .. struct.name)
+function on_object(type_name, object)
+	io.write('typedef ' .. type_name .. ' _' .. object.name)
 	io.write('\n')
 	io.write('{\n')
-	for key, value in pairs(struct.field_list.field_list) do
+	for key, value in pairs(object.field_list.field_list) do
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('\thpuint32 ')
+				io.write(value.args.arg_list[3].ot)
+				io.write(';\n')
+			end
+		end
+
 		io.write('\t')
-		io.write(struct.args.arg_list[0])
+		print_type(value.type, value.args)
+		io.write(' ')
 		io.write(value.identifier .. ';\n')
 	end
-	io.write('}\n')
+	io.write('}' .. object.name .. '\n')
 end
 
 for key, value in pairs(hd['definition_list']) do
@@ -115,7 +124,9 @@ for key, value in pairs(hd['definition_list']) do
 	elseif(value.type == E_DT_ENUM)then
 		on_enum(value.definition.de_enum)
 	elseif(value.type == E_DT_STRUCT)then
-		on_struct(value.definition.de_struct)
+		on_object('struct', value.definition.de_struct)
+	elseif(value.type == E_DT_UNION)then
+		on_object('union', value.definition.de_union)
 	end
 end
 
