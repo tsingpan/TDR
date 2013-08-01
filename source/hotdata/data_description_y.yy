@@ -104,7 +104,6 @@
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
 
-%type<sn_argument> Argument
 %type<sn_arguments> Arguments ArgumentList
 
 
@@ -624,23 +623,13 @@ Arguments:
 	};
 	
 ArgumentList:
-	ArgumentList ',' Argument
+	ArgumentList ',' Type
 	{
-		dp_reduce_ArgumentList_ArgumentList_Argument(GET_SELF, &yylloc, &$$, &$1, &$3);
+		dp_reduce_ArgumentList_ArgumentList_Type(GET_SELF, &yylloc, &$$, &$1, &$3);
 	}
-|	Argument
+|	Type
 	{
-		dp_reduce_ArgumentList_Argument(GET_SELF, &yylloc, &$$, &$1);
-	};
-	
-Argument:
-	tok_identifier
-	{
-		dp_reduce_Argument_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
-	}
-|	SimpleType
-	{
-		dp_reduce_Argument_SimpleType(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_ArgumentList_Type(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 UnixComment:

@@ -1,4 +1,4 @@
-loadfile(lua_dir .. "lib/syntactic_node.lua")();
+loadfile(lua_dir .. "lib/syntactic_node.lua")()
 
 function print_val(val)
 	if val.type == E_SNVT_IDENTIFIER then

@@ -187,30 +187,6 @@ void write_ST_Parameters(HPAbstractWriter *self, const ST_Parameters* data)
 	write_struct_end(self , "ST_Parameters");
 }
 
-void write_ST_ARGUMENT(HPAbstractWriter *self, const ST_ARGUMENT* data)
-{ 
-	write_struct_begin(self, "ST_ARGUMENT");
-
-	if(data->type == E_AT_IDENTIFIER)
-	{
-		write_field_begin(self, "id");
-
-		write_string(self, data->id);
-
-		write_field_end(self, "id");
-	}
-	else if(data->type == E_AT_SIMPLE_TYPE)
-	{
-		write_field_begin(self, "st");
-
-		write_ST_TYPE(self, &data->st);
-
-		write_field_end(self, "st");
-	}
-	
-
-	write_struct_end(self , "ST_ARGUMENT");
-}
 
 void write_ST_ARGUMENTS(HPAbstractWriter *self, const ST_ARGUMENTS* data)
 { 
@@ -234,7 +210,7 @@ void write_ST_ARGUMENTS(HPAbstractWriter *self, const ST_ARGUMENTS* data)
 			}
 			write_vector_item_begin(self, i);
 
-			write_ST_ARGUMENT(self, &data->arg_list[i]);
+			write_ST_TYPE(self, &data->arg_list[i]);
 
 			write_vector_item_end(self, i);
 		}

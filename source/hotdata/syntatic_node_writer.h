@@ -20,8 +20,6 @@ void write_ST_Parameter(HPAbstractWriter *self, const ST_Parameter* data);
 
 void write_ST_Parameters(HPAbstractWriter *self, const ST_Parameters* data);
 
-void write_ST_ARGUMENT(HPAbstractWriter *self, const ST_ARGUMENT* data);
-
 void write_ST_ARGUMENTS(HPAbstractWriter *self, const ST_ARGUMENTS* data);
 
 void write_ST_Expression(HPAbstractWriter *self, const ST_Expression* data);

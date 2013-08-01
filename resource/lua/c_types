@@ -38,16 +38,7 @@ function on_const(const)
 	io.write('\n')
 end
 
-function print_container_type(type, args)
-	if(type.type == E_SNT_CONTAINER)then
-		if(type.ct == E_CT_VECTOR)then
-			io.write(args.arg_list[0].id)
-		elseif(type.ct == E_CT_STRING)then
-		end
-	end
-end
-
-function print_type(type)
+function print_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
 			io.write('hpchar')
@@ -73,7 +64,11 @@ function print_type(type)
 			io.write('hpuint64')
 		end
 	elseif(type.type == E_SNT_CONTAINER)then
-		print_container_type(type)
+		if(type.ct == E_CT_VECTOR)then
+			io.write(args.arg_list[0].id)
+		elseif(type.ct == E_CT_STRING)then
+			io.write('hpchar')
+		end
 	elseif(type.type == E_SNT_REFER)then
 		io.write(type.ot);
 	end
@@ -82,7 +77,7 @@ end
 function on_typedef(typedef)
 	io.write('typedef')
 	io.write(' ')
-	print_type(typedef.type)
+	print_type(typedef.type, nil)
 	io.write(' ')
 	io.write(typedef.name)
 	io.write(';\n')
@@ -105,7 +100,9 @@ function on_struct(struct)
 	io.write('\n')
 	io.write('{\n')
 	for key, value in pairs(struct.field_list.field_list) do
-		io.write('\t' .. value.identifier .. ';\n')
+		io.write('\t')
+		io.write(struct.args.arg_list[0])
+		io.write(value.identifier .. ';\n')
 	end
 	io.write('}\n')
 end

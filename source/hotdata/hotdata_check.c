@@ -720,9 +720,9 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 	hpuint32 i;
 	for(i = start_index; i < args->arg_list_num; ++i)
 	{
-		if(args->arg_list[i].type == E_AT_IDENTIFIER)
+		if(args->arg_list[i].type == E_SNT_REFER)
 		{
-			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, args->arg_list[i].id);
+			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, args->arg_list[i].ot);
 			if(symbol == NULL)
 			{
 				dp_error(self, yylloc, E_HP_ERROR);
@@ -802,9 +802,9 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				goto done;
 			}
 
-			if(pn_field->args.arg_list[0].type == E_AT_IDENTIFIER)
+			if(pn_field->args.arg_list[0].type == E_SNT_REFER)
 			{
-				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].id);
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
 				if(symbol == NULL)
 				{
 					dp_error(self, yylloc, E_HP_ERROR);
@@ -848,7 +848,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 					dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
 				}
 			}
-			else if(pn_field->args.arg_list[0].type == E_AT_SIMPLE_TYPE)
+			else if(pn_field->args.arg_list[0].type == E_SNT_SIMPLE)
 			{
 				if(pn_field->args.arg_list_num != 3)
 				{
@@ -858,9 +858,9 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 			}
 
 
-			if(pn_field->args.arg_list[1].type == E_AT_IDENTIFIER)
+			if(pn_field->args.arg_list[1].type == E_SNT_REFER)
 			{
-				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[1].id);
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[1].ot);
 				if(symbol == NULL)
 				{
 					dp_error(self, yylloc, E_HP_ERROR);
@@ -890,7 +890,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				goto done;
 			}
 
-			if(pn_field->args.arg_list[2].type != E_AT_IDENTIFIER)
+			if(pn_field->args.arg_list[2].type != E_SNT_REFER)
 			{
 				dp_error(self, yylloc, E_HP_ERROR);
 				goto done;
@@ -902,9 +902,9 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				dp_error(self, yylloc, E_HP_ERROR);
 				goto done;
 			}
-			if(pn_field->args.arg_list[0].type == E_AT_IDENTIFIER)
+			if(pn_field->args.arg_list[0].type == E_SNT_REFER)
 			{
-				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].id);
+				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
 				if(symbol == NULL)
 				{
 					dp_error(self, yylloc, E_HP_ERROR);

@@ -117,24 +117,11 @@ typedef struct _ST_Parameters
 #define MAX_ARGUMENT_NUM 16
 #endif//MAX_ARGUMENT_NUM
 
-typedef enum _EN_ARGUMENT_TYPE
-{
-	E_AT_IDENTIFIER = 0,
-	E_AT_SIMPLE_TYPE = 1,
-}EN_ARGUMENT_TYPE;
-
-typedef struct _ST_ARGUMENT
-{
-	EN_ARGUMENT_TYPE type;
-	hpchar id[MAX_IDENTIFIER_LENGTH];
-	ST_TYPE st;
-}ST_ARGUMENT;
-
 typedef struct _ST_ARGUMENTS
 {
 
 	hpuint32 arg_list_num;
-	ST_ARGUMENT arg_list[MAX_ARGUMENT_NUM];
+	ST_TYPE arg_list[MAX_ARGUMENT_NUM];
 }ST_ARGUMENTS;
 
 typedef enum _ST_EXPRESSION_OPER
