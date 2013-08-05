@@ -130,7 +130,7 @@ end
 
 function main(hd)
 	file_tag = hd.file_name
-	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_')
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_TYPES'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
 	for key, value in pairs(hd['definition_list']) do

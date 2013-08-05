@@ -44,7 +44,7 @@ hpint32 xml_writer_fini(HP_XML_WRITER *self)
 	self->super.write_field_end = NULL;
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
-	self->super.write_enum = NULL;
+	self->super.write_enum_number = NULL;
 	self->super.write_char = NULL;
 	self->super.write_double = NULL;
 	self->super.write_int8 = NULL;

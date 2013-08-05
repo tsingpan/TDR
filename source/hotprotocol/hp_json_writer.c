@@ -29,7 +29,7 @@ hpint32 ddekit_json_encoding_writer_init(HP_JSON_WRITER *self, FILE *f)
 	self->super.write_uint32 = ddekit_json_encoding_write_hpuint32;
 	self->super.write_uint64 = ddekit_json_encoding_write_hpuint64;
 
-	self->super.write_enum = ddekit_json_encoding_write_enum;
+	self->super.write_enum_number = ddekit_json_encoding_write_enum;
 	self->super.write_char = ddekit_json_encoding_write_hpchar;
 	self->super.write_double = ddekit_json_encoding_write_hpdouble;
 	self->super.write_bytes = ddekit_json_encoding_write_bytes;
@@ -52,7 +52,7 @@ hpint32 ddekit_json_encoding_writer_fini(HP_JSON_WRITER *self)
 	self->super.write_field_end = NULL;
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
-	self->super.write_enum = NULL;
+	self->super.write_enum_number = NULL;
 	self->super.write_char = NULL;
 	self->super.write_double = NULL;
 	self->super.write_int8 = NULL;

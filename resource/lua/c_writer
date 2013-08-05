@@ -30,14 +30,6 @@ function print_val(val)
 	end
 end
 
-function on_const(const)
-	io.write('#define\t')
-	io.write(const.identifier)
-	io.write(' ')
-	print_val(const.val)
-	io.write('\n')
-end
-
 function print_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
@@ -74,63 +66,139 @@ function print_type(type, args)
 	end
 end
 
-function on_typedef(typedef)
-	io.write('typedef')
-	io.write(' ')
-	print_type(typedef.type, nil)
-	io.write(' ')
-	io.write(typedef.name)
-	io.write(';\n')
+function on_enum_name(enum)
+	io.write('void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)\n')
+	io.write('{\n')
+	io.write('\tswitch(data)\n')
+	io.write('\t{\n')
+	for key, value in pairs(enum.enum_def_list) do
+		io.write('\t\tcase ' .. value.identifier .. ':\n')
+		io.write('\t\t\twrite_enum_name(self, "' ..  value.identifier .. '")\n')
+		io.write('\t\t\tbreak;\n')
+	end
+	io.write('\t}\n')
+	io.write('}\n')
+end
+
+function on_enum_number(enum)
+	io.write('void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)\n')
+	io.write('{\n')
+	io.write('\twrite_enum(self, data)\n')
+	io.write('}\n')
 end
 
 function on_enum(enum)
-	io.write('typedef enum _' .. enum.name)
-	io.write('\n')
+	on_enum_name(enum)
+	on_enum_number(enum)
+
+	io.write('void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)\n')
 	io.write('{\n')
-	for key, value in pairs(enum.enum_def_list) do
-		io.write('\t' .. value.identifier .. ' = ')
-		print_val(value.val)
-		io.write(',\n')
-	end
-	io.write('}' .. enum.name .. ';\n')
+	io.write('\twrite_' .. enum.name .. '_name(self, data)\n')
+	io.write('\twrite_' .. enum.name .. '_number(self, data)\n')
+	io.write('}\n')
 end
 
-function on_object(type_name, object)
-	io.write('typedef ' .. type_name .. ' _' .. object.name)
-	io.write('\n')
-	io.write('{\n')
-	for key, value in pairs(object.field_list.field_list) do
-		if(value.type.type == E_SNT_CONTAINER)then
-			if(value.type.ct == E_CT_VECTOR)then
-				io.write('\thpuint32 ')
-				io.write(value.args.arg_list[3].ot)
-				io.write(';\n')
-			end
-		end
-
-		io.write('\t')
-		print_type(value.type, value.args)
-		io.write(' ')
-		io.write(value.identifier)
-		if(value.type.type == E_SNT_CONTAINER)then
-			if(value.type.ct == E_CT_VECTOR)then
-				io.write('[')
-				io.write(value.args.arg_list[2].ot)
-				io.write(']')
-			elseif(value.type.ct == E_CT_STRING)then
-				io.write('[')
-				io.write(value.args.arg_list[1].ot)
-				io.write(']')
-			end
-		end
-		io.write(';\n')
+function on_struct(object)
+	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	for key, value in pairs(object.parameters.par_list) do
+		io.write(' , ')
+		print_type(value.type, nil)
+		io.write(' *' .. value.identifier)
 	end
-	io.write('}' .. object.name .. ';\n')
+	io.write(')\n')
+	io.write('{\n')
+	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
+	for key, value in pairs(object.field_list.field_list) do
+		io.write('\n')
+		io.write('\twrite_field_begin(self, "' .. value.identifier .. '");\n')
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('\thpuint32 i;\n')
+				io.write('\tfor(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)\n')
+				io.write('\t{\n')
+				io.write('\t\twrite_')
+				print_type(value.type, value.args)
+				io.write('(self, &data->' .. value.identifier .. ')')
+				for ak, av in pairs(value.args.arg_list) do
+					io.write(', &data->' .. av.ot)
+				end
+				io.write(')\n')
+				io.write('\t}\n')
+			elseif(value.type.ct == E_CT_STRING)then
+				io.write('\twrite_string')
+				io.write('(self, &data->' .. value.identifier .. ');\n')
+			end
+		else
+			io.write('\twrite_')
+			print_type(value.type, nil)
+			io.write('(self, &data->' .. value.identifier)
+			for ak, av in pairs(value.args.arg_list) do
+				io.write(', &data->' .. av.ot)
+			end
+			io.write(');\n')
+		end
+		io.write('\twrite_field_end(self, "' .. value.identifier .. '");\n')
+	end
+	io.write('\n')
+	io.write('\twrite_struct_end(self, "' .. object.name .. '");\n')
+	io.write('}\n')
+end
+
+
+function on_union(object)
+	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	for key, value in pairs(object.parameters.par_list) do
+		io.write(' , ')
+		print_type(value.type, nil)
+		io.write(' *' .. value.identifier)
+	end
+	io.write(')\n')
+	io.write('{\n')
+	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
+	io.write('\tswitch(*s)\n')
+	io.write('\t{\n')
+	for key, value in pairs(object.field_list.field_list) do
+		io.write('\t\tcase ' .. value.condition.exp.op1.val.identifier .. ':\n')
+		io.write('\t\t{\n')
+		io.write('\t\t\twrite_field_begin(self, "' .. value.identifier .. '");\n')
+		if(value.type.type == E_SNT_CONTAINER)then
+			if(value.type.ct == E_CT_VECTOR)then
+				io.write('\t\t\thpuint32 i;\n')
+				io.write('\t\t\tfor(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)\n')
+				io.write('\t\t\t{\n')
+				io.write('\t\t\t\twrite_')
+				print_type(value.type, value.args)
+				io.write('(self, &data->' .. value.identifier .. ')')
+				for ak, av in pairs(value.args.arg_list) do
+					io.write(', &data->' .. av.ot)
+				end
+				io.write(')\n')
+				io.write('\t\t}\n')
+			elseif(value.type.ct == E_CT_STRING)then
+				io.write('\t\t\twrite_string')
+				io.write('(self, &data->' .. value.identifier .. ');\n')
+			end
+		else
+			io.write('\t\t\twrite_')
+			print_type(value.type, nil)
+			io.write('(self, &data->' .. value.identifier)
+			for ak, av in pairs(value.args.arg_list) do
+				io.write(', &data->' .. av.ot)
+			end
+			io.write(');\n')
+		end
+		io.write('\t\t\twrite_field_end(self, "' .. value.identifier .. '");\n')
+		io.write('\t\t\tbreak;\n')
+		io.write('\t\t}\n')
+	end
+	io.write('\t}\n')
+	io.write('\twrite_struct_end(self, "' .. object.name .. '");\n')
+	io.write('}\n')
 end
 
 function main(hd)
 	file_tag = hd.file_name
-	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_')
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
 	if(c_types_file)then
@@ -140,16 +208,12 @@ function main(hd)
 		io.write('#include \"' .. c_writer_header_file .. '\"\n')
 	end
 	for key, value in pairs(hd['definition_list']) do
-		if(value.type == E_DT_CONST)then
-			on_const(value.definition.de_const)
-		elseif(value.type == E_DT_TYPEDEF)then
-			on_typedef(value.definition.de_typedef)
-		elseif(value.type == E_DT_ENUM)then
+		if(value.type == E_DT_ENUM)then
 			on_enum(value.definition.de_enum)
 		elseif(value.type == E_DT_STRUCT)then
-			on_object('struct', value.definition.de_struct)
+			on_struct(value.definition.de_struct)
 		elseif(value.type == E_DT_UNION)then
-			on_object('union', value.definition.de_union)
+			on_union(value.definition.de_union)
 		end
 	end
 	io.write('#endif//' .. file_tag .. '\n')

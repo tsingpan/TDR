@@ -191,6 +191,7 @@ void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, PN_C
 		ta = &self->pn_definition.definition.de_union.ta;
 	}
 
+	current->empty = hpfalse;
 	current->exp.neg = hpfalse;
 	current->exp.op0.type = E_SNVT_IDENTIFIER;		
 	snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, "s");
@@ -201,6 +202,6 @@ void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, PN_C
 			snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, ta->ta_list[i].val.val.identifier);			
 		}
 	}
-	current->exp.oper = E_EO_AND;
+	current->exp.oper = E_EO_EQUAL;
 	current->exp.op1 = *val;
 }

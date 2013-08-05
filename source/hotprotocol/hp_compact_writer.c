@@ -15,7 +15,7 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 	self->super.write_vector_end = hp_compact_write_vector_end;
 	self->super.write_field_begin = hp_compact_write_field_begin;
 	self->super.write_field_end = hp_compact_write_field_end;
-	self->super.write_enum = hp_compact_write_enum;
+	self->super.write_enum_number = hp_compact_write_enum;
 	self->super.write_char = hp_compact_write_hpchar;
 	self->super.write_double = hp_compact_write_hpdouble;
 	self->super.write_int8 = hp_compact_write_hpint8;
@@ -45,7 +45,7 @@ hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
 	self->super.write_field_end = NULL;
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
-	self->super.write_enum = NULL;
+	self->super.write_enum_number = NULL;
 	self->super.write_char = NULL;
 	self->super.write_double = NULL;
 	self->super.write_int8 = NULL;

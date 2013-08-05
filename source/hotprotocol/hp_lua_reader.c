@@ -18,7 +18,7 @@ hpint32 lua_reader_init(HP_LUA_READER *self, lua_State *ls)
 	self->super.read_vector_end = lua_read_vector_end;
 	self->super.read_field_begin = lua_read_field_begin;
 	self->super.read_field_end = lua_read_field_end;
-	self->super.read_enum = lua_read_enum;
+	self->super.read_enum_number = lua_read_enum;
 	self->super.read_char = lua_read_hpchar;
 	self->super.read_double = lua_read_hpdouble;
 	self->super.read_int8 = lua_read_hpint8;
@@ -41,7 +41,7 @@ hpint32 lua_reader_fini(HP_LUA_READER *self)
 	self->super.read_vector_end = NULL;
 	self->super.read_field_begin = NULL;
 	self->super.read_field_end = NULL;
-	self->super.read_enum = NULL;
+	self->super.read_enum_number = NULL;
 	self->super.read_char = NULL;
 	self->super.read_double = NULL;
 	self->super.read_int8 = NULL;

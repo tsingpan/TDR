@@ -411,7 +411,7 @@ Field :
 	{
 		GET_SELF->pn_field.condition = $1;
 		GET_SELF->pn_field.type = $2;
-		GET_SELF->pn_field.args = $3;
+		GET_SELF->pn_field.args = $3;		
 		memcpy(GET_SELF->pn_field.identifier, $4.ptr, $4.len);
 		GET_SELF->pn_field.identifier[$4.len] = 0;		
 		GET_SELF->pn_field.comment = $7;
@@ -444,6 +444,7 @@ Condition :
 	}
 |	tok_if '(' Value tok_unequal Value ')'
 	{
+		$$.empty = hpfalse;
 		$$.exp.neg = hptrue;
 		$$.exp.op0 = $3;
 		$$.exp.oper = E_EO_EQUAL;

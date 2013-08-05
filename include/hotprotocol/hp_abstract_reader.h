@@ -26,7 +26,7 @@ struct _HPAbstractReader
 	hpint32 (*read_uint32)(HPAbstractReader *self, hpuint32 *val);
 	hpint32 (*read_uint64)(HPAbstractReader *self, hpuint64 *val);
 
-	hpint32 (*read_enum)(HPAbstractReader *self, hpint32 *val);
+	hpint32 (*read_enum_number)(HPAbstractReader *self, hpint32 *val);
 	hpint32 (*read_enum_name)(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_name_length);
 	hpint32 (*read_char)(HPAbstractReader *self, hpchar *val);
 	hpint32 (*read_double)(HPAbstractReader *self, hpdouble *val);
@@ -59,7 +59,7 @@ hpint32 read_uint16(HPAbstractReader *self, hpuint16 *val);
 hpint32 read_uint32(HPAbstractReader *self, hpuint32 *val);
 hpint32 read_uint64(HPAbstractReader *self, hpuint64 *val);
 
-hpint32 read_enum(HPAbstractReader *self, hpint32 *val);
+hpint32 read_enum_number(HPAbstractReader *self, hpint32 *val);
 hpint32 read_enum_name(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_name_length);
 hpint32 read_char(HPAbstractReader *self, hpchar *val);
 hpint32 read_double(HPAbstractReader *self, hpdouble *val);

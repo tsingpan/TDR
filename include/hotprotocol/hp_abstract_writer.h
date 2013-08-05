@@ -27,7 +27,7 @@ struct _HPAbstractWriter
 
 	hpint32 (*write_char)(HPAbstractWriter *self, const hpchar val);	
 	hpint32 (*write_double)(HPAbstractWriter *self, const hpdouble val);
-	hpint32 (*write_enum)(HPAbstractWriter *self, const hpint32 val);
+	hpint32 (*write_enum_number)(HPAbstractWriter *self, const hpint32 val);
 	hpint32 (*write_enum_name)(HPAbstractWriter *self, const hpchar *enum_name);
 	hpint32 (*write_string)(HPAbstractWriter *self, const hpchar* str);
 	hpint32 (*write_bytes)(HPAbstractWriter *self, const hpbytes bytes);
@@ -61,7 +61,7 @@ hpint32 write_uint64(HPAbstractWriter *self, const hpuint64 val);
 
 hpint32 write_char(HPAbstractWriter *self, const hpchar val);	
 hpint32 write_double(HPAbstractWriter *self, const hpdouble val);
-hpint32 write_enum(HPAbstractWriter *self, const hpint32 val);
+hpint32 write_enum_number(HPAbstractWriter *self, const hpint32 val);
 hpint32 write_enum_name(HPAbstractWriter *self, const hpchar *enum_name);
 hpint32 write_string(HPAbstractWriter *self, const hpchar* str);
 hpint32 write_bytes(HPAbstractWriter *self, const hpbytes bytes);

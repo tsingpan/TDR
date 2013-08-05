@@ -14,7 +14,7 @@ hpint32 ddekit_json_encoding_reader_init(HP_JSON_READER *self, const void *addr,
 	self->super.read_vector_end = ddekit_json_encoding_read_vector_end;
 	self->super.read_field_begin = ddekit_json_encoding_read_field_begin;
 	self->super.read_field_end = ddekit_json_encoding_read_field_end;
-	self->super.read_enum = ddekit_json_encoding_read_enum;
+	self->super.read_enum_number = ddekit_json_encoding_read_enum;
 	self->super.read_char = ddekit_json_encoding_read_hpchar;
 	self->super.read_double = ddekit_json_encoding_read_hpdouble;
 	self->super.read_int8 = ddekit_json_encoding_read_hpint8;
@@ -41,7 +41,7 @@ hpint32 ddekit_json_encoding_reader_fini(HP_JSON_READER *self)
 	self->super.read_vector_end = NULL;
 	self->super.read_field_begin = NULL;
 	self->super.read_field_end = NULL;
-	self->super.read_enum = NULL;
+	self->super.read_enum_number = NULL;
 	self->super.read_char = NULL;
 	self->super.read_double = NULL;
 	self->super.read_int8 = NULL;

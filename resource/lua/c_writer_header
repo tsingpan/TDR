@@ -1,45 +1,129 @@
-#ifndef _H_<% $file_tag %>_writer_header
-#define _H_<% $file_tag %>_writer_header
+loadfile(lua_dir .. "lib/syntactic_node.lua")();
+function print_val(val)
+	if val.type == E_SNVT_IDENTIFIER then
+		io.write(val.val.identifier)
+	elseif val.type == E_SNVT_CHAR then
+		io.write("'")
+		if(val.val.c == '\n')then
+			io.write('\\n')
+		else
+			io.write(val.val.c)
+		end
+		io.write("'")
+	elseif val.type == E_SNVT_DOUBLE then
+		io.write(val.val.d)
+	elseif val.type == E_SNVT_BOOL then
+		io.write(val.val.b)
+	elseif val.type == E_SNVT_STRING then
+		--需要处理字符串中的转义
+		io.write('"')
+		io.write(val.val.str)
+		io.write('"')
+	elseif val.type == E_SNVT_INT64 then
+		io.write(val.val.i64)
+	elseif val.type == E_SNVT_UINT64 then
+		io.write(val.val.ui64)
+	elseif val.type == E_SNVT_HEX_INT64 then
+		io.write(val.val.hex_i64)
+	elseif val.type == E_SNVT_HEX_UINT64 then
+		io.write(val.val.hex_ui64)
+	end
+end
+
+function print_type(type, args)
+	if(type.type == E_SNT_SIMPLE)then
+		if(type.st == E_ST_CHAR)then
+			io.write('hpchar')
+		elseif(type.st == E_ST_DOUBLE)then
+			io.write('hpdouble')
+		elseif(type.st == E_ST_BOOL)then
+			io.write('hpbool')
+		elseif(type.st == E_ST_INT8)then
+			io.write('hpint8')
+		elseif(type.st == E_ST_INT16)then
+			io.write('hpint16')
+		elseif(type.st == E_ST_INT32)then
+			io.write('hpint32')
+		elseif(type.st == E_ST_INT64)then
+			io.write('hpint64')
+		elseif(type.st == E_ST_UINT8)then
+			io.write('hpuint8')
+		elseif(type.st == E_ST_UINT16)then
+			io.write('hpuint16')
+		elseif(type.st == E_ST_UINT32)then
+			io.write('hpuint32')
+		elseif(type.st == E_ST_UINT64)then
+			io.write('hpuint64')
+		end
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			io.write(args.arg_list[1].ot)
+		elseif(type.ct == E_CT_STRING)then
+			io.write('hpchar')
+		end
+	elseif(type.type == E_SNT_REFER)then
+		io.write(type.ot);
+	end
+end
+
+function on_enum_name(enum)
+	io.write('void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data);\n')
+end
+
+function on_enum_number(enum)
+	io.write('void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);\n')
+end
+
+function on_enum(enum)
+	on_enum_name(enum)
+	on_enum_number(enum)
+
+	io.write('void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);\n')
+end
+
+function on_struct(object)
+	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	for key, value in pairs(object.parameters.par_list) do
+		io.write(' , ')
+		print_type(value.type, nil)
+		io.write(' *' .. value.identifier)
+	end
+	io.write(');\n')
+end
 
 
-#include "hotpot/hp_platform.h"
-#include "hotprotocol/hp_abstract_writer.h"
+function on_union(object)
+	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	for key, value in pairs(object.parameters.par_list) do
+		io.write(' , ')
+		print_type(value.type, nil)
+		io.write(' *' .. value.identifier)
+	end
+	io.write(');\n')
+	io.write('{\n')
+	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
+	io.write('\tswitch(*s)\n')
+end
 
-#include "<%$types_file%>"
+function main(hd)
+	file_tag = hd.file_name
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER_HEADER'
+	io.write('#ifndef ' .. file_tag .. '\n')
+	io.write('#define ' .. file_tag .. '\n')
+	if(c_types_file)then
+		io.write('#include \"' .. c_types_file .. '\"\n')
+	end
+	for key, value in pairs(hd['definition_list']) do
+		if(value.type == E_DT_ENUM)then
+			on_enum(value.definition.de_enum)
+		elseif(value.type == E_DT_STRUCT)then
+			on_struct(value.definition.de_struct)
+		elseif(value.type == E_DT_UNION)then
+			on_union(value.definition.de_union)
+		end
+	end
+	io.write('#endif//' .. file_tag .. '\n')
+end
 
-<%
-	$DefinitionList
-	[
-		$*
-		{
-			$import
-			{
-%>
-#include "<%$package_name%>.h"
-<%
-			}
-			$comment
-			{
-%>
-//<% $text %>
-<%
-			}
+main(hd)
 
-			$struct
-			{
-%>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>);
-<%
-			}
-
-	$union
-			{
-%>
-void write_<%$name%>(HPAbstractWriter *self, const <%$name%>* data<% $Parameters[$*{' ' ',' 'hp' $Type{$SimpleType{$type} $ObjectType{$type} $ContainerType{$type}} ' ' $name}] %>);
-<%
-			}
-
-		}
-	]
-%>
-#endif//_H_<% $file_tag %>_writer_header

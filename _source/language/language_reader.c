@@ -57,7 +57,7 @@ hpint32 read_LanguageStringID(HPAbstractReader *self, LanguageStringID *sid)
 		}
 	}
 
-	read_enum(self, (hpint32*)sid);
+	read_enum_number(self, (hpint32*)sid);
 
 	return E_HP_ERROR;
 done:

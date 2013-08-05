@@ -132,13 +132,13 @@ hpint32 read_uint64(HPAbstractReader *self, hpuint64 *val)
 	return self->read_uint64(self, val);
 }
 
-hpint32 read_enum(HPAbstractReader *self, hpint32 *val)
+hpint32 read_enum_number(HPAbstractReader *self, hpint32 *val)
 {
-	if(self->read_enum == NULL)
+	if(self->read_enum_number == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_enum(self, val);
+	return self->read_enum_number(self, val);
 }
 
 hpint32 read_enum_name(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_name_length)

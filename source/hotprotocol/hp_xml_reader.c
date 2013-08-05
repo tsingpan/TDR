@@ -54,7 +54,7 @@ hpint32 xml_reader_fini(HP_XML_READER *self)
 	self->super.read_field_end = NULL;
 	self->super.read_vector_begin = NULL;
 	self->super.read_vector_end = NULL;
-	self->super.read_enum = NULL;
+	self->super.read_enum_number = NULL;
 	self->super.read_char = NULL;
 	self->super.read_double = NULL;
 	self->super.read_int8 = NULL;

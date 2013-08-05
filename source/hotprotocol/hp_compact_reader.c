@@ -16,7 +16,7 @@ hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint
 	self->super.read_vector_end = hp_compact_read_vector_end;
 	self->super.read_field_begin = hp_compact_read_field_begin;
 	self->super.read_field_end = hp_compact_read_field_end;
-	self->super.read_enum = hp_compact_read_enum;
+	self->super.read_enum_number = hp_compact_read_enum;
 	self->super.read_char = hp_compact_read_hpchar;
 	self->super.read_double = hp_compact_read_hpdouble;
 	self->super.read_int8 = hp_compact_read_hpint8;
@@ -46,7 +46,7 @@ hpint32 hp_compact_reader_fini(HP_COMPACT_READER *self)
 	self->super.read_vector_end = NULL;
 	self->super.read_field_begin = NULL;
 	self->super.read_field_end = NULL;
-	self->super.read_enum = NULL;
+	self->super.read_enum_number = NULL;
 	self->super.read_char = NULL;
 	self->super.read_double = NULL;
 	self->super.read_int8 = NULL;

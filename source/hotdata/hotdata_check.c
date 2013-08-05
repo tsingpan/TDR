@@ -779,6 +779,29 @@ done:
 
 void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
 {
+	if(self->in_union)
+	{
+		if(pn_field->condition.empty)
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+
+		if(pn_field->condition.exp.neg)
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+
+		if(pn_field->condition.exp.oper != E_EO_EQUAL)
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+	}
+
+
+
 	if(pn_field->type.type == E_SNT_SIMPLE)
 	{
 		if(pn_field->args.arg_list_num != 0)
