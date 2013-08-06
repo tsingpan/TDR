@@ -236,15 +236,15 @@ enum EN_DEFINITION_TYPE
 	E_DT_UNIX_COMMENT = 6,
 };
 
-union UN_DEFINITION
+union UN_DEFINITION<EN_DEFINITION_TYPE s>
 {
-	ST_Import de_import;
-	ST_Const de_const;
-	ST_UNIX_COMMENT de_unix_comment;
-	ST_ENUM de_enum;
-	ST_STRUCT de_struct;
-	ST_UNION de_union;
-	ST_TYPEDEF de_typedef;
+case E_DT_IMPORT:	ST_Import de_import;
+case E_DT_CONST:	ST_Const de_const;
+case E_DT_UNIX_COMMENT:	ST_UNIX_COMMENT de_unix_comment;
+case E_DT_ENUM:	ST_ENUM de_enum;
+case E_DT_STRUCT:	ST_STRUCT de_struct;
+case E_DT_UNION:	ST_UNION de_union;
+case E_DT_TYPEDEF:	ST_TYPEDEF de_typedef;
 };
 
 struct ST_DEFINITION
