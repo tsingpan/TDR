@@ -812,6 +812,17 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 	}
 	else if(pn_field->type.type == E_SNT_REFER)
 	{
+		const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->type.ot);
+		if(symbol == NULL)
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
+		if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
+		{
+			dp_error(self, yylloc, E_HP_ERROR);
+			goto done;
+		}
 		dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
 	}
 	else if(pn_field->type.type == E_SNT_CONTAINER)

@@ -114,7 +114,7 @@ enum ST_EXPRESSION_OPER
 struct ST_Expression
 {
 
-	hpbool neg;
+	bool neg;
 	ST_VALUE op0;
 	ST_EXPRESSION_OPER oper;
 	ST_VALUE op1;
@@ -123,7 +123,7 @@ struct ST_Expression
 struct ST_CONDITION
 {
 
-	hpbool empty;
+	bool empty;
 	ST_Expression exp;
 };
 

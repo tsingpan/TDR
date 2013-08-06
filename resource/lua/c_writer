@@ -1,7 +1,7 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
 function print_val(val)
 	if val.type == E_SNVT_IDENTIFIER then
-		return val.val.identifier
+		return 'data->' .. val.val.identifier
 	elseif val.type == E_SNVT_CHAR then
 		return val.val.c
 	elseif val.type == E_SNVT_DOUBLE then
@@ -24,33 +24,33 @@ end
 function print_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
-			return 'hpchar'
+			return 'char'
 		elseif(type.st == E_ST_DOUBLE)then
-			return 'hpdouble'
+			return 'double'
 		elseif(type.st == E_ST_BOOL)then
-			return 'hpbool'
+			return 'bool'
 		elseif(type.st == E_ST_INT8)then
-			return 'hpint8'
+			return 'int8'
 		elseif(type.st == E_ST_INT16)then
-			return 'hpint16'
+			return 'int16'
 		elseif(type.st == E_ST_INT32)then
-			return 'hpint32'
+			return 'int32'
 		elseif(type.st == E_ST_INT64)then
-			return 'hpint64'
+			return 'int64'
 		elseif(type.st == E_ST_UINT8)then
-			return 'hpuint8'
+			return 'uint8'
 		elseif(type.st == E_ST_UINT16)then
-			return 'hpuint16'
+			return 'uint16'
 		elseif(type.st == E_ST_UINT32)then
-			return 'hpuint32'
+			return 'uint32'
 		elseif(type.st == E_ST_UINT64)then
-			return 'hpuint64'
+			return 'uint64'
 		end
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
 			return args.arg_list[1].ot
 		elseif(type.ct == E_CT_STRING)then
-			return 'hpchar'
+			return 'char'
 		end
 	elseif(type.type == E_SNT_REFER)then
 		return type.ot;
@@ -71,7 +71,7 @@ function on_enum_name(enum)
 	print_line(1, '{')
 	for key, value in pairs(enum.enum_def_list) do
 		print_line(2, 'case ' .. value.identifier .. ':')
-		print_line(3, 'write_enum_name(self, "' ..  value.identifier .. '")')
+		print_line(3, 'write_enum_name(self, "' ..  value.identifier .. '");')
 		print_line(3, 'break;')
 	end
 	print_line(1, '}')
@@ -81,7 +81,7 @@ end
 function on_enum_number(enum)
 	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
-	print_line(1, 'write_enum(self, data)')
+	print_line(1, 'write_enum_number(self, data);')
 	print_line(0, '}')
 end
 
@@ -91,8 +91,8 @@ function on_enum(enum)
 
 	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
-	print_line(1, 'write_' .. enum.name .. '_name(self, data)')
-	print_line(1, 'write_' .. enum.name .. '_number(self, data)')
+	print_line(1, 'write_' .. enum.name .. '_name(self, data);')
+	print_line(1, 'write_' .. enum.name .. '_number(self, data);')
 	print_line(0, '}')
 end
 
@@ -143,7 +143,7 @@ function on_struct(object)
 				for i=4, #value.args.arg_list do
 					line = line .. ', &data->' .. value.args.arg_list[i].ot
 				end
-				line = line .. ')'
+				line = line .. ');'
 				print_line(t, line)
 				t = t - 1
 				print_line(t, '}')
@@ -220,13 +220,12 @@ function on_union(object)
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', &data->' .. av.ot
 				end
-				line = line .. ')'
+				line = line .. ');'
 				print_line(t, line)
 				t = t - 1
 				print_line(t, '}')
 			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'write_string')
-				print_line(t, '(self, &data->' .. value.identifier .. ');')
+				print_line(t, 'write_string(self, &data->' .. value.identifier .. ');')
 			end
 		else
 			line = 'write_'
