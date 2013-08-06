@@ -2,7 +2,7 @@
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "syntactic_node.h"
-#include "syntatic_node_writer.h"
+#include "syntactic_node_writer.h"
 #include <string.h>
 
 void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT* data)

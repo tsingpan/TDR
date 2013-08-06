@@ -256,6 +256,9 @@ function main(hd)
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
+	print_line(0, '#include "hotpot/hp_platform.h"')
+	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
+
 	if(c_types_file)then
 		io.write('#include \"' .. c_types_file .. '\"\n')
 	end
