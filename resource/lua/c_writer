@@ -1,32 +1,23 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
 function print_val(val)
 	if val.type == E_SNVT_IDENTIFIER then
-		io.write(val.val.identifier)
+		return val.val.identifier
 	elseif val.type == E_SNVT_CHAR then
-		io.write("'")
-		if(val.val.c == '\n')then
-			io.write('\\n')
-		else
-			io.write(val.val.c)
-		end
-		io.write("'")
+		return val.val.c
 	elseif val.type == E_SNVT_DOUBLE then
-		io.write(val.val.d)
+		return val.val.d
 	elseif val.type == E_SNVT_BOOL then
-		io.write(val.val.b)
+		return val.val.b
 	elseif val.type == E_SNVT_STRING then
-		--需要处理字符串中的转义
-		io.write('"')
-		io.write(val.val.str)
-		io.write('"')
+		return val.val.str
 	elseif val.type == E_SNVT_INT64 then
-		io.write(val.val.i64)
+		return val.val.i64
 	elseif val.type == E_SNVT_UINT64 then
-		io.write(val.val.ui64)
+		return val.val.ui64
 	elseif val.type == E_SNVT_HEX_INT64 then
-		io.write(val.val.hex_i64)
+		return val.val.hex_i64
 	elseif val.type == E_SNVT_HEX_UINT64 then
-		io.write(val.val.hex_ui64)
+		return val.val.hex_ui64
 	end
 end
 
@@ -68,41 +59,41 @@ end
 
 function print_line(n, str)
 	for i = 1, n do
-		io.write('\t')
+		io.write('    ')
 	end
 	print(str)
 end
 
 function on_enum_name(enum)
-	io.write('void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)\n')
-	io.write('{\n')
-	io.write('\tswitch(data)\n')
-	io.write('\t{\n')
+	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)')
+	print_line(0, '{')
+	print_line(1, 'switch(data)')
+	print_line(1, '{')
 	for key, value in pairs(enum.enum_def_list) do
-		io.write('\t\tcase ' .. value.identifier .. ':\n')
-		io.write('\t\t\twrite_enum_name(self, "' ..  value.identifier .. '")\n')
-		io.write('\t\t\tbreak;\n')
+		print_line(2, 'case ' .. value.identifier .. ':')
+		print_line(3, 'write_enum_name(self, "' ..  value.identifier .. '")')
+		print_line(3, 'break;')
 	end
-	io.write('\t}\n')
-	io.write('}\n')
+	print_line(1, '}')
+	print_line(0, '}')
 end
 
 function on_enum_number(enum)
-	io.write('void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)\n')
-	io.write('{\n')
-	io.write('\twrite_enum(self, data)\n')
-	io.write('}\n')
+	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, '{')
+	print_line(1, 'write_enum(self, data)')
+	print_line(0, '}')
 end
 
 function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	io.write('void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)\n')
-	io.write('{\n')
-	io.write('\twrite_' .. enum.name .. '_name(self, data)\n')
-	io.write('\twrite_' .. enum.name .. '_number(self, data)\n')
-	io.write('}\n')
+	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, '{')
+	print_line(1, 'write_' .. enum.name .. '_name(self, data)')
+	print_line(1, 'write_' .. enum.name .. '_number(self, data)')
+	print_line(0, '}')
 end
 
 
@@ -121,9 +112,18 @@ function on_struct(object)
 	t = t + 1
 	print_line(t, 'write_struct_begin(self, "' .. object.name .. '");')
 	for key, value in pairs(object.field_list.field_list) do
-		if(value.condition.empty == false)then
-			print_line(t, 'if (' .. value.condition.exp.op0.val.identifier .. '==' .. value.condition.exp.op1.val.identifier .. ')')
-			print_line(t, '{\n')
+		if(value.condition.empty == false)then			
+			if(value.condition.exp.oper == E_EO_AND)then
+				oper = '&'
+			elseif(value.condition.exp.oper == E_EO_EQUAL)then
+				oper = '=='
+			end
+			if(value.condition.exp.neg)then
+				print_line(t, 'if (!(' .. print_val(value.condition.exp.op0) .. ' ' .. oper .. ' '.. print_val(value.condition.exp.op1) .. '))')
+			else
+				print_line(t, 'if (' .. print_val(value.condition.exp.op0) .. ' ' .. oper .. ' ' .. print_val(value.condition.exp.op1) .. ')')
+			end
+			print_line(t, '{')
 			t = t + 1
 		end
 
@@ -136,6 +136,7 @@ function on_struct(object)
 				print_line(t, 'hpuint32 i;')
 				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
 				print_line(t, '{')
+				t = t + 1
 				line = 'write_'
 				line = line .. print_type(value.type, value.args)
 				line = line .. '(self, &data->' .. value.identifier
@@ -151,8 +152,7 @@ function on_struct(object)
 				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			elseif(value.type.ct == E_CT_STRING)then
 				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
-				print_line(t, 'write_string')
-				print_line(t, '(self, &data->' .. value.identifier .. ');')
+				print_line(t, 'write_string(self, &data->' .. value.identifier .. ');')
 				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			end
 		else
