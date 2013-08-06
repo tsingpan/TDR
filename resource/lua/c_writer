@@ -33,37 +33,44 @@ end
 function print_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
-			io.write('hpchar')
+			return 'hpchar'
 		elseif(type.st == E_ST_DOUBLE)then
-			io.write('hpdouble')
+			return 'hpdouble'
 		elseif(type.st == E_ST_BOOL)then
-			io.write('hpbool')
+			return 'hpbool'
 		elseif(type.st == E_ST_INT8)then
-			io.write('hpint8')
+			return 'hpint8'
 		elseif(type.st == E_ST_INT16)then
-			io.write('hpint16')
+			return 'hpint16'
 		elseif(type.st == E_ST_INT32)then
-			io.write('hpint32')
+			return 'hpint32'
 		elseif(type.st == E_ST_INT64)then
-			io.write('hpint64')
+			return 'hpint64'
 		elseif(type.st == E_ST_UINT8)then
-			io.write('hpuint8')
+			return 'hpuint8'
 		elseif(type.st == E_ST_UINT16)then
-			io.write('hpuint16')
+			return 'hpuint16'
 		elseif(type.st == E_ST_UINT32)then
-			io.write('hpuint32')
+			return 'hpuint32'
 		elseif(type.st == E_ST_UINT64)then
-			io.write('hpuint64')
+			return 'hpuint64'
 		end
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			io.write(args.arg_list[1].ot)
+			return args.arg_list[1].ot
 		elseif(type.ct == E_CT_STRING)then
-			io.write('hpchar')
+			return 'hpchar'
 		end
 	elseif(type.type == E_SNT_REFER)then
-		io.write(type.ot);
+		return type.ot;
 	end
+end
+
+function print_line(n, str)
+	for i = 1, n do
+		io.write('\t')
+	end
+	print(str)
 end
 
 function on_enum_name(enum)
@@ -98,63 +105,93 @@ function on_enum(enum)
 	io.write('}\n')
 end
 
+
+
 function on_struct(object)
-	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	t = 0;
+	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
-		io.write(' , ')
-		print_type(value.type, nil)
-		io.write(' *' .. value.identifier)
+		line = line .. ' , '
+		line = line .. print_type(value.type, nil)
+		line = line .. ' *' .. value.identifier
 	end
-	io.write(')\n')
-	io.write('{\n')
-	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
+	line = line .. ')'
+	print_line(t, line)
+	print_line(t, '{')
+	t = t + 1
+	print_line(t, 'write_struct_begin(self, "' .. object.name .. '");')
 	for key, value in pairs(object.field_list.field_list) do
-		io.write('\n')
-		io.write('\twrite_field_begin(self, "' .. value.identifier .. '");\n')
+		if(value.condition.empty == false)then
+			print_line(t, 'if (' .. value.condition.exp.op0.val.identifier .. '==' .. value.condition.exp.op1.val.identifier .. ')')
+			print_line(t, '{\n')
+			t = t + 1
+		end
+
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
-				io.write('\thpuint32 i;\n')
-				io.write('\tfor(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)\n')
-				io.write('\t{\n')
-				io.write('\t\twrite_')
-				print_type(value.type, value.args)
-				io.write('(self, &data->' .. value.identifier .. ')')
-				for ak, av in pairs(value.args.arg_list) do
-					io.write(', &data->' .. av.ot)
+				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", data->' .. value.args.arg_list[3].ot .. ');');
+				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
+				print_line(t, '{')
+				t = t + 1
+				print_line(t, 'hpuint32 i;')
+				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
+				print_line(t, '{')
+				line = 'write_'
+				line = line .. print_type(value.type, value.args)
+				line = line .. '(self, &data->' .. value.identifier
+				for i=4, #value.args.arg_list do
+					line = line .. ', &data->' .. value.args.arg_list[i].ot
 				end
-				io.write(')\n')
-				io.write('\t}\n')
+				line = line .. ')'
+				print_line(t, line)
+				t = t - 1
+				print_line(t, '}')
+				t = t - 1
+				print_line(t, '}')
+				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			elseif(value.type.ct == E_CT_STRING)then
-				io.write('\twrite_string')
-				io.write('(self, &data->' .. value.identifier .. ');\n')
+				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
+				print_line(t, 'write_string')
+				print_line(t, '(self, &data->' .. value.identifier .. ');')
+				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			end
 		else
-			io.write('\twrite_')
-			print_type(value.type, nil)
-			io.write('(self, &data->' .. value.identifier)
+			print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
+			line = 'write_'
+			line = line .. print_type(value.type, nil)
+			line = line .. '(self, &data->' .. value.identifier
 			for ak, av in pairs(value.args.arg_list) do
-				io.write(', &data->' .. av.ot)
+				line = line .. ', &data->' .. av.ot
 			end
-			io.write(');\n')
+			line = line .. ');'
+			print_line(t, line)
+			print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 		end
-		io.write('\twrite_field_end(self, "' .. value.identifier .. '");\n')
+
+		if(value.condition.empty == false)then
+			t = t - 1
+			print_line(t, '}')
+		end
 	end
-	io.write('\n')
-	io.write('\twrite_struct_end(self, "' .. object.name .. '");\n')
-	io.write('}\n')
+	print_line(t, 'write_struct_end(self, "' .. object.name .. '");')
+	t = t - 1
+	print_line(t, '}')
 end
 
 
 function on_union(object)
-	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	t = 0;
+	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
-		io.write(' , ')
-		print_type(value.type, nil)
-		io.write(' *' .. value.identifier)
+		line = line .. ' , '
+		line = line .. print_type(value.type, nil)
+		line = line .. ' *' .. value.identifier
 	end
-	io.write(')\n')
-	io.write('{\n')
-	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
+	line = line .. ')'
+	print_line(t, line)
+	print_line(t, '{')
+	t = t + 1
+	print_line(t, 'write_struct_begin(self, "' .. object.name .. '");')
 
 	sw = 's'
 	for key, value in pairs(object.ta.ta_list) do
@@ -163,45 +200,55 @@ function on_union(object)
 		end
 	end
 
-	io.write('\tswitch(*' .. sw .. ')\n')
-	io.write('\t{\n')
+	print_line(t, 'switch(*' .. sw .. ')')
+	print_line(t, '{')
+	t = t + 1
 	for key, value in pairs(object.field_list.field_list) do
-		io.write('\t\tcase ' .. value.condition.exp.op1.val.identifier .. ':\n')
-		io.write('\t\t{\n')
-		io.write('\t\t\twrite_field_begin(self, "' .. value.identifier .. '");\n')
+		print_line(t, 'case ' .. value.condition.exp.op1.val.identifier .. ':')
+		print_line(t, '{')
+		t = t + 1
+		print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
-				io.write('\t\t\thpuint32 i;\n')
-				io.write('\t\t\tfor(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)\n')
-				io.write('\t\t\t{\n')
-				io.write('\t\t\t\twrite_')
-				print_type(value.type, value.args)
-				io.write('(self, &data->' .. value.identifier .. ')')
+				print_line(t, 'hpuint32 i;')
+				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
+				print_line(t, '{')
+				t = t + 1
+				line = 'write_'
+				line = line .. print_type(value.type, value.args)
+				line = line .. '(self, &data->' .. value.identifier .. ')'
 				for ak, av in pairs(value.args.arg_list) do
-					io.write(', &data->' .. av.ot)
+					line = line .. ', &data->' .. av.ot
 				end
-				io.write(')\n')
-				io.write('\t\t}\n')
+				line = line .. ')'
+				print_line(t, line)
+				t = t - 1
+				print_line(t, '}')
 			elseif(value.type.ct == E_CT_STRING)then
-				io.write('\t\t\twrite_string')
-				io.write('(self, &data->' .. value.identifier .. ');\n')
+				print_line(t, 'write_string')
+				print_line(t, '(self, &data->' .. value.identifier .. ');')
 			end
 		else
-			io.write('\t\t\twrite_')
-			print_type(value.type, nil)
-			io.write('(self, &data->' .. value.identifier)
+			line = 'write_'
+			line = line .. print_type(value.type, nil)
+			line = line .. '(self, &data->' .. value.identifier
 			for ak, av in pairs(value.args.arg_list) do
-				io.write(', &data->' .. av.ot)
+				line = line .. ', &data->' .. av.ot
 			end
-			io.write(');\n')
+
+			line = line .. ');'
+			print_line(t, line)
 		end
-		io.write('\t\t\twrite_field_end(self, "' .. value.identifier .. '");\n')
-		io.write('\t\t\tbreak;\n')
-		io.write('\t\t}\n')
+		print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
+		print_line(t, 'break;')
+		t = t - 1
+		print_line(t, '}')
 	end
-	io.write('\t}\n')
-	io.write('\twrite_struct_end(self, "' .. object.name .. '");\n')
-	io.write('}\n')
+	t = t - 1
+	print_line(t, '}')
+	print_line(t, 'write_struct_end(self, "' .. object.name .. '");')
+	t = t - 1
+	print_line(t, '}')
 end
 
 function main(hd)

@@ -35,6 +35,7 @@ struct _HPAbstractReader
 
 	hpint32 (*read_bool)(HPAbstractReader *self, hpbool *val);
 	hpint32 (*read_null)(HPAbstractReader *self);
+	hpint32 (*read_counter)(HPAbstractReader *self, const char *name, hpuint32 *val);
 
 	hpint32 (*read_semicolon)(HPAbstractReader *self);
 
@@ -69,6 +70,7 @@ hpint32 read_bool(HPAbstractReader *self, hpbool *val);
 hpint32 read_null(HPAbstractReader *self);
 hpint32 read_semicolon(HPAbstractReader *self);
 hpint32 read_type(HPAbstractReader *self, HPType *type);
+hpint32 read_counter(HPAbstractReader *self, const char *name, hpuint32 *val);
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index);
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index);
 hpuint32 reader_get_index(HPAbstractReader *self);

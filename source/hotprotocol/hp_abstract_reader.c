@@ -222,6 +222,15 @@ hpint32 read_type(HPAbstractReader *self, HPType *type)
 	return self->read_type(self, type);
 }
 
+hpint32 read_counter(HPAbstractReader *self, const char *name, hpuint32 *val)
+{
+	if(self->read_counter == NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->read_counter(self, name, val);
+}
+
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 {
 	self->stack[self->stack_num - 1] = index;

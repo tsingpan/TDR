@@ -221,6 +221,15 @@ hpint32 write_type(HPAbstractWriter *self, const HPType type)
 	return self->write_type(self, type);
 }
 
+hpint32 write_counter(HPAbstractWriter *self, const hpchar *name, const hpuint32 val)
+{
+	if(self->write_counter== NULL)
+	{
+		return E_HP_NOERROR;
+	}
+	return self->write_counter(self, name, val);
+}
+
 hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index)
 {
 	self->stack[self->stack_num - 1] = index;
