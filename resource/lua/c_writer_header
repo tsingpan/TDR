@@ -100,9 +100,6 @@ function on_union(object)
 		io.write(' *' .. value.identifier)
 	end
 	io.write(');\n')
-	io.write('{\n')
-	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
-	io.write('\tswitch(*s)\n')
 end
 
 function main(hd)
