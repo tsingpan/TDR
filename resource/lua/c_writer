@@ -155,7 +155,15 @@ function on_union(object)
 	io.write(')\n')
 	io.write('{\n')
 	io.write('\twrite_struct_begin(self, "' .. object.name .. '");\n')
-	io.write('\tswitch(*s)\n')
+
+	sw = 's'
+	for key, value in pairs(object.ta.ta_list) do
+		if(value.type == E_TA_SWITCH)then
+			sw = value.val.val.identifier
+		end
+	end
+
+	io.write('\tswitch(*' .. sw .. ')\n')
 	io.write('\t{\n')
 	for key, value in pairs(object.field_list.field_list) do
 		io.write('\t\tcase ' .. value.condition.exp.op1.val.identifier .. ':\n')
