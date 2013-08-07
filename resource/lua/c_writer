@@ -144,7 +144,7 @@ function on_struct(object)
 				t = t + 1
 				line = 'write_'
 				line = line .. print_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier
+				line = line .. '(self, &data->' .. value.identifier .. '[i]'
 				for i=4, #value.args.arg_list do
 					line = line .. ', &data->' .. value.args.arg_list[i].ot
 				end
@@ -157,7 +157,7 @@ function on_struct(object)
 				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			elseif(value.type.ct == E_CT_STRING)then
 				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
-				print_line(t, 'write_string(self, &data->' .. value.identifier .. ');')
+				print_line(t, 'write_string(self, data->' .. value.identifier .. ');')
 				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
 			end
 		else
@@ -221,7 +221,7 @@ function on_union(object)
 				t = t + 1
 				line = 'write_'
 				line = line .. print_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier .. ')'
+				line = line .. '(self, &data->' .. value.identifier .. '[i]'
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', &data->' .. av.ot
 				end
@@ -230,7 +230,7 @@ function on_union(object)
 				t = t - 1
 				print_line(t, '}')
 			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'write_string(self, &data->' .. value.identifier .. ');')
+				print_line(t, 'write_string(self, data->' .. value.identifier .. ');')
 			end
 		else
 			line = 'write_'
