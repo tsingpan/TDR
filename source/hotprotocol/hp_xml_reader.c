@@ -41,6 +41,8 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_hpdouble = xml_read_hpdouble;
 	self->super.read_hpbool = xml_read_hpbool;	
 	self->super.read_string = xml_read_string;
+	self->super.read_hpchar = xml_read_hpchar;
+	self->super.read_counter = xml_read_counter;
 	
 
 
@@ -271,8 +273,57 @@ hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val)
 	return E_HP_NOERROR;
 }
 
+static void read_char(FILE* fin, hpchar *ch)
+{
+	char c = fgetc(fin);
+	
+	if(c == '&')
+	{
+		char c2 = fgetc(fin);
+		if(c2 == 'l')
+		{
+			//&lt
+			fgetc(fin);
+			*ch = '<';
+		}
+		else if(c2 == 'g')
+		{
+			//&gt
+			*ch = '>';
+		}
+		else
+		{
+			char c3 = fgetc(fin);
+			if(c3 == 'm')
+			{
+				//&amp
+				*ch = '&';
+			}
+			else if(c3 == 'p')
+			{
+				//&apos
+				*ch = '\'';
+			}
+			else if(c3 == 'u')
+			{
+				//&auot
+				*ch = '\"';
+			}
+		}
+	}
+	else
+	{
+		*ch = c;
+	}
+}
 
-HP_API hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
+hpint32 xml_read_hpchar(HPAbstractReader *super, char *val)
+{
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
+	read_char(self->f, val);
+}
+
+hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	hpuint32 i;
@@ -281,52 +332,27 @@ HP_API hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 st
 	self->need_tab = hpfalse;
 	for(;;)
 	{
-		char c = fgetc(self->f);
+		char c;
+		read_char(self->f, &c);
 		if(c == '<')
 		{
 			ungetc('<', self->f);
-			break;
-		}
-		//实体引用
-		else if(c == '&')
-		{
-			char c2 = fgetc(self->f);
-			if(c2 == 'l')
-			{
-				//&lt
-				fgetc(self->f);
-				str[len++] = '<';
-			}
-			else if(c2 == 'g')
-			{
-				//&gt
-				str[len++] = '>';
-			}
-			else
-			{
-				char c3 = fgetc(self->f);
-				if(c3 == 'm')
-				{
-					//&amp
-					str[len++] = '&';
-				}
-				else if(c3 == 'p')
-				{
-					//&apos
-					str[len++] = '\'';
-				}
-				else if(c3 == 'u')
-				{
-					//&auot
-					str[len++] = '\"';
-				}
-			}
+			str[len++] = 0;
 		}
 		else
 		{
 			str[len++] = c;
 		}
 	}
+
+	return E_HP_NOERROR;
+}
+
+HP_API hpint32 xml_read_counter(HPAbstractReader *super, const hpchar *name, hpuint32 *val)
+{
+	xml_read_field_begin(super, name);
+	xml_read_hpuint32(super, val);
+	xml_read_field_end(super, name);
 
 	return E_HP_NOERROR;
 }

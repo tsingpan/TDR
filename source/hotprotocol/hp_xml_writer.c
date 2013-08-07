@@ -38,6 +38,7 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->super.write_hpbool = xml_write_hpbool;
 	self->super.write_vector_item_begin = xml_write_vector_item_begin;
 	self->super.write_vector_item_end= xml_write_vector_item_end;
+	self->super.write_hpchar = xml_write_hpchar;
 
 	self->super.write_enum_name = xml_write_enum_name;
 
@@ -228,6 +229,32 @@ hpint32 xml_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 	return E_HP_NOERROR;
 }
 
+static void write_char(FILE* fout, hpchar c)
+{
+	switch (c)
+	{
+	case '<':
+		fprintf(fout, "&lt");
+		break;
+	case '>':
+		fprintf(fout, "&gt");
+		break;
+	case '&':
+		fprintf(fout, "&amp");
+		break;
+	case '\'':
+		fprintf(fout, "&apos");
+		break;
+	case '\"':
+		fprintf(fout, "&quot");
+		break;
+	default:
+		{
+			fputc(c, fout);
+		}
+	}
+}
+
 hpint32 xml_write_string(HPAbstractWriter *super, const hpchar* str)
 {
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
@@ -235,28 +262,7 @@ hpint32 xml_write_string(HPAbstractWriter *super, const hpchar* str)
 	self->need_tab = hpfalse;
 	for(i = str; *i ; ++i)
 	{
-		switch (*i)
-		{
-		case '<':
-			fprintf(self->f, "&lt");
-			continue;
-		case '>':
-			fprintf(self->f, "&gt");
-			continue;
-		case '&':
-			fprintf(self->f, "&amp");
-			continue;
-		case '\'':
-			fprintf(self->f, "&apos");
-			continue;
-		case '\"':
-			fprintf(self->f, "&quot");
-			continue;						
-		default:
-			{
-				fputc(*i, self->f);
-			}
-		} 
+		write_char(self->f, *i);
 	}
 
 	return E_HP_NOERROR;
@@ -283,8 +289,18 @@ hpint32 xml_write_hpbool(HPAbstractWriter *super, const hpbool val)
 	return E_HP_NOERROR;
 }
 
+hpint32 xml_write_hpchar(HPAbstractWriter *super, const hpchar val)
+{
+	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
+
+	write_char(self->f, val);
+	return E_HP_NOERROR;
+}
 
 hpint32 xml_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val)
 {
-	return xml_write_hpint64(super, val);
+	xml_write_field_begin(super, name);
+	xml_write_hpuint32(super, val);
+	xml_write_field_end(super, name);
+	return E_HP_NOERROR;
 }

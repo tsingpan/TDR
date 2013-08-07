@@ -31,8 +31,6 @@ HP_API hpint32 xml_write_field_end(HPAbstractWriter *super, const char *var_name
 
 HP_API hpint32 xml_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
 
-HP_API hpint32 xml_write_hpdouble(HPAbstractWriter *super, const double val);
-
 
 HP_API hpint32 xml_write_hpint8(HPAbstractWriter *super, const hpint8 val);
 
@@ -52,9 +50,11 @@ HP_API hpint32 xml_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
 HP_API hpint32 xml_write_string(HPAbstractWriter *super, const hpchar* str);
 
+HP_API hpint32 xml_write_hpdouble(HPAbstractWriter *super, const double val);
+
 HP_API hpint32 xml_write_hpbool(HPAbstractWriter *super, const hpbool val);
 
-HP_API hpint32 xml_write_null(HPAbstractWriter *super);
+HP_API hpint32 xml_write_hpchar(HPAbstractWriter *super, const hpchar val);
 
 HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
 
