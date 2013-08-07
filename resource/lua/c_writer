@@ -11,12 +11,12 @@ function get_symbol_access_by_type_suffix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix(identifier, type)
+function get_symbol_access_by_type_prefix(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '&'
@@ -34,12 +34,12 @@ function get_symbol_access_by_type_prefix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix_reverse(identifier, type)
+function get_symbol_access_by_type_prefix_reverse(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '*'
@@ -60,16 +60,16 @@ end
 function get_symbol_access(identifier, object)
 	for k,v in pairs(object.parameters.par_list) do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. identifier .. suffix
 		end
 	end
 
 	for k,v in pairs(object.field_list.field_list)do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. 'data->' .. identifier .. suffix
 		end
 	end
@@ -222,9 +222,9 @@ function on_struct(object)
 				print_line(t, 'write_vector_item_begin(self, i);')
 				line = 'write_'
 				line = line .. get_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier .. '[i]'
+				line = line .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for i=4, #value.args.arg_list do
-					line = line .. ', &data->' .. value.args.arg_list[i].ot
+					line = line .. ', ' .. get_symbol_access(value.args.arg_list[i].ot, object)
 				end
 				line = line .. ');'
 				print_line(t, line)
