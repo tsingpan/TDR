@@ -7,7 +7,7 @@
 
 hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
+	memset(&self->super, 0, sizeof(HPAbstractWriter));
 
 	self->super.write_enum_number = hp_compact_write_enum;
 	self->super.write_hpchar = hp_compact_write_hpchar;

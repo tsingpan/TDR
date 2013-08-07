@@ -9,7 +9,7 @@
 
 hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+	memset(&self->super, 0, sizeof(HPAbstractReader));
 
 	self->f = f;
 	self->count = 0;

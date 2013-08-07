@@ -8,7 +8,7 @@
 
 hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
+	memset(&self->super, 0, sizeof(HPAbstractWriter));
 
 	self->f = f;
 	self->count = 0;

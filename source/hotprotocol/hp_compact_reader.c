@@ -8,7 +8,7 @@
 
 hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+	memset(&self->super, 0, sizeof(HPAbstractReader));
 
 	self->super.read_enum_number = hp_compact_read_enum;
 	self->super.read_hpchar = hp_compact_read_hpchar;

@@ -10,7 +10,7 @@
 
 hpint32 lua_reader_init(HP_LUA_READER *self, lua_State *ls)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+	memset(&self->super, 0, sizeof(HPAbstractReader));
 
 	self->ls = ls;	
 
