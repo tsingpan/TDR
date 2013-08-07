@@ -50,7 +50,7 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 	{
 		self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
 	}
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 }
 
@@ -104,7 +104,7 @@ hpint32 hotvm_echo_literal(HotVM *self, const HotOp* op)
 			self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
 		}
 	}
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -117,11 +117,11 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 	//todo filed_search_strategy
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.field_begin_arg.failed_jmp_lineno;
+		self->eip = op->arg.field_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
-		++(self->current_op);
+		++(self->eip);
 	}
 
 	
@@ -132,7 +132,7 @@ hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
 	read_field_end(self->reader, NULL);
 
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 }
 
@@ -143,11 +143,11 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 
 	if(read_vector_begin(self->reader) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.vector_begin_arg.failed_jmp_lineno;
+		self->eip = op->arg.vector_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
-		++(self->current_op);
+		++(self->eip);
 	}
 
 	
@@ -159,7 +159,7 @@ hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 	read_vector_end(self->reader);
 	--(self->stack_num);
 
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 }
 
@@ -173,7 +173,7 @@ hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 
 	self->stack[self->stack_num - 1] = op->arg.vector_set_index_arg.index;
 
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -188,7 +188,7 @@ hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 
 	++(self->stack[self->stack_num - 1]);
 
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -203,11 +203,11 @@ hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 
 	if(read_vector_item_begin(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
+		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
-		++(self->current_op);
+		++(self->eip);
 	}
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -223,11 +223,11 @@ hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 
 	if(read_vector_item_end(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
-		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
+		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
-		++(self->current_op);
+		++(self->eip);
 	}
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -303,13 +303,13 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 		}	
 	}
 
-	++(self->current_op);
+	++(self->eip);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 {
-	self->current_op = op->arg.jmp_arg.lineno;
+	self->eip = op->arg.jmp_arg.lineno;
 
 	return E_HP_NOERROR;
 }
@@ -318,7 +318,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 {
 	self->reader = reader;
 	self->hotoparr = hotoparr;
-	self->current_op = 0;
+	self->eip = 0;
 	self->user_data = user_data;
 	self->stack_num = 0;
 
@@ -344,9 +344,9 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 
-	while(self->current_op < self->hotoparr->next_oparr)
+	while(self->eip < self->hotoparr->next_oparr)
 	{
-		if(self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]) != E_HP_NOERROR)
+		if(self->op_handler[self->hotoparr->oparr[self->eip].instruct](self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}

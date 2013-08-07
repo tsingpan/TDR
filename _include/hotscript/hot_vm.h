@@ -97,7 +97,7 @@ struct _HotVM
 {
 	const HotOpArr *hotoparr;
 
-	hpuint32 current_op;
+	hpuint32 eip;
 
 	void *user_data;
 
