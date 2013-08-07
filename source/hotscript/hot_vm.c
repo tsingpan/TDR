@@ -363,10 +363,19 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
+	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
+	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 
 	while(self->eip < self->hotoparr->next_oparr)
 	{
-		if(self->op_handler[self->hotoparr->oparr[self->eip].instruct](self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
+		hotvm_execute_func func = self->op_handler[self->hotoparr->oparr[self->eip].instruct];
+		if(func == NULL)
+		{
+			++self->eip;
+			continue;
+		}
+
+		if(func(self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}
