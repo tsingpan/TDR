@@ -1,7 +1,12 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
-function print_val(val)
+function print_val(val, object)
 	if val.type == E_SNVT_IDENTIFIER then
-		return 'data->' .. val.val.identifier
+		for k,v in pairs(object.field_list.field_list)do
+			if(v.identifier == val.val.identifier)then
+				return 'data->' .. val.val.identifier
+			end
+		end
+		return val.val.identifier
 	elseif val.type == E_SNVT_CHAR then
 		return val.val.c
 	elseif val.type == E_SNVT_DOUBLE then
@@ -65,9 +70,9 @@ function print_line(n, str)
 end
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)')
+	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' *data)')
 	print_line(0, '{')
-	print_line(1, 'switch(data)')
+	print_line(1, 'switch(*data)')
 	print_line(1, '{')
 	for key, value in pairs(enum.enum_def_list) do
 		print_line(2, 'case ' .. value.identifier .. ':')
@@ -79,7 +84,7 @@ function on_enum_name(enum)
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' *data)')
 	print_line(0, '{')
 	print_line(1, 'write_enum_number(self, data);')
 	print_line(0, '}')
@@ -89,7 +94,7 @@ function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' *data)')
 	print_line(0, '{')
 	print_line(1, 'write_' .. enum.name .. '_name(self, data);')
 	print_line(1, 'write_' .. enum.name .. '_number(self, data);')
@@ -119,9 +124,9 @@ function on_struct(object)
 				oper = '=='
 			end
 			if(value.condition.exp.neg)then
-				print_line(t, 'if (!(' .. print_val(value.condition.exp.op0) .. ' ' .. oper .. ' '.. print_val(value.condition.exp.op1) .. '))')
+				print_line(t, 'if (!(' .. print_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' '.. print_val(value.condition.exp.op1, object) .. '))')
 			else
-				print_line(t, 'if (' .. print_val(value.condition.exp.op0) .. ' ' .. oper .. ' ' .. print_val(value.condition.exp.op1) .. ')')
+				print_line(t, 'if (' .. print_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' ' .. print_val(value.condition.exp.op1, object) .. ')')
 			end
 			print_line(t, '{')
 			t = t + 1
@@ -129,7 +134,7 @@ function on_struct(object)
 
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
-				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", data->' .. value.args.arg_list[3].ot .. ');');
+				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", &data->' .. value.args.arg_list[3].ot .. ');');
 				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
 				print_line(t, '{')
 				t = t + 1
@@ -204,7 +209,7 @@ function on_union(object)
 	print_line(t, '{')
 	t = t + 1
 	for key, value in pairs(object.field_list.field_list) do
-		print_line(t, 'case ' .. value.condition.exp.op1.val.identifier .. ':')
+		print_line(t, 'case ' .. print_val(value.condition.exp.op1, object) .. ':')
 		print_line(t, '{')
 		t = t + 1
 		print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
