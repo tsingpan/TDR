@@ -41,6 +41,7 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->super.write_hpchar = xml_write_hpchar;
 
 	self->super.write_enum_name = xml_write_enum_name;
+	self->super.write_counter = xml_write_counter;
 
 	
 

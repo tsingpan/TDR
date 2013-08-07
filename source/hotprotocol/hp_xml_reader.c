@@ -338,6 +338,7 @@ hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
 		{
 			ungetc('<', self->f);
 			str[len++] = 0;
+			break;
 		}
 		else
 		{
