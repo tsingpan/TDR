@@ -5,10 +5,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
-#include "hotscript/hotobject_reader.h"
-#include "hotscript/hotobject_writer.h"
 #include "hotscript/script_parser.h"
 #include <stdio.h>
 #include <string.h>
@@ -21,7 +18,6 @@
 #include "language/language_types.h"
 #include "language/language_reader.h"
 #include "language/language.h"
-#include "hotjson/json_parser.h"
 
 #include "syntactic_node.h"
 
@@ -84,7 +80,6 @@ void get_real_file_path(const char *file_name)
 }
 
 
-JSON_PARSER jp;
 SCRIPT_PARSER sp;
 
 int main(hpuint32 argc, char **argv)
