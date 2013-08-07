@@ -1,12 +1,53 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
-function print_val(val, object)
-	if val.type == E_SNVT_IDENTIFIER then
-		for k,v in pairs(object.field_list.field_list)do
-			if(v.identifier == val.val.identifier)then
-				return 'data->' .. val.val.identifier
+
+
+function get_symbol_access_by_type(identifier, type)
+	prefix = ''
+	suffix = ''
+	if(type.type == E_SNT_SIMPLE)then
+		prefix = 'data->'
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+				prefix = 'data->'
+			else
+				prefix = '&data->'
 			end
+			suffix = '[i]'
+		elseif(type.ct == E_CT_STRING)then
+			prefix = 'data->'
 		end
-		return val.val.identifier
+	elseif(type.type == E_SNT_REFER)then
+		prefix = '&data->'
+	end
+	return prefix .. identifier .. suffix
+end
+
+function get_symbol_access(identifier, object)
+	for k,v in pairs(object.field_list.field_list)do
+			if(v.identifier == identifier)then
+				return get_symbol_access_by_type(identifier, v.type)
+			end
+	end
+	for k,v in pairs(object.parameters.par_list) do
+		if(v.identifier == identifier)then
+			return get_symbol_access_by_type(identifier, v.type)
+		end
+	end
+
+	return identifier
+end
+
+function print_line(n, str)
+	for i = 1, n do
+		io.write('    ')
+	end
+	print(str)
+end
+
+function get_val(val, object)
+	if val.type == E_SNVT_IDENTIFIER then
+		return get_symbol_access(val.val.identifier, object)
 	elseif val.type == E_SNVT_CHAR then
 		return val.val.c
 	elseif val.type == E_SNVT_DOUBLE then
@@ -26,7 +67,7 @@ function print_val(val, object)
 	end
 end
 
-function print_type(type, args)
+function get_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
 			return 'char'
@@ -62,13 +103,6 @@ function print_type(type, args)
 	end
 end
 
-function print_line(n, str)
-	for i = 1, n do
-		io.write('    ')
-	end
-	print(str)
-end
-
 function on_enum_name(enum)
 	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' *data)')
 	print_line(0, '{')
@@ -102,13 +136,12 @@ function on_enum(enum)
 end
 
 
-
 function on_struct(object)
 	t = 0;
 	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
-		line = line .. print_type(value.type, nil)
+		line = line .. get_type(value.type, nil)
 		line = line .. ' *' .. value.identifier
 	end
 	line = line .. ')'
@@ -124,9 +157,9 @@ function on_struct(object)
 				oper = '=='
 			end
 			if(value.condition.exp.neg)then
-				print_line(t, 'if (!(' .. print_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' '.. print_val(value.condition.exp.op1, object) .. '))')
+				print_line(t, 'if (!(' .. get_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' '.. get_val(value.condition.exp.op1, object) .. '))')
 			else
-				print_line(t, 'if (' .. print_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' ' .. print_val(value.condition.exp.op1, object) .. ')')
+				print_line(t, 'if (' .. get_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' ' .. get_val(value.condition.exp.op1, object) .. ')')
 			end
 			print_line(t, '{')
 			t = t + 1
@@ -143,7 +176,7 @@ function on_struct(object)
 				print_line(t, '{')
 				t = t + 1
 				line = 'write_'
-				line = line .. print_type(value.type, value.args)
+				line = line .. get_type(value.type, value.args)
 				line = line .. '(self, &data->' .. value.identifier .. '[i]'
 				for i=4, #value.args.arg_list do
 					line = line .. ', &data->' .. value.args.arg_list[i].ot
@@ -162,12 +195,10 @@ function on_struct(object)
 			end
 		else
 			print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
-			line = 'write_'
-			line = line .. print_type(value.type, nil)
-			line = line .. '(self, &data->' .. value.identifier
-			for ak, av in pairs(value.args.arg_list) do
-				line = line .. ', &data->' .. av.ot
-			end
+			line = 'write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
+				for ak, av in pairs(value.args.arg_list) do
+					line = line .. ', ' .. get_symbol_access(av.ot, object)
+				end
 			line = line .. ');'
 			print_line(t, line)
 			print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
@@ -189,7 +220,7 @@ function on_union(object)
 	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
-		line = line .. print_type(value.type, nil)
+		line = line .. get_type(value.type, nil)
 		line = line .. ' *' .. value.identifier
 	end
 	line = line .. ')'
@@ -209,7 +240,7 @@ function on_union(object)
 	print_line(t, '{')
 	t = t + 1
 	for key, value in pairs(object.field_list.field_list) do
-		print_line(t, 'case ' .. print_val(value.condition.exp.op1, object) .. ':')
+		print_line(t, 'case ' .. get_val(value.condition.exp.op1, object) .. ':')
 		print_line(t, '{')
 		t = t + 1
 		print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
@@ -219,11 +250,9 @@ function on_union(object)
 				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
 				print_line(t, '{')
 				t = t + 1
-				line = 'write_'
-				line = line .. print_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier .. '[i]'
+				line = 'write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for ak, av in pairs(value.args.arg_list) do
-					line = line .. ', &data->' .. av.ot
+					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end
 				line = line .. ');'
 				print_line(t, line)
@@ -234,8 +263,8 @@ function on_union(object)
 			end
 		else
 			line = 'write_'
-			line = line .. print_type(value.type, nil)
-			line = line .. '(self, &data->' .. value.identifier
+			line = line .. get_type(value.type, nil)
+			line = line .. '(self, ' .. get_symbol_access(value.identifier, object)
 			for ak, av in pairs(value.args.arg_list) do
 				line = line .. ', &data->' .. av.ot
 			end
