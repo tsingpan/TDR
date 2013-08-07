@@ -92,6 +92,13 @@ any_char		((.|"\n"))
 	return tok_identifier;
 }
 
+<ST_IN_SCRIPTING>'$''$'{identifier}{
+	yylval->var.type = E_HP_BYTES;
+	yylval->var.val.bytes.ptr = yytext + 2;
+	yylval->var.val.bytes.len = yyleng - 2;
+	return tok_call_identifier;
+}
+
 <ST_IN_SCRIPTING>'$'{intconstant}{
 	char number[128];
 	memcpy(number, yytext + 1, yyleng - 1);

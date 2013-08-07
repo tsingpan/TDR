@@ -123,6 +123,7 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 
 	self->stack[self->stack_num].eax = self->eax;
 	self->stack[self->stack_num].eip = self->eip;
+	self->stack[self->stack_num].return_eip = op->arg.field_begin_arg.lineno_after_field_end;
 	//todo filed_search_strategy
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
@@ -147,11 +148,7 @@ hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 	}
 
 	self->eax = self->stack[self->stack_num - 1].eax;
-	self->eip = self->stack[self->stack_num - 1].eip;
-
-
-
-	self->eip = self->hotoparr->oparr[self->eip].arg.field_begin_arg.lineno_after_field_end;
+	self->eip = self->stack[self->stack_num - 1].return_eip;
 	--(self->stack_num);
 	
 

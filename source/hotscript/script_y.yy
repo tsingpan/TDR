@@ -37,6 +37,7 @@
 %token tok_integer
 %token tok_auto_integer
 %token tok_identifier
+%token tok_call_identifier
 %token tok_text
 
 %start Script
@@ -64,7 +65,9 @@ Statement:
 
 Identifier :
 	tok_identifier {$$ = $1;$$.token = tok_identifier; }
+|	tok_call_identifier {$$ = $1;$$.token = tok_identifier; }
 |	tok_integer{$$ = $1;$$.token = tok_integer; }
 |	tok_auto_integer{$$ = $1;$$.token = tok_auto_integer; }
+
 
 %%
