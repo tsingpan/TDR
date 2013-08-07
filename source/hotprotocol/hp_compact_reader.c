@@ -17,16 +17,16 @@ hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint
 	self->super.read_field_begin = hp_compact_read_field_begin;
 	self->super.read_field_end = hp_compact_read_field_end;
 	self->super.read_enum_number = hp_compact_read_enum;
-	self->super.read_char = hp_compact_read_hpchar;
-	self->super.read_double = hp_compact_read_hpdouble;
-	self->super.read_int8 = hp_compact_read_hpint8;
-	self->super.read_int16 = hp_compact_read_hpint16;
-	self->super.read_int32 = hp_compact_read_hpint32;
-	self->super.read_int64 = hp_compact_read_hpint64;
-	self->super.read_uint8 = hp_compact_read_hpuint8;
-	self->super.read_uint16 = hp_compact_read_hpuint16;
-	self->super.read_uint32 = hp_compact_read_hpuint32;
-	self->super.read_uint64 = hp_compact_read_hpuint64;
+	self->super.read_hpchar = hp_compact_read_hpchar;
+	self->super.read_hpdouble = hp_compact_read_hpdouble;
+	self->super.read_hpint8 = hp_compact_read_hpint8;
+	self->super.read_hpint16 = hp_compact_read_hpint16;
+	self->super.read_hpint32 = hp_compact_read_hpint32;
+	self->super.read_hpint64 = hp_compact_read_hpint64;
+	self->super.read_hpuint8 = hp_compact_read_hpuint8;
+	self->super.read_hpuint16 = hp_compact_read_hpuint16;
+	self->super.read_hpuint32 = hp_compact_read_hpuint32;
+	self->super.read_hpuint64 = hp_compact_read_hpuint64;
 	self->super.read_string = hp_compact_read_string;
 
 
@@ -47,16 +47,16 @@ hpint32 hp_compact_reader_fini(HP_COMPACT_READER *self)
 	self->super.read_field_begin = NULL;
 	self->super.read_field_end = NULL;
 	self->super.read_enum_number = NULL;
-	self->super.read_char = NULL;
-	self->super.read_double = NULL;
-	self->super.read_int8 = NULL;
-	self->super.read_int16 = NULL;
-	self->super.read_int32 = NULL;
-	self->super.read_int64 = NULL;
-	self->super.read_uint8 = NULL;
-	self->super.read_uint16 = NULL;
-	self->super.read_uint32 = NULL;
-	self->super.read_uint64 = NULL;
+	self->super.read_hpchar = NULL;
+	self->super.read_hpdouble = NULL;
+	self->super.read_hpint8 = NULL;
+	self->super.read_hpint16 = NULL;
+	self->super.read_hpint32 = NULL;
+	self->super.read_hpint64 = NULL;
+	self->super.read_hpuint8 = NULL;
+	self->super.read_hpuint16 = NULL;
+	self->super.read_hpuint32 = NULL;
+	self->super.read_hpuint64 = NULL;
 
 
 	self->addr = NULL;

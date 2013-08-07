@@ -141,7 +141,7 @@ Document :
 		write_field_end(GET_WRITER, "definition_list");
 
 		write_field_begin(GET_WRITER, "definition_list_num");
-		write_uint32(GET_WRITER, GET_SELF->definition_list_num);
+		write_hpuint32(GET_WRITER, GET_SELF->definition_list_num);
 		write_field_end(GET_WRITER, "definition_list_num");
 		write_struct_end(GET_WRITER, "ST_DOCUMENT");
 	};
@@ -347,7 +347,7 @@ Union :
 	}
 	'}'
 	{
-		dp_check_domain_end(GET_SELF, &yylloc, &$5);
+		dp_check_domain_end(GET_SELF, &yylloc);
 	}
 	';'
 	{
@@ -372,7 +372,7 @@ Struct :
 	}
 	'{' FieldList '}' ';'
 	{
-		dp_check_domain_end(GET_SELF, &yylloc, &$4);
+		dp_check_domain_end(GET_SELF, &yylloc);
 
 		GET_DEFINITION.definition.de_struct.ta = $3;
 		memcpy(GET_DEFINITION.definition.de_struct.name, $4.ptr, $4.len);

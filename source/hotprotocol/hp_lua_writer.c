@@ -25,21 +25,21 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 	self->super.write_vector_item_begin = lua_write_vector_item_begin;
 	self->super.write_vector_item_end = lua_write_vector_item_end;
 
-	self->super.write_int8 = lua_write_hpint8;
-	self->super.write_int16 = lua_write_hpint16;
-	self->super.write_int32 = lua_write_hpint32;
-	self->super.write_int64 = lua_write_hpint64;
-	self->super.write_uint8 = lua_write_hpuint8;
-	self->super.write_uint16 = lua_write_hpuint16;
-	self->super.write_uint32 = lua_write_hpuint32;
-	self->super.write_uint64 = lua_write_hpuint64;
+	self->super.write_hpint8 = lua_write_hpint8;
+	self->super.write_hpint16 = lua_write_hpint16;
+	self->super.write_hpint32 = lua_write_hpint32;
+	self->super.write_hpint64 = lua_write_hpint64;
+	self->super.write_hpuint8 = lua_write_hpuint8;
+	self->super.write_hpuint16 = lua_write_hpuint16;
+	self->super.write_hpuint32 = lua_write_hpuint32;
+	self->super.write_hpuint64 = lua_write_hpuint64;
 
 	self->super.write_enum_number = lua_write_enum_number;
-	self->super.write_char = lua_write_hpchar;
-	self->super.write_double = lua_write_hpdouble;
+	self->super.write_hpchar = lua_write_hpchar;
+	self->super.write_hpdouble = lua_write_hpdouble;
 	self->super.write_bytes = lua_write_bytes;
 	self->super.write_string = lua_write_string;
-	self->super.write_bool = lua_write_hpbool;
+	self->super.write_hpbool = lua_write_hpbool;
 	self->super.write_null = lua_write_null;
 	
 	
@@ -56,16 +56,16 @@ hpint32 lua_writer_fini(HP_LUA_WRITER *self)
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
 	self->super.write_enum_number = NULL;
-	self->super.write_char = NULL;
-	self->super.write_double = NULL;
-	self->super.write_int8 = NULL;
-	self->super.write_int16 = NULL;
-	self->super.write_int32 = NULL;
-	self->super.write_int64 = NULL;
-	self->super.write_uint8 = NULL;
-	self->super.write_uint16 = NULL;
-	self->super.write_uint32 = NULL;
-	self->super.write_uint64 = NULL;
+	self->super.write_hpchar = NULL;
+	self->super.write_hpdouble = NULL;
+	self->super.write_hpint8 = NULL;
+	self->super.write_hpint16 = NULL;
+	self->super.write_hpint32 = NULL;
+	self->super.write_hpint64 = NULL;
+	self->super.write_hpuint8 = NULL;
+	self->super.write_hpuint16 = NULL;
+	self->super.write_hpuint32 = NULL;
+	self->super.write_hpuint64 = NULL;
 
 
 	return E_HP_NOERROR;

@@ -59,94 +59,94 @@ hpint32 write_field_end(HPAbstractWriter *self, const char *var_name)
 	return self->write_field_end(self, var_name);
 }
 
-hpint32 write_int8(HPAbstractWriter *self, const hpint8 val)
+hpint32 write_hpint8(HPAbstractWriter *self, const hpint8 val)
 {
-	if(self->write_int8 == NULL)
+	if(self->write_hpint8 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_int8(self, val);
+	return self->write_hpint8(self, val);
 }
 
-hpint32 write_int16(HPAbstractWriter *self, const hpint16 val)
+hpint32 write_hpint16(HPAbstractWriter *self, const hpint16 val)
 {
-	if(self->write_int16 == NULL)
+	if(self->write_hpint16 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_int16(self, val);
+	return self->write_hpint16(self, val);
 }
 
-hpint32 write_int32(HPAbstractWriter *self, const hpint32 val)
+hpint32 write_hpint32(HPAbstractWriter *self, const hpint32 val)
 {
-	if(self->write_int32 == NULL)
+	if(self->write_hpint32 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_int32(self, val);
+	return self->write_hpint32(self, val);
 }
 
-hpint32 write_int64(HPAbstractWriter *self, const hpint64 val)
+hpint32 write_hpint64(HPAbstractWriter *self, const hpint64 val)
 {
-	if(self->write_int64 == NULL)
+	if(self->write_hpint64 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_int64(self, val);
+	return self->write_hpint64(self, val);
 }
 
-hpint32 write_uint8(HPAbstractWriter *self, const hpuint8 val)
+hpint32 write_hpuint8(HPAbstractWriter *self, const hpuint8 val)
 {
-	if(self->write_uint8 == NULL)
+	if(self->write_hpuint8 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_uint8(self, val);
+	return self->write_hpuint8(self, val);
 }
 
-hpint32 write_uint16(HPAbstractWriter *self, const hpuint16 val)
+hpint32 write_hpuint16(HPAbstractWriter *self, const hpuint16 val)
 {
-	if(self->write_uint16 == NULL)
+	if(self->write_hpuint16 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_uint16(self, val);
+	return self->write_hpuint16(self, val);
 }
 
-hpint32 write_uint32(HPAbstractWriter *self, const hpuint32 val)
+hpint32 write_hpuint32(HPAbstractWriter *self, const hpuint32 val)
 {
-	if(self->write_uint32 == NULL)
+	if(self->write_hpuint32 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_uint32(self, val);
+	return self->write_hpuint32(self, val);
 }
 
-hpint32 write_uint64(HPAbstractWriter *self, const hpuint64 val)
+hpint32 write_hpuint64(HPAbstractWriter *self, const hpuint64 val)
 {
-	if(self->write_uint64 == NULL)
+	if(self->write_hpuint64 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_uint64(self, val);
+	return self->write_hpuint64(self, val);
 }
 
-hpint32 write_char(HPAbstractWriter *self, const hpchar val)
+hpint32 write_hpchar(HPAbstractWriter *self, const hpchar val)
 {
-	if(self->write_char == NULL)
+	if(self->write_hpchar == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_char(self, val);
+	return self->write_hpchar(self, val);
 }
 
-hpint32 write_double(HPAbstractWriter *self, const hpdouble val)
+hpint32 write_hpdouble(HPAbstractWriter *self, const hpdouble val)
 {
-	if(self->write_double == NULL)
+	if(self->write_hpdouble == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_double(self, val);
+	return self->write_hpdouble(self, val);
 }
 
 hpint32 write_enum_number(HPAbstractWriter *self, const hpint32 val)
@@ -185,13 +185,13 @@ hpint32 write_bytes(HPAbstractWriter *self, const hpbytes bytes)
 	return self->write_bytes(self, bytes);
 }
 
-hpint32 write_bool(HPAbstractWriter *self, const hpbool val)
+hpint32 write_hpbool(HPAbstractWriter *self, const hpbool val)
 {
-	if(self->write_bool == NULL)
+	if(self->write_hpbool == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->write_bool(self, val);
+	return self->write_hpbool(self, val);
 }
 
 hpint32 write_null(HPAbstractWriter *self)

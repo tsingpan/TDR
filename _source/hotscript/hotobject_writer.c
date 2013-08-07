@@ -168,9 +168,9 @@ hpint32 hotobject_writer_init(HotObjectWriter* self, HotObject *hotobject)
 	self->super.write_vector_item_end = hotobject_write_vector_item_end;
 	self->super.write_bytes = hotobject_write_bytes;
 	self->super.write_string = hotobject_write_hpstring;
-	self->super.write_double = hotobject_write_double;
-	self->super.write_int64 = hotobject_write_hpint64;
-	self->super.write_bool = hotobject_write_hpbool;
+	self->super.write_hpdouble = hotobject_write_double;
+	self->super.write_hpint64 = hotobject_write_hpint64;
+	self->super.write_hpbool = hotobject_write_hpbool;
 
 	return E_HP_NOERROR;
 }

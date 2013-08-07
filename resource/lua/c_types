@@ -1,4 +1,6 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
+loadfile(lua_dir .. "lib/common.lua")();
+
 function print_val(val)
 	if val.type == E_SNVT_IDENTIFIER then
 		io.write(val.val.identifier)
@@ -133,6 +135,7 @@ function main(hd)
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_TYPES'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
+	io.write('#include "hotpot/hp_platform.h"\n')
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_CONST)then
 			on_const(value.definition.de_const)

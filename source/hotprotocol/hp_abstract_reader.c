@@ -60,76 +60,76 @@ hpint32 read_field_end(HPAbstractReader *self, const char *var_name)
 	return self->read_field_end(self, var_name);
 }
 
-hpint32 read_int8(HPAbstractReader *self, hpint8 *val)
+hpint32 read_hpint8(HPAbstractReader *self, hpint8 *val)
 {
-	if(self->read_int8 == NULL)
+	if(self->read_hpint8 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_int8(self, val);
+	return self->read_hpint8(self, val);
 }
 
-hpint32 read_int16(HPAbstractReader *self, hpint16 *val)
+hpint32 read_hpint16(HPAbstractReader *self, hpint16 *val)
 {
-	if(self->read_int16 == NULL)
+	if(self->read_hpint16 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_int16(self, val);
+	return self->read_hpint16(self, val);
 }
 
-hpint32 read_int32(HPAbstractReader *self, hpint32 *val)
+hpint32 read_hpint32(HPAbstractReader *self, hpint32 *val)
 {
-	if(self->read_int32 == NULL)
+	if(self->read_hpint32 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_int32(self, val);
+	return self->read_hpint32(self, val);
 }
 
-hpint32 read_int64(HPAbstractReader *self, hpint64 *val)
+hpint32 read_hpint64(HPAbstractReader *self, hpint64 *val)
 {
-	if(self->read_int64 == NULL)
+	if(self->read_hpint64 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_int64(self, val);
+	return self->read_hpint64(self, val);
 }
 
-hpint32 read_uint8(HPAbstractReader *self, hpuint8 *val)
+hpint32 read_hpuint8(HPAbstractReader *self, hpuint8 *val)
 {
-	if(self->read_uint8 == NULL)
+	if(self->read_hpuint8 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_uint8(self, val);
+	return self->read_hpuint8(self, val);
 }
 
-hpint32 read_uint16(HPAbstractReader *self, hpuint16 *val)
+hpint32 read_hpuint16(HPAbstractReader *self, hpuint16 *val)
 {
-	if(self->read_uint16 == NULL)
+	if(self->read_hpuint16 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_uint16(self, val);
+	return self->read_hpuint16(self, val);
 }
 
-hpint32 read_uint32(HPAbstractReader *self, hpuint32 *val)
+hpint32 read_hpuint32(HPAbstractReader *self, hpuint32 *val)
 {
-	if(self->read_uint32 == NULL)
+	if(self->read_hpuint32 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_uint32(self, val);
+	return self->read_hpuint32(self, val);
 }
 
-hpint32 read_uint64(HPAbstractReader *self, hpuint64 *val)
+hpint32 read_hpuint64(HPAbstractReader *self, hpuint64 *val)
 {
-	if(self->read_uint64 == NULL)
+	if(self->read_hpuint64 == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_uint64(self, val);
+	return self->read_hpuint64(self, val);
 }
 
 hpint32 read_enum_number(HPAbstractReader *self, hpint32 *val)
@@ -150,22 +150,22 @@ hpint32 read_enum_name(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_
 	return self->read_enum_name(self, enum_name, enum_name_length);
 }
 
-hpint32 read_char(HPAbstractReader *self, hpchar *val)
+hpint32 read_hpchar(HPAbstractReader *self, hpchar *val)
 {
-	if(self->read_char == NULL)
+	if(self->read_hpchar == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_char(self, val);
+	return self->read_hpchar(self, val);
 }
 
-hpint32 read_double(HPAbstractReader *self, hpdouble *val)
+hpint32 read_hpdouble(HPAbstractReader *self, hpdouble *val)
 {
-	if(self->read_double == NULL)
+	if(self->read_hpdouble == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_double(self, val);
+	return self->read_hpdouble(self, val);
 }
 
 hpint32 read_string(HPAbstractReader *self, hpchar* str, hpuint32 str_length)
@@ -186,13 +186,13 @@ hpint32 read_bytes(HPAbstractReader *self, hpbytes *bytes)
 	return self->read_bytes(self, bytes);
 }
 
-hpint32 read_bool(HPAbstractReader *self, hpbool *val)
+hpint32 read_hpbool(HPAbstractReader *self, hpbool *val)
 {
-	if(self->read_bool == NULL)
+	if(self->read_hpbool == NULL)
 	{
 		return E_HP_NOERROR;
 	}
-	return self->read_bool(self, val);
+	return self->read_hpbool(self, val);
 }
 
 hpint32 read_null(HPAbstractReader *self)

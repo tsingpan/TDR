@@ -19,16 +19,16 @@ hpint32 lua_reader_init(HP_LUA_READER *self, lua_State *ls)
 	self->super.read_field_begin = lua_read_field_begin;
 	self->super.read_field_end = lua_read_field_end;
 	self->super.read_enum_number = lua_read_enum;
-	self->super.read_char = lua_read_hpchar;
-	self->super.read_double = lua_read_hpdouble;
-	self->super.read_int8 = lua_read_hpint8;
-	self->super.read_int16 = lua_read_hpint16;
-	self->super.read_int32 = lua_read_hpint32;
-	self->super.read_int64 = lua_read_hpint64;
-	self->super.read_uint8 = lua_read_hpuint8;
-	self->super.read_uint16 = lua_read_hpuint16;
-	self->super.read_uint32 = lua_read_hpuint32;
-	self->super.read_uint64 = lua_read_hpuint64;
+	self->super.read_hpchar = lua_read_hpchar;
+	self->super.read_hpdouble = lua_read_hpdouble;
+	self->super.read_hpint8 = lua_read_hpint8;
+	self->super.read_hpint16 = lua_read_hpint16;
+	self->super.read_hpint32 = lua_read_hpint32;
+	self->super.read_hpint64 = lua_read_hpint64;
+	self->super.read_hpuint8 = lua_read_hpuint8;
+	self->super.read_hpuint16 = lua_read_hpuint16;
+	self->super.read_hpuint32 = lua_read_hpuint32;
+	self->super.read_hpuint64 = lua_read_hpuint64;
 
 	return E_HP_NOERROR;
 }
@@ -42,16 +42,16 @@ hpint32 lua_reader_fini(HP_LUA_READER *self)
 	self->super.read_field_begin = NULL;
 	self->super.read_field_end = NULL;
 	self->super.read_enum_number = NULL;
-	self->super.read_char = NULL;
-	self->super.read_double = NULL;
-	self->super.read_int8 = NULL;
-	self->super.read_int16 = NULL;
-	self->super.read_int32 = NULL;
-	self->super.read_int64 = NULL;
-	self->super.read_uint8 = NULL;
-	self->super.read_uint16 = NULL;
-	self->super.read_uint32 = NULL;
-	self->super.read_uint64 = NULL;
+	self->super.read_hpchar = NULL;
+	self->super.read_hpdouble = NULL;
+	self->super.read_hpint8 = NULL;
+	self->super.read_hpint16 = NULL;
+	self->super.read_hpint32 = NULL;
+	self->super.read_hpint64 = NULL;
+	self->super.read_hpuint8 = NULL;
+	self->super.read_hpuint16 = NULL;
+	self->super.read_hpuint32 = NULL;
+	self->super.read_hpuint64 = NULL;
 
 
 	return E_HP_NOERROR;

@@ -33,8 +33,6 @@ HP_API hpint32 xml_read_field_begin(HPAbstractReader *self, const char *var_name
 
 HP_API hpint32 xml_read_field_end(HPAbstractReader *self, const char *var_name);
 
-HP_API hpint32 xml_read_enum(HPAbstractReader *super, hpint32 *val);
-
 HP_API hpint32 xml_read_enum_name(HPAbstractReader *super, hpchar *enum_name, hpuint32 enum_name_length);
 
 HP_API hpint32 xml_read_hpchar(HPAbstractReader *super, char *val);

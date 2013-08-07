@@ -39,7 +39,6 @@ enum TEST_NUM_GROUP
 
 struct PROTO
 {
-	int32 pos_size;
 	vector<POSITION, NUM, pos_size> pos;
 	int32 id;
 	string<MAX_NAME_LENGTH> name;

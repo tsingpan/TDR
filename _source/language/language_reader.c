@@ -82,7 +82,7 @@ hpint32 read_LanguageLib(HPAbstractReader *self, LanguageLib *data)
 	read_struct_begin(self, "LanguageLib");
 
 	read_field_begin(self, "str_num", strlen("str_num"));
-	read_uint32(self, &data->str_num);
+	read_hpuint32(self, &data->str_num);
 	read_field_end(self, "str_num", strlen("str_num"));
 
 	read_field_begin(self, "str", strlen("str"));

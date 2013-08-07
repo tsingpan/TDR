@@ -194,9 +194,9 @@ hpint32 hotobject_reader_init(HotObjectReader* self, const HotObject *hotobject)
 	self->super.read_vector_item_begin = hotobject_read_vector_item_begin;
 	self->super.read_vector_item_end = hotobject_read_vector_item_end;
 	self->super.read_bytes = hotobject_read_bytes;
-	self->super.read_double = hotobject_read_double;
-	self->super.read_int64 = hotobject_read_hpint64;
-	self->super.read_bool = hotobject_read_hpbool;
+	self->super.read_hpdouble = hotobject_read_double;
+	self->super.read_hpint64 = hotobject_read_hpint64;
+	self->super.read_hpbool = hotobject_read_hpbool;
 
 	return E_HP_NOERROR;
 }

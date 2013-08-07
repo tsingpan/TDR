@@ -16,16 +16,16 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 	self->super.write_field_begin = hp_compact_write_field_begin;
 	self->super.write_field_end = hp_compact_write_field_end;
 	self->super.write_enum_number = hp_compact_write_enum;
-	self->super.write_char = hp_compact_write_hpchar;
-	self->super.write_double = hp_compact_write_hpdouble;
-	self->super.write_int8 = hp_compact_write_hpint8;
-	self->super.write_int16 = hp_compact_write_hpint16;
-	self->super.write_int32 = hp_compact_write_hpint32;
-	self->super.write_int64 = hp_compact_write_hpint64;
-	self->super.write_uint8 = hp_compact_write_hpuint8;
-	self->super.write_uint16 = hp_compact_write_hpuint16;
-	self->super.write_uint32 = hp_compact_write_hpuint32;
-	self->super.write_uint64 = hp_compact_write_hpuint64;
+	self->super.write_hpchar = hp_compact_write_hpchar;
+	self->super.write_hpdouble = hp_compact_write_hpdouble;
+	self->super.write_hpint8 = hp_compact_write_hpint8;
+	self->super.write_hpint16 = hp_compact_write_hpint16;
+	self->super.write_hpint32 = hp_compact_write_hpint32;
+	self->super.write_hpint64 = hp_compact_write_hpint64;
+	self->super.write_hpuint8 = hp_compact_write_hpuint8;
+	self->super.write_hpuint16 = hp_compact_write_hpuint16;
+	self->super.write_hpuint32 = hp_compact_write_hpuint32;
+	self->super.write_hpuint64 = hp_compact_write_hpuint64;
 	self->super.write_string = hp_compact_write_string;
 	
 	
@@ -46,16 +46,16 @@ hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
 	self->super.write_vector_begin = NULL;
 	self->super.write_vector_end = NULL;
 	self->super.write_enum_number = NULL;
-	self->super.write_char = NULL;
-	self->super.write_double = NULL;
-	self->super.write_int8 = NULL;
-	self->super.write_int16 = NULL;
-	self->super.write_int32 = NULL;
-	self->super.write_int64 = NULL;
-	self->super.write_uint8 = NULL;
-	self->super.write_uint16 = NULL;
-	self->super.write_uint32 = NULL;
-	self->super.write_uint64 = NULL;
+	self->super.write_hpchar = NULL;
+	self->super.write_hpdouble = NULL;
+	self->super.write_hpint8 = NULL;
+	self->super.write_hpint16 = NULL;
+	self->super.write_hpint32 = NULL;
+	self->super.write_hpint64 = NULL;
+	self->super.write_hpuint8 = NULL;
+	self->super.write_hpuint16 = NULL;
+	self->super.write_hpuint32 = NULL;
+	self->super.write_hpuint64 = NULL;
 
 	self->addr = NULL;
 	self->size = 0;

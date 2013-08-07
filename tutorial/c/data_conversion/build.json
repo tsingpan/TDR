@@ -1,5 +1,0 @@
-{
-	"types_file" : "proto_types.h",
-	"reader_header_file" : "proto_reader.h",
-	"writer_header_file" : "proto_writer.h"
-}

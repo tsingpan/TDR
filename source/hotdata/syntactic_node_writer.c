@@ -8,7 +8,7 @@ void write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data)
 {
 	write_struct_begin(self, "ST_UNIX_COMMENT");
 	write_field_begin(self, "empty");
-	write_bool(self, data->empty);
+	write_hpbool(self, data->empty);
 	write_field_end(self, "empty");
 	write_field_begin(self, "text");
 	write_string(self, data->text);
@@ -65,28 +65,28 @@ void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , const SN_VALU
 	case E_SNVT_INT64:
 		{
 			write_field_begin(self, "i64");
-			write_int64(self, data->i64);
+			write_hpint64(self, data->i64);
 			write_field_end(self, "i64");
 			break;
 		}
 	case E_SNVT_HEX_INT64:
 		{
 			write_field_begin(self, "hex_i64");
-			write_int64(self, data->hex_i64);
+			write_hpint64(self, data->hex_i64);
 			write_field_end(self, "hex_i64");
 			break;
 		}
 	case E_SNVT_UINT64:
 		{
 			write_field_begin(self, "ui64");
-			write_uint64(self, data->ui64);
+			write_hpuint64(self, data->ui64);
 			write_field_end(self, "ui64");
 			break;
 		}
 	case E_SNVT_HEX_UINT64:
 		{
 			write_field_begin(self, "hex_ui64");
-			write_uint64(self, data->hex_ui64);
+			write_hpuint64(self, data->hex_ui64);
 			write_field_end(self, "hex_ui64");
 			break;
 		}
@@ -100,21 +100,21 @@ void write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , const SN_VALU
 	case E_SNVT_BOOL:
 		{
 			write_field_begin(self, "b");
-			write_bool(self, data->b);
+			write_hpbool(self, data->b);
 			write_field_end(self, "b");
 			break;
 		}
 	case E_SNVT_DOUBLE:
 		{
 			write_field_begin(self, "d");
-			write_double(self, data->d);
+			write_hpdouble(self, data->d);
 			write_field_end(self, "d");
 			break;
 		}
 	case E_SNVT_CHAR:
 		{
 			write_field_begin(self, "c");
-			write_char(self, data->c);
+			write_hpchar(self, data->c);
 			write_field_end(self, "c");
 			break;
 		}
@@ -332,7 +332,7 @@ void write_ST_Expression(HPAbstractWriter *self, const ST_Expression *data)
 {
 	write_struct_begin(self, "ST_Expression");
 	write_field_begin(self, "neg");
-	write_bool(self, data->neg);
+	write_hpbool(self, data->neg);
 	write_field_end(self, "neg");
 	write_field_begin(self, "op0");
 	write_ST_VALUE(self, &data->op0);
@@ -349,7 +349,7 @@ void write_ST_CONDITION(HPAbstractWriter *self, const ST_CONDITION *data)
 {
 	write_struct_begin(self, "ST_CONDITION");
 	write_field_begin(self, "empty");
-	write_bool(self, data->empty);
+	write_hpbool(self, data->empty);
 	write_field_end(self, "empty");
 	write_field_begin(self, "exp");
 	write_ST_Expression(self, &data->exp);
