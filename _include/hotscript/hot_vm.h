@@ -94,10 +94,12 @@ typedef void (*vm_user_putc)(HotVM *self, char c);
 #define MAX_FUNCTION_STACK_DEEP 1024
 typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 
+#define HS_MAX_NAME_LENGTH 512
 typedef struct _STACK_FRAME
 {
 	hpuint32 eax;
 	hpuint32 eip;
+	hpchar name[HS_MAX_NAME_LENGTH];
 }STACK_FRAME;
 
 struct _HotVM
