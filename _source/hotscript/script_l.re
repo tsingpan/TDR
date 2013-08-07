@@ -6,6 +6,7 @@
 #include "hotscript/script_parser.h"
 #include "script_l.h"
 #include "hotscript/hotlex.h"
+#include <string.h>
 	
 		
 static void hotscript_reserved_keyword(const char* keyword)

@@ -40,8 +40,6 @@ hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier)
 	identifier->vector_begin_index = op->lineno;
 
 	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
 }
 
 hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
@@ -53,8 +51,6 @@ hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
 
 	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
 }
 hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 {
@@ -271,9 +267,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 {
 	hpint32 ret;
 
-	YYLTYPE yylloc;
-	SP_NODE snode;
-	
+
 
 	scanner_stack_init(&self->scanner_stack);
 
@@ -295,7 +289,10 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	scanner_stack_pop(&self->scanner_stack);
 
-	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
+	if(hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc) != E_HP_NOERROR)
+	{
+		self->result = E_HP_ERROR;
+	}
 
 	return self->result;
 ERROR_RET:

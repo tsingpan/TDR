@@ -58,7 +58,6 @@ hpint32 xml_reader_fini(HP_XML_READER *self)
 
 static void skip_tab(HP_XML_READER *self)
 {
-	hpuint32 i;
 	for(;;)
 	{
 		char c = fgetc(self->f);
@@ -173,7 +172,7 @@ HP_API hpint32 xml_read_vector_item_begin(HPAbstractReader *super, hpuint32 inde
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	char str[1024];
 	snprintf(str, 1024, "[%d]", index);
-	return xml_read_field_begin(super, str, strlen(str));
+	return xml_read_field_begin(super, str);
 }
 
 HP_API hpint32 xml_read_vector_item_end(HPAbstractReader *super, hpuint32 index)
@@ -181,7 +180,7 @@ HP_API hpint32 xml_read_vector_item_end(HPAbstractReader *super, hpuint32 index)
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	char str[1024];
 	snprintf(str, 1024, "[%d]", index);
-	return xml_read_field_end(super, str, strlen(str));
+	return xml_read_field_end(super, str);
 }
 
 hpint32 xml_read_hpdouble(HPAbstractReader *super, double *val)
@@ -326,7 +325,6 @@ hpint32 xml_read_hpchar(HPAbstractReader *super, char *val)
 hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
-	hpuint32 i;
 	hpuint32 len = 0;
 
 	self->need_tab = hpfalse;

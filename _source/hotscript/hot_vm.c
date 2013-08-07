@@ -165,22 +165,42 @@ hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
+
 	self->stack[self->stack_num - 1] = op->arg.vector_set_index_arg.index;
 
 	++(self->current_op);
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	++(self->stack[self->stack_num - 1]);
 
 	++(self->current_op);
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	if(read_vector_item_begin(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
 		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
@@ -190,10 +210,17 @@ hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 		++(self->current_op);
 	}
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	if(read_vector_item_end(self->reader, self->stack[self->stack_num - 1]) != E_HP_NOERROR)
 	{
 		self->current_op = op->arg.vector_item_begin_arg.failed_jmp_lineno;
@@ -203,6 +230,8 @@ hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 		++(self->current_op);
 	}
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
@@ -317,8 +346,13 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 
 	while(self->current_op < self->hotoparr->next_oparr)
 	{
-		self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]);		
+		if(self->op_handler[self->hotoparr->oparr[self->current_op].instruct](self, &self->hotoparr->oparr[self->current_op]) != E_HP_NOERROR)
+		{
+			goto ERROR_RET;
+		}
 	}
 
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
