@@ -5,7 +5,6 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#include "hotprotocol/hp_json_writer.h"
 #include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
 #include "hotscript/hotobject_reader.h"

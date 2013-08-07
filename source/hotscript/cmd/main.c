@@ -4,8 +4,6 @@
 #include <string.h>
 #include "hotscript/hotobject.h"
 #include "hotscript/hot_vm.h"
-#include "hotprotocol/hp_json_writer.h"
-#include "hotprotocol/hp_json_reader.h"
 #include "hotpot/hp_platform.h"
 #include "hotscript/hotobject_reader.h"
 #include "hotscript/hotobject_writer.h"
@@ -17,8 +15,6 @@ SCRIPT_PARSER sp;
 HotObject *obj;
 HotObjectReader reader;
 HotObjectWriter writer;
-HP_JSON_WRITER json_writer;
-HP_JSON_READER json_reader;
 
 
 HotObject *ho;

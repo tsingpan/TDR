@@ -203,15 +203,6 @@ hpint32 write_null(HPAbstractWriter *self)
 	return self->write_null(self);
 }
 
-hpint32 write_semicolon(HPAbstractWriter *self)
-{
-	if(self->write_semicolon == NULL)
-	{
-		return E_HP_NOERROR;
-	}
-	return self->write_semicolon(self);
-}
-
 hpint32 write_type(HPAbstractWriter *self, const HPType type)
 {
 	if(self->write_type == NULL)

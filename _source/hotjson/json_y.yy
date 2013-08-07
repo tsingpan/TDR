@@ -68,7 +68,7 @@ Members:
 	}
 |
 	Members
-	',' { write_semicolon(YYJSON_WRITER); }
+	','
 	Pair
 ;
 	
@@ -91,7 +91,7 @@ Array:
 
 Elements:
 	Elements
-	',' { write_semicolon(YYJSON_WRITER); }
+	','
 	{write_vector_item_begin(YYJSON_WRITER, writer_get_index(YYJSON_WRITER)); }
 	Value
 	{write_vector_item_end(YYJSON_WRITER, writer_get_index(YYJSON_WRITER)); }
