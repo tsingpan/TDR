@@ -1,6 +1,6 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
 
-
+enum_list = {}
 function get_symbol_access_by_type(identifier, type)
 	prefix = ''
 	suffix = ''
@@ -18,7 +18,11 @@ function get_symbol_access_by_type(identifier, type)
 			prefix = 'data->'
 		end
 	elseif(type.type == E_SNT_REFER)then
-		prefix = '&data->'
+		if(enum_list[type.ot] == nil)then
+			prefix = '&data->'
+		else
+			prefix = 'data->'
+		end
 	end
 	return prefix .. identifier .. suffix
 end
@@ -104,7 +108,7 @@ function get_type(type, args)
 end
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' *data)')
+	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)')
 	print_line(0, '{')
 	print_line(1, 'switch(*data)')
 	print_line(1, '{')
@@ -118,21 +122,25 @@ function on_enum_name(enum)
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' *data)')
+	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
 	print_line(1, 'write_enum_number(self, data);')
 	print_line(0, '}')
 end
 
+
 function on_enum(enum)
+	
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' *data)')
+	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
 	print_line(1, 'write_' .. enum.name .. '_name(self, data);')
 	print_line(1, 'write_' .. enum.name .. '_number(self, data);')
 	print_line(0, '}')
+
+	enum_list[enum.name] = true
 end
 
 
@@ -283,7 +291,6 @@ function on_union(object)
 	t = t - 1
 	print_line(t, '}')
 end
-
 function main(hd)
 	file_tag = hd.file_name
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
@@ -311,4 +318,3 @@ function main(hd)
 end
 
 main(hd)
-
