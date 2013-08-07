@@ -93,21 +93,26 @@ typedef void (*vm_user_putc)(HotVM *self, char c);
 
 #define MAX_FUNCTION_STACK_DEEP 1024
 typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
+
+typedef struct _STACK_FRAME
+{
+	hpuint32 eax;
+	hpuint32 eip;
+}STACK_FRAME;
+
 struct _HotVM
 {
 	const HotOpArr *hotoparr;
-
-	hpuint32 eip;
-
-	void *user_data;
-
-	vm_user_putc uputc;
-
 	HPAbstractReader *reader;
-
+	void *user_data;
+	vm_user_putc uputc;
 	hotvm_execute_func op_handler[HOT_MAX];
 	
-	hpuint32 stack[MAX_FUNCTION_STACK_DEEP];
+	
+	
+	hpuint32 eip;
+	hpuint32 eax;
+	STACK_FRAME stack[MAX_FUNCTION_STACK_DEEP];
 	hpuint32 stack_num;
 };
 
