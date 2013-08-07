@@ -1,105 +1,191 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
-function print_val(val)
-	if val.type == E_SNVT_IDENTIFIER then
-		io.write(val.val.identifier)
-	elseif val.type == E_SNVT_CHAR then
-		io.write("'")
-		if(val.val.c == '\n')then
-			io.write('\\n')
-		else
-			io.write(val.val.c)
+
+enum_list = {}
+
+function get_symbol_access_by_type_suffix(identifier, type)
+	if(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			return '[i]'
 		end
-		io.write("'")
+	end
+	return ''
+end
+
+function get_symbol_access_by_type_prefix(identifier, type)
+	if(type.type == E_SNT_SIMPLE)then
+		return ''
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+				return ''
+			else
+				return '&'
+			end
+		elseif(type.ct == E_CT_STRING)then
+			return ''
+		end
+	elseif(type.type == E_SNT_REFER)then
+		if(enum_list[type.ot] == nil)then
+			return '&'
+		else
+			return ''
+		end
+	end
+	return ''
+end
+
+function get_symbol_access_by_type_prefix_reverse(identifier, type)
+	if(type.type == E_SNT_SIMPLE)then
+		return ''
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+				return ''
+			else
+				return '*'
+			end
+		elseif(type.ct == E_CT_STRING)then
+			return ''
+		end
+	elseif(type.type == E_SNT_REFER)then
+		if(enum_list[type.ot] == nil)then
+			return '*'
+		else
+			return ''
+		end
+	end
+	return ''
+end
+
+function get_symbol_access(identifier, object)
+	for k,v in pairs(object.parameters.par_list) do
+		if(v.identifier == identifier)then
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			return prefix .. identifier .. suffix
+		end
+	end
+
+	for k,v in pairs(object.field_list.field_list)do
+		if(v.identifier == identifier)then
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			return prefix .. 'data->' .. identifier .. suffix
+		end
+	end
+
+	return identifier
+end
+
+function print_line(n, str)
+	for i = 1, n do
+		io.write('    ')
+	end
+	print(str)
+end
+
+function get_val(val, object)
+	if val.type == E_SNVT_IDENTIFIER then
+		return get_symbol_access(val.val.identifier, object)
+	elseif val.type == E_SNVT_CHAR then
+		return val.val.c
 	elseif val.type == E_SNVT_DOUBLE then
-		io.write(val.val.d)
+		return val.val.d
 	elseif val.type == E_SNVT_BOOL then
-		io.write(val.val.b)
+		return val.val.b
 	elseif val.type == E_SNVT_STRING then
-		--需要处理字符串中的转义
-		io.write('"')
-		io.write(val.val.str)
-		io.write('"')
+		return val.val.str
 	elseif val.type == E_SNVT_INT64 then
-		io.write(val.val.i64)
+		return val.val.i64
 	elseif val.type == E_SNVT_UINT64 then
-		io.write(val.val.ui64)
+		return val.val.ui64
 	elseif val.type == E_SNVT_HEX_INT64 then
-		io.write(val.val.hex_i64)
+		return val.val.hex_i64
 	elseif val.type == E_SNVT_HEX_UINT64 then
-		io.write(val.val.hex_ui64)
+		return val.val.hex_ui64
 	end
 end
 
-function print_type(type, args)
+function get_type(type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		if(type.st == E_ST_CHAR)then
-			io.write('hpchar')
+			return 'char'
 		elseif(type.st == E_ST_DOUBLE)then
-			io.write('hpdouble')
+			return 'double'
 		elseif(type.st == E_ST_BOOL)then
-			io.write('hpbool')
+			return 'bool'
 		elseif(type.st == E_ST_INT8)then
-			io.write('hpint8')
+			return 'int8'
 		elseif(type.st == E_ST_INT16)then
-			io.write('hpint16')
+			return 'int16'
 		elseif(type.st == E_ST_INT32)then
-			io.write('hpint32')
+			return 'int32'
 		elseif(type.st == E_ST_INT64)then
-			io.write('hpint64')
+			return 'int64'
 		elseif(type.st == E_ST_UINT8)then
-			io.write('hpuint8')
+			return 'uint8'
 		elseif(type.st == E_ST_UINT16)then
-			io.write('hpuint16')
+			return 'uint16'
 		elseif(type.st == E_ST_UINT32)then
-			io.write('hpuint32')
+			return 'uint32'
 		elseif(type.st == E_ST_UINT64)then
-			io.write('hpuint64')
+			return 'uint64'
 		end
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			io.write(args.arg_list[1].ot)
+			return args.arg_list[1].ot
 		elseif(type.ct == E_CT_STRING)then
-			io.write('hpchar')
+			return 'char'
 		end
 	elseif(type.type == E_SNT_REFER)then
-		io.write(type.ot);
+		return type.ot;
 	end
 end
 
 function on_enum_name(enum)
-	io.write('void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data);\n')
+	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
 end
 
 function on_enum_number(enum)
-	io.write('void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);\n')
+	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
 end
 
+
 function on_enum(enum)
+	
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	io.write('void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);\n')
+	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+
+
+	enum_list[enum.name] = true
 end
 
+
 function on_struct(object)
-	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	t = 0;
+	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
-		io.write(' , ')
-		print_type(value.type, nil)
-		io.write(' *' .. value.identifier)
+		line = line .. ' , '
+		line = line .. get_type(value.type, nil)
+		line = line .. ' const ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
-	io.write(');\n')
+	line = line .. ');'
+	print_line(t, line)
 end
 
 
 function on_union(object)
-	io.write('void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data')
+	t = 0;
+	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
-		io.write(' , ')
-		print_type(value.type, nil)
-		io.write(' *' .. value.identifier)
+		line = line .. ' , '
+		line = line .. 'const ' .. get_type(value.type, nil)
+		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
-	io.write(');\n')
+	line = line .. ');'
+	print_line(t, line)
 end
 
 function main(hd)
@@ -107,6 +193,9 @@ function main(hd)
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER_HEADER'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
+	print_line(0, '#include "hotpot/hp_platform.h"')
+	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
+
 	if(c_types_file)then
 		io.write('#include \"' .. c_types_file .. '\"\n')
 	end

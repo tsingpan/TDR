@@ -34,7 +34,7 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 	self->super.write_uint32 = lua_write_hpuint32;
 	self->super.write_uint64 = lua_write_hpuint64;
 
-	self->super.write_enum_number = lua_write_enum;
+	self->super.write_enum_number = lua_write_enum_number;
 	self->super.write_char = lua_write_hpchar;
 	self->super.write_double = lua_write_hpdouble;
 	self->super.write_bytes = lua_write_bytes;
@@ -134,9 +134,10 @@ HP_API hpint32 lua_write_vector_item_end(HPAbstractWriter *super, hpuint32 index
 }
 
 
-HP_API hpint32 lua_write_enum(HPAbstractWriter *super, const int val)
+HP_API hpint32 lua_write_enum_number(HPAbstractWriter *super, const int val)
 {
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
+	lua_pushinteger(self->ls, val);
 	return E_HP_NOERROR;
 }
 

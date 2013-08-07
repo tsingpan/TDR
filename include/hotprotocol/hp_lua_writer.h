@@ -35,7 +35,7 @@ HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 ind
 
 HP_API hpint32 lua_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
 
-HP_API hpint32 lua_write_enum(HPAbstractWriter *super, const int val);
+HP_API hpint32 lua_write_enum_number(HPAbstractWriter *super, const int val);
 
 HP_API hpint32 lua_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
 

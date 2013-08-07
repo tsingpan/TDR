@@ -1,41 +1,76 @@
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
 
 enum_list = {}
-function get_symbol_access_by_type(identifier, type)
-	prefix = ''
-	suffix = ''
+
+function get_symbol_access_by_type_suffix(identifier, type)
+	if(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			return '[i]'
+		end
+	end
+	return ''
+end
+
+function get_symbol_access_by_type_prefix(identifier, type)
 	if(type.type == E_SNT_SIMPLE)then
-		prefix = 'data->'
+		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
 			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
-				prefix = 'data->'
+				return ''
 			else
-				prefix = '&data->'
+				return '&'
 			end
-			suffix = '[i]'
 		elseif(type.ct == E_CT_STRING)then
-			prefix = 'data->'
+			return ''
 		end
 	elseif(type.type == E_SNT_REFER)then
 		if(enum_list[type.ot] == nil)then
-			prefix = '&data->'
+			return '&'
 		else
-			prefix = 'data->'
+			return ''
 		end
 	end
-	return prefix .. identifier .. suffix
+	return ''
+end
+
+function get_symbol_access_by_type_prefix_reverse(identifier, type)
+	if(type.type == E_SNT_SIMPLE)then
+		return ''
+	elseif(type.type == E_SNT_CONTAINER)then
+		if(type.ct == E_CT_VECTOR)then
+			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+				return ''
+			else
+				return '*'
+			end
+		elseif(type.ct == E_CT_STRING)then
+			return ''
+		end
+	elseif(type.type == E_SNT_REFER)then
+		if(enum_list[type.ot] == nil)then
+			return '*'
+		else
+			return ''
+		end
+	end
+	return ''
 end
 
 function get_symbol_access(identifier, object)
-	for k,v in pairs(object.field_list.field_list)do
-			if(v.identifier == identifier)then
-				return get_symbol_access_by_type(identifier, v.type)
-			end
-	end
 	for k,v in pairs(object.parameters.par_list) do
 		if(v.identifier == identifier)then
-			return get_symbol_access_by_type(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			return prefix .. identifier .. suffix
+		end
+	end
+
+	for k,v in pairs(object.field_list.field_list)do
+		if(v.identifier == identifier)then
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			return prefix .. 'data->' .. identifier .. suffix
 		end
 	end
 
@@ -108,9 +143,9 @@ function get_type(type, args)
 end
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, ' .. enum.name .. ' data)')
+	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
-	print_line(1, 'switch(*data)')
+	print_line(1, 'switch(data)')
 	print_line(1, '{')
 	for key, value in pairs(enum.enum_def_list) do
 		print_line(2, 'case ' .. value.identifier .. ':')
@@ -150,7 +185,7 @@ function on_struct(object)
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. get_type(value.type, nil)
-		line = line .. ' *' .. value.identifier
+		line = line .. ' const ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
 	line = line .. ')'
 	print_line(t, line)
@@ -175,14 +210,16 @@ function on_struct(object)
 
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
-				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", &data->' .. value.args.arg_list[3].ot .. ');');
+				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", data->' .. value.args.arg_list[3].ot .. ');');
 				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
 				print_line(t, '{')
 				t = t + 1
 				print_line(t, 'hpuint32 i;')
+				print_line(t, 'write_vector_begin(self);')
 				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
 				print_line(t, '{')
 				t = t + 1
+				print_line(t, 'write_vector_item_begin(self, i);')
 				line = 'write_'
 				line = line .. get_type(value.type, value.args)
 				line = line .. '(self, &data->' .. value.identifier .. '[i]'
@@ -191,8 +228,10 @@ function on_struct(object)
 				end
 				line = line .. ');'
 				print_line(t, line)
+				print_line(t, 'write_vector_item_end(self, i);')
 				t = t - 1
 				print_line(t, '}')
+				print_line(t, 'write_vector_end(self);')
 				t = t - 1
 				print_line(t, '}')
 				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
@@ -228,8 +267,8 @@ function on_union(object)
 	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
-		line = line .. get_type(value.type, nil)
-		line = line .. ' *' .. value.identifier
+		line = line .. 'const ' .. get_type(value.type, nil)
+		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
 	line = line .. ')'
 	print_line(t, line)
@@ -244,7 +283,7 @@ function on_union(object)
 		end
 	end
 
-	print_line(t, 'switch(*' .. sw .. ')')
+	print_line(t, 'switch(' .. get_symbol_access(sw, object) .. ')')
 	print_line(t, '{')
 	t = t + 1
 	for key, value in pairs(object.field_list.field_list) do
