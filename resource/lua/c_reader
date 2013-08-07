@@ -11,12 +11,12 @@ function get_symbol_access_by_type_suffix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix(identifier, type)
+function get_symbol_access_by_type_prefix(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[1].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '&'
@@ -34,12 +34,12 @@ function get_symbol_access_by_type_prefix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix_reverse(identifier, type)
+function get_symbol_access_by_type_prefix_reverse(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[1].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '*'
@@ -60,16 +60,16 @@ end
 function get_symbol_access(identifier, object)
 	for k,v in pairs(object.parameters.par_list) do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. identifier .. suffix
 		end
 	end
 
 	for k,v in pairs(object.field_list.field_list)do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. 'data->' .. identifier .. suffix
 		end
 	end
@@ -148,14 +148,14 @@ function on_enum_name(enum)
 	print_line(1, 'char name[' .. MAX_IDENTIFIER_LENGTH .. '];')
 	print_line(1, 'read_enum_name(self, name, ' .. MAX_IDENTIFIER_LENGTH .. ');')
 	for key, value in pairs(enum.enum_def_list) do
-		print_line(1, 'if(strcmp(name, \"' .. value.identifier .. '\"))')
+		print_line(1, 'if(strcmp(name, \"' .. value.identifier .. '\") == 0)')
 		print_line(1, '{')
 		print_line(2, '*data = ' .. value.identifier .. ';')
 		print_line(2, 'goto done;')
 		print_line(1, '}')
 	end
 	print_line(0, 'done:')
-	print_line(1, 'return')
+	print_line(1, 'return;')
 	print_line(0, '}')
 end
 
@@ -247,7 +247,7 @@ function on_struct(object)
 			print_line(t, 'read_field_begin(self, "' .. value.identifier .. '");')
 			line = 'read_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for ak, av in pairs(value.args.arg_list) do
-					line = line .. ', &' .. av.ot
+					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end
 			line = line .. ');'
 			print_line(t, line)
@@ -271,7 +271,7 @@ function on_union(object)
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. ' ' .. get_type(value.type, nil)
-		line = line .. ' *' .. value.identifier
+		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
 	line = line .. ')'
 	print_line(t, line)
@@ -351,6 +351,7 @@ function main(hd)
 	print_line(0, '#ifndef ' .. file_tag)
 	print_line(0, '#include "hotpot/hp_platform.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_reader.h"')
+	print_line(0, '#include <string.h>')
 
 	if(c_types_file)then
 		print_line(0, '#include \"' .. c_types_file .. '\"')

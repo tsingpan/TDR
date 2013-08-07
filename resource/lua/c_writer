@@ -313,7 +313,7 @@ function on_union(object)
 			line = line .. get_type(value.type, nil)
 			line = line .. '(self, ' .. get_symbol_access(value.identifier, object)
 			for ak, av in pairs(value.args.arg_list) do
-				line = line .. ', &data->' .. av.ot
+				line = line .. ', ' .. get_symbol_access(av.ot, object) 
 			end
 
 			line = line .. ');'
