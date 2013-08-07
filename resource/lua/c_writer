@@ -333,16 +333,16 @@ end
 function main(hd)
 	file_tag = hd.file_name
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
-	io.write('#ifndef ' .. file_tag .. '\n')
-	io.write('#define ' .. file_tag .. '\n')
+	print_line(0, '#ifndef ' .. file_tag)
+	print_line(0, '#define ' .. file_tag)
 	print_line(0, '#include "hotpot/hp_platform.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
 
 	if(c_types_file)then
-		io.write('#include \"' .. c_types_file .. '\"\n')
+		print_line(0, '#include \"' .. c_types_file .. '\"')
 	end
 	if(c_writer_header_file)then
-		io.write('#include \"' .. c_writer_header_file .. '\"\n')
+		print_line(0, '#include \"' .. c_writer_header_file .. '\"')
 	end
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_ENUM)then
@@ -353,7 +353,7 @@ function main(hd)
 			on_union(value.definition.de_union)
 		end
 	end
-	io.write('#endif//' .. file_tag .. '\n')
+	print_line(0, '#endif//' .. file_tag)
 end
 
 main(hd)

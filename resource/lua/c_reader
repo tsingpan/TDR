@@ -245,7 +245,7 @@ function on_struct(object)
 			end
 		else
 			print_line(t, 'read_field_begin(self, "' .. value.identifier .. '");')
-			line = 'read_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
+			line = 'read_' .. get_type(value.type, value.args) .. '(self, &data->' .. value.identifier
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end
@@ -307,7 +307,7 @@ function on_union(object)
 				print_line(t, 'read_vector_item_begin(self, i);')
 				line = 'read_'
 				line = line .. get_type(value.type, value.args)
-				line = line .. '(self, data->' .. value.identifier .. '[i]'
+				line = line .. '(self, &data->' .. value.identifier .. '[i]'
 				for i=4, #value.args.arg_list do
 					line = line .. ', ' .. get_symbol_access(value.args.arg_list[i].ot, object)
 				end
@@ -327,7 +327,7 @@ function on_union(object)
 			end
 		else
 			print_line(t, 'read_field_begin(self, "' .. value.identifier .. '");')
-			line = 'read_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
+			line = 'read_' .. get_type(value.type, value.args) .. '(self, &data->' .. value.identifier
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end

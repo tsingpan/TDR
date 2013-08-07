@@ -11,12 +11,12 @@ function get_symbol_access_by_type_suffix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix(identifier, type)
+function get_symbol_access_by_type_prefix(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '&'
@@ -34,12 +34,12 @@ function get_symbol_access_by_type_prefix(identifier, type)
 	return ''
 end
 
-function get_symbol_access_by_type_prefix_reverse(identifier, type)
+function get_symbol_access_by_type_prefix_reverse(identifier, type, args)
 	if(type.type == E_SNT_SIMPLE)then
 		return ''
 	elseif(type.type == E_SNT_CONTAINER)then
 		if(type.ct == E_CT_VECTOR)then
-			if(v.args.arg_list[0].type == E_SNT_SIMPLE)then
+			if(args.arg_list[1].type == E_SNT_SIMPLE)then
 				return ''
 			else
 				return '*'
@@ -60,16 +60,16 @@ end
 function get_symbol_access(identifier, object)
 	for k,v in pairs(object.parameters.par_list) do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. identifier .. suffix
 		end
 	end
 
 	for k,v in pairs(object.field_list.field_list)do
 		if(v.identifier == identifier)then
-			prefix = get_symbol_access_by_type_prefix(identifier, v.type)
-			suffix = get_symbol_access_by_type_suffix(identifier, v.type)
+			prefix = get_symbol_access_by_type_prefix(identifier, v.type, v.args)
+			suffix = get_symbol_access_by_type_suffix(identifier, v.type, v.args)
 			return prefix .. 'data->' .. identifier .. suffix
 		end
 	end
@@ -143,11 +143,11 @@ function get_type(type, args)
 end
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'void read_' .. enum.name .. '_name(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'void read_' .. enum.name .. '_number(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 end
 
 
@@ -156,7 +156,7 @@ function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'void read_' .. enum.name .. '(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 
 
 	enum_list[enum.name] = true
@@ -165,11 +165,11 @@ end
 
 function on_struct(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'void read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. get_type(value.type, nil)
-		line = line .. ' const ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
+		line = line .. ' *' .. value.identifier
 	end
 	line = line .. ');'
 	print_line(t, line)
@@ -178,26 +178,25 @@ end
 
 function on_union(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'void read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
-		line = line .. 'const ' .. get_type(value.type, nil)
+		line = line .. ' ' .. get_type(value.type, nil)
 		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
 	end
 	line = line .. ');'
 	print_line(t, line)
 end
-
 function main(hd)
 	file_tag = hd.file_name
-	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER_HEADER'
-	io.write('#ifndef ' .. file_tag .. '\n')
-	io.write('#define ' .. file_tag .. '\n')
+	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_READER_HEADER'
+	print_line(0, '#ifndef ' .. file_tag)
 	print_line(0, '#include "hotpot/hp_platform.h"')
-	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
+	print_line(0, '#include "hotprotocol/hp_abstract_reader.h"')
+	print_line(0, '#include <string.h>')
 
 	if(c_types_file)then
-		io.write('#include \"' .. c_types_file .. '\"\n')
+		print_line(0, '#include \"' .. c_types_file .. '\"')
 	end
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_ENUM)then
@@ -208,8 +207,7 @@ function main(hd)
 			on_union(value.definition.de_union)
 		end
 	end
-	io.write('#endif//' .. file_tag .. '\n')
+	print_line(0, '#endif//' .. file_tag)
 end
 
 main(hd)
-
