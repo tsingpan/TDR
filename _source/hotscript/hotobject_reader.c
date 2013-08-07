@@ -3,7 +3,7 @@
 #include "hotpot/hp_platform.h"
 
 #include "hotpot/hp_error.h"
-
+#include <string.h>
 
 
 
@@ -172,7 +172,7 @@ hpint32 hotobject_read_vector_item_end(HPAbstractReader *super, hpuint32 index)
 		str[str_len++] = '0' + count % 10;
 		count/=10;
 	}while(count > 0);
-	return hotobject_read_field_end(super, str, str_len);
+	return hotobject_read_field_end(super, str);
 }
 
 

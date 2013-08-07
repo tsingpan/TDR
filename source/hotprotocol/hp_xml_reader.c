@@ -39,7 +39,6 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_hpuint64 = xml_read_hpuint64;
 
 	self->super.read_hpdouble = xml_read_hpdouble;
-	self->super.read_bytes = xml_read_bytes;
 	self->super.read_hpbool = xml_read_hpbool;	
 	self->super.read_string = xml_read_string;
 	
@@ -255,66 +254,6 @@ hpint32 xml_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 	return E_HP_NOERROR;
 }
 
-hpint32 xml_read_bytes(HPAbstractReader *super, hpbytes *bytes)
-{
-	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
-	hpuint32 i;
-	hpuint32 len = 0;
-
-	self->need_tab = hpfalse;
-	for(;;)
-	{
-		char c = fgetc(self->f);
-		if(c == '<')
-		{
-			ungetc('<', self->f);
-			bytes->len = len;
-			break;
-		}
-		//实体引用
-		else if(c == '&')
-		{
-			char c2 = fgetc(self->f);
-			if(c2 == 'l')
-			{
-				//&lt
-				fgetc(self->f);
-				bytes->ptr[len++] = '<';
-			}
-			else if(c2 == 'g')
-			{
-				//&gt
-				bytes->ptr[len++] = '>';
-			}
-			else
-			{
-				char c3 = fgetc(self->f);
-				if(c3 == 'm')
-				{
-					//&amp
-					bytes->ptr[len++] = '&';
-				}
-				else if(c3 == 'p')
-				{
-					//&apos
-					bytes->ptr[len++] = '\'';
-				}
-				else if(c3 == 'u')
-				{
-					//&auot
-					bytes->ptr[len++] = '\"';
-				}
-			}
-		}
-		else
-		{
-			bytes->ptr[len++] = c;
-		}
-	}
-	
-	return E_HP_NOERROR;
-}
-
 hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
@@ -332,19 +271,62 @@ hpint32 xml_read_hpbool(HPAbstractReader *super, hpbool *val)
 	return E_HP_NOERROR;
 }
 
+
 HP_API hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)
 {
-	hpbytes bytes;
-	bytes.ptr = str;
-	bytes.len = str_len;
+	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
+	hpuint32 i;
+	hpuint32 len = 0;
 
-	if(xml_read_bytes(super, &bytes) == E_HP_ERROR)
+	self->need_tab = hpfalse;
+	for(;;)
 	{
-		goto ERROR_RET;
+		char c = fgetc(self->f);
+		if(c == '<')
+		{
+			ungetc('<', self->f);
+			break;
+		}
+		//实体引用
+		else if(c == '&')
+		{
+			char c2 = fgetc(self->f);
+			if(c2 == 'l')
+			{
+				//&lt
+				fgetc(self->f);
+				str[len++] = '<';
+			}
+			else if(c2 == 'g')
+			{
+				//&gt
+				str[len++] = '>';
+			}
+			else
+			{
+				char c3 = fgetc(self->f);
+				if(c3 == 'm')
+				{
+					//&amp
+					str[len++] = '&';
+				}
+				else if(c3 == 'p')
+				{
+					//&apos
+					str[len++] = '\'';
+				}
+				else if(c3 == 'u')
+				{
+					//&auot
+					str[len++] = '\"';
+				}
+			}
+		}
+		else
+		{
+			str[len++] = c;
+		}
 	}
-	bytes.ptr[(bytes.len)++] = 0;
 
 	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
 }

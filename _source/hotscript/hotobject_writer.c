@@ -120,7 +120,7 @@ hpint32 hotobject_write_vector_item_begin(HPAbstractWriter *super, hpuint32 inde
 		count/=10;
 	}while(count > 0);
 
-	return hotobject_write_field_begin(super, str, str_len);
+	return hotobject_write_field_begin(super, str);
 }
 
 hpint32 hotobject_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
@@ -136,7 +136,7 @@ hpint32 hotobject_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
 		count/=10;
 	}while(count > 0);
 
-	return hotobject_write_field_end(super, str, str_len);
+	return hotobject_write_field_end(super, str);
 }
 
 hpint32 hotobject_write_struct_begin(HPAbstractWriter *super, const char *struct_name)

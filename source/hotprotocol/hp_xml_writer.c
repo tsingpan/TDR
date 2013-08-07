@@ -22,10 +22,18 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->super.write_field_begin = xml_write_field_begin;
 	self->super.write_field_end = xml_write_field_end;
 	
+	self->super.write_hpint8 = xml_write_hpint8;
+	self->super.write_hpint16 = xml_write_hpint16;
+	self->super.write_hpint32 = xml_write_hpint32;
 	self->super.write_hpint64 = xml_write_hpint64;
 
+	self->super.write_hpuint8 = xml_write_hpuint8;
+	self->super.write_hpuint16 = xml_write_hpuint16;
+	self->super.write_hpuint32 = xml_write_hpuint32;
+	self->super.write_hpuint64 = xml_write_hpuint64;
+
+
 	self->super.write_hpdouble = xml_write_hpdouble;
-	self->super.write_bytes = xml_write_bytes;
 	self->super.write_string = xml_write_string;
 	self->super.write_hpbool = xml_write_hpbool;
 	self->super.write_vector_item_begin = xml_write_vector_item_begin;
@@ -154,7 +162,7 @@ HP_API hpint32 xml_write_vector_item_begin(HPAbstractWriter *super, hpuint32 ind
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
 	char str[1024];
 	snprintf(str, 1024, "[%d]", index);
-	return xml_write_field_begin(super, str, strlen(str));
+	return xml_write_field_begin(super, str);
 }
 
 HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index)
@@ -162,7 +170,7 @@ HP_API hpint32 xml_write_vector_item_end(HPAbstractWriter *super, hpuint32 index
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
 	char str[1024];
 	snprintf(str, 1024, "[%d]", index);
-	return xml_write_field_end(super, str, strlen(str));
+	return xml_write_field_end(super, str);
 }
 
 hpint32 xml_write_hpdouble(HPAbstractWriter *super, const double val)
@@ -173,6 +181,20 @@ hpint32 xml_write_hpdouble(HPAbstractWriter *super, const double val)
 	return E_HP_NOERROR;
 }
 
+hpint32 xml_write_hpint8(HPAbstractWriter *super, const hpint8 val)
+{
+	return xml_write_hpint64(super, val);
+}
+
+hpint32 xml_write_hpint16(HPAbstractWriter *super, const hpint16 val)
+{
+	return xml_write_hpint64(super, val);
+}
+
+hpint32 xml_write_hpint32(HPAbstractWriter *super, const hpint32 val)
+{
+	return xml_write_hpint64(super, val);
+}
 
 hpint32 xml_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
@@ -183,43 +205,61 @@ hpint32 xml_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 }
 
 
-hpint32 xml_write_bytes(HPAbstractWriter *super, const hpbytes bytes)
+hpint32 xml_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
+{
+	return xml_write_hpuint64(super, val);
+}
+
+hpint32 xml_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
+{
+	return xml_write_hpuint64(super, val);
+}
+
+hpint32 xml_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
+{
+	return xml_write_hpuint64(super, val);
+}
+
+hpint32 xml_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
 	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
-	hpuint32 i;
+	fprintf(self->f, "%llu", val);
 	self->need_tab = hpfalse;
-	for(i = 0;i < bytes.len; ++i)
-		switch (bytes.ptr[i])
-		{
-			case '<':
-				fprintf(self->f, "&lt");
-				continue;
-			case '>':
-				fprintf(self->f, "&gt");
-				continue;
-			case '&':
-				fprintf(self->f, "&amp");
-				continue;
-			case '\'':
-				fprintf(self->f, "&apos");
-				continue;
-			case '\"':
-				fprintf(self->f, "&quot");
-				continue;						
-			default:
-				{
-					fputc(bytes.ptr[i], self->f);
-				}
-		}
 	return E_HP_NOERROR;
 }
 
 hpint32 xml_write_string(HPAbstractWriter *super, const hpchar* str)
 {
-	hpbytes bytes;
-	bytes.ptr = str;
-	bytes.len = strlen(str);
-	return xml_write_bytes(super, bytes);
+	HP_XML_WRITER *self = HP_CONTAINER_OF(super, HP_XML_WRITER, super);
+	const hpchar *i;
+	self->need_tab = hpfalse;
+	for(i = str; *i ; ++i)
+	{
+		switch (*i)
+		{
+		case '<':
+			fprintf(self->f, "&lt");
+			continue;
+		case '>':
+			fprintf(self->f, "&gt");
+			continue;
+		case '&':
+			fprintf(self->f, "&amp");
+			continue;
+		case '\'':
+			fprintf(self->f, "&apos");
+			continue;
+		case '\"':
+			fprintf(self->f, "&quot");
+			continue;						
+		default:
+			{
+				fputc(*i, self->f);
+			}
+		} 
+	}
+
+	return E_HP_NOERROR;
 }
 hpint32 xml_write_enum_name(HPAbstractWriter *self, const hpchar *enum_name)
 {

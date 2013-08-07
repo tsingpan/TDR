@@ -60,7 +60,6 @@ HP_API hpint32 lua_write_hpuint32(HPAbstractWriter *super, const hpuint32 val);
 HP_API hpint32 lua_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
 HP_API hpint32 lua_write_bytes(HPAbstractWriter *super, const hpbytes bytes);
-
 HP_API hpint32 lua_write_string(HPAbstractWriter *super, const hpchar* str);
 
 HP_API hpint32 lua_write_hpbool(HPAbstractWriter *super, const hpbool val);
