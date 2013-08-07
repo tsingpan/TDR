@@ -114,18 +114,24 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 	char name[1024];
 	memcpy(name, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len);
 	name[op->arg.field_begin_arg.name.len] = 0;
+
+
+	self->stack[self->stack_num].eax = self->eax;
+	self->stack[self->stack_num].eip = self->eip;
+	++(self->stack_num);
+
+
 	//todo filed_search_strategy
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
-		self->eip = op->arg.field_begin_arg.failed_jmp_lineno;
+		self->eip = op->arg.field_begin_arg.lineno_after_field_end;
 	}
 	else
 	{
 		++(self->eip);
 	}
 
-	self->stack[self->stack_num].eax = self->eax;
-	++(self->stack_num);
+	
 
 	
 	return E_HP_NOERROR;
@@ -133,17 +139,20 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <=0 )
+	if(self->stack_num <= 0 )
 	{
 		goto ERROR_RET;
 	}
 
+	self->eax = self->stack[self->stack_num - 1].eax;
+	self->eip = self->stack[self->stack_num - 1].eip;
+	self->eip = self->hotoparr->oparr[self->eip].arg.field_begin_arg.lineno_after_field_end;
+	--(self->stack_num);
+	
+
 	read_field_end(self->reader, NULL);
 
-	self->eax = self->stack[self->stack_num - 1].eax;
-	--(self->stack_num);
-
-	++(self->eip);
+	
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
