@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #define NORMAL_OP_SIZE 128
 
 
@@ -109,11 +111,12 @@ ERROR_RET:
 }
 hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 {
+	char name[1024];
+	memcpy(name, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len);
+	name[op->arg.field_begin_arg.name.len] = 0;
 	//todo filed_search_strategy
-	if(read_field_begin(self->reader, op->arg.field_begin_arg.name.ptr, op->arg.field_begin_arg.name.len) != E_HP_NOERROR)
+	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
-		hpuint32 i;
-		
 		self->current_op = op->arg.field_begin_arg.failed_jmp_lineno;
 	}
 	else
@@ -127,7 +130,7 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
-	read_field_end(self->reader, NULL, 0);
+	read_field_end(self->reader, NULL);
 
 	++(self->current_op);
 	return E_HP_NOERROR;
