@@ -8,6 +8,8 @@
 
 hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 {
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
+
 	self->f = f;
 	self->count = 0;
 	self->need_tab = hpfalse;
@@ -38,24 +40,7 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 
 hpint32 xml_writer_fini(HP_XML_WRITER *self)
 {
-	self->super.write_struct_begin = NULL;
-	self->super.write_struct_end = NULL;
-	self->super.write_field_begin = NULL;
-	self->super.write_field_end = NULL;
-	self->super.write_vector_begin = NULL;
-	self->super.write_vector_end = NULL;
-	self->super.write_enum_number = NULL;
-	self->super.write_hpchar = NULL;
-	self->super.write_hpdouble = NULL;
-	self->super.write_hpint8 = NULL;
-	self->super.write_hpint16 = NULL;
-	self->super.write_hpint32 = NULL;
-	self->super.write_hpint64 = NULL;
-	self->super.write_hpuint8 = NULL;
-	self->super.write_hpuint16 = NULL;
-	self->super.write_hpuint32 = NULL;
-	self->super.write_hpuint64 = NULL;
-
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 
 	return E_HP_NOERROR;
 }
@@ -258,3 +243,8 @@ hpint32 xml_write_hpbool(HPAbstractWriter *super, const hpbool val)
 	return E_HP_NOERROR;
 }
 
+
+hpint32 xml_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val)
+{
+	return xml_write_hpint64(super, val);
+}

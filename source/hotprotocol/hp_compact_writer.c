@@ -7,14 +7,8 @@
 
 hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
 {
-	memset(&self->super, 0, sizeof(self->super));
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 
-	self->super.write_struct_begin = hp_compact_write_struct_begin;
-	self->super.write_struct_end = hp_compact_write_struct_end;
-	self->super.write_vector_begin = hp_compact_write_vector_begin;
-	self->super.write_vector_end = hp_compact_write_vector_end;
-	self->super.write_field_begin = hp_compact_write_field_begin;
-	self->super.write_field_end = hp_compact_write_field_end;
 	self->super.write_enum_number = hp_compact_write_enum;
 	self->super.write_hpchar = hp_compact_write_hpchar;
 	self->super.write_hpdouble = hp_compact_write_hpdouble;
@@ -27,6 +21,7 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 	self->super.write_hpuint32 = hp_compact_write_hpuint32;
 	self->super.write_hpuint64 = hp_compact_write_hpuint64;
 	self->super.write_string = hp_compact_write_string;
+	self->super.write_counter = hp_compact_write_counter;
 	
 	
 
@@ -39,23 +34,7 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 
 hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
 {
-	self->super.write_struct_begin = NULL;
-	self->super.write_struct_end = NULL;
-	self->super.write_field_begin = NULL;
-	self->super.write_field_end = NULL;
-	self->super.write_vector_begin = NULL;
-	self->super.write_vector_end = NULL;
-	self->super.write_enum_number = NULL;
-	self->super.write_hpchar = NULL;
-	self->super.write_hpdouble = NULL;
-	self->super.write_hpint8 = NULL;
-	self->super.write_hpint16 = NULL;
-	self->super.write_hpint32 = NULL;
-	self->super.write_hpint64 = NULL;
-	self->super.write_hpuint8 = NULL;
-	self->super.write_hpuint16 = NULL;
-	self->super.write_hpuint32 = NULL;
-	self->super.write_hpuint64 = NULL;
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 
 	self->addr = NULL;
 	self->size = 0;
@@ -66,42 +45,6 @@ hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
 #define DDEKIT_COMPACT_encoding_CAPACITY(self) (self->size - self->offset)
 
 #define DDEKIT_COMPACT_encoding_PTR(self) (self->addr + self->offset)
-
-hpint32 hp_compact_write_struct_begin(HPAbstractWriter *super, const char *struct_name)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
-
-hpint32 hp_compact_write_struct_end(HPAbstractWriter *super, const char *struct_name)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
-
-hpint32 hp_compact_write_vector_begin(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
-
-hpint32 hp_compact_write_vector_end(HPAbstractWriter *super, const char *var_name, hpint32 var_type, hpint32 end_with_zero)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
-
-hpint32 hp_compact_write_field_begin(HPAbstractWriter *super, const char *var_name)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
-
-hpint32 hp_compact_write_field_end(HPAbstractWriter *super, const char *var_name)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	return E_HP_NOERROR;
-}
 
 HP_API hpint32 hp_compact_write_enum(HPAbstractWriter *super, const hpint32 val)
 {
@@ -291,4 +234,9 @@ done:
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
+}
+
+HP_API hpint32 hp_compact_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val)
+{
+	return hp_compact_write_hpuint32(super, val);
 }

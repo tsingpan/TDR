@@ -55,4 +55,6 @@ HP_API hpint32 lua_read_hpuint32(HPAbstractReader *super, hpuint32 *val);
 
 HP_API hpint32 lua_read_hpuint64(HPAbstractReader *super, hpuint64 *val);
 
+HP_API hpint32 lua_read_counter(HPAbstractReader *super, const char *name, hpuint32 *val);
+
 #endif//_H_DDEKIT_LUA_ENCODING_READER

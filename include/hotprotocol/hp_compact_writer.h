@@ -18,18 +18,6 @@ HP_API hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuin
 HP_API hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self);
 
 //virtual functions
-HP_API hpint32 hp_compact_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
-
-HP_API hpint32 hp_compact_write_struct_end(HPAbstractWriter *self, const char *struct_name);
-
-HP_API hpint32 hp_compact_write_vector_begin(HPAbstractWriter *self);
-
-HP_API hpint32 hp_compact_write_vector_end(HPAbstractWriter *self);
-
-HP_API hpint32 hp_compact_write_field_begin(HPAbstractWriter *self, const char *var_name);
-
-HP_API hpint32 hp_compact_write_field_end(HPAbstractWriter *self, const char *var_name);
-
 HP_API hpint32 hp_compact_write_enum(HPAbstractWriter *super, const hpint32 val);
 
 HP_API hpint32 hp_compact_write_hpchar(HPAbstractWriter *super, const char val);
@@ -53,5 +41,7 @@ HP_API hpint32 hp_compact_write_hpuint32(HPAbstractWriter *super, const hpuint32
 HP_API hpint32 hp_compact_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
 HP_API hpint32 hp_compact_write_string(HPAbstractWriter *super, const hpchar* str);
+
+HP_API hpint32 hp_compact_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val);
 
 #endif//_H_DDEKIT_COMPACT_ENCODING_WRITER

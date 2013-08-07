@@ -9,10 +9,12 @@
 
 hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 {
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+
 	self->f = f;
 	self->count = 0;
 	self->need_tab = hpfalse;
-	memset(&self->super, 0, sizeof(HPAbstractReader));
+	
 
 	self->super.read_enum_name = xml_read_enum_name;
 
@@ -48,24 +50,7 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 
 hpint32 xml_reader_fini(HP_XML_READER *self)
 {
-	self->super.read_struct_begin = NULL;
-	self->super.read_struct_end = NULL;
-	self->super.read_field_begin = NULL;
-	self->super.read_field_end = NULL;
-	self->super.read_vector_begin = NULL;
-	self->super.read_vector_end = NULL;
-	self->super.read_enum_number = NULL;
-	self->super.read_hpchar = NULL;
-	self->super.read_hpdouble = NULL;
-	self->super.read_hpint8 = NULL;
-	self->super.read_hpint16 = NULL;
-	self->super.read_hpint32 = NULL;
-	self->super.read_hpint64 = NULL;
-	self->super.read_hpuint8 = NULL;
-	self->super.read_hpuint16 = NULL;
-	self->super.read_hpuint32 = NULL;
-	self->super.read_hpuint64 = NULL;
-
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
 
 	return E_HP_NOERROR;
 }

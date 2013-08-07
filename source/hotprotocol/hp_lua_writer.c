@@ -14,7 +14,10 @@
 
 hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 {
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
+
 	self->ls = lua_state;
+	
 
 	self->super.write_struct_begin = lua_write_struct_begin;
 	self->super.write_struct_end = lua_write_struct_end;
@@ -41,6 +44,7 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 	self->super.write_string = lua_write_string;
 	self->super.write_hpbool = lua_write_hpbool;
 	self->super.write_null = lua_write_null;
+	self->super.write_counter = lua_write_counter;
 	
 	
 
@@ -49,24 +53,7 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 
 hpint32 lua_writer_fini(HP_LUA_WRITER *self)
 {
-	self->super.write_struct_begin = NULL;
-	self->super.write_struct_end = NULL;
-	self->super.write_field_begin = NULL;
-	self->super.write_field_end = NULL;
-	self->super.write_vector_begin = NULL;
-	self->super.write_vector_end = NULL;
-	self->super.write_enum_number = NULL;
-	self->super.write_hpchar = NULL;
-	self->super.write_hpdouble = NULL;
-	self->super.write_hpint8 = NULL;
-	self->super.write_hpint16 = NULL;
-	self->super.write_hpint32 = NULL;
-	self->super.write_hpint64 = NULL;
-	self->super.write_hpuint8 = NULL;
-	self->super.write_hpuint16 = NULL;
-	self->super.write_hpuint32 = NULL;
-	self->super.write_hpuint64 = NULL;
-
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 
 	return E_HP_NOERROR;
 }
@@ -254,6 +241,15 @@ hpint32 lua_write_null(HPAbstractWriter *super)
 	HP_LUA_WRITER *self = HP_CONTAINER_OF(super, HP_LUA_WRITER, super);
 	
 	lua_pushnil(self->ls);
+
+	return E_HP_NOERROR;
+}
+
+hpint32 lua_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val)
+{
+	lua_write_field_begin(super, name);
+	lua_write_hpuint32(super, val);
+	lua_write_field_end(super, name);
 
 	return E_HP_NOERROR;
 }

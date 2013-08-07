@@ -10,7 +10,9 @@
 
 hpint32 lua_reader_init(HP_LUA_READER *self, lua_State *ls)
 {
-	self->ls = ls;
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+
+	self->ls = ls;	
 
 	self->super.read_struct_begin = lua_read_struct_begin;
 	self->super.read_struct_end = lua_read_struct_end;
@@ -29,29 +31,14 @@ hpint32 lua_reader_init(HP_LUA_READER *self, lua_State *ls)
 	self->super.read_hpuint16 = lua_read_hpuint16;
 	self->super.read_hpuint32 = lua_read_hpuint32;
 	self->super.read_hpuint64 = lua_read_hpuint64;
+	self->super.read_counter = lua_read_counter;
 
 	return E_HP_NOERROR;
 }
 
 hpint32 lua_reader_fini(HP_LUA_READER *self)
 {
-	self->super.read_struct_begin = NULL;
-	self->super.read_struct_end = NULL;
-	self->super.read_vector_begin = NULL;
-	self->super.read_vector_end = NULL;
-	self->super.read_field_begin = NULL;
-	self->super.read_field_end = NULL;
-	self->super.read_enum_number = NULL;
-	self->super.read_hpchar = NULL;
-	self->super.read_hpdouble = NULL;
-	self->super.read_hpint8 = NULL;
-	self->super.read_hpint16 = NULL;
-	self->super.read_hpint32 = NULL;
-	self->super.read_hpint64 = NULL;
-	self->super.read_hpuint8 = NULL;
-	self->super.read_hpuint16 = NULL;
-	self->super.read_hpuint32 = NULL;
-	self->super.read_hpuint64 = NULL;
+	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
 
 
 	return E_HP_NOERROR;
@@ -176,5 +163,13 @@ hpint32 lua_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 hpint32 lua_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 {
 	HP_LUA_READER *self = HP_CONTAINER_OF(super, HP_LUA_READER, super);
+	return E_HP_NOERROR;
+}
+
+hpint32 lua_read_counter(HPAbstractReader *super, const char *name, hpuint32 *val)
+{
+	lua_read_field_begin(super, name);
+	lua_read_hpuint32(super, val);
+	lua_read_field_end(super, name);
 	return E_HP_NOERROR;
 }

@@ -50,7 +50,7 @@ void test_compact()
 
 int main()
 {
-	test_xml();
+	//test_xml();
 
 	test_compact();
 

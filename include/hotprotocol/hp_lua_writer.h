@@ -61,12 +61,12 @@ HP_API hpint32 lua_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
 
 HP_API hpint32 lua_write_bytes(HPAbstractWriter *super, const hpbytes bytes);
 
-HP_API hpint32 lua_write_string(HPAbstractWriter *self, const hpchar* str);
+HP_API hpint32 lua_write_string(HPAbstractWriter *super, const hpchar* str);
 
-HP_API hpint32 lua_write_hpbool(HPAbstractWriter *self, const hpbool val);
+HP_API hpint32 lua_write_hpbool(HPAbstractWriter *super, const hpbool val);
 
-HP_API hpint32 lua_write_null(HPAbstractWriter *self);
+HP_API hpint32 lua_write_null(HPAbstractWriter *super);
 
-HP_API hpint32 lua_write_semicolon(HPAbstractWriter *super);
+HP_API hpint32 lua_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val);
 
 #endif//_H_DDEKIT_LUA_ENCODING_WRITER
