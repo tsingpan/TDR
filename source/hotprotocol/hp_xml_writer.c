@@ -92,6 +92,7 @@ hpint32 xml_write_struct_end(HPAbstractWriter *super, const char *struct_name)
 	{
 		len = strlen(struct_name);
 
+		fputc('\n', self->f);
 		fputc('<', self->f);
 		fputc('/', self->f);
 		for(i = 0;i < len; ++i)
