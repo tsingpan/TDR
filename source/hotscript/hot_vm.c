@@ -121,18 +121,19 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 	name[op->arg.field_begin_arg.name.len] = 0;	
 
 
-	self->stack[self->stack_num].eax = self->eax;
-	self->stack[self->stack_num].eip = self->eip;
-	self->stack[self->stack_num].return_eip = op->arg.field_begin_arg.lineno_after_field_end;
-	//todo filed_search_strategy
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.field_begin_arg.lineno_after_field_end;
 	}
 	else
 	{
-		++(self->eip);
+		self->stack[self->stack_num].eax = self->eax;
+		self->stack[self->stack_num].eip = self->eip;
+		self->stack[self->stack_num].return_eip = op->arg.field_begin_arg.lineno_after_field_end;		
 		++(self->stack_num);
+
+
+		++(self->eip);
 	}
 	
 	return E_HP_NOERROR;
@@ -155,6 +156,44 @@ hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 	read_field_end(self->reader, NULL);
 
 	
+	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
+}
+
+hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
+{
+	hpchar name[HS_MAX_NAME_LENGTH];
+
+	if(op->arg.call_field_arg.name.len >= HS_MAX_NAME_LENGTH)
+	{
+		goto ERROR_RET;
+	}
+	if(self->stack_num <= 0)
+	{
+		++self->eip;
+		goto ERROR_RET;
+	}
+
+	memcpy(name, op->arg.call_field_arg.name.ptr, HS_MAX_NAME_LENGTH);
+	name[op->arg.call_field_arg.name.len] = 0;
+
+	
+	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
+	{
+		++self->eip;
+	}
+	else
+	{
+		//ÕâÀïÆæÃîÁË
+		self->stack[self->stack_num].eax = self->eax;
+		self->stack[self->stack_num].eip = self->eip;
+		self->stack[self->stack_num].return_eip = self->eip + 1;
+		++(self->stack_num);
+
+		self->eip = self->stack[self->stack_num - 2].eip;
+	}
+
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;

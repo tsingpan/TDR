@@ -20,8 +20,7 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_ECHO_FIELD						   = 9,
 	HOT_JMP								   = 10,
 	HOT_ECHO_LITERAL                       = 11,
-	HOT_CALL_FIELD_BEGIN				   = 12,
-	HOT_CALL_FIELD_END					   = 13,
+	HOT_CALL_FIELD						   = 12,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 
@@ -36,15 +35,10 @@ typedef struct _HOT_FIELD_BEGIN_ARG
 	hpuint32 lineno_after_field_end;
 }HOT_FIELD_BEGIN_ARG;
 
-typedef struct _HOT_CALL_FIELD_BEGIN_ARG
+typedef struct _HOT_CALL_FIELD_ARG
 {	
 	hpbytes name;
-}HOT_CALL_FIELD_BEGIN_ARG;
-
-typedef struct _HOT_CALL_FIELD_END_ARG
-{	
-	hpbytes name;
-}HOT_CALL_FIELD_END_ARG;
+}HOT_CALL_FIELD_ARG;
 
 typedef struct _HOT_VECTOR_BEGIN_ARG
 {
@@ -70,8 +64,7 @@ typedef union _HOTSCRIPT_ARGUMENT
 {
 	HOT_ECHO_ARG	echo_arg;
 	HOT_FIELD_BEGIN_ARG field_begin_arg;
-	HOT_CALL_FIELD_BEGIN_ARG call_field_begin_arg;
-	HOT_CALL_FIELD_END_ARG call_field_end_arg;
+	HOT_CALL_FIELD_ARG call_field_arg;
 	HOT_VECTOR_BEGIN_ARG vector_begin_arg;
 	HOT_VECTOR_SET_INDEX_ARG vector_set_index_arg;
 	HOT_VECTOR_ITEM_BEGIN_ARG vector_item_begin_arg;
