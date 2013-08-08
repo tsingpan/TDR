@@ -425,7 +425,6 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	while(self->eip < self->hotoparr->next_oparr)
 	{		
 		hotvm_execute_func func = self->op_handler[self->hotoparr->oparr[self->eip].instruct];
-
 		if(func(self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;

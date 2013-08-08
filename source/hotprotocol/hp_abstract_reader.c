@@ -224,6 +224,11 @@ hpint32 read_counter(HPAbstractReader *self, const char *name, hpuint32 *val)
 
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	self->stack[self->stack_num - 1] = index;
 	if(self->read_vector_item_begin == NULL)
 	{
@@ -231,10 +236,17 @@ hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 	}
 
 	return self->read_vector_item_begin(self, index);
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	self->stack[self->stack_num - 1] = index + 1;
 	if(self->read_vector_item_end == NULL)
 	{
@@ -242,9 +254,18 @@ hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index)
 	}
 
 	return self->read_vector_item_end(self, index);
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpuint32 reader_get_index(HPAbstractReader *self)
 {
+	if(self->stack_num <= 0)
+	{
+		goto ERROR_RET;
+	}
+
 	return self->stack[self->stack_num - 1];
+ERROR_RET:
+	return E_HP_ERROR;
 }
