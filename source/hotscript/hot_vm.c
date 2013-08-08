@@ -163,6 +163,8 @@ ERROR_RET:
 
 hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
 {
+	hpint32 i;
+	hpuint32 func_eip;
 	hpchar name[HS_MAX_NAME_LENGTH];
 
 	if(op->arg.call_field_arg.name.len >= HS_MAX_NAME_LENGTH)
@@ -178,21 +180,37 @@ hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
 	memcpy(name, op->arg.call_field_arg.name.ptr, HS_MAX_NAME_LENGTH);
 	name[op->arg.call_field_arg.name.len] = 0;
 
+	func_eip = 0xffffffff;
+	for(i = self->stack_num - 1; i >= 0; --i)
+	{
+		const HotOp *_op = &self->hotoparr->oparr[self->stack[i].eip];
+
+		if((_op->instruct == HOT_FIELD_BEGIN) && (op->arg.call_field_arg.name.len == _op->arg.field_begin_arg.name.len) 
+			&& (memcmp(_op->arg.field_begin_arg.name.ptr, op->arg.call_field_arg.name.ptr, _op->arg.field_begin_arg.name.len) == 0))
+		{
+			func_eip = self->stack[i].eip + 1;
+			break;
+		}
+	}
+	if(func_eip == 0xffffffff)
+	{
+		++self->eip;
+		goto done;
+	}
 	
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
 		++self->eip;
+		goto done;
 	}
-	else
-	{
-		//这里奇妙了
-		self->stack[self->stack_num].eax = self->eax;
-		self->stack[self->stack_num].eip = self->eip;
-		self->stack[self->stack_num].return_eip = self->eip + 1;
-		++(self->stack_num);
+	//这里奇妙了
+	self->stack[self->stack_num].eax = self->eax;
+	self->stack[self->stack_num].eip = self->eip;
+	self->stack[self->stack_num].return_eip = self->eip + 1;
+	++(self->stack_num);
 
-		self->eip = self->stack[self->stack_num - 2].eip;
-	}
+	self->eip = func_eip;
+
 done:
 	return E_HP_NOERROR;
 ERROR_RET:
