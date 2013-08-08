@@ -38,6 +38,7 @@ typedef struct _HOT_FIELD_BEGIN_ARG
 typedef struct _HOT_CALL_FIELD_ARG
 {	
 	hpbytes name;
+	hpuint32 lineno_after_field_end;
 }HOT_CALL_FIELD_ARG;
 
 typedef struct _HOT_VECTOR_BEGIN_ARG

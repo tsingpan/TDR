@@ -206,7 +206,7 @@ hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
 	//ÕâÀïÆæÃîÁË
 	self->stack[self->stack_num].eax = self->eax;
 	self->stack[self->stack_num].eip = self->eip;
-	self->stack[self->stack_num].return_eip = self->eip + 1;
+	self->stack[self->stack_num].return_eip = op->arg.call_field_arg.lineno_after_field_end;
 	++(self->stack_num);
 
 	self->eip = func_eip;
@@ -423,7 +423,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_CALL_FIELD] = hotvm_call_field;
 
 	while(self->eip < self->hotoparr->next_oparr)
-	{
+	{		
 		hotvm_execute_func func = self->op_handler[self->hotoparr->oparr[self->eip].instruct];
 
 		if(func(self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
