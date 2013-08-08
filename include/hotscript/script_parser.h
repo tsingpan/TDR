@@ -22,6 +22,13 @@ typedef struct _SP_NODE
 }SP_NODE;
 
 
+typedef enum _E_SP_NODE_TYPE
+{
+	E_SP_OBJECT,
+	E_SP_ARRAY,
+}E_SP_NODE_TYPE;
+
+#define MAX_SP_STACK_DEEP 1024
 typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
 struct tagSCRIPT_PARSER
 {
@@ -33,6 +40,9 @@ struct tagSCRIPT_PARSER
 
 	HPAbstractReader *reader;
 	HotVM hotvm;
+
+	E_SP_NODE_TYPE stack[MAX_SP_STACK_DEEP];
+	hpuint32 stack_num;
 };
 
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, 

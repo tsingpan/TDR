@@ -37,6 +37,8 @@ hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP
 
 	identifier->vector_begin_index = op->lineno;
 
+	self->stack[(self->stack_num)++] = E_SP_ARRAY;
+
 	return E_HP_NOERROR;
 }
 
@@ -48,6 +50,8 @@ hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_N
 	op->script_line = yylloc->first_line;
 
 	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+
+	--(self->stack_num);
 	return E_HP_NOERROR;
 }
 hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
@@ -74,6 +78,10 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 	}
 	else if(identifier->token == tok_integer)
 	{
+		if((self->stack_num <= 0) || (self->stack[self->stack_num - 1] != E_SP_ARRAY))
+		{
+			goto ERROR_RET;
+		}
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
@@ -86,6 +94,11 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
+		if((self->stack_num <= 0) || (self->stack[self->stack_num - 1] != E_SP_ARRAY))
+		{
+			goto ERROR_RET;
+		}
+
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->script_line = yylloc->first_line;
@@ -104,7 +117,11 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		identifier->vector_item_begin_index = op->lineno;		
 	}
 	
+	self->stack[(self->stack_num)++] = E_SP_OBJECT;
 	return E_HP_NOERROR;
+ERROR_RET:
+	self->result = E_HP_ERROR;
+	return E_HP_ERROR;
 }
 
 hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
@@ -151,6 +168,8 @@ hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NO
 
 		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
+
+	--self->stack_num;
 	return E_HP_NOERROR;
 }
 
@@ -265,7 +284,7 @@ hpint32 script_parser_str(SCRIPT_PARSER *self, char* script, char *script_limit,
 {
 	hpint32 ret;
 
-	
+	self->stack_num = 0;
 
 	scanner_stack_init(&self->scanner_stack);
 
@@ -293,7 +312,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 {
 	hpint32 ret;
 
-
+	self->stack_num = 0;
 
 	scanner_stack_init(&self->scanner_stack);
 
@@ -313,7 +332,15 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	
 	ret = yyscriptparse(self);
 
-	scanner_stack_pop(&self->scanner_stack);
+	if(self->result != E_HP_NOERROR)
+	{
+		goto ERROR_RET;
+	}
+
+	if(scanner_stack_pop(&self->scanner_stack) != E_HP_NOERROR)
+	{
+		goto ERROR_RET;
+	}
 
 	if(hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc) != E_HP_NOERROR)
 	{
