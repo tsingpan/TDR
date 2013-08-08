@@ -67,7 +67,7 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 	if(identifier->token == tok_call_identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
-		op->instruct = HOT_CALL_FIELD;
+		op->instruct = HOT_CALL_FIELD_BEGIN;
 		op->arg.field_begin_arg.name = identifier->var.val.bytes;
 		identifier->call_field_begin_index = op->lineno;
 	}
@@ -116,8 +116,8 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 	else if(identifier->token == tok_call_identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
-		op->instruct = HOT_FIELD_END;
-		self->hotoparr.oparr[identifier->call_field_begin_index].arg.call_field_arg.lineno_after_call_field = op->lineno;
+		op->instruct = HOT_CALL_FIELD_END;
+		self->hotoparr.oparr[identifier->call_field_begin_index].arg.call_field_begin_arg.lineno_after_call_field_begin = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_integer)
 	{
