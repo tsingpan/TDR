@@ -11,6 +11,7 @@
 
 #include "datrie/trie.h"
 #include "language/language.h"
+#include "hotpot/hp_error_msg.h"
 
 
 #include "parser_node.h"
@@ -27,7 +28,7 @@ struct _DATA_PARSER
 	char result_str[MAX_ERROR_NUM][MAX_RESULT_STRING_LENGTH];
 	hpuint32 result_num;
 
-	const LanguageLib *language_lib;
+	const HP_ERROR_MSG_LIBRARY *language_lib;
 
 	char file_name[MAX_FILE_NAME_LENGTH];
 
@@ -46,7 +47,7 @@ struct _DATA_PARSER
 
 hpint32 data_parser_init(DATA_PARSER *self);
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib);
+hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const HP_ERROR_MSG_LIBRARY *language_lib);
 
 //do
 void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINITION *pn_definition);

@@ -15,9 +15,8 @@
 #include "hotprotocol/hp_xml_reader.h"
 #include "hotprotocol/hp_lua_writer.h"
 
-#include "language/language_types.h"
-#include "language/language_reader.h"
-#include "language/language.h"
+#include "hotpot/hp_error_msg_reader.h"
+#include "hotpot/hp_error_msg.h"
 
 #include "syntactic_node.h"
 
@@ -47,7 +46,7 @@ void help()
 }
 
 
-LanguageLib language_lib;
+HP_ERROR_MSG_LIBRARY language_lib;
 DATA_PARSER dp;
 
 HP_LUA_WRITER writer;

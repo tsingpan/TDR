@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "globals.h"
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const LanguageLib *language_lib)
+hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer, const HP_ERROR_MSG_LIBRARY *language_lib)
 {
 	hpint32 ret;
 	AlphaMap *alpha_map = NULL;
@@ -96,7 +96,7 @@ static void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, v
 void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...) 
 {
 	va_list ap;
-	const char *error_str = get_string_by_sid(self->language_lib, (LanguageStringID)result);
+	const char *error_str = get_string_by_sid(self->language_lib, result);
 
 	self->result[self->result_num] = result;
 

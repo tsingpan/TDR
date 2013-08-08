@@ -160,7 +160,7 @@ void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, con
 
 	if(dp_find_symbol(self, tok_identifier) != NULL)
 	{
-		dp_error(self, yylloc, E_SID_SYMBOL_REDEFINITION, id);
+		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, id);
 	}
 }
 
@@ -183,7 +183,7 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 	
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR, id);
+		dp_error(self, yylloc, E_HP_ERROR, id);
 	}
 done:
 	return;
@@ -198,7 +198,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 
 	if((type == NULL) || (val == NULL))
 	{
-		dp_error(self, yylloc, E_SID_ERROR, id);
+		dp_error(self, yylloc, E_HP_ERROR, id);
 		goto done;
 	}
 
@@ -269,7 +269,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 	}
 	else if(type->type == E_SNT_REFER)
 	{
-		dp_error(self, yylloc, E_SID_ERROR, id);
+		dp_error(self, yylloc, E_HP_ERROR, id);
 	}
 	else if(type->type == E_SNT_CONTAINER)
 	{
@@ -277,12 +277,12 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(sn_value->type != E_SNVT_STRING)
 			{
-				dp_error(self, yylloc, E_SID_ERROR, id);
+				dp_error(self, yylloc, E_HP_ERROR, id);
 			}
 		}
 		else
 		{
-			dp_error(self, yylloc, E_SID_ERROR, id);
+			dp_error(self, yylloc, E_HP_ERROR, id);
 		}
 	}
 
@@ -338,7 +338,7 @@ void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_P
 
 	if(dp_save_symbol_string(self, pn_parameter->identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR);
+		dp_error(self, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -984,7 +984,7 @@ void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD
 
 	if(dp_save_symbol_string(self, pn_field->identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR);
+		dp_error(self, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -999,7 +999,7 @@ void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTI
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR);
+		dp_error(self, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -1013,7 +1013,7 @@ void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDEN
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR);
+		dp_error(self, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -1027,7 +1027,7 @@ void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENT
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_SID_ERROR);
+		dp_error(self, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
