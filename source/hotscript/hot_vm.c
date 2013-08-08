@@ -221,7 +221,7 @@ hpint32 hotvm_call_field_begin(HotVM *self, const HotOp* op)
 		self->eip = op->arg.call_field_begin_arg.lineno_after_call_field_begin;
 		goto done;
 	}
-	//ÕâÀïÆæÃîÁË
+
 	self->stack[self->stack_num].eax = self->eax;
 	self->stack[self->stack_num].eip = self->eip;
 	self->stack[self->stack_num].return_eip = op->arg.call_field_begin_arg.lineno_after_call_field_begin;

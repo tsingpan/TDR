@@ -257,15 +257,3 @@ hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index)
 ERROR_RET:
 	return E_HP_ERROR;
 }
-
-hpuint32 reader_get_index(HPAbstractReader *self)
-{
-	if(self->stack_num <= 0)
-	{
-		goto ERROR_RET;
-	}
-
-	return self->stack[self->stack_num - 1];
-ERROR_RET:
-	return E_HP_ERROR;
-}
