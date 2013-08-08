@@ -52,7 +52,7 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 //do
 void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINITION *pn_definition);
 
-void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...) ;
+void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, ...) ;
 
 #endif//_H_HOTDATA_PARSER
 

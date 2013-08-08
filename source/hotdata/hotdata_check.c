@@ -237,7 +237,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		case E_ST_DOUBLE:
 			goto done;
 		default:
-			dp_error(self, yylloc, (hpint32)E_HP_INVALID_CONSTANCE_TYPE);
+			dp_error(self, yylloc, E_HP_INVALID_CONSTANCE_TYPE);
 			goto done;
 		}
 		size *= 8;
@@ -245,7 +245,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(val->val.ui64 >> size)
 			{
-				dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+				dp_error(self, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
 			}
 		}
@@ -253,7 +253,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(val->val.i64 >> size)
 			{
-				dp_error(self, yylloc, (hpint32)E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+				dp_error(self, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
 			}
 		}
@@ -263,7 +263,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		}
 		else
 		{
-			dp_error(self, yylloc, (hpint32)E_HP_UNKNOW_CONSTANT_VALUE);
+			dp_error(self, yylloc, E_HP_UNKNOW_CONSTANT_VALUE);
 			goto done;
 		}
 	}

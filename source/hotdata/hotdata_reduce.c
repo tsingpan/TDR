@@ -39,13 +39,6 @@ void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yyllo
 	}
 	id[i] = 0;
 	strncpy(current->ot, id, MAX_IDENTIFIER_LENGTH);
-/*
-	if(!trie_retrieve(self->typedef_identifier, id, type))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_ERROR, id);
-		goto done;
-	}
-	*/
 done:
 	return;
 }
@@ -77,19 +70,6 @@ void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN
 	memcpy(current->val.identifier, sn_identifier.ptr, sn_identifier.len);
 	current->val.identifier[sn_identifier.len] = 0;
 
-/*
-	if(!trie_retrieve(self->symbols, id, &data))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
-		goto error_ret;
-	}
-/*
-	if((self->symbol_list[data].type != E_SST_Const) && (self->symbol_list[data].type != E_SST_EnumDef))
-	{
-		dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_FIND_CONSTANCE, id);
-		goto error_ret;
-	}
-*/
 	
 done:
 	return;

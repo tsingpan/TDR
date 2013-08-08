@@ -93,7 +93,7 @@ static void _dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, const char *s, v
 	vsnprintf(self->result_str[self->result_num] + len, MAX_RESULT_STRING_LENGTH - len, s, ap);
 }
 
-void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, hpint32 result, ...) 
+void dp_error(DATA_PARSER *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, ...) 
 {
 	va_list ap;
 	const char *error_str = get_string_by_sid(self->language_lib, result);
@@ -161,7 +161,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 		{
 			if(YYCURSOR >= YYLIMIT)
 			{
-				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				dp_error(dp, yylloc, E_HP_ERROR);
 				break;
 			}
 			if(*YYCURSOR == '\\')
@@ -212,7 +212,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			}
 			else
 			{
-				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				dp_error(dp, yylloc, E_HP_ERROR);
 			}
 			break;
 		}
@@ -221,7 +221,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			hpuint32 len = 0;
 			if(YYCURSOR >= YYLIMIT)
 			{
-				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				dp_error(dp, yylloc, E_HP_ERROR);
 				break;
 			}
 			yylval->sn_string = YYCURSOR;
@@ -248,7 +248,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			}
 			if(YYCURSOR >= YYLIMIT)
 			{
-				dp_error(dp, yylloc, (hpint32)E_HP_ERROR);
+				dp_error(dp, yylloc, E_HP_ERROR);
 			}
 			else
 			{				
@@ -281,7 +281,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{	
-					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
+					dp_error(dp, yylloc, E_HP_INTEGER_OVERFLOW);
 				}
 			}
 			break;
@@ -293,7 +293,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
+					dp_error(dp, yylloc, E_HP_INTEGER_OVERFLOW);
 			}
 			break;
 		}
@@ -309,7 +309,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					dp_error(dp, yylloc, (hpint32)E_HP_INTEGER_OVERFLOW);
+					dp_error(dp, yylloc, E_HP_INTEGER_OVERFLOW);
 				}
 			}
 			break;
@@ -448,29 +448,10 @@ void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINIT
 	if(pn_definition->type == E_DT_IMPORT)
 	{
 		char file_name[HP_MAX_FILE_PATH_LENGTH];
-/*
-		hpuint32 i;
-		hpuint32 suffix_len = strlen(DATA_DESCRIPTION_FILE_EXTENSION_NAME);
-		hpuint32 len = strlen(pn_definition->definition.de_import.package_name);
-		
-		for(i = 0; i < len; ++i)
-		{
-			file_name[i] = pn_definition->definition.de_import.package_name[i];
-			if(file_name[i] == '.')
-			{
-				file_name[i] = HP_FILE_SEPARATOR;
-			}
-		}
-		for(; i < len + suffix_len; ++i)
-		{
-			file_name[i] = DATA_DESCRIPTION_FILE_EXTENSION_NAME[i - len];
-		}
-		file_name[i] = 0;
-*/
 		snprintf(file_name, HP_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
 		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 		{
-			dp_error(self, yylloc, (hpint32)E_HP_CAN_NOT_OPEN_FILE, file_name);
+			dp_error(self, yylloc, E_HP_CAN_NOT_OPEN_FILE, file_name);
 		}
 	}
 }
