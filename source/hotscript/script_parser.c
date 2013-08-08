@@ -8,9 +8,8 @@
 #include "hotpot/hp_platform.h"
 
 
-hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO;
@@ -18,10 +17,8 @@ hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
+hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
-
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO_LITERAL;
 	op->arg.echo_arg.bytes = text->var.val.bytes;
@@ -29,9 +26,8 @@ hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier)
+hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
 	
 	op = hotoparr_get_next_op(&self->hotoparr);
@@ -42,9 +38,8 @@ hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
+hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_END;
@@ -52,9 +47,8 @@ hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier)
 	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
 }
-hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
+hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 	HotOp *op = NULL;
 
 	if(identifier->token == tok_identifier)
@@ -102,9 +96,8 @@ hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
+hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 
 	HotOp *op = NULL;
 	if(identifier->token == tok_identifier)
@@ -145,11 +138,10 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 }
 
 
-hpint32 hotscript_do_echo_field(SCANNER_STACK *super, SP_NODE *identifier)
+hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
 	if(identifier->token != tok_call_identifier)
 	{
-		SCRIPT_PARSER *self = HP_CONTAINER_OF(super, SCRIPT_PARSER, scanner_stack);
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_ECHO_FIELD;
 	}

@@ -42,21 +42,21 @@ hpint32 script_parser_str(SCRIPT_PARSER *self, char* script, char *script_limit,
 						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
 
 
-hpint32 hotscript_do_text(SCANNER_STACK *super, const SP_NODE *text);
+hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 
-hpint32 hotscript_do_literal(SCANNER_STACK *super, const SP_NODE *text);
+hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 
-hpint32 hotscript_do_field_begin(SCANNER_STACK *super, SP_NODE *identifier);
+hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier);
+hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_begin(SCANNER_STACK *super, SP_NODE *identifier);
+hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_end(SCANNER_STACK *super, SP_NODE *identifier);
+hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_field(SCANNER_STACK *super, SP_NODE *current);
+hpint32 hotscript_do_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *current);
 
-hpint32 hotscript_do_echo_field(SCANNER_STACK *super);
+hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc);
 
 #endif//_H_SCRIPT_PARSER
 
