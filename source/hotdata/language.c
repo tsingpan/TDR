@@ -1,4 +1,4 @@
-#include "language/language.h"
+#include "language.h"
 #include "hotpot/hp_error.h"
 
 #include "hotpot/hp_error_msg_reader.h"

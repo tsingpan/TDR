@@ -190,6 +190,7 @@ function on_union(object)
 	print_line(t, '}')
 end
 function main(hd)
+	print_file_prefix()
 	print_line(0, '#include "hotpot/hp_platform.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
 
