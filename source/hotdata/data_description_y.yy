@@ -80,7 +80,6 @@
 
 %type<sn_definition> Definition
 %type<sn_import> Import
-%type<sn_tok_import> tok_import
 
 %type<sn_tok_identifier> tok_identifier
 %type<sn_int64> tok_int64
@@ -194,9 +193,9 @@ Definition :
 	};
 
 Import :
-	tok_import
+	tok_import tok_string
 	{
-		dp_reduce_Import_tok_import(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_Import_tok_string(GET_SELF, &yylloc, &$$, $2);
 	};
 
 Typedef :

@@ -197,12 +197,12 @@ function main(hd)
 	print_line(0, '#include "hotpot/hp_platform.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
 
-	if(c_types_file)then
-		print_line(0, '#include \"' .. c_types_file .. '\"')
+	if(ifiles ~= nil) then
+		for k, v in pairs(ifiles) do
+			print_line(0, '#include "' .. v .. '"')
+		end
 	end
-	if(c_writer_header_file)then
-		print_line(0, '#include \"' .. c_writer_header_file .. '\"')
-	end
+
 	for key, value in pairs(hd['definition_list']) do
 		if(value.type == E_DT_ENUM)then
 			on_enum(value.definition.de_enum)

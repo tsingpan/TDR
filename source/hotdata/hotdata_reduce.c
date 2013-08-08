@@ -20,9 +20,9 @@ void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_D
 	pn_current->definition.de_typedef = *pn_typedef;
 }
 
-void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import)
+void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring str)
 {
-	snprintf(current->package_name, sizeof(current->package_name), *sn_tok_import);
+	snprintf(current->package_name, sizeof(current->package_name), str);
 }
 
 void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier)

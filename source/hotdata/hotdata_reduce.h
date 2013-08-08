@@ -12,7 +12,7 @@ void dp_reduce_Definition_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEF
 
 void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_TYPEDEF* pn_typedef);
 
-void dp_reduce_Import_tok_import(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring *sn_tok_import);
+void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring str);
 
 void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier);
 

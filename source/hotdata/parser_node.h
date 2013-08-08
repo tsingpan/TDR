@@ -35,7 +35,6 @@ typedef ST_FIELD_LIST PN_FIELD_LIST;
 union _ParserNode
 {
 	PN_IMPORT sn_import;
-	hpstring sn_tok_import;
 
 	PN_TYPE sn_type;
 	PN_VALUE sn_value;	

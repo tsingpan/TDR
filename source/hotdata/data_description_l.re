@@ -208,7 +208,6 @@ anychar			([^])
 <INITIAL>"extends"            { ddekit_reserved_keyword(yytext); }
 <INITIAL>"exception"          { ddekit_reserved_keyword(yytext); }
 <INITIAL>"binary"             { ddekit_reserved_keyword(yytext); }
-<INITIAL>"include"            { ddekit_reserved_keyword(yytext); }
 <INITIAL>"bool"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"void"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"byte"               { ddekit_reserved_keyword(yytext); }
