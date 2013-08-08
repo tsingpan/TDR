@@ -79,6 +79,7 @@ typedef struct _HotOp
 	HOTSCRIPT_INSTRUCT instruct;
 	HOTSCRIPT_ARGUMENT arg;
 	hpuint32 lineno;
+	hpuint32 script_line;
 }HotOp;
 
 typedef struct _HotOpArr

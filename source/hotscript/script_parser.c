@@ -14,6 +14,7 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_N
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO;
 	op->arg.echo_arg.bytes = text->var.val.bytes;
+	op->script_line = yylloc->first_line;
 	return E_HP_NOERROR;
 }
 
@@ -22,7 +23,7 @@ hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const S
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO_LITERAL;
 	op->arg.echo_arg.bytes = text->var.val.bytes;
-
+	op->script_line = yylloc->first_line;
 	return E_HP_NOERROR;
 }
 
@@ -32,6 +33,7 @@ hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP
 	
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_BEGIN;
+	op->script_line = yylloc->first_line;
 
 	identifier->vector_begin_index = op->lineno;
 
@@ -43,6 +45,7 @@ hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_N
 	HotOp *op = NULL;
 	op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_VECTOR_END;
+	op->script_line = yylloc->first_line;
 
 	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	return E_HP_NOERROR;
@@ -56,6 +59,8 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_BEGIN;
 		op->arg.field_begin_arg.name = identifier->var.val.bytes;
+		op->script_line = yylloc->first_line;
+
 		identifier->field_begin_index = op->lineno;
 	}
 	if(identifier->token == tok_call_identifier)
@@ -63,6 +68,8 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_CALL_FIELD_BEGIN;
 		op->arg.field_begin_arg.name = identifier->var.val.bytes;
+		op->script_line = yylloc->first_line;
+
 		identifier->call_field_begin_index = op->lineno;
 	}
 	else if(identifier->token == tok_integer)
@@ -70,15 +77,18 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
+		op->script_line = yylloc->first_line;
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
+		op->script_line = yylloc->first_line;
 		identifier->vector_item_begin_index = op->lineno;	
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
+		op->script_line = yylloc->first_line;
 		if(identifier->token == tok_auto_integer)
 		{
 			op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
@@ -90,6 +100,7 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
+		op->script_line = yylloc->first_line;
 		identifier->vector_item_begin_index = op->lineno;		
 	}
 	
@@ -104,18 +115,21 @@ hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NO
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_END;
+		op->script_line = yylloc->first_line;
 		self->hotoparr.oparr[identifier->field_begin_index].arg.field_begin_arg.lineno_after_field_end = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_call_identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_CALL_FIELD_END;
+		op->script_line = yylloc->first_line;
 		self->hotoparr.oparr[identifier->call_field_begin_index].arg.call_field_begin_arg.lineno_after_call_field_begin = hotoparr_get_next_op_number(&self->hotoparr);
 	}
 	else if(identifier->token == tok_integer)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_END;
+		op->script_line = yylloc->first_line;
 
 		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 	}
@@ -123,12 +137,15 @@ hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NO
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_END;
+		op->script_line = yylloc->first_line;
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_INC_INDEX;
+		op->script_line = yylloc->first_line;
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_JMP;
+		op->script_line = yylloc->first_line;
 		op->arg.jmp_arg.lineno = self->hotoparr.oparr[identifier->vector_item_begin_index].lineno;
 
 
@@ -144,6 +161,7 @@ hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_N
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_ECHO_FIELD;
+		op->script_line = yylloc->first_line;
 	}
 	return E_HP_NOERROR;
 }
