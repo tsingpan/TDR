@@ -122,15 +122,11 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
-	SCANNER_STACK *ss = &dp->scanner_stack;
-
 
 	switch(*token)
 	{
 	case tok_import:
 		{
-			const char *i;
-
 			yylval->sn_tok_import = NULL;
 
 			while(self->yy_cursor < self->yy_limit)
@@ -449,9 +445,24 @@ void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINIT
 {
 	if(pn_definition->type == E_DT_IMPORT)
 	{
-		char file_name[1024];
-		snprintf(file_name, sizeof(file_name), "%s%s", pn_definition->definition.de_import.package_name, DATA_DESCRIPTION_FILE_EXTENSION_NAME);
-		file_name[sizeof(file_name) - 1] = 0;
+		hpuint32 i;
+		hpuint32 suffix_len = strlen(DATA_DESCRIPTION_FILE_EXTENSION_NAME);
+		hpuint32 len = strlen(pn_definition->definition.de_import.package_name);
+		char file_name[HP_MAX_FILE_PATH_LENGTH];
+
+		for(i = 0; i < len; ++i)
+		{
+			file_name[i] = pn_definition->definition.de_import.package_name[i];
+			if(file_name[i] == '.')
+			{
+				file_name[i] = HP_FILE_SEPARATOR;
+			}
+		}
+		for(; i < len + suffix_len; ++i)
+		{
+			file_name[i] = DATA_DESCRIPTION_FILE_EXTENSION_NAME[i - len];
+		}
+		file_name[i] = 0;
 
 		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 		{

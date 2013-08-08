@@ -1,7 +1,7 @@
 #ifndef _H_hp_error_hd_TYPES
 #define _H_hp_error_hd_TYPES
 #include "hotpot/hp_platform.h"
-typedef enum _HP_HOTPOT_ERROR_CODE
+typedef enum _HP_ERROR_CODE
 {
 	E_HP_NOERROR = 0,
 	E_HP_ERROR = -1,
@@ -17,5 +17,5 @@ typedef enum _HP_HOTPOT_ERROR_CODE
 	E_HP_UNKNOW_CONSTANT_VALUE = -11,
 	E_HP_SYMBOL_REDEFINITION = -12,
 	E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE = -13,
-}HP_HOTPOT_ERROR_CODE;
+}HP_ERROR_CODE;
 #endif//_H_hp_error_hd_TYPES

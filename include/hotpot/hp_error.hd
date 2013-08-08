@@ -1,4 +1,4 @@
-enum HP_HOTPOT_ERROR_CODE
+enum HP_ERROR_CODE
 {
 	E_HP_NOERROR																= 0,
 	E_HP_ERROR																	= -1, 

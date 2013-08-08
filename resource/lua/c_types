@@ -130,6 +130,9 @@ function on_object(type_name, object)
 	io.write('}' .. object.name .. ';\n')
 end
 
+function on_import(import)
+end
+
 function main(hd)
 	file_tag = hd.file_name
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_TYPES'
@@ -147,6 +150,8 @@ function main(hd)
 			on_object('struct', value.definition.de_struct)
 		elseif(value.type == E_DT_UNION)then
 			on_object('union', value.definition.de_union)
+		elseif(value.type == E_DT_IMPORT)then
+			on_import(value.definition.de_import)
 		end
 	end
 	io.write('#endif//' .. file_tag .. '\n')
