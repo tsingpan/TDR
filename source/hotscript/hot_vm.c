@@ -172,7 +172,7 @@ hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
 	if(self->stack_num <= 0)
 	{
 		++self->eip;
-		goto ERROR_RET;
+		goto done;
 	}
 
 	memcpy(name, op->arg.call_field_arg.name.ptr, HS_MAX_NAME_LENGTH);
@@ -193,7 +193,7 @@ hpint32 hotvm_call_field(HotVM *self, const HotOp* op)
 
 		self->eip = self->stack[self->stack_num - 2].eip;
 	}
-
+done:
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -402,17 +402,11 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
-	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
-	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
+	self->op_handler[HOT_CALL_FIELD] = hotvm_call_field;
 
 	while(self->eip < self->hotoparr->next_oparr)
 	{
 		hotvm_execute_func func = self->op_handler[self->hotoparr->oparr[self->eip].instruct];
-		if(func == NULL)
-		{
-			++self->eip;
-			continue;
-		}
 
 		if(func(self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
 		{
