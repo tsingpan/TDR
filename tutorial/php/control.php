@@ -13,12 +13,13 @@
 	$d['data'] = '1d';
 
 
+	$ddd['d'] = $dddd;
 	$dd['d'] = $ddd;
 	$d['d'] = $dd;
 
 	$d['hi'] = 'hello!';
 	$d['arr'] = array(1,2,3,4,5,6);
 
-	echo hs_execute_array($d, 'd:/test.hs');
+	echo hs_execute_array($d, 'template.hs');
 ?>
 

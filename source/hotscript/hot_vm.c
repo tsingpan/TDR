@@ -169,7 +169,7 @@ hpint32 hotvm_call_field_end(HotVM *self, const HotOp* op)
 	}
 
 	self->eax = self->stack[self->stack_num - 1].eax;
-	++self->eip;// = self->stack[self->stack_num - 1].return_eip;
+	self->eip = self->stack[self->stack_num - 1].return_eip;
 	--(self->stack_num);
 
 	read_field_end(self->reader, NULL);
