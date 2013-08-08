@@ -32,7 +32,7 @@ typedef enum tagHP_HOTPOT_ERROR_CODE_NUMBER
 
 //hotdata´íÎóÇø¼ä
 typedef enum _HP_HOTDATA_ERROR_CODE
-{	
+{
 	E_HP_CONSTANT_REDEFINITION												= -E_HP_HOTDATA_SECTION - 1,
 	E_HP_INTEGER_OVERFLOW													= -E_HP_HOTDATA_SECTION - 2,
 	E_HP_CAN_NOT_OPEN_FILE													= -E_HP_HOTDATA_SECTION - 3,
