@@ -117,7 +117,7 @@ hpint32 hotscript_do_field_end(SCANNER_STACK *super, SP_NODE *identifier)
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_END;
-		self->hotoparr.oparr[identifier->call_field_begin_index].arg.call_field_arg.lineno_after_field_end = op->lineno;
+		self->hotoparr.oparr[identifier->call_field_begin_index].arg.call_field_arg.lineno_after_call_field = op->lineno;
 	}
 	else if(identifier->token == tok_integer)
 	{
