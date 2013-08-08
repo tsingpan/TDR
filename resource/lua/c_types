@@ -131,6 +131,7 @@ function on_object(type_name, object)
 end
 
 function on_import(import)
+	io.write('#include \"' .. string.gsub(import.package_name, '[.]', '/') .. '.h\"\n')
 end
 
 function main(hd)

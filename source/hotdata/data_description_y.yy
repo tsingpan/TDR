@@ -149,11 +149,13 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
-		write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
-		write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-		write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
-
-		++GET_SELF->definition_list_num;
+		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
+		{
+			write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+			write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
+			write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+			++GET_SELF->definition_list_num;
+		}		
 
 		dp_do_Definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
