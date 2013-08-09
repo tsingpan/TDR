@@ -58,6 +58,7 @@ function main(hd)
 			on_const(value.definition.de_const)
 		elseif(value.type == E_DT_ENUM)then
 			on_enum(value.definition.de_enum)
+		end
 	end
 end
 

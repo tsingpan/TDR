@@ -23,11 +23,11 @@
 #include "hotscript/hot_vm.h"
 #include <io.h>
 
-#define HOTDATA_VERSION "0.0.1"
+#include "hotpot/hp_config.h"
 
 void version()
 {
-	printf("HotData version %s\n", HOTDATA_VERSION);
+	printf("HotData version %s\n", HOTPOT_VERSION);
 }
 
 void usage()

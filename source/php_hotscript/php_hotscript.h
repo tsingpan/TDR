@@ -16,7 +16,9 @@ extern zend_module_entry hotscript_module_entry;
 #include "TSRM.h"
 #endif
 
-#define PHP_HOTSCRIPT_VERSION "0.0.1"
+#include "hotpot/hp_config.h"
+
+#define PHP_HOTSCRIPT_VERSION HOTPOT_VERSION
 
 
 PHP_MINIT_FUNCTION(hotscript);
