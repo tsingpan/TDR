@@ -14,6 +14,7 @@ INCLUDE_DIRECTORIES(
 
 set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c ${GEN_PATH}/proto_reader.h ${GEN_PATH}/proto_writer.c ${GEN_PATH}/proto_writer.h)
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
+        COMMAND cmake -E make_directory ${GEN_PATH}
 	COMMAND ${HOTDATA_EXECUTABLE} -s ${data_conversion_SOURCE_DIR} -t ${GEN_PATH} -python c_types -python c_reader_header -python c_reader -python c_writer_header -python c_writer proto.hd
 )
 

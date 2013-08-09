@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "hotplatform/hp_platform.h"
-#include "proto_types.h"
+#include "proto.h"
 
 #include "proto_reader.h"
 #include "proto_writer.h"
