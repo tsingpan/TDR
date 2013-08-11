@@ -23,8 +23,6 @@
 #include "hotscript/hp_script_vm.h"
 #include <io.h>
 
-#include "hotpot/hp_config.h"
-
 void version()
 {
 	printf("HotData version %s\n", HOTPOT_VERSION);

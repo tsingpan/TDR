@@ -16,7 +16,7 @@ extern zend_module_entry hotscript_module_entry;
 #include "TSRM.h"
 #endif
 
-#include "hotpot/hp_config.h"
+
 #include "hotpot/hp_error_msg.h"
 
 #define PHP_HOTSCRIPT_VERSION HOTPOT_VERSION

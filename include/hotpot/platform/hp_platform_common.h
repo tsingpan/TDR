@@ -1,7 +1,7 @@
 #ifndef _H_HP_PLATFORM_COMMON
 #define _H_HP_PLATFORM_COMMON
 
-#include "hp_config.h"
+#include "hotpot/hp_config.h"
 
 typedef signed char hpint8;
 typedef signed short int hpint16;
