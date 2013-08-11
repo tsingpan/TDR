@@ -1,44 +1,44 @@
-HotPot——小星星的聚宝盆
+HotPot锟斤拷锟斤拷小锟斤拷锟角的聚憋拷锟斤拷
 ========================
-提供了数据的跨平台， 跨语言支持等功能， 是其他库的基础。
+锟结供锟斤拷锟斤拷锟捷的匡拷平台锟斤拷 锟斤拷锟斤拷锟斤拷支锟街等癸拷锟杰ｏ拷 锟斤拷锟斤拷锟斤拷锟斤拷锟侥伙拷锟斤拷锟斤拷
 
-安装
+锟斤拷装
 ----
 #windows
-###1、安装PHP
-		最低版本:5.5.1
-		安装请参考：https://wiki.php.net/internals/windows/stepbystepbuild
-		不要忘记配置环境变量PHP-DEVEL_DIR为php的根目录
+###1锟斤拷锟斤拷装PHP
+		锟斤拷锟酵版本:5.5.1
+		锟斤拷装锟斤拷锟轿匡拷锟斤拷https://wiki.php.net/internals/windows/stepbystepbuild
+		锟斤拷要锟斤拷锟斤拷锟斤拷锟矫伙拷锟斤拷锟斤拷锟斤拷PHP-DEVEL_DIR为php锟侥革拷目录
 
-###2、安装LUA
-		最低版本:5.5.2
-		[静态版本的LUA请参考](http://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/)
-		不要忘记配置环境变量LUA_DIR为lua的根目录
+###2锟斤拷锟斤拷装LUA
+		锟斤拷锟酵版本:5.5.2
+		锟斤拷态锟芥本锟斤拷LUA锟斤拷锟轿匡拷](htp://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/)
+		锟斤拷要锟斤拷锟斤拷锟斤拷锟矫伙拷锟斤拷锟斤拷锟斤拷LUA_DIR为lua锟侥革拷目录
 		
-###3、安装CMake
-		最低版本：2.8.11.1
-		如何在Windows上安装CMake请参考：http://www.cmake.org/
+###3锟斤拷锟斤拷装CMake
+		锟斤拷锟酵版本锟斤拷2.8.11.1
+		锟斤拷锟斤拷锟斤拷Windows锟较帮拷装CMake锟斤拷锟轿匡拷锟斤拷http://www.cmake.org/
 
-###4、下载HotPot源代码
+###4锟斤拷锟斤拷锟斤拷HotPot源锟斤拷锟斤拷
 		git clone https://github.com/randyliu/HotPot
 
-###5、CMake生成工程文件
-		假定使用Microsoft Visual Studio
+###5锟斤拷CMake锟斤拷锟缴癸拷锟斤拷锟侥硷拷
+		锟劫讹拷使锟斤拷Microsoft Visual Studio
 
-###6、用管理员身份启动Microsoft Visual Studio
-
-
-###7、运行INSTALL项目
+###6锟斤拷锟矫癸拷锟斤拷员锟斤拷锟斤拷锟斤拷锟斤拷Microsoft Visual Studio
 
 
-配置
+###7锟斤拷锟斤拷锟斤拷INSTALL锟斤拷目
+
+
+锟斤拷锟斤拷
 ----
-###1、配置PHP
-		在php.ini中添加php_hotscript.dll扩展。
-			例子：extension = "D:\build\source\php_hotscript\Debug\php_hotscript.dll"
-		在php.ini中添加HotPot安装目录
-			例子hotpot.dir="C:\Program Files\HotPot"
+###1锟斤拷锟斤拷锟斤拷PHP
+		锟斤拷php.ini锟斤拷锟斤拷锟斤拷php_hotscript.dll锟斤拷展锟斤拷
+			锟斤拷锟接ｏ拷extension = "D:\build\source\php_hotscript\Debug\php_hotscript.dll"
+		锟斤拷php.ini锟斤拷锟斤拷锟斤拷HotPot锟斤拷装目录
+			锟斤拷锟斤拷hotpot.dir="C:\Program Files\HotPot"
 
-###2、配置环境变量
-		配置环境变量
+###2锟斤拷锟斤拷锟矫伙拷锟斤拷锟斤拷锟斤拷
+		锟斤拷锟矫伙拷锟斤拷锟斤拷锟斤拷
 			HOTPOT_DIR="C:\Program Files\HotPot"
