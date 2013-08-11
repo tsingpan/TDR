@@ -89,7 +89,8 @@ int main(hpuint32 argc, char **argv)
 	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HOTPOT_DIR"));
 	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
 	{
-		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
+		root_dir[strlen(root_dir) + 1] = 0;
+		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;		
 	}
 
 	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
