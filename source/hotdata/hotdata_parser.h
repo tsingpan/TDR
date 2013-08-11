@@ -3,7 +3,7 @@
 
 
 #include "hotpot/hp_platform.h"
-#include <stdarg.h>
+
 #include <stdio.h>
 #include "hotscript/hotlex.h"
 #include "hotprotocol/hp_abstract_writer.h"
@@ -26,7 +26,6 @@ struct _DATA_PARSER
 	Trie *hotdata_symbols;
 	char domain[MAX_FILE_NAME_LENGTH];
 
-
 	PN_DEFINITION pn_definition;
 	PN_FIELD_LIST pn_field_list;
 	PN_FIELD pn_field;
@@ -35,7 +34,7 @@ struct _DATA_PARSER
 	hpbool in_struct;
 };
 
-hpint32 data_parser_init(DATA_PARSER *self);
+hpint32 data_parser_init(DATA_PARSER *self, const char* root_dir);
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
 

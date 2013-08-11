@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "globals.h"
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer)
@@ -389,9 +390,9 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 
 
-hpint32 data_parser_init(DATA_PARSER *self, const HP_ERROR_MSG_LIBRARY *language)
+hpint32 data_parser_init(DATA_PARSER *self, const char* root_dir)
 {
-	scanner_stack_init(&self->scanner_stack, language);	
+	scanner_stack_init(&self->scanner_stack, root_dir);
 	self->scanner_stack.result_num = 0;
 	self->definition_list_num = 0;
 	self->domain[0] = 0;
@@ -409,7 +410,7 @@ void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINIT
 		snprintf(file_name, HP_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
 		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 		{
-			scanner_stack_error(self, yylloc, E_HP_CAN_NOT_OPEN_FILE, file_name);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CAN_NOT_OPEN_FILE, file_name);
 		}
 	}
 }

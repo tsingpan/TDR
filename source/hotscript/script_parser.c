@@ -171,11 +171,10 @@ hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_N
 
 void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...) 
 {
-	SCRIPT_PARSER *self = HP_CONTAINER_OF(ss, SCRIPT_PARSER, scanner_stack);
 	va_list ap;
 
 	va_start(ap, s);
-	scanner_stack_errorap(self, yylloc, E_HP_SYNTAX_ERROR, s, ap);
+	scanner_stack_errorap(ss, yylloc, E_HP_SYNTAX_ERROR, s, ap);
 	va_end(ap);
 
 	return;
@@ -183,7 +182,6 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...)
 
 static hpint32 get_token_yylval(SCRIPT_PARSER *sp, int token, YYSTYPE * yylval)
 {
-	SCANNER *self = scanner_stack_get_scanner(&sp->scanner_stack);
 	return E_HP_NOERROR;
 }
 
@@ -254,53 +252,19 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 	return ret;
 }
 
-hpint32 script_parser_str(SCRIPT_PARSER *self, char* script, char *script_limit, 
-						  HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
-{
-	hpint32 ret;
-
-	self->stack_num = 0;
-
-	scanner_stack_init(&self->scanner_stack);
-
-
-	scanner_stack_push(&self->scanner_stack, script, script_limit, yycINITIAL);
-	
-
-	hotoparr_init(&self->hotoparr);
-
-	self->reader = reader;
-	
-	ret = yyscriptparse(self);
-
-	scanner_stack_pop(&self->scanner_stack);
-
-	hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc);
-
-	if(self->scanner_stack.result_num != 0)
-	{
-		goto ERROR_RET;
-		
-	}
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-}
-
 extern int yyscriptparse (SCRIPT_PARSER *sp);
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char* root_dir)
 {
 	hpint32 ret;
 
 	self->stack_num = 0;
 
-	scanner_stack_init(&self->scanner_stack);
+	scanner_stack_init(&self->scanner_stack, root_dir);
 
 
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
 	{
-		self->error_code = E_HP_ERROR;
+		scanner_stack_error(&self->scanner_stack, NULL, E_HP_ERROR);
 		goto ERROR_RET;
 	}
 	
@@ -308,12 +272,10 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	hotoparr_init(&self->hotoparr);
 
 	self->reader = reader;
-
-	self->error_code = E_HP_NOERROR;
 	
 	ret = yyscriptparse(self);
 
-	if(self->error_code != E_HP_NOERROR)
+	if(self->scanner_stack.result_num != 0)
 	{
 		goto ERROR_RET;
 	}
@@ -325,10 +287,10 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	if(hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc) != E_HP_NOERROR)
 	{
-		self->error_code = E_HP_ERROR;
+		scanner_stack_error(&self->scanner_stack, NULL, E_HP_ERROR);
 	}
 
-	return self->error_code;
+	return E_HP_NOERROR;
 ERROR_RET:
-	return self->error_code;
+	return E_HP_ERROR;
 }

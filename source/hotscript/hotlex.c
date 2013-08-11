@@ -1,8 +1,12 @@
 #include "hotscript/hotlex.h"
 #include "hotpot/hp_error_code.h"
-
+#include "hotpot/hp_error.h"
+#include "hotprotocol/hp_xml_reader.h"
+#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_msg_reader.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 
 hpint32 scanner_fini(SCANNER *self)
@@ -180,7 +184,7 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	FILE* fin;
 	char c;
 	YYCTYPE* yy_start = self->buff_curr;
-	hpint32 i = 0;
+	hpuint32 i = 0;
 	hpuint32 len = 0;
 	char realPath[HP_MAX_FILE_PATH_LENGTH];
 
@@ -247,13 +251,13 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 	return E_HP_NOERROR;
 }
 
-hpint32 scanner_stack_init(SCANNER_STACK *self, const HP_ERROR_MSG_LIBRARY *language_lib)
+hpint32 scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 	self->include_path_tail = 0;
-	self->language_lib = language_lib;
+	self->root_dir = root_dir;
 	self->result_num = 0;
 
 	return E_HP_NOERROR;
@@ -272,23 +276,42 @@ hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
 	return self->stack_num;
 }
 
-HP_ERROR_MSG_LIBRARY language_lib;
+
+void scanner_stack_error_msg_library_init(const char *root_dir)
+{
+	if(hp_error_msg_library.error_list_num == 0)
+	{
+		char language_path[HP_MAX_FILE_PATH_LENGTH];
+		HP_XML_READER xml_reader;
+		FILE* fin_xml;
+
+		snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+
+		fin_xml = fopen(language_path, "r");
+		xml_reader_init(&xml_reader, fin_xml);
+		read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &hp_error_msg_library);
+		fclose(fin_xml);
+	}	
+}
+
 void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap) 
 {
 	hpuint32 len;
 
-	//snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-	fin_xml = fopen(self->language_path, "r");
-	xml_reader_init(&xml_reader, fin_xml);
-	read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &language_lib);
-	fclose(fin_xml);
-
-	if(yylloc->file_name[0])
+	if((yylloc) && (yylloc->file_name[0]))
 	{
 		snprintf(self->result_str[self->result_num], MAX_ERROR_MSG_LENGTH, "%s", yylloc->file_name);
 	}
+	
+	if(yylloc)
+	{
+		len = strlen(self->result_str[self->result_num]);
+		snprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, "(%d): ", yylloc->first_line);
+	}
+
 	len = strlen(self->result_str[self->result_num]);
-	snprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, "(%d): error %d: ", yylloc->first_line, self->result[self->result_num]);
+	snprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, "error %d: ", self->result[self->result_num]);
+	
 	len = strlen(self->result_str[self->result_num]);
 	vsnprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, s, ap);
 
@@ -296,24 +319,16 @@ void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_
 	++(self->result_num);
 }
 
-static const char* get_string_by_sid(const HP_ERROR_MSG_LIBRARY *language_lib, HP_ERROR_CODE sid)
-{
-	hpuint32 i;
-	for(i = 0; i < language_lib->error_list_num; ++i)
-		if(language_lib->error_list[i].error_code == sid)
-		{
-			return language_lib->error_list[i].error_msg;
-		}
 
-		return NULL;
-}
 
 void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, ...) 
 {
 	va_list ap;
-	const char *error_str = get_string_by_sid(self->language_lib, result);
-	self->result[self->result_num] = result;
+	const char *error_str = NULL;
+	scanner_stack_error_msg_library_init(self->root_dir);
 
+	error_str = hp_error_get_msg(result);
+	self->result[self->result_num] = result;
 	va_start(ap, result);
 	scanner_stack_errorap(self, yylloc, result, error_str, ap);
 	va_end(ap);

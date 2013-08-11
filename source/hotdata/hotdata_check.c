@@ -92,7 +92,6 @@ static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const 
 static hpint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identifier, const HOTDATA_SYMBOLS *symbol)
 {
 	char name[MAX_IDENTIFIER_LENGTH];
-	char global_name[MAX_IDENTIFIER_LENGTH * 2];
 	memcpy(name, tok_identifier->ptr, tok_identifier->len);
 	name[tok_identifier->len] = 0;
 	return dp_save_symbol_string(self, name, symbol);

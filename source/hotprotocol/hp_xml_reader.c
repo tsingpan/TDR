@@ -320,6 +320,8 @@ hpint32 xml_read_hpchar(HPAbstractReader *super, char *val)
 {
 	HP_XML_READER *self = HP_CONTAINER_OF(super, HP_XML_READER, super);
 	read_char(self->f, val);
+
+	return E_HP_NOERROR;
 }
 
 hpint32 xml_read_string(HPAbstractReader *super, hpchar *str, hpuint32 str_len)

@@ -17,6 +17,7 @@ extern zend_module_entry hotscript_module_entry;
 #endif
 
 #include "hotpot/hp_config.h"
+#include "hotpot/hp_error_msg.h"
 
 #define PHP_HOTSCRIPT_VERSION HOTPOT_VERSION
 
@@ -31,13 +32,11 @@ PHP_FUNCTION(hs_execute_array);
 PHP_FUNCTION(hs_execute);
   
 
-#define PHP_HS_MAX_ERROR_MSG_LENGTH 1024
-#define PHP_HS_MAX_PATH_LENGTH 1024
 ZEND_BEGIN_MODULE_GLOBALS(hotscript)
 	char* hotpot_dir;
 
 	int error_code;
-	char error_msg[PHP_HS_MAX_ERROR_MSG_LENGTH];
+	char error_msg[MAX_ERROR_MSG_LENGTH];
 ZEND_END_MODULE_GLOBALS(hotscript)
 
 #ifdef ZTS

@@ -46,12 +46,9 @@ void help()
 }
 
 
-HP_ERROR_MSG_LIBRARY language_lib;
 DATA_PARSER dp;
 
 HP_LUA_WRITER writer;
-SCRIPT_PARSER sp;
-
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
@@ -83,9 +80,6 @@ SCRIPT_PARSER sp;
 
 int main(hpuint32 argc, char **argv)
 {
-	FILE *fin_xml;
-	HP_XML_READER xml_reader;
-
 	hpuint32 i, j, option_end;
 	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
@@ -101,6 +95,8 @@ int main(hpuint32 argc, char **argv)
 	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, "D:\\HotPot\\");
 #endif//_DEBUG
 
+	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+	data_parser_init(&dp, language_path);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);	
 	for (i = 1; i < argc; ++i)
 	{
@@ -147,13 +143,6 @@ int main(hpuint32 argc, char **argv)
 			break;
 		}
 	}
-
-	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-	fin_xml = fopen(language_path, "r");
-	xml_reader_init(&xml_reader, fin_xml);
-	read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &language_lib);
-	fclose(fin_xml);
-	
 	
 
 	L = luaL_newstate();
@@ -171,8 +160,7 @@ int main(hpuint32 argc, char **argv)
 
 	for(i = option_end; i < argc; ++i)
 	{
-		lua_writer_init(&writer, L);
-		data_parser_init(&dp);
+		lua_writer_init(&writer, L);		
 		if(data_parser(&dp, argv[i], &writer.super) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;

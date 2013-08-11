@@ -18,12 +18,14 @@
 #include "hotdata_check.h"
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"
+#include "syntactic_node_writer.h"
 
 #define YYMALLOC
 #define YYFREE
 
 #define YYSTYPE ParserNode
 #define YYLEX_PARAM ss
+#include <string.h>
 }
 
 %define api.pure
