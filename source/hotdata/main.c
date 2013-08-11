@@ -51,7 +51,6 @@ char root_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
 char path_prefix[HP_MAX_FILE_PATH_LENGTH];
-char language_path[HP_MAX_FILE_PATH_LENGTH];
 
 void script_putc(HotVM *self, char c)
 {
@@ -90,8 +89,7 @@ int main(hpuint32 argc, char **argv)
 		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;		
 	}
 
-	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-	data_parser_init(&dp, language_path);
+	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);	
 	for (i = 1; i < argc; ++i)
 	{
