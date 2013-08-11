@@ -86,14 +86,11 @@ int main(hpuint32 argc, char **argv)
 	
 	option_end = 0xffffffff;
 	//首先获得根目录
-	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HotPot_Dir"));
+	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, getenv("HOTPOT_DIR"));
 	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
 	{
 		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
 	}
-#ifdef _DEBUG
-	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, "D:\\HotPot\\");
-#endif//_DEBUG
 
 	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 	data_parser_init(&dp, language_path);
