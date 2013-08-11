@@ -5,8 +5,8 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#include "hotscript/hot_vm.h"
-#include "hotscript/script_parser.h"
+#include "hotscript/hp_script_vm.h"
+#include "hotscript/hp_script_parser.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -20,7 +20,7 @@
 
 #include "syntactic_node.h"
 
-#include "hotscript/hot_vm.h"
+#include "hotscript/hp_script_vm.h"
 #include <io.h>
 
 #include "hotpot/hp_config.h"

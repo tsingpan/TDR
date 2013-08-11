@@ -14,7 +14,7 @@
 %code requires
 {
 
-#include "hotscript/hotlex.h"
+#include "hotscript/hp_script_lex.h"
 #include "hotdata_check.h"
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"

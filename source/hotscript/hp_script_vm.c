@@ -1,4 +1,4 @@
-#include "hotscript/hot_vm.h"
+#include "hotscript/hp_script_vm.h"
 #include "hotpot/hp_error_code.h"
 
 #include <stdio.h>

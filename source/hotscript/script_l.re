@@ -3,9 +3,9 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error_code.h"
 #include "script_y.h"
-#include "hotscript/script_parser.h"
+#include "hotscript/hp_script_parser.h"
 #include "script_l.h"
-#include "hotscript/hotlex.h"
+#include "hotscript/hp_script_lex.h"
 #include <string.h>
 	
 		

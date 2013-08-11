@@ -20,8 +20,8 @@
 
 %code requires
 {
-#include "hotscript/script_parser.h"
-#include "hotscript/hot_vm.h"
+#include "hotscript/hp_script_parser.h"
+#include "hotscript/hp_script_vm.h"
 
 #define YYSTYPE SP_NODE
 #define YYMALLOC
