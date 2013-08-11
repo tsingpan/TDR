@@ -12,7 +12,8 @@ HotPot——小星星的聚宝盆
 
 ###2、安装LUA
 		最低版本:5.5.2
-		[静态版本的LUA请参考](http://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/)
+		静态版本的LUA请参考
+			http://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/
 		不要忘记配置环境变量LUA_DIR为lua的根目录
 		
 ###3、安装CMake
