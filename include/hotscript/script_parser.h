@@ -7,6 +7,8 @@
 #include "hotpot/hp_platform.h"
 #include "hot_vm.h"
 #include "hotscript/hotlex.h"
+#include "hotpot/hp_error_code.h"
+#include "hotpot/hp_error_msg.h"
 
 typedef struct _SP_NODE
 {
@@ -35,7 +37,6 @@ struct tagSCRIPT_PARSER
 {
 	SCANNER_STACK scanner_stack;
 
-	hpint32 result;
 	HotOpArr hotoparr;
 
 

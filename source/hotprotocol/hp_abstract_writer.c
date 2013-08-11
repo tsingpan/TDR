@@ -1,5 +1,5 @@
 #include "hotprotocol/hp_abstract_writer.h"
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 
 hpint32 write_struct_begin(HPAbstractWriter *self, const char *struct_name)
 {

@@ -1,5 +1,5 @@
 #include "hotprotocol/hp_compact_writer.h"
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 #include "hotpot/hp_number.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include <string.h>

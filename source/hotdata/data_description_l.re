@@ -4,7 +4,7 @@
 #include "data_description_y.h"
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 #include "hotscript/hotlex.h"
 
 #include <errno.h>

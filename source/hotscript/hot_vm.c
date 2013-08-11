@@ -1,5 +1,5 @@
 #include "hotscript/hot_vm.h"
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 
 #include <stdio.h>
 #include <stdlib.h>

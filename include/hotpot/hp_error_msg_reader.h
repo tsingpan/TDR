@@ -2,7 +2,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include <string.h>
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 #include "hotpot/hp_error_msg.h"
 void read_HP_ERROR_MSG(HPAbstractReader *self, HP_ERROR_MSG *data);
 void read_HP_ERROR_MSG_LIBRARY(HPAbstractReader *self, HP_ERROR_MSG_LIBRARY *data);

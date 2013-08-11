@@ -160,7 +160,7 @@ void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, con
 
 	if(dp_find_symbol(self, tok_identifier) != NULL)
 	{
-		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, id);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_SYMBOL_REDEFINITION, id);
 	}
 }
 
@@ -174,7 +174,7 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 
 	if(val == NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -183,7 +183,7 @@ void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc,
 	
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR, id);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR, id);
 	}
 done:
 	return;
@@ -198,7 +198,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 
 	if((type == NULL) || (val == NULL))
 	{
-		dp_error(self, yylloc, E_HP_ERROR, id);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR, id);
 		goto done;
 	}
 
@@ -237,7 +237,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		case E_ST_DOUBLE:
 			goto done;
 		default:
-			dp_error(self, yylloc, E_HP_INVALID_CONSTANCE_TYPE);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_INVALID_CONSTANCE_TYPE);
 			goto done;
 		}
 		size *= 8;
@@ -245,7 +245,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(val->val.ui64 >> size)
 			{
-				dp_error(self, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
 			}
 		}
@@ -253,7 +253,7 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(val->val.i64 >> size)
 			{
-				dp_error(self, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
 			}
 		}
@@ -263,13 +263,13 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		}
 		else
 		{
-			dp_error(self, yylloc, E_HP_UNKNOW_CONSTANT_VALUE);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_UNKNOW_CONSTANT_VALUE);
 			goto done;
 		}
 	}
 	else if(type->type == E_SNT_REFER)
 	{
-		dp_error(self, yylloc, E_HP_ERROR, id);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR, id);
 	}
 	else if(type->type == E_SNT_CONTAINER)
 	{
@@ -277,12 +277,12 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		{
 			if(sn_value->type != E_SNVT_STRING)
 			{
-				dp_error(self, yylloc, E_HP_ERROR, id);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR, id);
 			}
 		}
 		else
 		{
-			dp_error(self, yylloc, E_HP_ERROR, id);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR, id);
 		}
 	}
 
@@ -296,13 +296,13 @@ void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF
 	const ST_TYPE*type = get_type(self, &sn_typedef->type);
 	if(type == NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
 	if(type->type == E_SNT_CONTAINER)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -310,7 +310,7 @@ void dp_check_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF
 	symbol->body.type = *type;
 	if(dp_save_symbol_string(self, sn_typedef->name, symbol) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_SYMBOL_REDEFINITION, sn_typedef->name);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_SYMBOL_REDEFINITION, sn_typedef->name);
 		goto done;
 	}
 
@@ -338,7 +338,7 @@ void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_P
 
 	if(dp_save_symbol_string(self, pn_parameter->identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -349,7 +349,7 @@ void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
 	if(symbol != NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -363,7 +363,7 @@ void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, con
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol_local(self, tok_identifier);
 	if(symbol != NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -376,7 +376,7 @@ void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, c
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
 	if(symbol != NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -392,7 +392,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 	val = get_value(self, val);
 	if(val == NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -406,7 +406,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 	}
 	else
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -434,7 +434,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 				}
 				if(i64 == _i64)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
@@ -460,7 +460,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 				}
 				else
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 
@@ -475,7 +475,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 				}
 				if(_i64 < li64)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 
@@ -502,7 +502,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 				}
 				else
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 
@@ -517,7 +517,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 				}
 				if(_i64 >= upi64)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 
@@ -535,7 +535,7 @@ void dp_check_TypeAnnotation_tok_unique_Value(DATA_PARSER *self, const YYLTYPE *
 {
 	if(val->type != E_SNVT_BOOL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 	
@@ -549,7 +549,7 @@ void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yyllo
 
 	if((val == NULL) || (val->type != E_SNVT_INT64))
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -562,7 +562,7 @@ void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *
 {
 	if(val->type != E_SNVT_IDENTIFIER)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -588,7 +588,7 @@ void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const S
 			}
 			if(!found)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 		}
@@ -623,7 +623,7 @@ static void dp_check_expression_value_type(DATA_PARSER *self, const YYLTYPE *yyl
 	const PN_TYPE *pn_type = get_type(self, type);
 	if(pn_type == NULL)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 
@@ -631,7 +631,7 @@ static void dp_check_expression_value_type(DATA_PARSER *self, const YYLTYPE *yyl
 	{
 		if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_BOOL))
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 	}
@@ -640,13 +640,13 @@ static void dp_check_expression_value_type(DATA_PARSER *self, const YYLTYPE *yyl
 		const HOTDATA_SYMBOLS *symbols = dp_find_symbol_by_string(self, pn_type->ot);
 		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 	}
 	else
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 done:
@@ -662,7 +662,7 @@ void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, co
 			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, val->val.identifier);
 			if(symbol == NULL)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 			
@@ -673,14 +673,14 @@ void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, co
 					const PN_VALUE *val = get_value(self, &symbol->body.val);
 					if(val == NULL)
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 
 					if((val->type != E_SNVT_INT64) && (val->type != E_SNVT_UINT64)
 						&& (val->type != E_SNVT_HEX_INT64) && (val->type != E_SNVT_HEX_UINT64))
 					{					
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 					break;
@@ -696,7 +696,7 @@ void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, co
 					break;
 				}
 			default:
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 
@@ -708,7 +708,7 @@ void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, co
 	case E_SNVT_HEX_UINT64:
 		break;
 	default:
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 		goto done;
 	}
 done:
@@ -725,7 +725,7 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 			const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, args->arg_list[i].ot);
 			if(symbol == NULL)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 
@@ -733,7 +733,7 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 			{
 				if(!((symbol->body.val.type >= E_SNVT_BOOL) && (symbol->body.val.type <= E_SNVT_HEX_UINT64)))
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
@@ -746,7 +746,7 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 				{
 					if(!((symbol->body.field.type.type >= E_SNVT_BOOL) && (symbol->body.type.type <= E_SNVT_HEX_UINT64)))
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 				}
@@ -756,19 +756,19 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 				}
 				else
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
 			else
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 		}
 		else
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 	}
@@ -783,19 +783,19 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 	{
 		if(pn_field->condition.empty)
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 
 		if(pn_field->condition.exp.neg)
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 
 		if(pn_field->condition.exp.oper != E_EO_EQUAL)
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 	}
@@ -806,7 +806,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 	{
 		if(pn_field->args.arg_list_num != 0)
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 	}
@@ -815,12 +815,12 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 		const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->type.ot);
 		if(symbol == NULL)
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 		if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
 		{
-			dp_error(self, yylloc, E_HP_ERROR);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 			goto done;
 		}
 		dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
@@ -832,7 +832,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 		case E_CT_VECTOR:
 			if(pn_field->args.arg_list_num < 3)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 
@@ -841,7 +841,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
 				if(symbol == NULL)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 				if(symbol->type == EN_HST_TYPE)
@@ -849,14 +849,14 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 					const ST_TYPE *type = get_type(self, &symbol->body.type);
 					if(type == NULL)
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 					if(type->type == E_SNT_SIMPLE)
 					{
 						if(pn_field->args.arg_list_num != 3)
 						{
-							dp_error(self, yylloc, E_HP_ERROR);
+							scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 							goto done;
 						}
 					}
@@ -869,7 +869,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				{
 					if(pn_field->args.arg_list_num != 3)
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 				}
@@ -886,7 +886,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 			{
 				if(pn_field->args.arg_list_num != 3)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
@@ -897,7 +897,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[1].ot);
 				if(symbol == NULL)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 				if(symbol->type == EN_HST_VALUE)
@@ -908,32 +908,32 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 					}
 					else
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 				}
 				else
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
 			else
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 
 			if(pn_field->args.arg_list[2].type != E_SNT_REFER)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 			break;
 		case E_CT_STRING:
 			if(pn_field->args.arg_list_num != 1)
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 			if(pn_field->args.arg_list[0].type == E_SNT_REFER)
@@ -941,7 +941,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 				const HOTDATA_SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
 				if(symbol == NULL)
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 				if(symbol->type == EN_HST_VALUE)
@@ -952,19 +952,19 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 					}
 					else
 					{
-						dp_error(self, yylloc, E_HP_ERROR);
+						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
 					}
 				}
 				else
 				{
-					dp_error(self, yylloc, E_HP_ERROR);
+					scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 					goto done;
 				}
 			}
 			else
 			{
-				dp_error(self, yylloc, E_HP_ERROR);
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 				goto done;
 			}
 			break;
@@ -984,7 +984,7 @@ void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD
 
 	if(dp_save_symbol_string(self, pn_field->identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -999,7 +999,7 @@ void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTI
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -1013,7 +1013,7 @@ void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDEN
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
 done:
 	return;
@@ -1027,7 +1027,7 @@ void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENT
 
 	if(dp_save_symbol(self, tok_identifier, ptr) != E_HP_NOERROR)
 	{
-		dp_error(self, yylloc, E_HP_ERROR);
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
 done:
 	return;

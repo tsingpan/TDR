@@ -2,6 +2,7 @@
 #define _H_HOTLEX
 
 #include "hotpot/hp_platform.h"
+#include "hotpot/hp_error_msg.h"
 
 
 typedef struct YYLTYPE
@@ -48,8 +49,8 @@ struct _SCANNER
 
 #define MAX_LEX_BUFF_SIZE 1000000
 #define MAX_SCANNER_STACK_DEEP 1024
-#define MAX_RESULT_STRING_LENGTH 1024
 #define MAX_INCLUDE_PATH 1024
+#define MAX_RESULT_NUM 256
 
 typedef struct _SCANNER_STACK SCANNER_STACK;
 typedef struct _SCANNER_STACK
@@ -63,9 +64,17 @@ typedef struct _SCANNER_STACK
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
 	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
+
+	const HP_ERROR_MSG_LIBRARY *language_lib;
+
+	char language_path[HP_MAX_FILE_PATH_LENGTH];
+
+	hpint32 result[MAX_RESULT_NUM];
+	char result_str[MAX_RESULT_NUM][MAX_ERROR_MSG_LENGTH];
+	hpuint32 result_num;
 };
 
-hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);
+hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name, const HP_ERROR_MSG_LIBRARY *language_lib);
 hpint32 scanner_fini(SCANNER *self);
 
 hpint32 scanner_process(SCANNER *sp);
@@ -73,9 +82,11 @@ SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
 hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state);
 hpint32 scanner_stack_pop(SCANNER_STACK *self);
-hpint32 scanner_stack_init(SCANNER_STACK *self);
+hpint32 scanner_stack_init(SCANNER_STACK *self, const HP_ERROR_MSG_LIBRARY *language_lib);
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self);
 hpint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path);
+void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap);
+void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, ...);
 
 #endif//_H_HOTLEX
 

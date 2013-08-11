@@ -1,4 +1,4 @@
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 #include "globals.h"
 
 #include "lua.h"
@@ -83,6 +83,9 @@ SCRIPT_PARSER sp;
 
 int main(hpuint32 argc, char **argv)
 {
+	FILE *fin_xml;
+	HP_XML_READER xml_reader;
+
 	hpuint32 i, j, option_end;
 	lua_State *L;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
@@ -98,8 +101,7 @@ int main(hpuint32 argc, char **argv)
 	snprintf(root_dir, HP_MAX_FILE_PATH_LENGTH, "D:\\HotPot\\");
 #endif//_DEBUG
 
-	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);
-	data_parser_init(&dp);
+	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);	
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -147,8 +149,10 @@ int main(hpuint32 argc, char **argv)
 	}
 
 	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-	load_language(&language_lib, language_path);
-
+	fin_xml = fopen(language_path, "r");
+	xml_reader_init(&xml_reader, fin_xml);
+	read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &language_lib);
+	fclose(fin_xml);
 	
 	
 
@@ -168,7 +172,8 @@ int main(hpuint32 argc, char **argv)
 	for(i = option_end; i < argc; ++i)
 	{
 		lua_writer_init(&writer, L);
-		if(data_parser(&dp, argv[i], &writer.super, &language_lib) != E_HP_NOERROR)
+		data_parser_init(&dp);
+		if(data_parser(&dp, argv[i], &writer.super) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}

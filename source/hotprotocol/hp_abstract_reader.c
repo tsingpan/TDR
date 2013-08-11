@@ -1,5 +1,5 @@
 #include "hotprotocol/hp_abstract_reader.h"
-#include "hotpot/hp_error.h"
+#include "hotpot/hp_error_code.h"
 
 
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name)
