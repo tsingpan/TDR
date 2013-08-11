@@ -4,7 +4,6 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
-#include "hotpot/hp_value.h"
 
 typedef enum _HOTSCRIPT_INSTRUCT
 {

@@ -2,7 +2,6 @@
 #define _H_HP_ABSTRACT_READR
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_value.h"
 
 typedef struct _HPAbstractReader HPAbstractReader;
 #define MAX_VECTOR_DEEP 1024

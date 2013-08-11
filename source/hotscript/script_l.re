@@ -60,10 +60,8 @@ any_char		((.|"\n"))
 	}
 
 <INITIAL>{any_char}		     {
-	yylval->var.type = E_HP_BYTES;
-	
-	yylval->var.val.bytes.len = 1;
-	yylval->var.val.bytes.ptr = yytext;
+	yylval->bytes.len = 1;
+	yylval->bytes.ptr = yytext;
 	while(YYCURSOR < YYLIMIT)
 	{
 		if(YYCURSOR - yytext >= 2)
@@ -71,12 +69,12 @@ any_char		((.|"\n"))
 			if((*(YYCURSOR - 1) == '<')
 				&& (*YYCURSOR == '%'))
 			{
-				--(yylval->var.val.bytes.len);
+				--(yylval->bytes.len);
 				BEGIN(ST_IN_SCRIPTING);
 				break;
 			}
 		}
-		++(yylval->var.val.bytes.len);
+		++(yylval->bytes.len);
 		++YYCURSOR;
 	}
 	return tok_text;
@@ -86,16 +84,14 @@ any_char		((.|"\n"))
 
 
 <ST_IN_SCRIPTING>'$'{identifier}{
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.ptr = yytext + 1;
-	yylval->var.val.bytes.len = yyleng - 1;
+	yylval->bytes.ptr = yytext + 1;
+	yylval->bytes.len = yyleng - 1;
 	return tok_identifier;
 }
 
 <ST_IN_SCRIPTING>'$''$'{identifier}{
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.ptr = yytext + 2;
-	yylval->var.val.bytes.len = yyleng - 2;
+	yylval->bytes.ptr = yytext + 2;
+	yylval->bytes.len = yyleng - 2;
 	return tok_call_identifier;
 }
 
@@ -103,14 +99,12 @@ any_char		((.|"\n"))
 	char number[128];
 	memcpy(number, yytext + 1, yyleng - 1);
 	number[yyleng] = 0;
-	yylval->var.type = E_HP_UINT32;
-	yylval->var.val.ui32 = strtoul(number, NULL, 10);
+	yylval->ui32 = strtoul(number, NULL, 10);
 	return tok_integer;
 }
 
 <ST_IN_SCRIPTING>'$''*'{
-	yylval->var.type = E_HP_UINT32;
-	yylval->var.val.ui32 = 0;
+	yylval->ui32 = 0;
 	return tok_auto_integer;
 }
 
@@ -118,25 +112,23 @@ any_char		((.|"\n"))
 	char number[128];
 	memcpy(number, yytext + 1, yyleng - 2);
 	number[yyleng] = 0;
-	yylval->var.type = E_HP_UINT32;
-	yylval->var.val.ui32 = strtoul(number, NULL, 10);
+	yylval->ui32 = strtoul(number, NULL, 10);
 	return tok_auto_integer;
 }
 
 <ST_IN_SCRIPTING>{literal_begin} {
 	char mark = *yytext;
-	yylval->var.type = E_HP_BYTES;
-	yylval->var.val.bytes.len = 0;
-	yylval->var.val.bytes.ptr = YYCURSOR;
+	yylval->bytes.len = 0;
+	yylval->bytes.ptr = YYCURSOR;
 	while(YYCURSOR < YYLIMIT)
 	{
 		if(*YYCURSOR == '\\')
 		{
 			++YYCURSOR;
-			++(yylval->var.val.bytes.len);
+			++(yylval->bytes.len);
 			if(YYCURSOR < YYLIMIT)
 			{
-				++(yylval->var.val.bytes.len);
+				++(yylval->bytes.len);
 				++YYCURSOR;
 				continue;
 			}
@@ -153,7 +145,7 @@ any_char		((.|"\n"))
 				break;
 			}
 		}
-		++(yylval->var.val.bytes.len);
+		++(yylval->bytes.len);
 		++YYCURSOR;
 	}
 	return tok_literal;

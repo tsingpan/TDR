@@ -131,12 +131,13 @@ function on_object(type_name, object)
 end
 
 function main(hd)
+	print_file_prefix()
+
 	file_tag = hd.file_name
 	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_TYPES'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
 
-	print_file_prefix()
 
 	io.write('#include "hotpot/hp_platform.h"\n')
 	if(ifiles ~= nil) then

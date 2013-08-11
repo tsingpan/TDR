@@ -13,7 +13,7 @@ hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_N
 
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO;
-	op->arg.echo_arg.bytes = text->var.val.bytes;
+	op->arg.echo_arg.bytes = text->bytes;
 	return E_HP_NOERROR;
 }
 
@@ -21,7 +21,7 @@ hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const S
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO_LITERAL;
-	op->arg.echo_arg.bytes = text->var.val.bytes;
+	op->arg.echo_arg.bytes = text->bytes;
 	return E_HP_NOERROR;
 }
 
@@ -58,7 +58,7 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_FIELD_BEGIN;
-		op->arg.field_begin_arg.name = identifier->var.val.bytes;
+		op->arg.field_begin_arg.name = identifier->bytes;
 
 		identifier->field_begin_index = op->lineno;
 	}
@@ -66,7 +66,7 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 	{
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_CALL_FIELD_BEGIN;
-		op->arg.field_begin_arg.name = identifier->var.val.bytes;
+		op->arg.field_begin_arg.name = identifier->bytes;
 
 		identifier->call_field_begin_index = op->lineno;
 	}
@@ -78,7 +78,7 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		}
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_SET_INDEX;
-		op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
+		op->arg.vector_set_index_arg.index = identifier->ui32;
 
 		op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
@@ -95,7 +95,7 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		if(identifier->token == tok_auto_integer)
 		{
-			op->arg.vector_set_index_arg.index = identifier->var.val.ui32;
+			op->arg.vector_set_index_arg.index = identifier->ui32;
 		}
 		else
 		{

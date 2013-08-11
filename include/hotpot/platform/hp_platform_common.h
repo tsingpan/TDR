@@ -1,21 +1,7 @@
 #ifndef _H_HP_PLATFORM_COMMON
 #define _H_HP_PLATFORM_COMMON
 
-
-#ifndef FALSE
-#define FALSE               0
-#endif
-
-#ifndef TRUE
-#define TRUE                1
-#endif
-
-typedef enum _hpbool hpbool;
-enum _hpbool
-{
-	hptrue = 1,
-	hpfalse = 0,
-};
+#include "hp_config.h"
 
 typedef signed char hpint8;
 typedef signed short int hpint16;

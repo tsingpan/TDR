@@ -14,7 +14,6 @@
 %code requires
 {
 
-#include "hotpot/hp_value.h"
 #include "hotscript/hotlex.h"
 #include "hotdata_check.h"
 #include "hotdata_parser.h"

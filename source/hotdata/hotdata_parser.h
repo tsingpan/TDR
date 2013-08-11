@@ -6,7 +6,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "hotscript/hotlex.h"
-#include "hotpot/hp_value.h"
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "datrie/trie.h"

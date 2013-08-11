@@ -11,7 +11,8 @@
 typedef struct _SP_NODE
 {
 	int token;
-	HPVar var;
+	hpbytes bytes;
+	hpuint32 ui32;
 
 	//以下几个玩意记录需要回溯处理的指令	
 	hpuint32 call_field_begin_index;
