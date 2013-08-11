@@ -9,7 +9,7 @@
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "datrie/trie.h"
-#include "hotpot/hp_error_msg.h"
+#include "hoterror/hp_error_msg.h"
 
 
 #include "parser_node.h"

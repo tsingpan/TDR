@@ -2,7 +2,7 @@
 #define _H_HOTLEX
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error_msg.h"
+#include "hoterror/hp_error_msg.h"
 
 #include <stdarg.h>
 

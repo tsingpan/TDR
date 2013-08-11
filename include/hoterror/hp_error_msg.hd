@@ -1,0 +1,16 @@
+import "hotpot/hp_error_code.hd"
+
+const uint32 MAX_ERROR_LIST_NUM = 65536;
+const uint32 MAX_ERROR_MSG_LENGTH = 1024;
+
+struct HP_ERROR_MSG
+{
+	HP_ERROR_CODE error_code;
+	string<MAX_ERROR_MSG_LENGTH> error_msg;
+};
+
+struct HP_ERROR_MSG_LIBRARY
+{
+	vector<HP_ERROR_MSG, MAX_ERROR_LIST_NUM, error_list_num> error_list;
+};
+

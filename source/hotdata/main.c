@@ -15,8 +15,8 @@
 #include "hotprotocol/hp_xml_reader.h"
 #include "hotprotocol/hp_lua_writer.h"
 
-#include "hotpot/hp_error_msg_reader.h"
-#include "hotpot/hp_error_msg.h"
+#include "hoterror/hp_error_msg_reader.h"
+#include "hoterror/hp_error_msg.h"
 
 #include "syntactic_node.h"
 

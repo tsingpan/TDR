@@ -3,9 +3,9 @@
 #include "hotprotocol/hp_abstract_reader.h"
 #include <string.h>
 #include "hotpot/hp_error_code.h"
-#include "hotpot/hp_error_reader.h"
-#include "hotpot/hp_error_msg.h"
-#include "hotpot/hp_error_msg_reader.h"
+#include "hoterror/hp_error_reader.h"
+#include "hoterror/hp_error_msg.h"
+#include "hoterror/hp_error_msg_reader.h"
 void read_HP_ERROR_MSG(HPAbstractReader *self, HP_ERROR_MSG *data)
 {
     read_struct_begin(self, "HP_ERROR_MSG");

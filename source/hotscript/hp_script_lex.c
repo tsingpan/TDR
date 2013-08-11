@@ -1,7 +1,7 @@
 #include "hotscript/hp_script_lex.h"
-#include "hotpot/hp_error.h"
 #include "hotpot/hp_error_code.h"
-#include "hotpot/hp_error_msg_reader.h"
+#include "hoterror/hp_error.h"
+#include "hoterror/hp_error_msg_reader.h"
 #include "hotprotocol/hp_xml_reader.h"
 #include <stdio.h>
 #include <string.h>
@@ -276,23 +276,6 @@ hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
 }
 
 
-void scanner_stack_error_msg_library_init(const char *root_dir)
-{
-	if(hp_error_msg_library.error_list_num == 0)
-	{
-		char language_path[HP_MAX_FILE_PATH_LENGTH];
-		HP_XML_READER xml_reader;
-		FILE* fin_xml;
-
-		snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-
-		fin_xml = fopen(language_path, "r");
-		xml_reader_init(&xml_reader, fin_xml);
-		read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &hp_error_msg_library);
-		fclose(fin_xml);
-	}	
-}
-
 void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap) 
 {
 	hpuint32 len;
@@ -324,7 +307,7 @@ void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CO
 {
 	va_list ap;
 	const char *error_str = NULL;
-	scanner_stack_error_msg_library_init(self->root_dir);
+	hp_error_init(self->root_dir);
 
 	error_str = hp_error_get_msg(result);
 	self->result[self->result_num] = result;
