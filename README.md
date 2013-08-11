@@ -12,7 +12,8 @@ HotPot——小星星的聚宝盆
 
 ###2、安装LUA
 		最低版本:5.5.2
-		静态版本的LUA请参考：http://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/
+		静态版本的LUA请参考：
+			http://sourceforge.net/projects/luabinaries/files/5.2.1/Windows%20Libraries/Static/
 		不要忘记配置环境变量LUA_DIR为lua的根目录
 		
 ###3、安装CMake
@@ -34,8 +35,11 @@ HotPot——小星星的聚宝盆
 配置
 ----
 ###1、配置PHP
-		在php.ini中添加， php_hotscript.dll扩展， 例子：extension = "D:\build\source\php_hotscript\Debug\php_hotscript.dll"
-		在php.ini中添加， 目录， 例子hotpot.dir="C:\Program Files\HotPot"
+		在php.ini中添加php_hotscript.dll扩展。
+			例子：extension = "D:\build\source\php_hotscript\Debug\php_hotscript.dll"
+		在php.ini中添加HotPot安装目录
+			例子hotpot.dir="C:\Program Files\HotPot"
 
 ###2、配置环境变量
-		配置环境变量HOTPOT_DIR="C:\Program Files\HotPot"
+		配置环境变量
+			HOTPOT_DIR="C:\Program Files\HotPot"
