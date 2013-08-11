@@ -125,7 +125,9 @@ typedef struct _ZVALReader
 	HPAbstractReader super;
 	hpuint32 stack_num;
 	STACK_NODE stack[MAX_DEEP];
+#ifdef ZTS
 	TSRMLS_D;
+#endif//ZTS
 }ZVALReader;
 
 zval* zval_reade_get_zval(ZVALReader *self)
