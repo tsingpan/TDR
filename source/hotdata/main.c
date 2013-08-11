@@ -21,7 +21,6 @@
 #include "syntactic_node.h"
 
 #include "hotscript/hp_script_vm.h"
-#include <io.h>
 
 void version()
 {
