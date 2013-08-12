@@ -4,7 +4,7 @@ HotPot——小星星的聚宝盆
 
 安装
 ----
-#windows
+#Windows
 ###1、安装CMake
 		最低版本：2.8.11.1
 		如何在Windows上安装CMake请参考：http://www.cmake.org/
@@ -24,7 +24,7 @@ HotPot——小星星的聚宝盆
 			https://wiki.php.net/internals/windows/stepbystepbuild
 
 ###7、配置PHP
-		在php.ini中添加HotPot安装目录
+		在php.ini中添加HotPot安装目录:
 			hotpot.dir="C:\Program Files\HotPot"
 
 ###8、配置环境变量
