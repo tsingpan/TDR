@@ -1,21 +1,21 @@
 find_program(HOTDATA_EXECUTABLE hd
-	PATHS $ENV{HotPot_Dir}/bin
+	PATHS $ENV{HOTPOT_DIR}/bin
    )
 
 find_program(HOTSCRIPT_EXECUTABLE hs
-	PATHS $ENV{HotPot_Dir}/bin
+	PATHS $ENV{HOTPOT_DIR}/bin
    )
 
 find_path(HOTPOT_INCLUDE_DIR NAMES hotpot/hp_platform.h
-	PATHS $ENV{HotPot_Dir}/include
+	PATHS $ENV{HOTPOT_DIR}/include
    )
 
 find_library(HOTPOT_LIBRARIES NAMES hotpot
-	PATHS $ENV{HotPot_Dir}/lib
+	PATHS $ENV{HOTPOT_DIR}/lib
    )
 
 find_library(HOTPROTOCOL_LIBRARIES NAMES hotprotocol
-	PATHS $ENV{HotPot_Dir}/lib
+	PATHS $ENV{HOTPOT_DIR}/lib
    )
 
 include(FindPackageHandleStandardArgs)

@@ -14,6 +14,10 @@ set(FLEX_OUTPUTS ${_BUILD_SOURCE}/data_description_l.c)
 set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/data_description_y.h)
 set(BISON_OUTPUTS ${_BUILD_SOURCE}/data_description_y.c)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${DIR_HOME}/cmake/Modules/)
+FIND_PACKAGE(Lua52 REQUIRED)
+
+
 #linux 需要创建目录，否则Flex和Bison无法生成文件
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_INCLUDE})
@@ -27,7 +31,7 @@ INCLUDE_DIRECTORIES(
 	${INCLUDE}
 	${_BUILD_INCLUDE}
 	${DEPS}
-	${DEPS}/lua52
+	${LUA_INCLUDE_DIR}
 	.
 	)
 ADD_EXECUTABLE(HotData ${FILE_LIST} ${DDGEN_FILE_LIST} ${DATRIE_FILE_LIST} ${LUA_FILE_LIST} ${FLEX_FILE} ${BISON_FILE} ${FLEX_OUTPUTS} ${FLEX_HEADER} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS})
@@ -36,7 +40,7 @@ SET_TARGET_PROPERTIES(HotData PROPERTIES OUTPUT_NAME hotdata)
 INSTALL(TARGETS HotData RUNTIME DESTINATION ${BINARY_PATH})
 
 if(WIN32)
-	TARGET_LINK_LIBRARIES(HotData HotScript HotError HotProtocol HotPot lua52 datrie)
+	TARGET_LINK_LIBRARIES(HotData HotScript HotError HotProtocol HotPot ${LUA_LIBRARIES} datrie)
 else()
-	TARGET_LINK_LIBRARIES(HotData HotScript HotError HotProtocol HotPot lua52 datrie dl m)
+	TARGET_LINK_LIBRARIES(HotData HotScript HotError HotProtocol HotPot ${LUA_LIBRARIES} datrie dl m)
 endif(WIN32)

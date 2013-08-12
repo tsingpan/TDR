@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 FILE(GLOB_RECURSE FILE_LIST *.h *.c)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{HotPot_Dir}/cmake/Modules/)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{HOTPOT_DIR}/cmake/Modules/)
 find_package(HotPot)
 
 set(GEN_PATH ${data_conversion_BINARY_DIR}/gen)
