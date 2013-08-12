@@ -22,9 +22,11 @@ set(_BUILD_INCLUDE ${BUILD_HOME}/_include)
 set(_BUILD_SOURCE ${BUILD_HOME}/_source)
 
 set(INCLUDE  ${DIR_HOME}/include)
+set(DEPS  ${DIR_HOME}/deps)
 set(SOURCE  ${DIR_HOME}/source)
 
 add_subdirectory(source)
+add_subdirectory(deps)
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY resource DESTINATION ${CMAKE_INSTALL_PREFIX})
