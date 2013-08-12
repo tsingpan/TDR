@@ -1,0 +1,21 @@
+// $Id$
+// vim:ft=javascript
+
+ARG_WITH("hotscript", "for hotscript support", "no");
+
+if (PHP_HOTSCRIPT != "no") {
+	if (CHECK_HEADER_ADD_INCLUDE("hotpot/hp_platform.h", "CFLAGS", PHP_HOTSCRIPT + '/include')
+		&& CHECK_LIB("hotscript.lib;", "hotscript", PHP_HOTSCRIPT)
+		&& CHECK_LIB("hotprotocol.lib;", "hotscript", PHP_HOTSCRIPT)
+		&& CHECK_LIB("hotpot.lib;", "hotscript", PHP_HOTSCRIPT)
+		&& CHECK_LIB("hoterror.lib", "hotscript", PHP_HOTSCRIPT)
+		)
+	{
+		EXTENSION("hotscript", "hotscript.c");
+	}
+	else
+	{
+		WARNING("hotscript support can't be enabled")
+	}
+
+}
