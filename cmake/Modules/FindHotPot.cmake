@@ -1,8 +1,4 @@
-find_program(HOTDATA_EXECUTABLE hd
-	PATHS $ENV{HOTPOT_DIR}/bin
-   )
-
-find_program(HOTSCRIPT_EXECUTABLE hs
+find_program(HOTDATA_EXECUTABLE hotdata
 	PATHS $ENV{HOTPOT_DIR}/bin
    )
 
@@ -15,6 +11,14 @@ find_library(HOTPOT_LIBRARIES NAMES hotpot
    )
 
 find_library(HOTPROTOCOL_LIBRARIES NAMES hotprotocol
+	PATHS $ENV{HOTPOT_DIR}/lib
+   )
+
+find_library(HOTPROTOCOL_LIBRARIES NAMES hoterror
+	PATHS $ENV{HOTPOT_DIR}/lib
+   )
+
+find_library(HOTPROTOCOL_LIBRARIES NAMES hotscript
 	PATHS $ENV{HOTPOT_DIR}/lib
    )
 

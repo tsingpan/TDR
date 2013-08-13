@@ -37,14 +37,14 @@ void test_xml()
 	FILE *fin = NULL;
 
 
-	fout = fopen("d:/t.xml", "wb");
+	fout = fopen("t.xml", "wb");
 	init();
 	xml_writer_init(&xml_writer, fout);
 	write_PROTO(&xml_writer.super, &proto);
 	fclose(fout);
 
 	memset(&proto, 0, sizeof(proto));
-	fin = fopen("d:/t.xml", "rb");
+	fin = fopen("t.xml", "rb");
 	xml_reader_init(&xml_reader, fin);
 	read_PROTO(&xml_reader.super, &proto);
 	fclose(fin);
