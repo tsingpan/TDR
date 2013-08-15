@@ -69,7 +69,7 @@ void hp_error_load_if_first(const char *root_dir)
 		HP_XML_READER xml_reader;
 		FILE* fin_xml;
 
-		snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+		snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
 
 		fin_xml = fopen(language_path, "r");
 		xml_reader_init(&xml_reader, fin_xml);

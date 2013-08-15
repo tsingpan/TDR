@@ -59,15 +59,13 @@ void script_putc(HotVM *self, char c)
 
 void get_real_file_path(const char *file_name)
 {
-	snprintf(path_prefix, HP_MAX_FILE_PATH_LENGTH, "%s%cresource%clua%c", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-
 	if(access(file_name, 00) == 0)
 	{
 		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s", file_name);		
 	}
 	else
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", path_prefix, file_name);
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", lua_dir, file_name);
 	}
 }
 
@@ -86,11 +84,11 @@ int main(hpuint32 argc, char **argv)
 	if(root_dir[strlen(root_dir) - 1] != HP_FILE_SEPARATOR)
 	{
 		root_dir[strlen(root_dir) + 1] = 0;
-		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;		
+		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
 	}
 
 	data_parser_init(&dp, root_dir);
-	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%s/resource/lua/", root_dir);	
+	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;

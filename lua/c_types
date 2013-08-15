@@ -1,3 +1,4 @@
+print(lua_dir .. "lib/syntactic_node.lua")
 loadfile(lua_dir .. "lib/syntactic_node.lua")();
 loadfile(lua_dir .. "lib/common.lua")();
 
