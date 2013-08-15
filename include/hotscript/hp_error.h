@@ -2,7 +2,7 @@
 #define _H_hp_error_hd_TYPES
 #include "hotpot/hp_platform.h"
 
-#include "hoterror/hp_error_msg.h"
+#include "hotscript/hp_error_msg.h"
 
 
 const char* hp_error_search_msg(const HP_ERROR_MSG_LIBRARY *hp_error_msg_library, HP_ERROR_CODE sid);

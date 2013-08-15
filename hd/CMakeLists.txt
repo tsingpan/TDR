@@ -12,9 +12,7 @@ add_custom_target(hd
 	COMMAND cmake -E make_directory ${_GEN_LUA}
 	COMMAND cmake -E make_directory ${_GEN_INCLUDE}/hotpot/
 	COMMAND cmake -E make_directory ${_GEN_INCLUDE}/hotdata/
-	COMMAND cmake -E make_directory ${_GEN_INCLUDE}/hoterror/
 	COMMAND cmake -E make_directory ${_GEN_SOURCE}/hotdata/
-	COMMAND cmake -E make_directory ${_GEN_SOURCE}/hoterror/
 	COMMAND cmake -E make_directory ${_GEN_LUA}/hotpot/
 	COMMAND cmake -E make_directory ${_GEN_LUA}/hotdata/
 
@@ -23,12 +21,12 @@ add_custom_target(hd
 	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotdata/syntactic_node.h','hotdata/syntactic_node_writer.h'}\" -lua c_writer hotdata/syntactic_node.hd > ${_GEN_SOURCE}/hotdata/syntactic_node_writer.c
 	COMMAND HotData -i ${hd_SOURCE_DIR} -lua lua_types hotdata/syntactic_node.hd > ${_GEN_LUA}/hotdata/syntactic_node.lua
 
-	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_types hoterror/hp_error_msg.hd > ${_GEN_INCLUDE}/hoterror/hp_error_msg.h
-	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h','hoterror/hp_error_msg.h'}\" -lua c_reader_header hoterror/hp_error_msg.hd > ${_GEN_INCLUDE}/hoterror/hp_error_msg_reader.h
-	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h','hoterror/hp_error_code_reader.h','hoterror/hp_error_msg.h'}\" -lua c_reader hoterror/hp_error_msg.hd > ${_GEN_SOURCE}/hoterror/hp_error_msg_reader.c
+	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_types hotscript/hp_error_msg.hd > ${_GEN_INCLUDE}/hotscript/hp_error_msg.h
+	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h','hotscript/hp_error_msg.h'}\" -lua c_reader_header hotscript/hp_error_msg.hd > ${_GEN_INCLUDE}/hotscript/hp_error_msg_reader.h
+	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h','hotscript/hp_error_code_reader.h','hotscript/hp_error_msg.h'}\" -lua c_reader hotscript/hp_error_msg.hd > ${_GEN_SOURCE}/hotscript/hp_error_msg_reader.c
 
-	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader_header hotpot/hp_error_code.hd > ${_GEN_INCLUDE}/hoterror/hp_error_code_reader.h
-	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader hotpot/hp_error_code.hd > ${_GEN_SOURCE}/hoterror/hp_error_code_reader.c
+	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader_header hotpot/hp_error_code.hd > ${_GEN_INCLUDE}/hotscript/hp_error_code_reader.h
+	COMMAND HotData -i ${hd_SOURCE_DIR} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader hotpot/hp_error_code.hd > ${_GEN_SOURCE}/hotscript/hp_error_code_reader.c
 	COMMAND HotData -i ${hd_SOURCE_DIR} -lua c_types hotpot/hp_error_code.hd > ${_GEN_INCLUDE}/hotpot/hp_error_code.h
 
 	COMMAND HotData -i ${hd_SOURCE_DIR} -lua c_types hotpot/hp_config.hd > ${_GEN_INCLUDE}/hotpot/hp_config.h

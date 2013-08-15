@@ -6,7 +6,7 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error_code.h"
-#include "hoterror/hp_error_msg.h"
+#include "hotscript/hp_error_msg.h"
 #include "hotscript/hp_script_vm.h"
 #include "hotscript/hp_script_lex.h"
 
