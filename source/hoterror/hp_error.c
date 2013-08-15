@@ -5,20 +5,16 @@
 
 #include <stdio.h>
 
-HP_ERROR_MSG_LIBRARY hp_error_msg_library;
-HP_ERROR_CODE hp_errno;
-char hp_errmsg[MAX_ERROR_MSG_LENGTH];
-
-const char* hp_error_search_msg(HP_ERROR_CODE sid)
+const char* hp_error_search_msg(const HP_ERROR_MSG_LIBRARY *hp_error_msg_library, HP_ERROR_CODE sid)
 {
 	hpuint32 l, r, m;
 
 	l = 0;
-	r = hp_error_msg_library.error_list_num;
+	r = hp_error_msg_library->error_list_num;
 	while(l < r)
 	{
 		m = (l + r - 1) >> 1;
-		if(hp_error_msg_library.error_list[m].error_code < sid)
+		if(hp_error_msg_library->error_list[m].error_code < sid)
 		{
 			l = m + 1;
 		}
@@ -32,43 +28,48 @@ const char* hp_error_search_msg(HP_ERROR_CODE sid)
 		goto ERROR_RET;
 	}
 
-	return hp_error_msg_library.error_list[l].error_msg;
+	return hp_error_msg_library->error_list[l].error_msg;
 ERROR_RET:
 	return NULL;
 }
 
-static void sort_library()
+static void sort_library(HP_ERROR_MSG_LIBRARY *hp_error_msg_library)
 {
 	hpuint32 i,j;
-	for(i = 0; i < hp_error_msg_library.error_list_num; ++i)
+	for(i = 0; i < hp_error_msg_library->error_list_num; ++i)
 	{
 		HP_ERROR_MSG tmp;
 		hpuint32 min_j = i;
 
-		for(j = i + 1; j < hp_error_msg_library.error_list_num; ++j)
+		for(j = i + 1; j < hp_error_msg_library->error_list_num; ++j)
 		{
-			if(hp_error_msg_library.error_list[j].error_code < hp_error_msg_library.error_list[min_j].error_code)
+			if(hp_error_msg_library->error_list[j].error_code < hp_error_msg_library->error_list[min_j].error_code)
 			{
 				min_j = j;
 			}
 		}
 		if(i != min_j)
 		{
-			tmp = hp_error_msg_library.error_list[i];
-			hp_error_msg_library.error_list[i] = hp_error_msg_library.error_list[min_j];
-			hp_error_msg_library.error_list[min_j] = tmp;
+			tmp = hp_error_msg_library->error_list[i];
+			hp_error_msg_library->error_list[i] = hp_error_msg_library->error_list[min_j];
+			hp_error_msg_library->error_list[min_j] = tmp;
 		}
 	}
 }
 
-HP_ERROR_CODE hp_error_load_if_first(const char *root_dir)
+void hp_error_init(HP_ERROR_MSG_LIBRARY *hp_error_msg_library)
+{
+	hp_error_msg_library->error_list_num = 0;
+}
+
+HP_ERROR_CODE hp_error_load_if_first(HP_ERROR_MSG_LIBRARY *hp_error_msg_library, const char *root_dir)
 {
 	char language_path[HP_MAX_FILE_PATH_LENGTH];
 	HP_XML_READER xml_reader;
 	FILE* fin_xml;
 	HP_ERROR_CODE ret = E_HP_NOERROR;
 
-	if(hp_error_msg_library.error_list_num != 0)
+	if(hp_error_msg_library->error_list_num != 0)
 	{
 		goto done;
 	}
@@ -81,15 +82,14 @@ HP_ERROR_CODE hp_error_load_if_first(const char *root_dir)
 	}
 
 	xml_reader_init(&xml_reader, fin_xml);
-	ret = read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &hp_error_msg_library);
+	ret = read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, hp_error_msg_library);
 	if(ret != E_HP_NOERROR)
 	{
 		goto f_done;
 	}	
-	sort_library();
+	sort_library(hp_error_msg_library);
 f_done:
 	fclose(fin_xml);
 done:
-	hp_errno = ret;
 	return ret;
 }

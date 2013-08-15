@@ -48,7 +48,7 @@ hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, c
 	else
 	{
 		self->file_name[0] = 0;
-	}
+	}	
 
 	self->yy_start = yy_start;
 	self->yy_limit = yy_limit;
@@ -258,6 +258,7 @@ hpint32 scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
 	self->include_path_tail = 0;
 	self->root_dir = root_dir;
 	self->result_num = 0;
+	hp_error_init(&self->error_msg_library);
 
 	return E_HP_NOERROR;
 }
@@ -307,9 +308,9 @@ void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CO
 {
 	va_list ap;
 	const char *error_str = NULL;
-	hp_error_load_if_first(self->root_dir);
+	hp_error_load_if_first(&self->error_msg_library, self->root_dir);
 
-	error_str = hp_error_search_msg(result);
+	error_str = hp_error_search_msg(&self->error_msg_library, result);
 	self->result[self->result_num] = result;
 	va_start(ap, result);
 	scanner_stack_errorap(self, yylloc, result, error_str, ap);

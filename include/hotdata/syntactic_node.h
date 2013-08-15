@@ -27,6 +27,7 @@ typedef enum _SN_VALUE_TYPE
 	E_SNVT_HEX_INT64 = 7,
 	E_SNVT_HEX_UINT64 = 8,
 }SN_VALUE_TYPE;
+#define SN_VALUE_TYPE_NUM 9
 typedef union _UN_VALUE
 {
 	hpint64 i64;
@@ -58,17 +59,20 @@ typedef enum _SN_SIMPLE_TYPE
 	E_ST_CHAR = 9,
 	E_ST_DOUBLE = 10,
 }SN_SIMPLE_TYPE;
+#define SN_SIMPLE_TYPE_NUM 11
 typedef enum _SN_CONTAINER_TYPE
 {
 	E_CT_VECTOR = 0,
 	E_CT_STRING = 1,
 }SN_CONTAINER_TYPE;
+#define SN_CONTAINER_TYPE_NUM 2
 typedef enum _SN_TYPE
 {
 	E_SNT_SIMPLE = 0,
 	E_SNT_CONTAINER = 1,
 	E_SNT_REFER = 2,
 }SN_TYPE;
+#define SN_TYPE_NUM 3
 typedef struct _ST_TYPE
 {
 	SN_TYPE type;
@@ -98,6 +102,7 @@ typedef enum _ST_EXPRESSION_OPER
 	E_EO_AND = 0,
 	E_EO_EQUAL = 1,
 }ST_EXPRESSION_OPER;
+#define ST_EXPRESSION_OPER_NUM 2
 typedef struct _ST_Expression
 {
 	hpbool neg;
@@ -125,7 +130,9 @@ typedef enum _TA_TYPE
 	E_TA_UNIQUE = 1,
 	E_TA_LOWER_BOUND = 2,
 	E_TA_UPPER_BOUND = 3,
+	E_TA_COUNTER = 4,
 }TA_TYPE;
+#define TA_TYPE_NUM 5
 typedef struct _ST_TypeAnnotation
 {
 	TA_TYPE type;
@@ -196,6 +203,7 @@ typedef enum _EN_DEFINITION_TYPE
 	E_DT_TYPEDEF = 5,
 	E_DT_UNIX_COMMENT = 6,
 }EN_DEFINITION_TYPE;
+#define EN_DEFINITION_TYPE_NUM 7
 typedef union _UN_DEFINITION
 {
 	ST_Import de_import;

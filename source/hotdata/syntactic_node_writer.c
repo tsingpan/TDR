@@ -457,6 +457,9 @@ HP_ERROR_CODE write_TA_TYPE_name(HPAbstractWriter *self, const TA_TYPE data)
         case E_TA_UPPER_BOUND:
             if(write_enum_name(self, "E_TA_UPPER_BOUND") != E_HP_NOERROR) goto ERROR_RET;
             break;
+        case E_TA_COUNTER:
+            if(write_enum_name(self, "E_TA_COUNTER") != E_HP_NOERROR) goto ERROR_RET;
+            break;
     }
 return E_HP_NOERROR;
 ERROR_RET:

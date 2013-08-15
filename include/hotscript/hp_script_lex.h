@@ -68,6 +68,7 @@ typedef struct _SCANNER_STACK
 	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
 
 	const char *root_dir;
+	HP_ERROR_MSG_LIBRARY error_msg_library;
 
 	hpint32 result[MAX_RESULT_NUM];
 	char result_str[MAX_RESULT_NUM][MAX_ERROR_MSG_LENGTH];

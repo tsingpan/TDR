@@ -84,7 +84,7 @@ static hpint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const 
 	//printf("save %s : %x\n", global_name, symbol);
 	if(!trie_store_if_absent(self->hotdata_symbols, global_name, symbol))
 	{
-		E_HP_ERROR;
+		return E_HP_ERROR;
 	}
 	return E_HP_NOERROR;
 }
@@ -569,6 +569,27 @@ done:
 	return;
 }
 
+void dp_check_TypeAnnotation_tok_counter_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+{
+	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+
+	if(val->type != E_SNVT_STRING)
+	{
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
+		goto done;
+	}
+
+	ptr->type = EN_HST_VALUE;
+	ptr->body.val.type = E_ST_UINT32;
+	if(dp_find_symbol_by_string(self, val->val.str) != NULL)
+	{
+		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
+		goto done;
+	}
+done:
+	return;
+}
+
 void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
 {
 	hpuint32 i, j;
@@ -990,9 +1011,10 @@ done:
 }
 
 
-void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const ST_ENUM *pn_enum)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+	hpuint32 i;
 
 	ptr->type = EN_HST_ENUM;
 
@@ -1000,6 +1022,22 @@ void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTI
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 	}
+
+
+	for(i = 0;i < pn_enum->type_annotations.ta_list_num; ++i)
+		if(pn_enum->type_annotations.ta_list[i].type == E_TA_COUNTER)
+		{
+			ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
+			ptr->type = EN_HST_VALUE;
+			ptr->body.val.type = E_SNVT_UINT64;
+			ptr->body.val.val.ui64 = pn_enum->enum_def_list_num;
+
+			if(dp_save_symbol_string(self, pn_enum->type_annotations.ta_list[i].val.val.str, ptr) != E_HP_NOERROR)
+			{
+				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
+			}
+		}
+
 done:
 	return;
 }

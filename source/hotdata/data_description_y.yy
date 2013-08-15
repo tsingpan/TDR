@@ -60,6 +60,7 @@
 %token tok_case
 %token tok_unixcomment
 %token tok_unique
+%token tok_counter
 %token tok_lower_bound
 %token tok_upper_bound
 %token tok_typedef
@@ -282,7 +283,7 @@ Enum :
 	{ }
 	';'
 	{
-		dp_check_Enum_Add(GET_SELF, &yylloc, &$4);
+		dp_check_Enum_Add(GET_SELF, &yylloc, &$4, &GET_DEFINITION.definition.de_enum);
 	};
     
 EnumDefList :
@@ -705,7 +706,15 @@ TypeAnnotation:
 	
 		$$.type = E_TA_SWITCH;
 		$$.val = $3;
-	};
+	}
+|	tok_counter '=' Value
+	{
+		dp_check_TypeAnnotation_tok_counter_Value(GET_SELF, &yylloc, &$3);
+	
+		$$.type = E_TA_COUNTER;
+		$$.val = $3;
+	}
+	;
 
     
 %%

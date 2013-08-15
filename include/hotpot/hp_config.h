@@ -15,6 +15,7 @@ typedef enum _hpbool
 	hptrue = 1,
 	hpfalse = 0,
 }hpbool;
+#define hpbool_NUM 2
 typedef enum _HPType
 {
 	E_HP_INT8 = 0,
@@ -34,4 +35,5 @@ typedef enum _HPType
 	E_HP_VECTOR = 14,
 	E_HP_OBJECT = 15,
 }HPType;
+#define HPType_NUM 16
 #endif//_H_hotpot_hp_config_hd_TYPES

@@ -63,6 +63,7 @@ anychar			([^])
 <INITIAL>"case"                 {return tok_case;																}
 <INITIAL>"typename"				{return tok_typename;															}
 <INITIAL>"unique"				{return tok_unique;																}
+<INITIAL>"counter"				{return tok_counter;															}
 <INITIAL>"typedef"				{return tok_typedef;															}
 <INITIAL>"lower_bound"			{return tok_lower_bound;														}
 <INITIAL>"upper_bound"			{return tok_upper_bound;														}

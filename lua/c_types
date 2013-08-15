@@ -95,6 +95,13 @@ function on_enum(enum)
 		io.write(',\n')
 	end
 	io.write('}' .. enum.name .. ';\n')
+	counter = enum.name .. '_NUM'
+	for key, value in pairs(enum.type_annotations.ta_list) do
+		if(value.type == E_TA_COUNTER)then
+			counter = value.val.val.str
+		end
+	end
+	print_line(0, '#define ' .. counter .. ' ' .. #enum.enum_def_list);
 end
 
 function on_object(type_name, object)

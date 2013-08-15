@@ -34,6 +34,8 @@ void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yyllo
 
 void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
 
+void dp_check_TypeAnnotation_tok_counter_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val);
+
 void dp_check_Union_Parameters(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
 void dp_check_Union_begin(DATA_PARSER *self, const YYLTYPE *yylloc);
@@ -50,7 +52,7 @@ void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn
 
 void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field);
 
-void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
+void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const ST_ENUM *pn_enum);
 
 void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier);
 

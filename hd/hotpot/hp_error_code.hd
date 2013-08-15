@@ -1,4 +1,4 @@
-enum HP_ERROR_CODE
+enum(counter = "HP_ERROR_CODE_NUM") HP_ERROR_CODE
 {
 	E_HP_NOERROR																= 0,
 	E_HP_ERROR																	= -1, 
