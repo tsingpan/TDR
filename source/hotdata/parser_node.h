@@ -4,7 +4,7 @@
 
 #include "hotpot/hp_platform.h"
 
-#include "syntactic_node.h"
+#include "hotdata/syntactic_node.h"
 
 typedef union _ParserNode ParserNode;
 

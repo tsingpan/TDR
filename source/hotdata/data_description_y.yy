@@ -18,7 +18,7 @@
 #include "hotdata_check.h"
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"
-#include "syntactic_node_writer.h"
+#include "hotdata/syntactic_node_writer.h"
 
 #define YYMALLOC
 #define YYFREE

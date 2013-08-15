@@ -5,11 +5,11 @@
  *  @generated
  */
 
-#ifndef _H_hp_config_hd_TYPES
-#define _H_hp_config_hd_TYPES
+#ifndef _H_hotpot_hp_config_hd_TYPES
+#define _H_hotpot_hp_config_hd_TYPES
 #include "hotpot/hp_platform.h"
 #define	HOTPOT_VERSION "0.0.1"
-#define HP_INVALID_INDEX 0xffffffff
+#define	HP_INVALID_INDEX -1
 typedef enum _hpbool
 {
 	hptrue = 1,
@@ -34,4 +34,4 @@ typedef enum _HPType
 	E_HP_VECTOR = 14,
 	E_HP_OBJECT = 15,
 }HPType;
-#endif//_H_hp_config_hd_TYPES
+#endif//_H_hotpot_hp_config_hd_TYPES

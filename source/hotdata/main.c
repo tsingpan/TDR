@@ -18,7 +18,7 @@
 #include "hoterror/hp_error_msg_reader.h"
 #include "hoterror/hp_error_msg.h"
 
-#include "syntactic_node.h"
+#include "hotdata/syntactic_node.h"
 
 #include "hotscript/hp_script_vm.h"
 
