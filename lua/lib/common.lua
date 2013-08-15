@@ -1,5 +1,5 @@
-loadfile(lua_dir .. "lib/syntactic_node.lua")();
-loadfile(lua_dir .. "lib/hp_config.lua")();
+loadfile(lua_dir .. "lib/hotdata/syntactic_node.lua")();
+loadfile(lua_dir .. "lib/hotpot/hp_config.lua")();
 
 enum_list = {}
 
