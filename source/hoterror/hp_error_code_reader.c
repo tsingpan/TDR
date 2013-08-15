@@ -9,10 +9,11 @@
 #include "hotpot/hp_error_code.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include <string.h>
+#include "hotpot/hp_error_code.h"
 HP_ERROR_CODE read_HP_ERROR_CODE_name(HPAbstractReader *self, HP_ERROR_CODE *data)
 {
     char name[128];
-    read_enum_name(self, name, 128);
+    if(read_enum_name(self, name, 128) != E_HP_NOERROR) goto ERROR_RET;
     if(strcmp(name, "E_HP_NOERROR") == 0)
     {
         *data = E_HP_NOERROR;
@@ -83,6 +84,7 @@ HP_ERROR_CODE read_HP_ERROR_CODE_name(HPAbstractReader *self, HP_ERROR_CODE *dat
         *data = E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE;
         goto done;
     }
+ERROR_RET:
     return E_HP_ERROR;
 done:
     return E_HP_NOERROR;

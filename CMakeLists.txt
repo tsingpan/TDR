@@ -45,7 +45,7 @@ add_custom_target(genall
 	COMMAND cmake -E make_directory ${_GEN_SOURCE}/hoterror/
 	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_types hoterror/hp_error_msg.hd > ${_GEN_INCLUDE}/hoterror/hp_error_msg.h
 	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h','hoterror/hp_error_msg.h'}\" -lua c_reader_header hoterror/hp_error_msg.hd > ${_GEN_INCLUDE}/hoterror/hp_error_msg_reader.h
-	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h','hoterror/hp_error_msg.h'}\" -lua c_reader hoterror/hp_error_msg.hd > ${_GEN_SOURCE}/hoterror/hp_error_msg_reader.c
+	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h','hoterror/hp_error_code_reader.h','hoterror/hp_error_msg.h'}\" -lua c_reader hoterror/hp_error_msg.hd > ${_GEN_SOURCE}/hoterror/hp_error_msg_reader.c
 	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader_header hotpot/hp_error_code.hd > ${_GEN_INCLUDE}/hoterror/hp_error_code_reader.h
 	COMMAND HOTDATA -i ${INCLUDE} -luastr \"ifiles={'hotpot/hp_error_code.h'}\" -lua c_reader hotpot/hp_error_code.hd > ${_GEN_SOURCE}/hoterror/hp_error_code_reader.c
 
