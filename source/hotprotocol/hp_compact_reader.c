@@ -6,6 +6,267 @@
 #include <string.h>
 #include <assert.h>
 
+static HP_ERROR_CODE hp_compact_varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result)
+{
+	hpuint8 b;
+
+	if(*buff_size < 1)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 0);
+	*result = (b & 0x7F);
+	if (!(b & 0x80))
+	{
+		*buff_size = 1;
+		goto done;
+	}
+
+	if(*buff_size < 2)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 1);
+	*result |= (b & 0x7F) << 7;
+	if (!(b & 0x80))
+	{
+		*buff_size = 2;
+		goto done;
+	}
+
+	if(*buff_size < 3)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 2);
+	*result |= (b & 0x7F) << 14;
+	if (!(b & 0x80))
+	{
+		*buff_size = 3;
+		goto done;
+	}
+
+	return E_HP_ERROR;
+done:
+	return E_HP_NOERROR;
+
+not_enough_byte_size:
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+}
+
+
+static HP_ERROR_CODE hp_compact_varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result)
+{
+	hpuint8 b;
+
+	if(*buff_size < 1)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 0);
+	*result = (b & 0x7F);
+	if (!(b & 0x80))
+	{
+		*buff_size = 1;
+		goto done;
+	}
+
+	if(*buff_size < 2)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 1);
+	*result |= (b & 0x7F) << 7;
+	if (!(b & 0x80))
+	{
+		*buff_size = 2;
+		goto done;
+	}
+
+	if(*buff_size < 3)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 2);
+	*result |= (b & 0x7F) << 14;
+	if (!(b & 0x80))
+	{
+		*buff_size = 3;
+		goto done;
+	}
+
+	if(*buff_size < 4)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 3);
+	*result |= (b & 0x7F) << 21;
+	if (!(b & 0x80))
+	{
+		*buff_size = 4;
+		goto done;
+	}
+
+	if(*buff_size < 5)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 4);
+	*result |= (b & 0x7F) << 28;
+	if (!(b & 0x80))
+	{
+		*buff_size = 5;
+		goto done;
+	}	
+
+	return E_HP_ERROR;
+done:
+	return E_HP_NOERROR;
+
+not_enough_byte_size:
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+}
+
+
+static HP_ERROR_CODE hp_compact_varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result)
+{
+	hpuint8 b;
+
+	hpuint32 par0 = 0;
+	hpuint32 par1 = 0;
+	hpuint32 par2 = 0;
+
+	//par0
+	if(*buff_size < 1)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 0);
+	par0 = (b & 0x7F);
+	if (!(b & 0x80))
+	{
+		*buff_size = 1;
+		goto done;
+	}
+
+	if(*buff_size < 2)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 1);
+	par0 |= (b & 0x7F) << 7;
+	if (!(b & 0x80))
+	{
+		*buff_size = 2;
+		goto done;
+	}
+
+	if(*buff_size < 3)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 2);
+	par0 |= (b & 0x7F) << 14;
+	if (!(b & 0x80))
+	{
+		*buff_size = 3;
+		goto done;
+	}
+
+	if(*buff_size < 4)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 3);
+	par0 |= (b & 0x7F) << 21;
+	if (!(b & 0x80))
+	{
+		*buff_size = 4;
+		goto done;
+	}
+
+	//par1
+	if(*buff_size < 5)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 4);
+	par1 = (b & 0x7F);
+	if (!(b & 0x80))
+	{
+		*buff_size = 5;
+		goto done;
+	}
+
+	if(*buff_size < 6)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 5);
+	par1 |= (b & 0x7F) << 7;
+	if (!(b & 0x80))
+	{
+		*buff_size = 6;
+		goto done;
+	}
+
+	if(*buff_size < 7)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 6);
+	par1 |= (b & 0x7F) << 14;
+	if (!(b & 0x80))
+	{
+		*buff_size = 7;
+		goto done;
+	}
+
+	if(*buff_size < 8)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 7);
+	par1 |= (b & 0x7F) << 21;
+	if (!(b & 0x80))
+	{
+		*buff_size = 8;
+		goto done;
+	}
+
+	//par2
+	if(*buff_size < 9)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 8);
+	par2 = (b & 0x7F);
+	if (!(b & 0x80))
+	{
+		*buff_size = 9;
+		goto done;
+	}
+
+	if(*buff_size < 10)
+	{
+		goto not_enough_byte_size;
+	}
+	b = *(hpuint8*)(buff_ptr + 9);
+	par2 |= (b & 0x7F) << 7;
+	if (!(b & 0x80))
+	{
+		*buff_size = 10;
+		goto done;
+	}
+	return E_HP_ERROR;
+done:
+	*result = ((hpuint64)par0) | ((hpuint64)par1 << 28 )| ((hpuint64)par2 << 56);
+	return E_HP_NOERROR;
+
+not_enough_byte_size:
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+}
+
 hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size)
 {
 	memset(&self->super, 0, sizeof(HPAbstractReader));
@@ -51,7 +312,7 @@ hpint32 hp_compact_read_enum(HPAbstractReader *super, hpint32 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -116,7 +377,7 @@ hpint32 hp_compact_read_hpint16(HPAbstractReader *super, hpint16 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint16 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -134,7 +395,7 @@ hpint32 hp_compact_read_hpint32(HPAbstractReader *super, hpint32 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -152,7 +413,7 @@ hpint32 hp_compact_read_hpint64(HPAbstractReader *super, hpint64 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint64 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -188,7 +449,7 @@ hpint32 hp_compact_read_hpuint16(HPAbstractReader *super, hpuint16 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint16 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint16_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -206,7 +467,7 @@ hpint32 hp_compact_read_hpuint32(HPAbstractReader *super, hpuint32 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint32 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint32_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;
@@ -225,7 +486,7 @@ hpint32 hp_compact_read_hpuint64(HPAbstractReader *super, hpuint64 *val)
 	HP_COMPACT_READER *self = HP_CONTAINER_OF(super, HP_COMPACT_READER, super);
 	hpuint64 res;
 	hpuint32 buff_size = COMPACT_encoding_READER_CAPACITY(self);
-	int ret = hp_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
+	int ret = hp_compact_varint64_decode(COMPACT_encoding_READER_PTR(self), &buff_size, &res);
 	if(ret != E_HP_NOERROR)
 	{
 		goto not_enough_bytebuff_size;

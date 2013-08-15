@@ -16,9 +16,9 @@ typedef struct _HP_XML_WRITER
 	hpbool need_tab;
 }HP_XML_WRITER;
 
-HP_API hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f);
+HP_API void xml_writer_init(HP_XML_WRITER *self, FILE *f);
 
-HP_API hpint32 xml_writer_fini(HP_XML_WRITER *self);
+HP_API void xml_writer_fini(HP_XML_WRITER *self);
 
 //virtual functions
 HP_API hpint32 xml_write_vector_begin(HPAbstractWriter *super);

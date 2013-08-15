@@ -7,7 +7,6 @@ if (PHP_HOTSCRIPT != "no") {
 	if (CHECK_HEADER_ADD_INCLUDE("hotpot/hp_platform.h", "CFLAGS", PHP_HOTSCRIPT + '/include')
 		&& CHECK_LIB("hotscript.lib;", "hotscript", PHP_HOTSCRIPT)
 		&& CHECK_LIB("hotprotocol.lib;", "hotscript", PHP_HOTSCRIPT)
-		&& CHECK_LIB("hotpot.lib;", "hotscript", PHP_HOTSCRIPT)
 		&& CHECK_LIB("hoterror.lib", "hotscript", PHP_HOTSCRIPT)
 		)
 	{

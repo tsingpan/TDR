@@ -11,6 +11,6 @@ extern char hp_errmsg[MAX_ERROR_MSG_LENGTH];
 
 const char* hp_error_search_msg(HP_ERROR_CODE sid);
 
-void hp_error_load_if_first(const char *root_dir);
+HP_ERROR_CODE hp_error_load_if_first(const char *root_dir);
 
 #endif//_H_hp_error_hd_TYPES

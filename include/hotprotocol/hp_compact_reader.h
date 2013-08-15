@@ -13,7 +13,6 @@ typedef struct _HP_COMPACT_READER
 	hpuint32 offset;
 }HP_COMPACT_READER;
 
-
 HP_API hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size);
 
 HP_API hpint32 hp_compact_reader_fini(HP_COMPACT_READER *self);

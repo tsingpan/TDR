@@ -61,21 +61,35 @@ static void sort_library()
 	}
 }
 
-void hp_error_load_if_first(const char *root_dir)
+HP_ERROR_CODE hp_error_load_if_first(const char *root_dir)
 {
-	if(hp_error_msg_library.error_list_num == 0)
+	char language_path[HP_MAX_FILE_PATH_LENGTH];
+	HP_XML_READER xml_reader;
+	FILE* fin_xml;
+	HP_ERROR_CODE ret = E_HP_NOERROR;
+
+	if(hp_error_msg_library.error_list_num != 0)
 	{
-		char language_path[HP_MAX_FILE_PATH_LENGTH];
-		HP_XML_READER xml_reader;
-		FILE* fin_xml;
+		goto done;
+	}
+	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+	fin_xml = fopen(language_path, "r");
+	if(fin_xml == NULL)
+	{
+		ret = E_HP_CAN_NOT_OPEN_FILE;
+		goto done;
+	}
 
-		snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
-
-		fin_xml = fopen(language_path, "r");
-		xml_reader_init(&xml_reader, fin_xml);
-		read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &hp_error_msg_library);
-		fclose(fin_xml);
-
-		sort_library();
+	xml_reader_init(&xml_reader, fin_xml);
+	ret = read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, &hp_error_msg_library);
+	if(ret != E_HP_NOERROR)
+	{
+		goto f_done;
 	}	
+	sort_library();
+f_done:
+	fclose(fin_xml);
+done:
+	hp_errno = ret;
+	return ret;
 }

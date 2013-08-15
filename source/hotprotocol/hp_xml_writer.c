@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
+void xml_writer_init(HP_XML_WRITER *self, FILE *f)
 {
 	memset(&self->super, 0, sizeof(HPAbstractWriter));
 
@@ -43,16 +43,11 @@ hpint32 xml_writer_init(HP_XML_WRITER *self, FILE *f)
 	self->super.write_enum_name = xml_write_enum_name;
 	self->super.write_counter = xml_write_counter;
 
-	
-
-	return E_HP_NOERROR;
 }
 
-hpint32 xml_writer_fini(HP_XML_WRITER *self)
+void xml_writer_fini(HP_XML_WRITER *self)
 {
 	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
-
-	return E_HP_NOERROR;
 }
 
 static void printf_tab(HP_XML_WRITER *self)

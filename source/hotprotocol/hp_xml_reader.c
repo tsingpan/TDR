@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
+void xml_reader_init(HP_XML_READER *self, FILE *f)
 {
 	memset(&self->super, 0, sizeof(HPAbstractReader));
 
@@ -43,17 +43,11 @@ hpint32 xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_string = xml_read_string;
 	self->super.read_hpchar = xml_read_hpchar;
 	self->super.read_counter = xml_read_counter;
-	
-
-
-	return E_HP_NOERROR;
 }
 
-hpint32 xml_reader_fini(HP_XML_READER *self)
+void xml_reader_fini(HP_XML_READER *self)
 {
 	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
-
-	return E_HP_NOERROR;
 }
 
 static void skip_tab(HP_XML_READER *self)
