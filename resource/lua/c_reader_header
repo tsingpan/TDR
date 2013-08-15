@@ -2,11 +2,11 @@ loadfile(lua_dir .. "lib/syntactic_node.lua")();
 loadfile(lua_dir .. "lib/common.lua")();
 
 function on_enum_name(enum)
-	print_line(0, 'void read_' .. enum.name .. '_name(HPAbstractReader *self, ' .. enum.name .. ' *data);')
+	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_name(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void read_' .. enum.name .. '_number(HPAbstractReader *self, ' .. enum.name .. ' *data);')
+	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_number(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 end
 
 
@@ -15,7 +15,7 @@ function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void read_' .. enum.name .. '(HPAbstractReader *self, ' .. enum.name .. ' *data);')
+	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '(HPAbstractReader *self, ' .. enum.name .. ' *data);')
 
 
 	enum_list[enum.name] = true
@@ -24,7 +24,7 @@ end
 
 function on_struct(object)
 	t = 0;
-	line = 'void read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. get_type(value.type, nil)
@@ -37,7 +37,7 @@ end
 
 function on_union(object)
 	t = 0;
-	line = 'void read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. ' ' .. get_type(value.type, nil)
@@ -55,6 +55,7 @@ function main(hd)
 	print_line(0, '#define ' .. file_tag)
 
 	print_line(0, '#include "hotpot/hp_platform.h"')
+	print_line(0, '#include "hotpot/hp_error_code.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_reader.h"')
 	print_line(0, '#include <string.h>')
 

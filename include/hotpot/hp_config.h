@@ -9,6 +9,7 @@
 #define _H_hp_config_hd_TYPES
 #include "hotpot/hp_platform.h"
 #define	HOTPOT_VERSION "0.0.1"
+#define HP_INVALID_INDEX 0xffffffff
 typedef enum _hpbool
 {
 	hptrue = 1,

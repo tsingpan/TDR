@@ -1,5 +1,6 @@
 const string HOTPOT_VERSION = "0.0.1";
 
+const uint32 HP_INVALID_INDEX = 0xffffffff;
 
 enum hpbool
 {

@@ -2,23 +2,26 @@ loadfile(lua_dir .. "lib/syntactic_node.lua")();
 loadfile(lua_dir .. "lib/common.lua")();
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
 	print_line(1, 'switch(data)')
 	print_line(1, '{')
 	for key, value in pairs(enum.enum_def_list) do
 		print_line(2, 'case ' .. value.identifier .. ':')
-		print_line(3, 'write_enum_name(self, "' ..  value.identifier .. '");')
+		print_line(3, 'if(write_enum_name(self, "' ..  value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 		print_line(3, 'break;')
 	end
 	print_line(1, '}')
+	print_line(0, 'return E_HP_NOERROR;')
+	print_line(0, 'ERROR_RET:')
+	print_line(1, 'return E_HP_ERROR;')
 	print_line(0, '}')
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
-	print_line(1, 'write_enum_number(self, data);')
+	print_line(1, 'return write_enum_number(self, data);')
 	print_line(0, '}')
 end
 
@@ -28,10 +31,13 @@ function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data)')
 	print_line(0, '{')
-	print_line(1, 'write_' .. enum.name .. '_name(self, data);')
-	print_line(1, 'write_' .. enum.name .. '_number(self, data);')
+	print_line(1, 'if(write_' .. enum.name .. '_name(self, data) != E_HP_NOERROR) goto ERROR_RET;')
+	print_line(1, 'if(write_' .. enum.name .. '_number(self, data) != E_HP_NOERROR) goto ERROR_RET;')
+	print_line(1, 'return E_HP_NOERROR;')
+	print_line(0, 'ERROR_RET:')
+	print_line(1, 'return E_HP_ERROR;')
 	print_line(0, '}')
 
 	enum_list[enum.name] = true
@@ -40,7 +46,7 @@ end
 
 function on_struct(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. get_type(value.type, nil)
@@ -50,7 +56,7 @@ function on_struct(object)
 	print_line(t, line)
 	print_line(t, '{')
 	t = t + 1
-	print_line(t, 'write_struct_begin(self, "' .. object.name .. '");')
+	print_line(t, 'if(write_struct_begin(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
 	for key, value in pairs(object.field_list.field_list) do
 		if(value.condition.empty == false)then			
 			if(value.condition.exp.oper == E_EO_AND)then
@@ -69,45 +75,45 @@ function on_struct(object)
 
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
-				print_line(t, 'write_counter(self, "' .. value.args.arg_list[3].ot .. '", data->' .. value.args.arg_list[3].ot .. ');');
-				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
+				print_line(t, 'if(write_counter(self, "' .. value.args.arg_list[3].ot .. '", data->' .. value.args.arg_list[3].ot .. ') != E_HP_NOERROR) goto ERROR_RET;');
+				print_line(t, 'if(write_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 				print_line(t, '{')
 				t = t + 1
 				print_line(t, 'hpuint32 i;')
-				print_line(t, 'write_vector_begin(self);')
+				print_line(t, 'if(write_vector_begin(self) != E_HP_NOERROR) goto ERROR_RET;')
 				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
 				print_line(t, '{')
 				t = t + 1
-				print_line(t, 'write_vector_item_begin(self, i);')
-				line = 'write_'
+				print_line(t, 'if(write_vector_item_begin(self, i) != E_HP_NOERROR) goto ERROR_RET;')
+				line = 'if(write_'
 				line = line .. get_type(value.type, value.args)
 				line = line .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for i=4, #value.args.arg_list do
 					line = line .. ', ' .. get_symbol_access(value.args.arg_list[i].ot, object)
 				end
-				line = line .. ');'
+				line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
 				print_line(t, line)
-				print_line(t, 'write_vector_item_end(self, i);')
+				print_line(t, 'if(write_vector_item_end(self, i) != E_HP_NOERROR) goto ERROR_RET;')
 				t = t - 1
 				print_line(t, '}')
-				print_line(t, 'write_vector_end(self);')
+				print_line(t, 'if(write_vector_end(self) != E_HP_NOERROR) goto ERROR_RET;')
 				t = t - 1
 				print_line(t, '}')
-				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
+				print_line(t, 'if(write_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
-				print_line(t, 'write_string(self, data->' .. value.identifier .. ');')
-				print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
+				print_line(t, 'if(write_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
+				print_line(t, 'if(write_string(self, data->' .. value.identifier .. ') != E_HP_NOERROR) goto ERROR_RET;')
+				print_line(t, 'if(write_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 			end
 		else
-			print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
-			line = 'write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
+			print_line(t, 'if(write_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
+			line = 'if(write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end
-			line = line .. ');'
+			line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
 			print_line(t, line)
-			print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
+			print_line(t, 'if(write_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 		end
 
 		if(value.condition.empty == false)then
@@ -115,7 +121,10 @@ function on_struct(object)
 			print_line(t, '}')
 		end
 	end
-	print_line(t, 'write_struct_end(self, "' .. object.name .. '");')
+	print_line(t, 'if(write_struct_end(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
+	print_line(1, 'return E_HP_NOERROR;')
+	print_line(0, 'ERROR_RET:')
+	print_line(1, 'return E_HP_ERROR;')
 	t = t - 1
 	print_line(t, '}')
 end
@@ -123,7 +132,7 @@ end
 
 function on_union(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. 'const ' .. get_type(value.type, nil)
@@ -133,7 +142,7 @@ function on_union(object)
 	print_line(t, line)
 	print_line(t, '{')
 	t = t + 1
-	print_line(t, 'write_struct_begin(self, "' .. object.name .. '");')
+	print_line(t, 'if(write_struct_begin(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
 
 	sw = 's'
 	for key, value in pairs(object.ta.ta_list) do
@@ -149,43 +158,46 @@ function on_union(object)
 		print_line(t, 'case ' .. get_val(value.condition.exp.op1, object) .. ':')
 		print_line(t, '{')
 		t = t + 1
-		print_line(t, 'write_field_begin(self, "' .. value.identifier .. '");')
+		print_line(t, 'if(write_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 		if(value.type.type == E_SNT_CONTAINER)then
 			if(value.type.ct == E_CT_VECTOR)then
 				print_line(t, 'hpuint32 i;')
 				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
 				print_line(t, '{')
 				t = t + 1
-				line = 'write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
+				line = 'if(write_' .. get_type(value.type, value.args) .. '(self, ' .. get_symbol_access(value.identifier, object)
 				for ak, av in pairs(value.args.arg_list) do
 					line = line .. ', ' .. get_symbol_access(av.ot, object)
 				end
-				line = line .. ');'
+				line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
 				print_line(t, line)
 				t = t - 1
 				print_line(t, '}')
 			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'write_string(self, data->' .. value.identifier .. ');')
+				print_line(t, 'if(write_string(self, data->' .. value.identifier .. ') != E_HP_NOERROR) goto ERROR_RET;')
 			end
 		else
-			line = 'write_'
+			line = 'if(write_'
 			line = line .. get_type(value.type, nil)
 			line = line .. '(self, ' .. get_symbol_access(value.identifier, object)
 			for ak, av in pairs(value.args.arg_list) do
 				line = line .. ', ' .. get_symbol_access(av.ot, object) 
 			end
 
-			line = line .. ');'
+			line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
 			print_line(t, line)
 		end
-		print_line(t, 'write_field_end(self, "' .. value.identifier .. '");')
+		print_line(t, 'if(write_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 		print_line(t, 'break;')
 		t = t - 1
 		print_line(t, '}')
 	end
 	t = t - 1
 	print_line(t, '}')
-	print_line(t, 'write_struct_end(self, "' .. object.name .. '");')
+	print_line(t, 'if(write_struct_end(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
+	print_line(1, 'return E_HP_NOERROR;')
+	print_line(0, 'ERROR_RET:')
+	print_line(1, 'return E_HP_ERROR;')
 	t = t - 1
 	print_line(t, '}')
 end

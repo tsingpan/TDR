@@ -2,11 +2,11 @@ loadfile(lua_dir .. "lib/syntactic_node.lua")();
 loadfile(lua_dir .. "lib/common.lua")();
 
 function on_enum_name(enum)
-	print_line(0, 'void write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '_name(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
 end
 
 function on_enum_number(enum)
-	print_line(0, 'void write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '_number(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
 end
 
 
@@ -15,7 +15,7 @@ function on_enum(enum)
 	on_enum_name(enum)
 	on_enum_number(enum)
 
-	print_line(0, 'void write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
+	print_line(0, 'HP_ERROR_CODE write_' .. enum.name .. '(HPAbstractWriter *self, const ' .. enum.name .. ' data);')
 
 
 	enum_list[enum.name] = true
@@ -24,7 +24,7 @@ end
 
 function on_struct(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. get_type(value.type, nil)
@@ -37,7 +37,7 @@ end
 
 function on_union(object)
 	t = 0;
-	line = 'void write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
+	line = 'HP_ERROR_CODE write_' .. object.name .. '(HPAbstractWriter *self, const ' .. object.name .. ' *data'
 	for key, value in pairs(object.parameters.par_list) do
 		line = line .. ' , '
 		line = line .. 'const ' .. get_type(value.type, nil)
@@ -56,6 +56,7 @@ function main(hd)
 	io.write('#define ' .. file_tag .. '\n')
 
 	print_line(0, '#include "hotpot/hp_platform.h"')
+	print_line(0, '#include "hotpot/hp_error_code.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
 
 	if(ifiles ~= nil) then
