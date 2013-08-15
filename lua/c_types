@@ -1,5 +1,4 @@
-print(lua_dir .. "lib/syntactic_node.lua")
-loadfile(lua_dir .. "lib/syntactic_node.lua")();
+loadfile(lua_dir .. "lib/hotdata/syntactic_node.lua")();
 loadfile(lua_dir .. "lib/common.lua")();
 
 function print_val(val)
