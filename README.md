@@ -7,14 +7,17 @@ HotPot——小星星的聚宝盆
 #Windows
 ###1、安装Bison
 		安装Cygwin并选中里面的Bison工具
+		版本2.4.1
 
 ###2、安装re2c
 		这里下载re2c工具， http://sourceforge.net/projects/re2c/
 		解压缩re2c.exe， 并把解压缩的路径加入path环境变量
+		版本0.13.5
 
 ###3、安装CMake
 		最低版本：2.8.11.1
 		如何在Windows上安装CMake请参考：http://www.cmake.org/
+		版本1.8.11.1
 
 ###4、下载HotPot源代码
 		git clone https://github.com/randyliu/HotPot
@@ -27,6 +30,8 @@ HotPot——小星星的聚宝盆
 ###7、运行INSTALL项目
 
 ###8、安装PHP扩展
+		php版本5.5.1		
+
 		source\hotscript\php\ext\hotscript目录下是一个标准的php扩展，安装方法请参考：
 			https://wiki.php.net/internals/windows/stepbystepbuild
 
