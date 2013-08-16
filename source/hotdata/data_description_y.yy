@@ -7,7 +7,7 @@
 #define GET_SELF HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
 #define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
 #define GET_DEFINITION HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
-
+#define YYLEX_PARAM ss
 %}
 %locations
 
@@ -19,12 +19,8 @@
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"
 #include "hotdata/syntactic_node_writer.h"
-
-#define YYMALLOC
-#define YYFREE
-
 #define YYSTYPE ParserNode
-#define YYLEX_PARAM ss
+
 #include <string.h>
 }
 
