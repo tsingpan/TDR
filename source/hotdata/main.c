@@ -72,7 +72,7 @@ void get_real_file_path(const char *file_name)
 
 SCRIPT_PARSER sp;
 
-int main(hpuint32 argc, char **argv)
+int main(hpint32 argc, char **argv)
 {
 	hpuint32 i, j, option_end;
 	lua_State *L;
