@@ -252,7 +252,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 	return ret;
 }
 
-extern int yyscriptparse (SCRIPT_PARSER *sp);
+extern int yyscriptparse (SCANNER_STACK *sp);
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char* root_dir)
 {
 	hpint32 ret;
@@ -273,7 +273,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	self->reader = reader;
 	
-	ret = yyscriptparse(self);
+	ret = yyscriptparse(&self->scanner_stack);
 
 	if(self->scanner_stack.result_num != 0)
 	{
