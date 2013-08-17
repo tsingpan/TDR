@@ -5,8 +5,8 @@ HotPot——小星星的聚宝盆
 一、C库的安装
 -------
 ###1、安装Bison
-		[http://www.gnu.org/software/bison/]
-		版本2.4.1
+		版本2.4.1[http://www.gnu.org/software/bison/]
+		
 
 		Windows:
 			安装Cygwin, http://www.cygwin.com/
