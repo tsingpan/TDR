@@ -13,7 +13,7 @@ HotPot
 安装
 ====
 ### C库的安装
-1.[安装Bison 2.4.1](http://www.gnu.org/software/bison/)
+1.安装[Bison](http://www.gnu.org/software/bison/)2.4.1
 
 		Windows
 			安装Cygwin, http://www.cygwin.com/
