@@ -18,7 +18,7 @@ HotPot
 1.安装[Bison](http://www.gnu.org/software/bison/) 2.4.1
 
 		Windows
-			安装[Cygwin](http://www.cygwin.com/)并选中里面的Bison工具。
+			安装Cygwin并选中里面的Bison工具。
 		Linux
 			apt-get install bison
 		OS X
@@ -76,7 +76,7 @@ HotPot
 			export HOTPOT_DIR=/usr/local
 
 ###HotScript-PHP
-[PHP手册](http://www.php.net/manual/zh/index.php)
+关于PHP的更多信息， 请参考[PHP手册](http://www.php.net/manual/zh/index.php)
 
 1.安装
 
