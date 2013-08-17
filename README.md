@@ -6,12 +6,13 @@ HotPot
 - hotprotocol 跨语言协议模块， 支持C, Php, ObjC。
 - hotscript 用于显示对象的脚本语言， 支持C和php扩展。
 
-### 问题和反馈
+问题和反馈
+==========
 点击这里 → [https://github.com/randyliu/HotPot/issues](https://github.com/randyliu/HotPot/issues)
 
-### 安装
-C库的安装
----------
+安装
+====
+### C库的安装
 1、安装Bison 2.4.1 [http://www.gnu.org/software/bison/](http://www.gnu.org/software/bison/)
 	Windows:
 		安装Cygwin, http://www.cygwin.com/
@@ -66,20 +67,18 @@ C库的安装
 	OS X:
 		export HOTPOT_DIR=/usr/local
 
-PHP扩展的安装
--------------
+### PHP扩展的安装
 	source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 	php安装方法说明 [http://www.php.net/manual/zh/install.php](http://www.php.net/manual/zh/install.php)
 
 	在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
-hotprotocol-java的安装
-----------------------
+### hotprotocol-java的安装
 	待完善
 
-hotprotocol-cocoa的安装
------------------------
+### hotprotocol-cocoa的安装
 	待完善
 
-### 目标
+目标
+====
 **为服务器端程序员提供精巧的开发工具！**
