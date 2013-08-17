@@ -14,71 +14,69 @@ HotPot
 ====
 ### C库的安装
 **安装Bison 2.4.1 [http://www.gnu.org/software/bison/](http://www.gnu.org/software/bison/)**
-
-*Windows*
+	*Windows*
 		安装Cygwin, http://www.cygwin.com/
 		选中里面的Bison工具
-*Linux*
+	*Linux*
 		apt-get install bison
-*OS X*
+	*OS X*
 		./configure
 		make
 		make install			
 
 **安装re2c 0.13.5 [http://sourceforge.net/projects/re2c/](http://sourceforge.net/projects/re2c/)**
-
-*Windows*
-下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
-*Linux*
-	apt-get install re2c
-*OS X*
-	./configure
-	make
-	make install
+	*Windows*
+		下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
+	*Linux*
+		apt-get install re2c
+	*OS X*
+		./configure
+		make
+		make install
 
 **安装CMake 2.8.11.1 [http://www.cmake.org/](http://www.cmake.org/)**
 
 **下载HotPot源代码**
-
 	git clone https://github.com/randyliu/HotPot
 
 **CMake生成工程文件**
-
 	使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
 
 **编译**
-
-*Windows*
+	*Windows*
 		打开Microsoft Visual Studio， 点击编译。
-*Linux*
+	*Linux*
 		make
-*OS X*
+	*OS X*
 		make
 
 **安装**
-*Windows*
+	*Windows*
 		在Microsoft Visual Studio中执行INSTALL项目。
-*Linux*
+
+	*Linux*
 		make install
-*OS X*
+	*OS X*
 		make install
 
 **配置环境变量**
-配置HOTPOT_DIR环境变量为安装目录
-*Windows*
-	新建一个环境变量HOTPOT_DIR=C:\Program Files\HotPot
-*Linux*
+	配置HOTPOT_DIR环境变量为安装目录
+	*Windows*
+		新建一个环境变量HOTPOT_DIR=C:\Program Files\HotPot
+	*Linux*
 		export HOTPOT_DIR=/usr/local
-*OS X*
+	*OS X*
 		export HOTPOT_DIR=/usr/local
 
 ### PHP扩展的安装
-source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 php安装方法说明 [http://www.php.net/manual/zh/install.php](http://www.php.net/manual/zh/install.php)
-在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
+
+	source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
+
+	在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
 ### hotprotocol-java的安装
-待完善
+	待完善
 
 ### hotprotocol-cocoa的安装
-待完善
+	待完善
