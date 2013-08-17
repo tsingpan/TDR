@@ -15,6 +15,7 @@ HotPot
 ### C库的安装
 
 1. 安装[Bison](http://www.gnu.org/software/bison/) 2.4.1
+
 	Windows
 		安装[Cygwin](http://www.cygwin.com/)并选中里面的Bison工具。
 	Linux
