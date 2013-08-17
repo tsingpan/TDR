@@ -76,6 +76,7 @@ HotPot
 
 ###HotScript的php扩展安装
 [PHP手册](http://www.php.net/manual/zh/index.php)
+
 1.安装
 		hotscript/php/ext/hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 2.php.ini
@@ -87,7 +88,3 @@ HotPot
 
 ###HotProtocol-cocoa的安装
 		待完善
-
-目标
-====
-***做一个精巧的服务器开发工具包***
