@@ -1,6 +1,12 @@
-HotPot——小星星的聚宝盆
+HotPot
 ========================
-提供了数据的跨平台， 跨语言支持等功能， 是其他库的基础。
+**小行星的聚宝盆**
+- hotpot 各种平台的支持
+- hotprotocol 各种语言下的协议
+- hotscript 一种用于显示对象的脚本语言
+
+### 问题和反馈
+点击这里 → [https://github.com/randyliu/HotPot/issues](https://github.com/randyliu/HotPot/issues)
 
 一、C库的安装
 -------
