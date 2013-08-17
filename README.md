@@ -2,10 +2,10 @@ HotPot
 ======
 **这是一个火锅， 里面有很多新奇玩意!**
 
-- HotPot 跨平台模块， 支持Windows,Linux,OS X。
+- HotPot 跨平台基础模块， 支持Windows,Linux,OS X。
 - HotProtocol 跨语言协议模块，支持C,Php,ObjC。
 - HotData 数据描述语言。
-- HotScript 文本处理工具脚本语言
+- HotScript 文本处理工具。
 
 问题和反馈
 ==========
