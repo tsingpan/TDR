@@ -47,11 +47,11 @@ function on_union(object)
 	print_line(t, line)
 end
 
-function main(hd)
+function main(document)
 	print_file_prefix()
 
-	file_tag = hd.file_name
-	file_tag = '_H_' .. string.gsub(hd.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
+	file_tag = document.file_name
+	file_tag = '_H_' .. string.gsub(document.file_name, '[^a-zA-Z0-9]', '_') .. '_WRITER'
 	io.write('#ifndef ' .. file_tag .. '\n')
 	io.write('#define ' .. file_tag .. '\n')
 
@@ -65,7 +65,7 @@ function main(hd)
 		end
 	end
 
-	for key, value in pairs(hd['definition_list']) do
+	for key, value in pairs(document['definition_list']) do
 		if(value.type == E_DT_ENUM)then
 			on_enum(value.definition.de_enum)
 		elseif(value.type == E_DT_STRUCT)then
@@ -77,5 +77,5 @@ function main(hd)
 	io.write('#endif//' .. file_tag .. '\n')
 end
 
-main(hd)
+main(document)
 

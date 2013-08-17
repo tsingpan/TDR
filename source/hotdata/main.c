@@ -156,7 +156,7 @@ int main(hpint32 argc, char **argv)
 		{
 			goto ERROR_RET;
 		}
-		lua_setglobal( L, "hd" );
+		lua_setglobal( L, "document" );
 
 		for(j = 1; j < option_end; ++j)
 		{

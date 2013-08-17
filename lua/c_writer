@@ -201,7 +201,7 @@ function on_union(object)
 	t = t - 1
 	print_line(t, '}')
 end
-function main(hd)
+function main(document)
 	print_file_prefix()
 	print_line(0, '#include "hotpot/hp_platform.h"')
 	print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
@@ -212,7 +212,7 @@ function main(hd)
 		end
 	end
 
-	for key, value in pairs(hd['definition_list']) do
+	for key, value in pairs(document['definition_list']) do
 		if(value.type == E_DT_ENUM)then
 			on_enum(value.definition.de_enum)
 		elseif(value.type == E_DT_STRUCT)then
@@ -223,4 +223,4 @@ function main(hd)
 	end
 end
 
-main(hd)
+main(document)

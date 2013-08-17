@@ -46,14 +46,14 @@ function on_enum(enum)
 	end
 end
 
-function main(hd)
+function main(document)
 	if(ifiles ~= nil) then
 		for k, v in pairs(ifiles) do
 			print_line(0, 'loadfile("' .. v .. '")()')
 		end
 	end
 
-	for key, value in pairs(hd['definition_list']) do
+	for key, value in pairs(document['definition_list']) do
 		if(value.type == E_DT_CONST)then
 			on_const(value.definition.de_const)
 		elseif(value.type == E_DT_ENUM)then
@@ -62,5 +62,5 @@ function main(hd)
 	end
 end
 
-main(hd)
+main(document)
 
