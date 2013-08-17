@@ -3,7 +3,7 @@ HotPot
 **这是一个火锅， 里面有很多新奇玩意!**
 
 - HotPot 跨平台基础模块， 支持Windows,Linux,OS X。
-- HotProtocol 跨语言协议模块，支持C,Php,ObjC。
+- HotProtocol 跨语言协议模块，支持C,PHP,ObjC。
 - HotData 数据描述语言。
 - HotScript 文本处理工具。
 
@@ -13,7 +13,7 @@ HotPot
 
 安装
 ====
-###C库的安装
+###HotPot-C
 
 1.安装[Bison](http://www.gnu.org/software/bison/) 2.4.1
 
@@ -75,7 +75,7 @@ HotPot
 		OS X
 			export HOTPOT_DIR=/usr/local
 
-###HotScript-php
+###HotScript-PHP
 [PHP手册](http://www.php.net/manual/zh/index.php)
 
 1.安装
@@ -86,8 +86,8 @@ HotPot
 
 		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
-###HotProtocol-java
+###HotProtocol-Java
 		待完善
 
-###HotProtocol-cocoa
+###HotProtocol-Cocoa
 		待完善
