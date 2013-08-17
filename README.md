@@ -2,9 +2,10 @@ HotPot
 ======
 **这是一个火锅， 里面有很多新奇玩意!**
 
-- HotPot 跨平台模块， 支持Windows,Linux,OsX。
+- HotPot 跨平台模块， 支持Windows,Linux,OS X。
 - HotProtocol 跨语言协议模块，支持C,Php,ObjC。
-- HotScript 用于显示对象的脚本语言， 支持C和php扩展。
+- HotData 数据描述语言。
+- HotScript 文本处理工具脚本语言
 
 问题和反馈
 ==========
@@ -78,6 +79,7 @@ HotPot
 [PHP手册](http://www.php.net/manual/zh/index.php)
 
 1.安装
+
 		hotscript/php/ext/hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 
 2.php.ini
