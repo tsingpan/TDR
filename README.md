@@ -69,7 +69,7 @@ HotPot
 
 ### PHP扩展的安装
 	source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
-	php安装方法说明 [http://www.php.net/manual/zh/install.php](http://www.php.net/manual/zh/install.php)
+php安装方法说明 [http://www.php.net/manual/zh/install.php](http://www.php.net/manual/zh/install.php)
 
 	在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
