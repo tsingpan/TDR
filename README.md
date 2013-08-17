@@ -27,14 +27,14 @@ HotPot
 
 2. 安装[re2c](http://sourceforge.net/projects/re2c/) 0.13.5
 
-	Windows
-		下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
-	Linux
-		apt-get install re2c
-	OS X
-		./configure
-		make
-		make install
+		Windows
+			下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
+		Linux
+			apt-get install re2c
+		OS X
+			./configure
+			make
+			make install
 
 3. 安装[CMake](http://www.cmake.org/) 2.8.11.1
 
