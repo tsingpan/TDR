@@ -26,7 +26,7 @@ void init()
 	proto.pos[0].lng = 789.987;
 	proto.pos_size = 1;
 	proto.id = 222;
-	snprintf(proto.name, sizeof(buff), "%s", "randyliu");
+	snprintf(proto.name, sizeof(proto.name), "%s", "randyliu");
 }
 
 void test_xml()
