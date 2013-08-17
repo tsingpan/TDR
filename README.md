@@ -2,7 +2,7 @@ HotPot——小星星的聚宝盆
 ========================
 提供了数据的跨平台， 跨语言支持等功能， 是其他库的基础。
 
-一、C的安装
+一、C库的安装
 -------
 ###1、安装Bison
 		http://www.gnu.org/software/bison/
@@ -53,8 +53,6 @@ HotPot——小星星的聚宝盆
 ###7、安装
 		Windows:
 			在Microsoft Visual Studio中执行INSTALL项目。
-
-
 		Linux:
 			make install
 		OS X:
@@ -80,7 +78,7 @@ HotPot——小星星的聚宝盆
 		在php.ini中添加HotPot安装目录:
 			hotpot.dir="C:\Program Files\HotPot"
 
-三、hotprotocol-JAVA的安装
+三、hotprotocol-java的安装
 --------------------------
 	待完善
 
