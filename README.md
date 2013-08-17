@@ -75,10 +75,10 @@ HotPot
 			export HOTPOT_DIR=/usr/local
 
 ###[PHP](http://www.php.net/manual/zh/index.php)的安装
-**安装**
+1.安装
 
 		source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
-**php.ini**
+2.php.ini
 
 		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
@@ -87,3 +87,7 @@ HotPot
 
 ###hotprotocol-cocoa的安装
 		待完善
+
+目标
+====
+**做一个精巧的服务器开发工具包**
