@@ -2,8 +2,8 @@ HotPot
 ======
 **这是一个火锅， 里面有很多新奇玩意!**
 
-- HotPot 跨平台模块， 支持Windows Linux OSX。
-- HotProtocol 跨语言协议模块， 支持C, Php, ObjC。
+- HotPot 跨平台模块， 支持Windows,Linux,OsX。
+- HotProtocol 跨语言协议模块，支持C,Php,ObjC。
 - HotScript 用于显示对象的脚本语言， 支持C和php扩展。
 
 问题和反馈
@@ -90,4 +90,4 @@ HotPot
 
 目标
 ====
-**做一个精巧的服务器开发工具包**
+***做一个精巧的服务器开发工具包***
