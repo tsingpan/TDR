@@ -74,17 +74,18 @@ HotPot
 		OS X
 			export HOTPOT_DIR=/usr/local
 
-###HotScript的php扩展安装
+###HotScript-php
 [PHP手册](http://www.php.net/manual/zh/index.php)
 
 1.安装
 		hotscript/php/ext/hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
+
 2.php.ini
 
 		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
-###HotProtocol-java的安装
+###HotProtocol-java
 		待完善
 
-###HotProtocol-cocoa的安装
+###HotProtocol-cocoa
 		待完善
