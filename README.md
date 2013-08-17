@@ -40,50 +40,50 @@ HotPot
 
 4.下载[HotPot](https://github.com/randyliu/HotPot)源代码
 
-	git clone https://github.com/randyliu/HotPot
+		git clone https://github.com/randyliu/HotPot
 
 5.CMake生成工程文件
 
-	使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
+		使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
 
 6.编译
 
-	Windows
-		打开Microsoft Visual Studio， 点击编译。
-	Linux
-		make
-	OS X
-		make
+		Windows
+			打开Microsoft Visual Studio， 点击编译。
+		Linux
+			make
+		OS X
+			make
 
 7.安装
 
-	Windows
-		在Microsoft Visual Studio中执行INSTALL项目。
-	Linux
-		make install
-	OS X
-		make install
+		Windows
+			在Microsoft Visual Studio中执行INSTALL项目。
+		Linux
+			make install
+		OS X
+			make install
 
 8.配置环境变量
 
-	配置HOTPOT_DIR环境变量为安装目录
-	Windows
-		新建一个环境变量HOTPOT_DIR=C:\Program Files\HotPot
-	Linux
-		export HOTPOT_DIR=/usr/local
-	OS X
-		export HOTPOT_DIR=/usr/local
+		配置HOTPOT_DIR环境变量为安装目录
+		Windows
+			新建一个环境变量HOTPOT_DIR=C:\Program Files\HotPot
+		Linux
+			export HOTPOT_DIR=/usr/local
+		OS X
+			export HOTPOT_DIR=/usr/local
 
 ###[PHP](http://www.php.net/manual/zh/index.php)的安装
 **安装**
 
-	source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
+		source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 **php.ini**
 
-	在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
+		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
 ###hotprotocol-java的安装
-	待完善
+		待完善
 
 ###hotprotocol-cocoa的安装
-	待完善
+		待完善
