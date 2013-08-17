@@ -13,6 +13,7 @@ HotPot
 安装
 ====
 ### C库的安装
+
 1.安装[Bison](http://www.gnu.org/software/bison/) 2.4.1
 
 		Windows
@@ -73,11 +74,11 @@ HotPot
 		OS X
 			export HOTPOT_DIR=/usr/local
 
-### [PHP](http://www.php.net/manual/zh/index.php)
+### [PHP](http://www.php.net/manual/zh/index.php)的安装
 **安装**
 
 		source\hotscript\php\ext\hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
-**配置**
+**php.ini**
 
 		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
 
