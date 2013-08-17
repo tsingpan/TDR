@@ -14,22 +14,22 @@ HotPot
 ====
 ### C库的安装
 **安装Bison 2.4.1 [http://www.gnu.org/software/bison/](http://www.gnu.org/software/bison/)**
-	*Windows*
-		安装Cygwin, http://www.cygwin.com/
-		选中里面的Bison工具
-	*Linux*
-		apt-get install bison
-	*OS X*
-		./configure
-		make
-		make install			
+		Windows
+			安装Cygwin, http://www.cygwin.com/
+			选中里面的Bison工具
+		Linux
+			apt-get install bison
+		OS X
+			./configure
+			make
+			make install			
 
 **安装re2c 0.13.5 [http://sourceforge.net/projects/re2c/](http://sourceforge.net/projects/re2c/)**
-	*Windows*
+	Windows
 		下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
-	*Linux*
+	Linux
 		apt-get install re2c
-	*OS X*
+	OS X
 		./configure
 		make
 		make install
@@ -43,29 +43,29 @@ HotPot
 	使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
 
 **编译**
-	*Windows*
+	Windows
 		打开Microsoft Visual Studio， 点击编译。
-	*Linux*
+	Linux
 		make
-	*OS X*
+	OS X
 		make
 
 **安装**
-	*Windows*
+	Windows
 		在Microsoft Visual Studio中执行INSTALL项目。
 
-	*Linux*
+	Linux
 		make install
-	*OS X*
+	OS X
 		make install
 
 **配置环境变量**
 	配置HOTPOT_DIR环境变量为安装目录
-	*Windows*
+	Windows
 		新建一个环境变量HOTPOT_DIR=C:\Program Files\HotPot
-	*Linux*
+	Linux
 		export HOTPOT_DIR=/usr/local
-	*OS X*
+	OS X
 		export HOTPOT_DIR=/usr/local
 
 ### PHP扩展的安装
