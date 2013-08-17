@@ -1,6 +1,39 @@
 #include "hotprotocol/hp_abstract_reader.h"
 #include "hotpot/hp_error_code.h"
 
+void hp_abstract_reader_init(HPAbstractReader *self)
+{
+	self->read_struct_begin = NULL;
+	self->read_struct_end = NULL;
+	self->read_vector_begin = NULL;
+	self->read_vector_end = NULL;
+	self->read_field_begin = NULL;
+	self->read_field_end = NULL;
+	self->read_vector_item_begin = NULL;
+	self->read_vector_item_end = NULL;
+
+	self->read_hpint8 = NULL;
+	self->read_hpint16 = NULL;
+	self->read_hpint32 = NULL;
+	self->read_hpint64 = NULL;
+	self->read_hpuint8 = NULL;
+	self->read_hpuint16 = NULL;
+	self->read_hpuint32 = NULL;
+	self->read_hpuint64 = NULL;
+	self->read_hpchar = NULL;
+	self->read_hpdouble = NULL;
+	self->read_hpbool = NULL;
+
+	self->read_enum_number = NULL;
+	self->read_enum_name = NULL;
+	self->read_string = NULL;
+	self->read_bytes = NULL;
+
+	self->read_null = NULL;
+	self->read_counter = NULL;
+
+	self->read_type = NULL;
+}
 
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name)
 {
@@ -22,9 +55,6 @@ hpint32 read_struct_end(HPAbstractReader *self, const char *struct_name)
 
 hpint32 read_vector_begin(HPAbstractReader *self)
 {
-	++(self->stack_num);
-	self->stack[self->stack_num - 1] = 0;
-
 	if(self->read_vector_begin == NULL)
 	{
 		return E_HP_NOERROR;
@@ -34,7 +64,6 @@ hpint32 read_vector_begin(HPAbstractReader *self)
 
 hpint32 read_vector_end(HPAbstractReader *self)
 {
-	--(self->stack_num);
 	if(self->read_vector_end == NULL)
 	{
 		return E_HP_NOERROR;
@@ -224,36 +253,20 @@ hpint32 read_counter(HPAbstractReader *self, const char *name, hpuint32 *val)
 
 hpint32 read_vector_item_begin(HPAbstractReader *self, hpuint32 index)
 {
-	if(self->stack_num <= 0)
-	{
-		goto ERROR_RET;
-	}
-
-	self->stack[self->stack_num - 1] = index;
 	if(self->read_vector_item_begin == NULL)
 	{
 		return E_HP_NOERROR;
 	}
 
 	return self->read_vector_item_begin(self, index);
-ERROR_RET:
-	return E_HP_ERROR;
 }
 
 hpint32 read_vector_item_end(HPAbstractReader *self, hpuint32 index)
 {
-	if(self->stack_num <= 0)
-	{
-		goto ERROR_RET;
-	}
-
-	self->stack[self->stack_num - 1] = index + 1;
 	if(self->read_vector_item_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
 
 	return self->read_vector_item_end(self, index);
-ERROR_RET:
-	return E_HP_ERROR;
 }

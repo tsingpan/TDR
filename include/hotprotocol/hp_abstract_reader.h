@@ -37,11 +37,9 @@ struct _HPAbstractReader
 	hpint32 (*read_counter)(HPAbstractReader *self, const char *name, hpuint32 *val);
 
 	hpint32 (*read_type)(HPAbstractReader *self, HPType *type);
-
-	hpuint32 stack[MAX_VECTOR_DEEP];
-	hpuint32 stack_num;
 };
 
+void hp_abstract_reader_init(HPAbstractReader *self);
 hpint32 read_struct_begin(HPAbstractReader *self, const char *struct_name);
 hpint32 read_struct_end(HPAbstractReader *self, const char *struct_name);
 hpint32 read_vector_begin(HPAbstractReader *self);

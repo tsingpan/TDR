@@ -307,7 +307,7 @@ not_enough_byte_size:
 
 hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
 {
-	memset(&self->super, 0, sizeof(HPAbstractWriter));
+	hp_abstract_writer_init(&self->super);
 
 	self->super.write_enum_number = hp_compact_write_enum;
 	self->super.write_hpchar = hp_compact_write_hpchar;
@@ -334,8 +334,6 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 
 hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
-
 	self->addr = NULL;
 	self->size = 0;
 	self->offset = 0;

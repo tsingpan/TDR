@@ -14,7 +14,7 @@
 
 hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 {
-	memset(&self->super, 0, sizeof(HPAbstractWriter));
+	hp_abstract_writer_init(&self->super);
 
 	self->ls = lua_state;
 	
@@ -53,7 +53,6 @@ hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state)
 
 hpint32 lua_writer_fini(HP_LUA_WRITER *self)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 
 	return E_HP_NOERROR;
 }

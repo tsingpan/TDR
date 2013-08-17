@@ -9,7 +9,7 @@
 
 void xml_reader_init(HP_XML_READER *self, FILE *f)
 {
-	memset(&self->super, 0, sizeof(HPAbstractReader));
+	hp_abstract_reader_init(&self->super);
 
 	self->f = f;
 	self->count = 0;
@@ -47,7 +47,7 @@ void xml_reader_init(HP_XML_READER *self, FILE *f)
 
 void xml_reader_fini(HP_XML_READER *self)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
+	hp_abstract_reader_init(&self->super);
 }
 
 static void skip_tab(HP_XML_READER *self)

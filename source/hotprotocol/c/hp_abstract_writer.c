@@ -1,6 +1,39 @@
 #include "hotprotocol/hp_abstract_writer.h"
 #include "hotpot/hp_error_code.h"
 
+void hp_abstract_writer_init(HPAbstractWriter *self)
+{
+	self->write_struct_begin = NULL;
+	self->write_struct_end = NULL;
+	self->write_vector_begin = NULL;
+	self->write_vector_end = NULL;
+	self->write_field_begin = NULL;
+	self->write_field_end = NULL;
+	self->write_vector_item_begin = NULL;
+	self->write_vector_item_end = NULL;
+
+	self->write_hpint8 = NULL;
+	self->write_hpint16 = NULL;
+	self->write_hpint32 = NULL;
+	self->write_hpint64 = NULL;
+	self->write_hpuint8 = NULL;
+	self->write_hpuint16 = NULL;
+	self->write_hpuint32 = NULL;
+	self->write_hpuint64 = NULL;
+	self->write_hpchar = NULL;
+	self->write_hpdouble = NULL;
+	self->write_hpbool = NULL;
+
+	self->write_enum_number = NULL;
+	self->write_enum_name = NULL;
+	self->write_counter = NULL;
+	self->write_string = NULL;
+	self->write_bytes = NULL;
+	self->write_null = NULL;
+
+	self->write_type = NULL;
+}
+
 hpint32 write_struct_begin(HPAbstractWriter *self, const char *struct_name)
 {
 	if(self->write_struct_begin == NULL)
@@ -21,9 +54,6 @@ hpint32 write_struct_end(HPAbstractWriter *self, const char *struct_name)
 
 hpint32 write_vector_begin(HPAbstractWriter *self)
 {
-	++(self->stack_num);
-	self->stack[self->stack_num - 1] = 0;
-
 	if(self->write_vector_begin == NULL)
 	{
 		return E_HP_NOERROR;
@@ -33,7 +63,6 @@ hpint32 write_vector_begin(HPAbstractWriter *self)
 
 hpint32 write_vector_end(HPAbstractWriter *self)
 {
-	--(self->stack_num);
 	if(self->write_vector_end == NULL)
 	{
 		return E_HP_NOERROR;
@@ -223,8 +252,6 @@ hpint32 write_counter(HPAbstractWriter *self, const hpchar *name, const hpuint32
 
 hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index)
 {
-	self->stack[self->stack_num - 1] = index;
-
 	if(self->write_vector_item_begin == NULL)
 	{
 		return E_HP_NOERROR;
@@ -234,15 +261,9 @@ hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index)
 
 hpint32 write_vector_item_end(HPAbstractWriter *self, hpuint32 index)
 {
-	self->stack[self->stack_num - 1] = index + 1;
 	if(self->write_vector_item_end == NULL)
 	{
 		return E_HP_NOERROR;
 	}
 	return self->write_vector_item_end(self, index);
-}
-
-hpuint32 writer_get_index(HPAbstractWriter *self)
-{
-	return self->stack[self->stack_num - 1];
 }

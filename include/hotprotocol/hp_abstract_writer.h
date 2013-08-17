@@ -35,12 +35,9 @@ struct _HPAbstractWriter
 	hpint32 (*write_null)(HPAbstractWriter *self);	
 
 	hpint32 (*write_type)(HPAbstractWriter *self, const HPType type);
-
-	hpuint32 stack[MAX_VECTOR_DEEP];
-	hpuint32 stack_num;
 };
 
-
+void hp_abstract_writer_init(HPAbstractWriter *self);
 hpint32 write_struct_begin(HPAbstractWriter *self, const char *struct_name);
 hpint32 write_struct_end(HPAbstractWriter *self, const char *struct_name);
 hpint32 write_vector_begin(HPAbstractWriter *self);
@@ -69,7 +66,6 @@ hpint32 write_type(HPAbstractWriter *self, const HPType type);
 hpint32 write_counter(HPAbstractWriter *self, const hpchar *name, const hpuint32 val);
 hpint32 write_vector_item_begin(HPAbstractWriter *self, hpuint32 index);
 hpint32 write_vector_item_end(HPAbstractWriter *self, hpuint32 index);
-hpuint32 writer_get_index(HPAbstractWriter *self);
 
 #endif //_H_HP_ABSTRACT_WRITER
 

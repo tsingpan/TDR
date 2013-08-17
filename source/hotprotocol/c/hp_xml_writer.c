@@ -8,7 +8,7 @@
 
 void xml_writer_init(HP_XML_WRITER *self, FILE *f)
 {
-	memset(&self->super, 0, sizeof(HPAbstractWriter));
+	hp_abstract_writer_init(&self->super);
 
 	self->f = f;
 	self->count = 0;
@@ -47,7 +47,6 @@ void xml_writer_init(HP_XML_WRITER *self, FILE *f)
 
 void xml_writer_fini(HP_XML_WRITER *self)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractWriter, stack));
 }
 
 static void printf_tab(HP_XML_WRITER *self)

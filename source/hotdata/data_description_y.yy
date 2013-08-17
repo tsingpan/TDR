@@ -148,9 +148,9 @@ DefinitionList :
 	{
 		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
 		{
-			write_vector_item_begin(GET_WRITER, writer_get_index(GET_WRITER));
+			write_vector_item_begin(GET_WRITER, GET_SELF->definition_list_num);
 			write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-			write_vector_item_end(GET_WRITER, writer_get_index(GET_WRITER));
+			write_vector_item_end(GET_WRITER, GET_SELF->definition_list_num);
 			++GET_SELF->definition_list_num;
 		}		
 

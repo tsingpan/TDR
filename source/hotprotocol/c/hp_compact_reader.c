@@ -269,7 +269,7 @@ not_enough_byte_size:
 
 hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size)
 {
-	memset(&self->super, 0, sizeof(HPAbstractReader));
+	hp_abstract_reader_init(&self->super);
 
 	self->super.read_enum_number = hp_compact_read_enum;
 	self->super.read_hpchar = hp_compact_read_hpchar;
@@ -296,8 +296,6 @@ hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint
 
 hpint32 hp_compact_reader_fini(HP_COMPACT_READER *self)
 {
-	memset(&self->super, 0, HP_OFFSET_OF(HPAbstractReader, stack));
-
 	self->addr = NULL;
 	self->size = 0;
 	self->offset = 0;
