@@ -193,7 +193,6 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 	char id[MAX_IDENTIFIER_LENGTH];
 	const ST_VALUE* val = get_value(self, sn_value);
 	const ST_TYPE* type = get_type(self, sn_type);
-	size_t size;
 
 	if((type == NULL) || (val == NULL))
 	{
@@ -209,40 +208,25 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		switch(type->st)
 		{
 		case E_ST_INT8:
-			size = sizeof(hpint8);
-			break;
 		case E_ST_INT16:
-			size = sizeof(hpint16);		
-			break;
 		case E_ST_INT32:
-			size = sizeof(hpint32);
-			break;
 		case E_ST_INT64:
-			size = sizeof(hpint64);
-			break;
 		case E_ST_UINT8:
-			size = sizeof(hpuint8);
-			break;
 		case E_ST_UINT16:
-			size = sizeof(hpuint16);
-			break;
 		case E_ST_UINT32:
-			size = sizeof(hpuint32);
-			break;
 		case E_ST_UINT64:
-			size = sizeof(hpuint64);
-			break;
 		case E_ST_CHAR:
 		case E_ST_DOUBLE:
-			goto done;
+			break;
 		default:
 			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_INVALID_CONSTANCE_TYPE);
 			goto done;
 		}
-		size *= 8;
 		if((val->type == E_SNVT_UINT64) || (val->type == E_SNVT_HEX_UINT64))
 		{
-			if(val->val.ui64 >> size)
+			hpuint64 tmp = val->val.ui64 >> 32;
+			tmp >>= 32;
+			if(tmp)
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
@@ -250,13 +234,27 @@ void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_
 		}
 		else if((val->type == E_SNVT_INT64) || (val->type == E_SNVT_HEX_INT64))
 		{
-			if(val->val.i64 >> size)
+			hpint64 tmp = val->val.ui64 >> 32;
+			tmp >>= 32;
+			if(tmp)
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CONSTANCE_TYPE_TOO_SMALL, id);
 				goto done;
 			}
 		}
 		else if(val->type == E_SNVT_IDENTIFIER)
+		{
+
+		}
+		else if(val->type == E_SNVT_DOUBLE)
+		{
+
+		}
+		else if(val->type == E_SNVT_CHAR)
+		{
+
+		}
+		else if(val->type == E_SNVT_BOOL)
 		{
 
 		}
