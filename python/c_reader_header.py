@@ -36,7 +36,7 @@ class C_READER_HEADER(DWalker):
 		self.print_line(0, line)
 
 
-	def on_union(self, union):
+	def on_union_begin(self, union):
 		line = 'HP_ERROR_CODE read_' + union['name'] + '(HPAbstractReader *self, ' + union['name'] + ' *data'
 		for value in union['parameters']['par_list']:
 			line = line + ' , '
