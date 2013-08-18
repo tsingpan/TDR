@@ -15,7 +15,7 @@ HotPot
 ====
 ###HotPot-C
 
-1.安装[Bison](http://www.gnu.org/software/bison/) 2.4.1
+1.安装[Bison](http://www.gnu.org/software/bison/) 2.7.1
 
 		Windows
 			安装Cygwin并选中里面的Bison工具。

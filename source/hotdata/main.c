@@ -48,10 +48,14 @@ void help()
 
 DATA_PARSER dp;
 
+#include "hp_python_writer.h"
+
 HP_LUA_WRITER writer;
+HP_PYTHON_WRITER python_writer;
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
+char python_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
 char path_prefix[HP_MAX_FILE_PATH_LENGTH];
 
@@ -60,7 +64,7 @@ void script_putc(HotVM *self, char c)
 	fputc(c, (FILE*)self->user_data);
 }
 
-void get_real_file_path(const char *file_name)
+void get_real_file_path(const char *script_dir, const char *file_name)
 {
 	if(access(file_name, 00) == 0)
 	{
@@ -68,12 +72,14 @@ void get_real_file_path(const char *file_name)
 	}
 	else
 	{
-		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", lua_dir, file_name);
+		snprintf(real_script_path, HP_MAX_FILE_PATH_LENGTH, "%s%s", script_dir, file_name);
 	}
 }
 
 
 SCRIPT_PARSER sp;
+
+#define MAX_PY_SCRIPT_LENGTH 32768
 
 int main(hpint32 argc, char **argv)
 {
@@ -92,6 +98,7 @@ int main(hpint32 argc, char **argv)
 
 	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
+	snprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, "%spython%c", root_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -155,11 +162,12 @@ int main(hpint32 argc, char **argv)
 	lua_setglobal( L, "lua_dir" );
 
 
-
+	Py_Initialize();
 	for(i = option_end; i < argc; ++i)
 	{
-		lua_writer_init(&writer, L);		
-		if(data_parser(&dp, argv[i], &writer.super) != E_HP_NOERROR)
+		lua_writer_init(&writer, L);
+		python_writer_init(&python_writer);
+		if(data_parser(&dp, argv[i], &python_writer.super) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}
@@ -179,7 +187,7 @@ int main(hpint32 argc, char **argv)
 			if (strcmp(arg, "-lua") == 0)
 			{
 				arg = argv[++j];
-				get_real_file_path(arg);
+				get_real_file_path(lua_dir, arg);
 				if(luaL_dofile(L, real_script_path) != 0)
 				{
 					const char* error = lua_tostring(L, -1);
@@ -199,14 +207,56 @@ int main(hpint32 argc, char **argv)
 			}
 			else if (strcmp(arg, "-python") == 0)
 			{
+				PyObject *pName, *pModule, *pDict, *pFunc, *pArgs, *pRetVal, *pParam, *pCurParam, *pO;
+				char py_script[MAX_PY_SCRIPT_LENGTH];				
 				arg = argv[++j];
+				get_real_file_path(python_dir, arg);
 
-				Py_Initialize();
-				PyRun_SimpleString("print(\'hello world\')");
-				Py_Finalize();
+				PyRun_SimpleString("import sys;");
+				snprintf(py_script, sizeof(py_script), "sys.path.append(\"%s\")", python_dir);
+				PyRun_SimpleString(py_script);
+
+				pModule = PyImport_ImportModule(arg);
+				if(pModule == NULL)
+				{
+					goto PYTHON_ERROR;
+				}				
+
+				pFunc = PyObject_GetAttrString(pModule, "hpmain");
+				if(pFunc == NULL)
+				{
+					goto PYTHON_ERROR;
+				}
+
+				pDict = python_writer.stack[0];
+				if(pDict == NULL)
+				{
+					goto PYTHON_ERROR;
+				}
+
+				pParam = PyTuple_New(1);
+				PyTuple_SetItem(pParam, 0, pDict);
+				pRetVal = PyObject_CallObject(pFunc, pParam);
+
+				if(!pRetVal)
+				{
+					goto PYTHON_ERROR;
+				}
+
+				if(pRetVal != Py_True)
+				{
+					goto ERROR_RET;
+				}
+				Py_DECREF(pDict);
+				
+PYTHON_ERROR:
+				PyErr_Print();
+				goto ERROR_RET;
 			}
 		}
 	}
+
+	Py_Finalize();
 
 	return 0;
 ERROR_RET:

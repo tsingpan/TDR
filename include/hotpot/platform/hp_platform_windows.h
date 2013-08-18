@@ -15,7 +15,7 @@
 
 #define PRIu64 "I64u"
 #define PRIi64 "I64d"
-#define HP_FILE_SEPARATOR '\\'
+#define HP_FILE_SEPARATOR '/'
 
 #pragma warning(disable:4996)
 
