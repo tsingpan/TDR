@@ -4,7 +4,6 @@
 #include "hotpot/hp_platform.h"
 
 typedef struct _HPAbstractReader HPAbstractReader;
-#define MAX_VECTOR_DEEP 1024
 struct _HPAbstractReader
 {
 	hpint32 (*read_struct_begin)(HPAbstractReader *self, const char *struct_name);

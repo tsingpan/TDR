@@ -1,4 +1,5 @@
 #include "hotprotocol/hp_compact_writer.h"
+#include "hotpot/hp_platform.h"
 #include "hotpot/hp_error_code.h"
 #include "hotpot/hp_number.h"
 #include "hotprotocol/hp_abstract_writer.h"
@@ -43,9 +44,6 @@ static HP_ERROR_CODE hp_compact_varint16_encode(hpuint16 n, char *buff_ptr, hpui
 		*buff_size = 1;
 		goto done;
 	}
-
-	//unreachable here
-	//return XERROR;
 
 done:
 	return E_HP_NOERROR;
@@ -124,17 +122,12 @@ static HP_ERROR_CODE hp_compact_varint32_encode(hpuint32 n, char *buff_ptr, hpui
 		goto done;
 	}
 
-	//unreachable here
-	//return XERROR;
-
 done:
 	return E_HP_NOERROR;
 
 not_enough_byte_size:
 	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
-
-
 
 static HP_ERROR_CODE hp_compact_varint64_encode(hpuint64 n, char *buff_ptr, hpuint32 *buff_size)
 {
@@ -273,8 +266,6 @@ static HP_ERROR_CODE hp_compact_varint64_encode(hpuint64 n, char *buff_ptr, hpui
 		}
 	}
 
-	//unreachable here
-	//return XERROR;
 
 size10:
 	buff_ptr[9] = (char)((part2 >>  7) | 0x80);
@@ -305,11 +296,11 @@ not_enough_byte_size:
 }
 
 
-hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
+void hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 size)
 {
 	hp_abstract_writer_init(&self->super);
 
-	self->super.write_enum_number = hp_compact_write_enum;
+	self->super.write_enum_number = hp_compact_write_enum_number;
 	self->super.write_hpchar = hp_compact_write_hpchar;
 	self->super.write_hpdouble = hp_compact_write_hpdouble;
 	self->super.write_hpint8 = hp_compact_write_hpint8;
@@ -322,84 +313,26 @@ hpint32 hp_compact_writer_init(HP_COMPACT_WRITER *self, void *addr, hpuint32 siz
 	self->super.write_hpuint64 = hp_compact_write_hpuint64;
 	self->super.write_string = hp_compact_write_string;
 	self->super.write_counter = hp_compact_write_counter;
-	
-	
 
 	self->addr = addr;
 	self->size = size;
 	self->offset = 0;
-
-	return E_HP_NOERROR;
 }
 
-hpint32 hp_compact_writer_fini(HP_COMPACT_WRITER *self)
-{
-	self->addr = NULL;
-	self->size = 0;
-	self->offset = 0;
-	return E_HP_NOERROR;
-}
-
-#define DDEKIT_COMPACT_encoding_CAPACITY(self) (self->size - self->offset)
-
-#define DDEKIT_COMPACT_encoding_PTR(self) (self->addr + self->offset)
-
-HP_API hpint32 hp_compact_write_enum(HPAbstractWriter *super, const hpint32 val)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint32_encode(hp_host32_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
-	if(ret != E_HP_NOERROR)
-	{
-		goto not_enough_bytebuff_size;
-	}
-	self->offset += buff_size;
-	return E_HP_NOERROR;
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
-}
-
-hpint32 hp_compact_write_hpchar(HPAbstractWriter *super, const char val)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(char))
-	{
-		goto not_enough_bytebuff_size;
-	}
-	*(char*)DDEKIT_COMPACT_encoding_PTR(self) = val;
-	self->offset += sizeof(char);
-	return E_HP_NOERROR;
-
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
-}
-
-hpint32 hp_compact_write_hpdouble(HPAbstractWriter *super, const double val)
-{
-	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(double))
-	{
-		goto not_enough_bytebuff_size;
-	}
-	*(double*)DDEKIT_COMPACT_encoding_PTR(self) = val;
-	self->offset += sizeof(double);
-	return E_HP_NOERROR;
-
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
-}
+#define COMPACT_WRITER_CAPACITY(self) (self->size - self->offset)
+#define COMPACT_WRITER_PTR(self) (self->addr + self->offset)
 
 hpint32 hp_compact_write_hpint8(HPAbstractWriter *super, const hpint8 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(hpint8))
+	if(COMPACT_WRITER_CAPACITY(self) < sizeof(hpint8))
 	{
 		goto not_enough_bytebuff_size;
 	}
-	*(hpint8*)DDEKIT_COMPACT_encoding_PTR(self) = val;
+	*(hpint8*)COMPACT_WRITER_PTR(self) = val;
 	self->offset += sizeof(hpint8);
-	return E_HP_NOERROR;
 
+	return E_HP_NOERROR;
 not_enough_bytebuff_size:
 	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
@@ -407,60 +340,60 @@ not_enough_bytebuff_size:
 hpint32 hp_compact_write_hpint16(HPAbstractWriter *super, const hpint16 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint16_encode(hp_host16_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint16_encode(hp_host16_to_little(hp_zigzag_encode16(val)), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
 	{
-		goto not_enough_bytebuff_size;
+		goto done;
 	}
 	self->offset += buff_size;
-	return E_HP_NOERROR;
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+
+done:
+	return ret;
 }
 
 hpint32 hp_compact_write_hpint32(HPAbstractWriter *super, const hpint32 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint32_encode(hp_host32_to_little(hp_zigzag_encode16(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint32_encode(hp_host32_to_little(hp_zigzag_encode16(val)), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
 	{
-		goto not_enough_bytebuff_size;
+		goto done;
 	}
 	self->offset += buff_size;
-	return E_HP_NOERROR;
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+
+done:
+	return ret;
 }
 
 hpint32 hp_compact_write_hpint64(HPAbstractWriter *super, const hpint64 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint64_encode(hp_host64_to_little(hp_zigzag_encode64(val)), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint64_encode(hp_host64_to_little(hp_zigzag_encode64(val)), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
 	{
-		goto not_enough_bytebuff_size;
+		goto done;
 	}
 	self->offset += buff_size;
-	return E_HP_NOERROR;
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+
+done:
+	return ret;
 }
 
 
 hpint32 hp_compact_write_hpuint8(HPAbstractWriter *super, const hpuint8 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	if(DDEKIT_COMPACT_encoding_CAPACITY(self) < sizeof(hpuint8))
+	if(COMPACT_WRITER_CAPACITY(self) < sizeof(hpuint8))
 	{
 		goto not_enough_bytebuff_size;
 	}
-	*(hpuint8*)DDEKIT_COMPACT_encoding_PTR(self) = val;
+	*(hpuint8*)COMPACT_WRITER_PTR(self) = val;
 	self->offset += sizeof(hpuint8);
-	return E_HP_NOERROR;
 
+	return E_HP_NOERROR;
 not_enough_bytebuff_size:
 	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
@@ -468,47 +401,74 @@ not_enough_bytebuff_size:
 hpint32 hp_compact_write_hpuint16(HPAbstractWriter *super, const hpuint16 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint16_encode(hp_host16_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint16_encode(hp_host16_to_little(val), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
 	{
-		goto not_enough_bytebuff_size;
+		goto done;
 	}
 	self->offset += buff_size;
-	return E_HP_NOERROR;
 
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+done:
+	return ret;
 }
 
 hpint32 hp_compact_write_hpuint32(HPAbstractWriter *super, const hpuint32 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint32_encode(hp_host32_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint32_encode(hp_host32_to_little(val), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
 	{
-		goto not_enough_bytebuff_size;
+		goto done;
 	}
 	self->offset += buff_size;
-	return E_HP_NOERROR;
 
-not_enough_bytebuff_size:
-	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+done:
+	return ret;
 }
 
 hpint32 hp_compact_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
-	hpuint32 buff_size = DDEKIT_COMPACT_encoding_CAPACITY(self);
-	hpint32 ret = hp_compact_varint64_encode(hp_host64_to_little(val), DDEKIT_COMPACT_encoding_PTR(self), &buff_size);
+	hpuint32 buff_size = COMPACT_WRITER_CAPACITY(self);
+	hpint32 ret = hp_compact_varint64_encode(hp_host64_to_little(val), COMPACT_WRITER_PTR(self), &buff_size);
 	if(ret != E_HP_NOERROR)
+	{
+		goto done;
+	}
+	self->offset += buff_size;
+
+done:
+	return ret;
+}
+
+hpint32 hp_compact_write_hpchar(HPAbstractWriter *super, const char val)
+{
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
+	if(COMPACT_WRITER_CAPACITY(self) < sizeof(char))
 	{
 		goto not_enough_bytebuff_size;
 	}
-	self->offset += buff_size;
-	return E_HP_NOERROR;
+	*(char*)COMPACT_WRITER_PTR(self) = val;
+	self->offset += sizeof(char);
 
+	return E_HP_NOERROR;
+not_enough_bytebuff_size:
+	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
+}
+
+hpint32 hp_compact_write_hpdouble(HPAbstractWriter *super, const double val)
+{
+	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
+	if(COMPACT_WRITER_CAPACITY(self) < sizeof(double))
+	{
+		goto not_enough_bytebuff_size;
+	}
+	*(double*)COMPACT_WRITER_PTR(self) = val;
+	self->offset += sizeof(double);
+
+	return E_HP_NOERROR;
 not_enough_bytebuff_size:
 	return E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 }
@@ -517,6 +477,7 @@ HP_API hpint32 hp_compact_write_string(HPAbstractWriter *super, const hpchar* st
 {
 	HP_COMPACT_WRITER *self = HP_CONTAINER_OF(super, HP_COMPACT_WRITER, super);
 	hpuint32 str_len = 0;
+	hpint32 ret= E_HP_NOERROR;
 
 	for(; self->offset < self->size; ++(self->offset))
 	{
@@ -527,14 +488,18 @@ HP_API hpint32 hp_compact_write_string(HPAbstractWriter *super, const hpchar* st
 			goto done;
 		}
 	}
-	goto ERROR_RET;
+	ret = E_HP_NOT_ENOUGH_BYTEBUFF_SIZE;
 done:
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
+	return ret;
 }
 
 HP_API hpint32 hp_compact_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val)
 {
+	HP_UNUSED(name);
 	return hp_compact_write_hpuint32(super, val);
+}
+
+HP_API hpint32 hp_compact_write_enum_number(HPAbstractWriter *super, const hpint32 val)
+{
+	return hp_compact_write_hpint32(super, val);
 }

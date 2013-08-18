@@ -2,7 +2,6 @@
 #define _H_HP_ABSTRACT_WRITER
 
 #include "hotpot/hp_platform.h"
-#define MAX_VECTOR_DEEP 1024
 typedef struct _HPAbstractWriter HPAbstractWriter;
 struct _HPAbstractWriter
 {

@@ -28,7 +28,6 @@ void hp_abstract_reader_init(HPAbstractReader *self)
 	self->read_enum_name = NULL;
 	self->read_string = NULL;
 	self->read_bytes = NULL;
-
 	self->read_null = NULL;
 	self->read_counter = NULL;
 

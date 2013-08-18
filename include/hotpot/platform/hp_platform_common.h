@@ -71,4 +71,7 @@ typedef hpchar* hpstring;
 #endif
 
 
+#define HP_UNUSED(x) (void)(x)
+
+
 #endif//_H_HP_PLATFORM_COMMON

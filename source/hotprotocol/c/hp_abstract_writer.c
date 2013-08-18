@@ -25,11 +25,11 @@ void hp_abstract_writer_init(HPAbstractWriter *self)
 	self->write_hpbool = NULL;
 
 	self->write_enum_number = NULL;
-	self->write_enum_name = NULL;
-	self->write_counter = NULL;
+	self->write_enum_name = NULL;	
 	self->write_string = NULL;
 	self->write_bytes = NULL;
 	self->write_null = NULL;
+	self->write_counter = NULL;
 
 	self->write_type = NULL;
 }

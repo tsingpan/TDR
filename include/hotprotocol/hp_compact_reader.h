@@ -13,17 +13,9 @@ typedef struct _HP_COMPACT_READER
 	hpuint32 offset;
 }HP_COMPACT_READER;
 
-HP_API hpint32 hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size);
-
-HP_API hpint32 hp_compact_reader_fini(HP_COMPACT_READER *self);
+HP_API void hp_compact_reader_init(HP_COMPACT_READER *self, const void *addr, hpuint32 size);
 
 //virtual public functions
-HP_API hpint32 hp_compact_read_enum(HPAbstractReader *super, hpint32 *val);
-
-HP_API hpint32 hp_compact_read_hpchar(HPAbstractReader *super, char *val);
-
-HP_API hpint32 hp_compact_read_hpdouble(HPAbstractReader *super, double *val);
-
 HP_API hpint32 hp_compact_read_hpint8(HPAbstractReader *super, hpint8 *val);
 
 HP_API hpint32 hp_compact_read_hpint16(HPAbstractReader *super, hpint16 *val);
@@ -40,8 +32,14 @@ HP_API hpint32 hp_compact_read_hpuint32(HPAbstractReader *super, hpuint32 *val);
 
 HP_API hpint32 hp_compact_read_hpuint64(HPAbstractReader *super, hpuint64 *val);
 
+HP_API hpint32 hp_compact_read_hpchar(HPAbstractReader *super, char *val);
+
+HP_API hpint32 hp_compact_read_hpdouble(HPAbstractReader *super, double *val);
+
 HP_API hpint32 hp_compact_read_string(HPAbstractReader *super, hpchar* str, hpuint32 str_length);
 
 HP_API hpint32 hp_compact_read_counter(HPAbstractReader *super, const char *name, hpuint32 *val);
+
+HP_API hpint32 hp_compact_read_enum_number(HPAbstractReader *super, hpint32 *val);
 
 #endif//_H_DDEKIT_COMPACT_ENCODING_READER
