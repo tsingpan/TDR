@@ -17,7 +17,6 @@ void xml_reader_init(HP_XML_READER *self, FILE *f)
 	
 
 	self->super.read_enum_name = xml_read_enum_name;
-
 	self->super.read_struct_begin = xml_read_struct_begin;
 	self->super.read_struct_end = xml_read_struct_end;
 
@@ -45,23 +44,19 @@ void xml_reader_init(HP_XML_READER *self, FILE *f)
 	self->super.read_counter = xml_read_counter;
 }
 
-void xml_reader_fini(HP_XML_READER *self)
-{
-	hp_abstract_reader_init(&self->super);
-}
-
 static void skip_tab(HP_XML_READER *self)
 {
 	for(;;)
 	{
-		char c = fgetc(self->f);
+		int c = fgetc(self->f);
 		if((c != '\t') && (c != '\n') && (c != '\r') && (c != ' '))
 		{
-			ungetc('a', self->f);
+			ungetc(c, self->f);
 			break;
 		}
 	}
 }
+
 hpint32 xml_read_enum_name(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_name_length)
 {
 	xml_read_string(self, enum_name, enum_name_length);

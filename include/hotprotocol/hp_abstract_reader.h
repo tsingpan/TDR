@@ -30,8 +30,7 @@ struct _HPAbstractReader
 	hpint32 (*read_enum_number)(HPAbstractReader *self, hpint32 *val);
 	hpint32 (*read_enum_name)(HPAbstractReader *self, hpchar *enum_name, hpuint32 enum_name_length);	
 	hpint32 (*read_string)(HPAbstractReader *self, hpchar* str, hpuint32 str_length);
-	hpint32 (*read_bytes)(HPAbstractReader *self, hpbytes *bytes);
-	
+	hpint32 (*read_bytes)(HPAbstractReader *self, hpbytes *bytes);	
 	hpint32 (*read_null)(HPAbstractReader *self);
 	hpint32 (*read_counter)(HPAbstractReader *self, const char *name, hpuint32 *val);
 

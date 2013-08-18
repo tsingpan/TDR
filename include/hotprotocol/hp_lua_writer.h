@@ -14,18 +14,12 @@ typedef struct _HP_LUA_WRITER
 }HP_LUA_WRITER;
 
 
-HP_API hpint32 lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state);
-
-HP_API hpint32 lua_writer_fini(HP_LUA_WRITER *self);
+HP_API void lua_writer_init(HP_LUA_WRITER *self, lua_State *lua_state);
 
 //virtual functions
 HP_API hpint32 lua_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
 
-HP_API hpint32 lua_write_struct_end(HPAbstractWriter *self, const char *struct_name);
-
 HP_API hpint32 lua_write_vector_begin(HPAbstractWriter *self);
-
-HP_API hpint32 lua_write_vector_end(HPAbstractWriter *self);
 
 HP_API hpint32 lua_write_field_begin(HPAbstractWriter *self, const char *var_name);
 
@@ -36,8 +30,6 @@ HP_API hpint32 lua_write_vector_item_begin(HPAbstractWriter *super, hpuint32 ind
 HP_API hpint32 lua_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
 
 HP_API hpint32 lua_write_enum_number(HPAbstractWriter *super, const int val);
-
-HP_API hpint32 lua_write_enum_name(HPAbstractWriter *super, const hpchar *enum_name);
 
 HP_API hpint32 lua_write_hpchar(HPAbstractWriter *super, const char val);
 

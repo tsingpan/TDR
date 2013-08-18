@@ -2,6 +2,7 @@
 #define _H_HP_ABSTRACT_WRITER
 
 #include "hotpot/hp_platform.h"
+
 typedef struct _HPAbstractWriter HPAbstractWriter;
 struct _HPAbstractWriter
 {

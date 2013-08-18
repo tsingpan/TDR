@@ -17,8 +17,6 @@ typedef struct _HP_XML_READER
 
 HP_API void xml_reader_init(HP_XML_READER *self, FILE *f);
 
-HP_API void xml_reader_fini(HP_XML_READER *self);
-
 //virtual public functions
 
 HP_API hpint32 xml_read_struct_begin(HPAbstractReader *self, const char *struct_name);
