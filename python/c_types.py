@@ -2,25 +2,25 @@ from document.dwalker import *
 
 class C_TYPES(DWalker):
 	def __init__(self, document, output_dir):
-		DWalker.__init__(self, document, output_dir)
-		self.file_tag = '_H_'
-		for i in range(0, len(document['file_name'])):
-			c = document['file_name'][i] 
-			if(((c >= 'a') and ( c <= 'z')) or ((c >= 'A') and ( c <= 'Z')) or ((c >= '0') and ( c <= '9'))):
-				self.file_tag += c
-			else:
-				self.file_tag += '_'
-		self.file_tag +=  '_TYPES'
-		
+		DWalker.__init__(self, document)
+		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_TYPES'
+		self.output_dir = output_dir
+
 
 	def on_document_begin(self, document):
+#		os.makedirs(self.output_dir, 0o777, True)
+		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '.h'
+		self.fout = open(ofile_name, "w")
+
 		self.print_file_prefix()
 		self.print_line(0, '#ifndef ' + self.file_tag)
 		self.print_line(0, '#define ' + self.file_tag)
-		self.print_line(0, '#include "hotpot/hp_platform.h"\n')
+		self.print_line(0, '#include "hotpot/hp_platform.h"')
 
 	def on_document_end(self, document):
 		self.print_line(0, '#endif//' + self.file_tag)
+
+		self.fout.close()
 
 	def on_import(self, de_import):
 		self.print_line(0, '#include "' + de_import['package_name'].rstrip('\.hd') + '.h"')
@@ -91,4 +91,4 @@ class C_TYPES(DWalker):
 
 def hpmain(document, output_dir):
 	cw = C_TYPES(document, output_dir)
-	cw.walk()
+	return cw.walk()

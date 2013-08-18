@@ -4,17 +4,22 @@ import sys
 import os
 
 class DWalker:
-	def __init__(self, document, output_dir):
+	def __init__(self, document):
 		self.document = document
-		self.output_dir = output_dir
 		self.enum_list = {}
-#		os.makedirs(output_dir, 0o777, True)
-		ofile_name = output_dir + '/' + document['file_name'].rstrip('.hd') + '.h'
-		self.fout = open(ofile_name, "w")
 
-	def __del__(self):
-		self.fout.close()
-		
+
+	def get_file_tag(self, filename):
+		file_tag = ''
+		for i in range(0, len(filename)):
+			c = filename[i] 
+			if(((c >= 'a') and ( c <= 'z')) or ((c >= 'A') and ( c <= 'Z')) or ((c >= '0') and ( c <= '9'))):
+				file_tag += c
+			else:			
+				file_tag += '_'
+		return file_tag
+
+
 	def get_symbol_access_by_type_suffix(self, identifier, type):
 		if(type['type'] == E_SNT_CONTAINER):
 			if(type['ct'] == E_CT_VECTOR):
@@ -33,7 +38,7 @@ class DWalker:
 			elif(type['ct'] == E_CT_STRING):
 				return ''
 		elif(type['type'] == E_SNT_REFER):
-			if(self.enum_list[type['ot']] == nil):
+			if(self.enum_list[type['ot']] == None):
 				return '&'
 			else:
 				return ''
@@ -51,7 +56,7 @@ class DWalker:
 			elif(type['ct'] == E_CT_STRING):
 				return ''
 		elif(type['type'] == E_SNT_REFER):
-			if(self['enum_list']['type']['ot'] == None):
+			if(self.enum_list[type['ot']] == None):
 				return '*'
 			else:
 				return ''
@@ -166,6 +171,7 @@ class DWalker:
 		for enum_field in enum['enum_def_list']:
 			self.on_enum_field(enum_field)
 		self.on_enum_end(enum)
+		self.enum_list[enum['name']] = True
 
 	def on_struct_field(self, struct_field):
 		pass
@@ -221,3 +227,4 @@ class DWalker:
 			elif(definition['type'] == E_DT_UNIX_COMMENT):
 				self.on_unix_comment(definition['definition']['de_unix_comment'])
 		self.on_document_end(self.document)
+		return True

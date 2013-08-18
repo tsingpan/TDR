@@ -1,80 +1,50 @@
-loadfile(lua_dir .. "lib/hotdata/syntactic_node.lua")();
-loadfile(lua_dir .. "lib/common.lua")();
+from document.dwalker import *
 
-function on_enum_name(enum)
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_name(HPAbstractReader *self, ' .. enum.name .. ' *data);')
-end
-
-function on_enum_number(enum)
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_number(HPAbstractReader *self, ' .. enum.name .. ' *data);')
-end
-
-
-function on_enum(enum)
+class C_READER_HEADER(DWalker):
+	def __init__(self, document, output_dir):
+		DWalker.__init__(self, document)
+		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_READER_HEADER'
+		self.output_dir = output_dir
 	
-	on_enum_name(enum)
-	on_enum_number(enum)
+	def on_document_begin(self, document):
+		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '_reader.h'
+		self.fout = open(ofile_name, "w")
 
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '(HPAbstractReader *self, ' .. enum.name .. ' *data);')
+		self.print_file_prefix()
+		self.print_line(0, '#ifndef ' + self.file_tag)
+		self.print_line(0, '#define ' + self.file_tag)
+		self.print_line(0, '#include "hotpot/hp_platform.h"')
+		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h')
+
+	def on_document_end(self, document):
+		self.print_line(0, '#endif//' + self.file_tag)
+		self.fout.close()
+
+	def on_enum_begin(self, enum):
+		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '_name(HPAbstractReader *self, ' + enum['name'] + ' *data);')
+		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '_number(HPAbstractReader *self, ' + enum['name'] + ' *data);')
+		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '(HPAbstractReader *self, ' + enum['name'] + ' *data);')
+		
+
+	def on_struct_begin(self, struct):
+		line = 'HP_ERROR_CODE read_' + struct['name'] + '(HPAbstractReader *self, ' + struct['name'] + ' *data'
+		for value in struct['parameters']['par_list']:
+			line = line + ' , '
+			line = line + self.get_type(value['type'], None)
+			line = line + ' *' + value['identifier']
+		line = line + ');'
+		self.print_line(0, line)
 
 
-	enum_list[enum.name] = true
-end
+	def on_union(self, union):
+		line = 'HP_ERROR_CODE read_' + union['name'] + '(HPAbstractReader *self, ' + union['name'] + ' *data'
+		for value in union['parameters']['par_list']:
+			line = line + ' , '
+			line = line + ' ' + self.get_type(value['type'], None)
+			line = line + ' ' + self.get_symbol_access_by_type_prefix_reverse(value['identifier'], value['type'], None) + value['identifier']
+		line = line + ');'
+		self.print_line(0, line)
 
-
-function on_struct(object)
-	t = 0;
-	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
-	for key, value in pairs(object.parameters.par_list) do
-		line = line .. ' , '
-		line = line .. get_type(value.type, nil)
-		line = line .. ' *' .. value.identifier
-	end
-	line = line .. ');'
-	print_line(t, line)
-end
-
-
-function on_union(object)
-	t = 0;
-	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
-	for key, value in pairs(object.parameters.par_list) do
-		line = line .. ' , '
-		line = line .. ' ' .. get_type(value.type, nil)
-		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
-	end
-	line = line .. ');'
-	print_line(t, line)
-end
-function main(document)
-	print_file_prefix()
-
-	file_tag = document.file_name
-	file_tag = '_H_' .. string.gsub(document.file_name, '[^a-zA-Z0-9]', '_') .. '_READER'
-	print_line(0, '#ifndef ' .. file_tag)
-	print_line(0, '#define ' .. file_tag)
-
-	print_line(0, '#include "hotpot/hp_platform.h"')
-	print_line(0, '#include "hotpot/hp_error_code.h"')
-	print_line(0, '#include "hotprotocol/hp_abstract_reader.h"')
-	print_line(0, '#include <string.h>')
-
-	if(ifiles ~= nil) then
-		for k, v in pairs(ifiles) do
-			print_line(0, '#include "' .. v .. '"')
-		end
-	end
-
-	for key, value in pairs(document['definition_list']) do
-		if(value.type == E_DT_ENUM)then
-			on_enum(value.definition.de_enum)
-		elseif(value.type == E_DT_STRUCT)then
-			on_struct(value.definition.de_struct)
-		elseif(value.type == E_DT_UNION)then
-			on_union(value.definition.de_union)
-		end
-	end
-	print_line(0, '#endif//' .. file_tag)
-end
-
-main(document)
+def hpmain(document, output_dir):
+	cw = C_READER_HEADER(document, output_dir)
+	return cw.walk()
