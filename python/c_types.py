@@ -1,77 +1,94 @@
-from hotpot.hotpot.hp_config import *
-from hotpot.hotdata.syntactic_node import *
-from common.common import *
+from document.dwalker import *
 
-def on_const(const):
-	print_line(0, '#define\t' + const['identifier'] + ' ' + str(get_val(const['val'], None)))
+class C_TYPES(DWalker):
+	def __init__(self, document, output_dir):
+		DWalker.__init__(self, document, output_dir)
+		self.file_tag = '_H_'
+		for i in range(0, len(document['file_name'])):
+			c = document['file_name'][i] 
+			if(((c >= 'a') and ( c <= 'z')) or ((c >= 'A') and ( c <= 'Z')) or ((c >= '0') and ( c <= '9'))):
+				self.file_tag += c
+			else:
+				self.file_tag += '_'
+		self.file_tag +=  '_TYPES'
+		
 
-def on_typedef(typedef):
-	print_line(0, 'typedef ' + get_type(typedef['type'], None) + ' ' + typedef['name'] + ';')
+	def on_document_begin(self, document):
+		self.print_file_prefix()
+		self.print_line(0, '#ifndef ' + self.file_tag)
+		self.print_line(0, '#define ' + self.file_tag)
+		self.print_line(0, '#include "hotpot/hp_platform.h"\n')
 
-def on_enum(enum):
-	print_line(0, 'typedef enum _' + enum['name'])
-	print_line(0, '{')
-	for value in enum['enum_def_list']:
-		print_line(1, value['identifier'] + ' = ' + str(get_val(value['val'], None)))
+	def on_document_end(self, document):
+		self.print_line(0, '#endif//' + self.file_tag)
 
-	print_line(0, '}' + enum['name'] + ';\n')
-	counter = enum['name'] + '_NUM'
-	for value in enum['type_annotations']['ta_list']:
-		if(value['type'] == E_TA_COUNTER):
-			counter = value['val']['val']['str']
+	def on_import(self, de_import):
+		self.print_line(0, '#include "' + de_import['package_name'].rstrip('\.hd') + '.h"')
 
-	print_line(0, '#define ' + counter + ' ' + str(len(enum['enum_def_list'])));
+	def on_unix_comment(self, de_unix_comment):
+		if(not de_unix_comment['empty']):
+			self.print_line(0, '//' + de_unix_comment['text'])
 
-def	on_object(type_name, object):
-	print_line(0, 'typedef ' + type_name + ' _' + object['name'])
-	print_line(0, '{')
-	for value in object['field_list']['field_list']:
-		if(value['type']['type'] == E_SNT_CONTAINER):
-			if(value['type']['ct'] == E_CT_VECTOR):
-				print_line(0, '\thpuint32 ' + value['args']['arg_list'][2]['ot'] + ';')
+	def on_const(self, const):
+		self.print_line(0, '#define ' + const['identifier'] + ' ' + str(self.get_val(const['val'], None)))
 
-		line = get_type(value['type'], value['args']) + ' ' + value['identifier']
-		if(value['type']['type'] == E_SNT_CONTAINER):
-			if(value['type']['ct'] == E_CT_VECTOR):
-				line = line + '[' + value['args']['arg_list'][1]['ot'] + ']'
-			elif(value['type']['ct'] == E_CT_STRING):
-				line = line + '[' + value['args']['arg_list'][0]['ot'] + ']'
-		print_line(1, line + ';')
-	print_line(0, '}' + object['name'] + ';\n')
+	def on_typedef(self, typedef):
+		self.print_line(0, 'typedef ' + self.get_type(typedef['type'], None) + ' ' + typedef['name'] + ';')
 
-od = './'
-def hpmain(document):
-	print_file_prefix()
+	def on_enum_begin(self, enum):
+		self.print_line(0, 'typedef enum _' + enum['name'])
+		self.print_line(0, '{')
 
-	ofile_name = document['file_name'].strip('.hd') + '.h'
-	fout = open(od + ofile_name, "w")
+	def on_enum_field(self, enum_field):
+		self.print_line(1, enum_field['identifier'] + ' = ' + str(self.get_val(enum_field['val'], None)))
 
-	file_tag = '_H_'
-	for i in range(0, len(document['file_name'])):
-		c = document['file_name'][i] 
-		if(((c >= 'a') and ( c <= 'z')) or ((c >= 'A') and ( c <= 'Z')) or ((c >= '0') and ( c <= '9'))):
-			file_tag += c
-		else:
-			file_tag += '_'
+	def on_enum_end(self, enum):
+		self.print_line(0, '}' + enum['name'] + ';')
+		for value in enum['type_annotations']['ta_list']:
+			if(value['type'] == E_TA_COUNTER):
+				self.print_line(0, '#define ' + value['val']['val']['str'] + ' ' + str(len(enum['enum_def_list'])));
 
-	file_tag +=  '_TYPES'
-	print_line(0, '#ifndef ' + file_tag)
-	print_line(0, '#define ' + file_tag)
+	def on_struct_begin(self, struct):
+		self.print_line(0, 'typedef struct ' ' _' + struct['name'])
+		self.print_line(0, '{')
+
+	def on_struct_field(self, struct_field):
+		if(struct_field['type']['type'] == E_SNT_CONTAINER):
+			if(struct_field['type']['ct'] == E_CT_VECTOR):
+				self.print_line(0, '\thpuint32 ' + struct_field['args']['arg_list'][2]['ot'] + ';')
+
+		line = self.get_type(struct_field['type'], struct_field['args']) + ' ' + struct_field['identifier']
+		if(struct_field['type']['type'] == E_SNT_CONTAINER):
+			if(struct_field['type']['ct'] == E_CT_VECTOR):
+				line = line + '[' + struct_field['args']['arg_list'][1]['ot'] + ']'
+			elif(struct_field['type']['ct'] == E_CT_STRING):
+				line = line + '[' + struct_field['args']['arg_list'][0]['ot'] + ']'
+		self.print_line(1, line + ';')
 
 
-	print_line(0, '#include "hotpot/hp_platform.h"\n')
+	def on_struct_end(self, struct):
+		self.print_line(0, '}' + struct['name'] + ';')
 
-	for value in document['definition_list']:
-		if(value['type'] == E_DT_CONST):
-			on_const(value['definition']['de_const'])
-		elif(value['type'] == E_DT_TYPEDEF):
-			on_typedef(value['definition']['de_typedef'])
-		elif(value['type'] == E_DT_ENUM):
-			on_enum(value['definition']['de_enum'])
-		elif(value['type'] == E_DT_STRUCT):
-			on_object('struct', value['definition']['de_struct'])
-		elif(value['type'] == E_DT_UNION):
-			on_object('union', value['definition']['de_union'])
-	print_line(0, '#endif//' + file_tag)
-	fout.close()
-	return True
+	def on_union_begin(self, union):
+		self.print_line(0, 'typedef union ' ' _' + union['name'])
+		self.print_line(0, '{')
+
+	def on_union_field(self, union_field):
+		if(union_field['type']['type'] == E_SNT_CONTAINER):
+			if(union_field['type']['ct'] == E_CT_VECTOR):
+				self.print_line(0, '\thpuint32 ' + union_field['args']['arg_list'][2]['ot'] + ';')
+
+		line = self.get_type(union_field['type'], union_field['args']) + ' ' + union_field['identifier']
+		if(union_field['type']['type'] == E_SNT_CONTAINER):
+			if(union_field['type']['ct'] == E_CT_VECTOR):
+				line = line + '[' + union_field['args']['arg_list'][1]['ot'] + ']'
+			elif(union_field['type']['ct'] == E_CT_STRING):
+				line = line + '[' + union_field['args']['arg_list'][0]['ot'] + ']'
+		self.print_line(1, line + ';')
+
+	def on_union_end(self,union):
+		self.print_line(0, '}' + union['name'] + ';')
+
+def hpmain(document, output_dir):
+	cw = C_TYPES(document, output_dir)
+	cw.walk()

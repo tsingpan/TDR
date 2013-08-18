@@ -37,17 +37,19 @@ HotPot
 			make
 			make install
 
-3.安装[CMake](http://www.cmake.org/) 2.8.11.1
+3.安装[Python](http://www.python.org/) 3.3.2
 
-4.下载[HotPot](https://github.com/randyliu/HotPot)源代码
+4.安装[CMake](http://www.cmake.org/) 2.8.11.1
+
+5.下载[HotPot](https://github.com/randyliu/HotPot)源代码
 
 		git clone https://github.com/randyliu/HotPot
 
-5.CMake生成工程文件
+6.CMake生成工程文件
 
 		使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
 
-6.编译
+7.编译
 
 		Windows
 			打开Microsoft Visual Studio， 点击编译。
@@ -56,7 +58,7 @@ HotPot
 		OS X
 			make
 
-7.安装
+8.安装
 
 		Windows
 			在Microsoft Visual Studio中执行INSTALL项目。
@@ -65,7 +67,7 @@ HotPot
 		OS X
 			make install
 
-8.配置环境变量
+9.配置环境变量
 
 		配置HOTPOT_DIR环境变量为安装目录
 		Windows
@@ -80,7 +82,7 @@ HotPot
 
 1.安装
 
-		hotscript/php/ext/hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
+		source/hotscript/php/ext/hotscript目录下是一个标准的php扩展, 请按照php所提供的方法进行安装。
 
 2.php.ini
 

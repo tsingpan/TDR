@@ -1,2 +1,0 @@
-JSON = loadfile(lua_dir .. "lib/JSON.lua")();
-print(JSON:encode(document))
