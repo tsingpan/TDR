@@ -19,8 +19,10 @@
 #include "hotscript/hp_error_msg.h"
 
 #include "hotdata/syntactic_node.h"
-
 #include "hotscript/hp_script_vm.h"
+
+
+#include "Python.h"
 
 void version()
 {
@@ -39,6 +41,7 @@ void help()
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version					Print the compiler version\n");
 	fprintf(stderr, "  -lua filename			Run the lua script\n");
+	fprintf(stderr, "  -python filename			Run the python script\n");
 	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
 }
 
@@ -124,6 +127,10 @@ int main(hpint32 argc, char **argv)
 		{
 			++i;
 		}
+		else if (strcmp(arg, "-python") == 0)
+		{
+			++i;
+		}
 		else if (strcmp(arg, "-luastr") == 0)
 		{
 			++i;
@@ -189,6 +196,14 @@ int main(hpint32 argc, char **argv)
 					fprintf(stderr, error);
 					goto ERROR_RET;
 				}
+			}
+			else if (strcmp(arg, "-python") == 0)
+			{
+				arg = argv[++j];
+
+				Py_Initialize();
+				PyRun_SimpleString("print(\'hello world\')");
+				Py_Finalize();
 			}
 		}
 	}
