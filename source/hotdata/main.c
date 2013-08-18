@@ -13,7 +13,7 @@
 #include "hotdata_parser.h"
 #include "hotprotocol/hp_xml_writer.h"
 #include "hotprotocol/hp_xml_reader.h"
-#include "hotprotocol/hp_lua_writer.h"
+#include "hp_lua_writer.h"
 
 #include "hotscript/hp_error_msg_reader.h"
 #include "hotscript/hp_error_msg.h"

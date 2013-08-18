@@ -3,9 +3,9 @@ PROJECT(HotData)
 FILE(GLOB FILE_LIST *.h *.c)
 FILE(GLOB HFILE_LIST ${INCLUDE}/hotdata/*.h)
 FILE(GLOB DATRIE_FILE_LIST datrie/*.h datrie/*.c)
-FILE(GLOB LUA_FILE_LIST lua/*.h lua/*.c)
+FILE(GLOB LUA_FILE_LIST lua52/*.h lua52/*.c)
 source_group("datrie" FILES ${DATRIE_FILE_LIST})
-source_group("lua" FILES ${LUA_FILE_LIST})
+source_group("lua52" FILES ${LUA_FILE_LIST})
 
 FILE(GLOB_RECURSE FLEX_FILE *.re)
 FILE(GLOB_RECURSE BISON_FILE *.yy)
@@ -28,8 +28,8 @@ add_custom_command(OUTPUT ${FLEX_OUTPUTS} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPU
 INCLUDE_DIRECTORIES(
 	${INCLUDE}
 	${_BUILD_INCLUDE}
-	${DEPS}/lua52
-	${DEPS}
+	lua52
+	datrie
 	${LUA_INCLUDE_DIR}
 	.
 	)
@@ -39,7 +39,7 @@ SET_TARGET_PROPERTIES(HotData PROPERTIES OUTPUT_NAME hotdata)
 INSTALL(TARGETS HotData RUNTIME DESTINATION ${BINARY_PATH})
 
 if(WIN32)
-	TARGET_LINK_LIBRARIES(HotData HotScript HotProtocol ${LUA_LIBRARIES} datrie lua52)
+	TARGET_LINK_LIBRARIES(HotData HotScript HotProtocol ${LUA_LIBRARIES})
 else()
-	TARGET_LINK_LIBRARIES(HotData HotScript HotProtocol ${LUA_LIBRARIES} datrie lua52 dl m)
+	TARGET_LINK_LIBRARIES(HotData HotScript HotProtocol ${LUA_LIBRARIES} dl m)
 endif(WIN32)
