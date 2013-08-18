@@ -42,6 +42,7 @@ void help()
 	fprintf(stderr, "  -version					Print the compiler version\n");
 	fprintf(stderr, "  -lua filename			Run the lua script\n");
 	fprintf(stderr, "  -python filename			Run the python script\n");
+	fprintf(stderr, "  -pythonstr script		Run the python script\n");
 	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
 }
 
@@ -83,8 +84,9 @@ SCRIPT_PARSER sp;
 
 int main(hpint32 argc, char **argv)
 {
-	hpuint32 i, j, option_end;
+	hpuint32 j, option_end;
 	lua_State *L;
+	hpint32 i;
 	strncpy(root_dir, argv[0], HP_MAX_FILE_PATH_LENGTH);
 	
 	option_end = 0xffffffff;
@@ -135,6 +137,10 @@ int main(hpint32 argc, char **argv)
 			++i;
 		}
 		else if (strcmp(arg, "-python") == 0)
+		{
+			++i;
+		}
+		else if (strcmp(arg, "-pythonstr") == 0)
 		{
 			++i;
 		}
@@ -205,9 +211,17 @@ int main(hpint32 argc, char **argv)
 					goto ERROR_RET;
 				}
 			}
+			else if (strcmp(arg, "-pythonstr") == 0)
+			{
+				arg = argv[++j];
+				if(PyRun_SimpleString(arg) != 0)
+				{
+					goto PYTHON_ERROR;
+				}
+			}
 			else if (strcmp(arg, "-python") == 0)
 			{
-				PyObject *pName, *pModule, *pDict, *pFunc, *pArgs, *pRetVal, *pParam, *pCurParam, *pO;
+				PyObject *pModule, *pDict, *pFunc, *pRetVal, *pParam;
 				char py_script[MAX_PY_SCRIPT_LENGTH];				
 				arg = argv[++j];
 				get_real_file_path(python_dir, arg);
@@ -248,10 +262,6 @@ int main(hpint32 argc, char **argv)
 					goto ERROR_RET;
 				}
 				Py_DECREF(pDict);
-				
-PYTHON_ERROR:
-				PyErr_Print();
-				goto ERROR_RET;
 			}
 		}
 	}
@@ -259,6 +269,9 @@ PYTHON_ERROR:
 	Py_Finalize();
 
 	return 0;
+PYTHON_ERROR:
+	PyErr_Print();
+	Py_Finalize();
 ERROR_RET:
 	return 1;
 }
