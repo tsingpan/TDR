@@ -1,11 +1,11 @@
 <%
-	$d
-	{
 	'<div>'
 		$data
-		$$d
+		$d
+		{
+			import 'template.hs'
+		}
 	'</div>'
-	}
 	$hi
 	$arr[$*]
 %>

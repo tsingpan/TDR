@@ -44,6 +44,7 @@ struct _HotVM
 	vm_user_putc uputc;
 
 	const char *root_dir;
+	const char *working_dir;
 
 
 	hotvm_execute_func op_handler[HOT_MAX];	
@@ -54,7 +55,9 @@ struct _HotVM
 	char result_str[MAX_ERROR_MSG_LENGTH];
 };
 
-hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc);
+hpint32 hotvm_execute(HotVM *self, const char* file_name, 
+					  const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc
+					  ,const char *work_dir);
 
 void hotvm_set_eip(HotVM *self, hpuint32 eip);
 

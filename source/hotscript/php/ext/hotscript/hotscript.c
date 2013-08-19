@@ -68,13 +68,15 @@ ZEND_GET_MODULE(hotscript)
 
 PHP_INI_BEGIN()
     STD_PHP_INI_ENTRY("hotpot.dir", "C:/Program Files/HotPot", PHP_INI_ALL, OnUpdateString, hotpot_dir, zend_hotscript_globals, hotscript_globals)
+	STD_PHP_INI_ENTRY("hotscript.workingdir", "./", PHP_INI_ALL, OnUpdateString, workingdir, zend_hotscript_globals, hotscript_globals)
 PHP_INI_END()
 
 static void php_hotscript_init_globals(zend_hotscript_globals *hotscript_globals TSRMLS_DC)
 {
-	hotscript_globals->hotpot_dir = NULL;
+	hotscript_globals->hotpot_dir = getenv("HOTPOT_DIR");
+	hotscript_globals->workingdir = "./";
 	hotscript_globals->error_code = E_HP_NOERROR;
-	hotscript_globals->error_msg[0] = getenv("HOTPOT_DIR");	
+	hotscript_globals->error_msg[0] = 0;
 }
 
 PHP_MINIT_FUNCTION(hotscript)
@@ -445,7 +447,7 @@ static PHP_FUNCTION(hs_execute_array)
 	reader.stack_num = 1;
 	
 
-	if(hotvm_execute(&hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc) == E_HP_NOERROR)
+	if(hotvm_execute(&hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc, HOTSCRIPT_G(workingdir)) == E_HP_NOERROR)
 	{
 		ZVAL_STRINGL(return_value, buf.c, buf.len, 1);		
 	}
@@ -478,7 +480,7 @@ static PHP_FUNCTION(hs_execute)
 	reader.stack[0].val = parameter;
 	reader.stack_num = 1;
 
-	if(hotvm_execute(&hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc) == E_HP_NOERROR)
+	if(hotvm_execute(&hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc, HOTSCRIPT_G(workingdir)) == E_HP_NOERROR)
 	{
 		ZVAL_STRINGL(return_value, buf.c, buf.len, 1);		
 	}

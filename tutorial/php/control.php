@@ -20,6 +20,13 @@
 	$d['hi'] = 'hello!';
 	$d['arr'] = array(1,2,3,4,5,6);
 
-	echo hs_execute_array($d, 'template.hs');
+	if(hs_last_error() == 0)
+	{
+		echo hs_execute_array($d, 'template.hs');
+	}
+	else
+	{
+		echo hs_last_error_msg();
+	}
 ?>
 

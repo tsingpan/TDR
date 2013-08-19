@@ -53,7 +53,7 @@ hpint32 hotvm_import(HotVM *self, const HotOp* op)
 {
 	SCRIPT_PARSER sp;
 
-	if(script_parser(&sp, op->arg.import_arg.file_name, self->root_dir) != E_HP_NOERROR)
+	if(script_parser(&sp, op->arg.import_arg.file_name, self->root_dir, self->working_dir) != E_HP_NOERROR)
 	{
 		self->result = sp.scanner_stack.result[0];
 		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
@@ -334,7 +334,7 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
+hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char *working_dir)
 {
 	SCRIPT_PARSER sp;
 
@@ -352,7 +352,8 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 	self->op_handler[HOT_IMPORT] = hotvm_import;
 
-	self->root_dir = root_dir;	
+	self->root_dir = root_dir;
+	self->working_dir = working_dir;
 	self->reader = reader;	
 	self->user_data = user_data;
 	self->vector_stack_num = 0;
@@ -361,7 +362,7 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 
 	self->stack_num = 0;
 
-	if(script_parser(&sp, file_name, root_dir) != E_HP_NOERROR)
+	if(script_parser(&sp, file_name, root_dir, working_dir) != E_HP_NOERROR)
 	{
 		self->result = sp.scanner_stack.result[0];
 		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);

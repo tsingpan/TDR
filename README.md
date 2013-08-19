@@ -86,7 +86,9 @@ HotPot
 
 2.php.ini
 
-		在php.ini中添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
+		添加HotPot安装目录 hotpot.dir="C:\Program Files\HotPot"
+		添加HotScript的工作目录 hotscript.workingdir = d:/
+
 
 ###HotProtocol-Java
 		待完善

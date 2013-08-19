@@ -33,6 +33,7 @@ static PHP_FUNCTION(hs_execute);
 
 ZEND_BEGIN_MODULE_GLOBALS(hotscript)
 	char* hotpot_dir;
+	char* workingdir;
 
 	int error_code;
 	char error_msg[MAX_ERROR_MSG_LENGTH];

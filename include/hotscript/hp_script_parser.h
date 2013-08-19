@@ -46,7 +46,7 @@ struct tagSCRIPT_PARSER
 	//HotVM hotvm;	
 };
 
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir);
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir);
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 

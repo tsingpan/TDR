@@ -207,13 +207,15 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 }
 
 extern int yyscriptparse (SCANNER_STACK *sp);
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir)
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir)
 {
 	hpint32 ret;
 
 	self->stack_num = 0;
 
 	scanner_stack_init(&self->scanner_stack, root_dir);
+
+	scanner_stack_add_path(&self->scanner_stack, work_dir);
 
 
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
