@@ -51,7 +51,7 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 	{
 		self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
 	}
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 }
 
@@ -105,7 +105,7 @@ hpint32 hotvm_echo_literal(HotVM *self, const HotOp* op)
 			self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
 		}
 	}
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -124,11 +124,11 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 
 	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
 	{
-		self->eip = op->arg.field_begin_arg.lineno_after_field_end;
+		hotvm_set_eip(self, op->arg.field_begin_arg.lineno_after_field_end);
 	}
 	else
 	{
-		++(self->eip);
+		hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	}
 	
 	return E_HP_NOERROR;
@@ -138,7 +138,7 @@ ERROR_RET:
 
 hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	read_field_end(self->reader, NULL);
 	
 	return E_HP_NOERROR;
@@ -150,12 +150,12 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 {	
 	if(read_vector_begin(self->reader) != E_HP_NOERROR)
 	{
-		self->eip = op->arg.vector_begin_arg.failed_jmp_lineno;
+		hotvm_set_eip(self, op->arg.vector_begin_arg.failed_jmp_lineno);
 	}
 	else
 	{
-		self->vector_stack[self->vector_stack_num++].eax = 0;
-		++(self->eip);
+		self->vector_stack[self->vector_stack_num++] = 0;
+		hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	}
 
 	
@@ -166,7 +166,7 @@ hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 {
 	read_vector_end(self->reader);
 	--(self->vector_stack_num);
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 }
 
@@ -178,9 +178,9 @@ hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 	}
 
 
-	self->vector_stack[self->vector_stack_num].eax = op->arg.vector_set_index_arg.index;
+	self->vector_stack[self->vector_stack_num] = op->arg.vector_set_index_arg.index;
 
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -193,9 +193,9 @@ hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	++(self->vector_stack[self->vector_stack_num].eax);
+	++(self->vector_stack[self->vector_stack_num]);
 
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
@@ -208,13 +208,13 @@ hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_begin(self->reader, self->vector_stack[self->vector_stack_num].eax) != E_HP_NOERROR)
+	if(read_vector_item_begin(self->reader, self->vector_stack[self->vector_stack_num]) != E_HP_NOERROR)
 	{
-		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
+		hotvm_set_eip(self, op->arg.vector_item_begin_arg.failed_jmp_lineno);
 	}
 	else
 	{
-		++(self->eip);
+		hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	}
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -228,13 +228,13 @@ hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_end(self->reader, self->vector_stack[self->vector_stack_num].eax) != E_HP_NOERROR)
+	if(read_vector_item_end(self->reader, self->vector_stack[self->vector_stack_num]) != E_HP_NOERROR)
 	{
-		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
+		hotvm_set_eip(self, op->arg.vector_item_begin_arg.failed_jmp_lineno);
 	}
 	else
 	{
-		++(self->eip);
+		hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	}
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -310,13 +310,13 @@ hpint32 hotvm_echo_field(HotVM *self, const HotOp* op)
 		}	
 	}
 
-	++(self->eip);
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 {
-	self->eip = op->arg.jmp_arg.lineno;
+	hotvm_set_eip(self, op->arg.jmp_arg.lineno);
 
 	return E_HP_NOERROR;
 }
@@ -332,9 +332,10 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 		goto ERROR_RET;
 	}
 	
-	self->hotoparr = &sp.hotoparr;
-	self->reader = reader;
-	self->eip = 0;
+	self->stack_num = 0;
+	hotvm_push(self, 0, &sp.hotoparr);
+
+	self->reader = reader;	
 	self->user_data = user_data;
 	self->vector_stack_num = 0;
 
@@ -360,16 +361,44 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 
-	while(self->eip < self->hotoparr->next_oparr)
+	while(hotvm_get_eip(self) < hotvm_get_op(self)->next_oparr)
 	{
-		hotvm_execute_func func = self->op_handler[self->hotoparr->oparr[self->eip].instruct];
-		if(func(self, &self->hotoparr->oparr[self->eip]) != E_HP_NOERROR)
+		hotvm_execute_func func = self->op_handler[hotvm_get_op(self)->oparr[hotvm_get_eip(self)].instruct];
+		if(func(self, &hotvm_get_op(self)->oparr[hotvm_get_eip(self)]) != E_HP_NOERROR)
 		{
 			goto ERROR_RET;
 		}
 	}
+	hotvm_pop(self);
 
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
+}
+
+hpuint32 hotvm_get_eip(HotVM *self)
+{
+	return self->stack[self->stack_num - 1].eip;
+}
+
+void hotvm_set_eip(HotVM *self, hpuint32 eip)
+{
+	self->stack[self->stack_num - 1].eip = eip;
+}
+
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
+{
+	self->stack[self->stack_num].eip = eip;
+	self->stack[self->stack_num].hotoparr = hotoparr;
+	++(self->stack_num);
+}
+
+const HotOpArr *hotvm_get_op(HotVM *self)
+{
+	return self->stack[self->stack_num - 1].hotoparr;
+}
+
+void hotvm_pop(HotVM *self)
+{
+	--(self->stack_num);
 }
