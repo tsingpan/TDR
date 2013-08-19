@@ -257,7 +257,6 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 
 	hotoparr_init(&self->hotoparr);
 
-	self->reader = reader;
 	
 	ret = yyscriptparse(&self->scanner_stack);
 
@@ -270,7 +269,7 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	{
 		goto ERROR_RET;
 	}
-	if(hotvm_execute(&self->hotvm, &self->hotoparr, self->reader, user_data, uputc) != E_HP_NOERROR)
+	if(hotvm_execute(&self->hotvm, &self->hotoparr, reader, user_data, uputc) != E_HP_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, NULL, E_HP_ERROR);
 	}

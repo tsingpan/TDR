@@ -40,7 +40,6 @@ struct tagSCRIPT_PARSER
 	HotOpArr hotoparr;
 
 
-	HPAbstractReader *reader;
 	HotVM hotvm;
 
 	E_SP_NODE_TYPE stack[MAX_SP_STACK_DEEP];
