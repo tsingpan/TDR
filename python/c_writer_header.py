@@ -1,8 +1,8 @@
-from document.walker import *
+from document.cwalker import *
 
 class C_WRITER_HEADER(Walker):
 	def __init__(self, document, output_dir):
-		Walker.__init__(self, document)
+		CWalker.__init__(self, document)
 		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_WRITER_HEADER'
 		self.output_dir = output_dir
 	
