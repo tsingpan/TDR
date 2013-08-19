@@ -108,16 +108,19 @@ typedef struct _STACK_FRAME
 
 struct _HotVM
 {
+	//这里搞个堆栈
 	const HotOpArr *hotoparr;
+	hpuint32 eip;
+
+	//这里加入一个script_parser
 	HPAbstractReader *reader;
 	void *user_data;
 	vm_user_putc uputc;
 
 
-	hotvm_execute_func op_handler[HOT_MAX];
-	hpuint32 eip;
-	STACK_FRAME stack[MAX_FUNCTION_STACK_DEEP];
-	hpuint32 stack_num;
+	hotvm_execute_func op_handler[HOT_MAX];	
+	STACK_FRAME vector_stack[MAX_FUNCTION_STACK_DEEP];
+	hpuint32 vector_stack_num;
 };
 
 

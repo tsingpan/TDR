@@ -153,7 +153,7 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 	}
 	else
 	{
-		self->stack[self->stack_num++].eax = 0;
+		self->vector_stack[self->vector_stack_num++].eax = 0;
 		++(self->eip);
 	}
 
@@ -164,20 +164,20 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 {
 	read_vector_end(self->reader);
-	--(self->stack_num);
+	--(self->vector_stack_num);
 	++(self->eip);
 	return E_HP_NOERROR;
 }
 
 hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <= 0)
+	if(self->vector_stack_num <= 0)
 	{
 		goto ERROR_RET;
 	}
 
 
-	self->stack[self->stack_num].eax = op->arg.vector_set_index_arg.index;
+	self->vector_stack[self->vector_stack_num].eax = op->arg.vector_set_index_arg.index;
 
 	++(self->eip);
 	return E_HP_NOERROR;
@@ -187,12 +187,12 @@ ERROR_RET:
 
 hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <= 0)
+	if(self->vector_stack_num <= 0)
 	{
 		goto ERROR_RET;
 	}
 
-	++(self->stack[self->stack_num].eax);
+	++(self->vector_stack[self->vector_stack_num].eax);
 
 	++(self->eip);
 	return E_HP_NOERROR;
@@ -202,12 +202,12 @@ ERROR_RET:
 
 hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <= 0)
+	if(self->vector_stack_num <= 0)
 	{
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_begin(self->reader, self->stack[self->stack_num].eax) != E_HP_NOERROR)
+	if(read_vector_item_begin(self->reader, self->vector_stack[self->vector_stack_num].eax) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
@@ -222,12 +222,12 @@ ERROR_RET:
 
 hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <= 0)
+	if(self->vector_stack_num <= 0)
 	{
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_end(self->reader, self->stack[self->stack_num].eax) != E_HP_NOERROR)
+	if(read_vector_item_end(self->reader, self->vector_stack[self->vector_stack_num].eax) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
@@ -326,7 +326,7 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->reader = reader;
 	self->eip = 0;
 	self->user_data = user_data;
-	self->stack_num = 0;
+	self->vector_stack_num = 0;
 
 	if(uputc == NULL)
 	{
