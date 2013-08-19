@@ -10,10 +10,17 @@
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
-
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO;
 	op->arg.echo_arg.bytes = text->bytes;
+	return E_HP_NOERROR;
+}
+
+hpint32 hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *import)
+{
+	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	op->instruct = HOT_IMPORT;
+	snprintf(op->arg.import_arg.file_name, HS_MAX_NAME_LENGTH, import->file_name);
 	return E_HP_NOERROR;
 }
 
@@ -168,6 +175,35 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...)
 
 static hpint32 get_token_yylval(SCRIPT_PARSER *sp, int token, YYSTYPE * yylval)
 {
+	int ret;
+	SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);		
+
+	switch (token)
+	{
+	case tok_import:
+		{
+			size_t len = 0;
+			while(scanner->yy_cursor < scanner->yy_limit)
+			{
+				if(*scanner->yy_cursor == ';')
+				{
+					break;
+				}
+				else if((*scanner->yy_cursor == '\n') || (*scanner->yy_cursor == '\t') || (*scanner->yy_cursor == ' '))
+				{
+					++(scanner->yy_cursor);
+				}
+				else
+				{
+					yylval->file_name[len++] = *scanner->yy_cursor;
+					++(scanner->yy_cursor);
+				}
+			}
+			yylval->file_name[len] = 0;
+		}
+		break;
+	}
+	
 	return E_HP_NOERROR;
 }
 
@@ -193,35 +229,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 				break;
 			}
 			scanner_stack_pop(&sp->scanner_stack);
-		}
-		else if(ret == tok_import)
-		{
-			char file_name[1024];
-			size_t len = 0;
-			while(scanner->yy_cursor < scanner->yy_limit)
-			{
-				if(*scanner->yy_cursor == ';')
-				{
-					break;
-				}
-				else if((*scanner->yy_cursor == '\n') || (*scanner->yy_cursor == '\t') || (*scanner->yy_cursor == ' '))
-				{
-					++(scanner->yy_cursor);
-				}
-				else
-				{
-					file_name[len++] = *scanner->yy_cursor;
-					++(scanner->yy_cursor);
-				}
-			}
-
-			file_name[len] = 0;
-			if(scanner_stack_push_file(&sp->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
-			{
-				scanner_stack_error(&sp->scanner_stack, yylloc_param, E_HP_ERROR);
-				return 0;
-			}
-		}
+		}		
 		else
 		{
 			if(get_token_yylval(sp, ret, yylval_param) != E_HP_NOERROR)

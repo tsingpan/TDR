@@ -53,6 +53,7 @@ StatementList :
 	
 Statement:
 	tok_text {hotscript_do_text(GET_SELF, &yylloc, &$1);}
+|	tok_import {hotscript_do_import(GET_SELF, &yylloc, &$1);}
 |	tok_literal {hotscript_do_literal(GET_SELF, &yylloc, &$1);}
 |	Identifier {hotscript_do_field_begin(GET_SELF, &yylloc, &$1); hotscript_do_echo_field(GET_SELF, &yylloc, &$1); hotscript_do_field_end(GET_SELF, &yylloc, &$1);}
 |	Identifier {hotscript_do_field_begin(GET_SELF, &yylloc, &$1);}

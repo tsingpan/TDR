@@ -18,6 +18,7 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_ECHO_FIELD						   = 9,
 	HOT_JMP								   = 10,
 	HOT_ECHO_LITERAL                       = 11,
+	HOT_IMPORT		                       = 12,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 
@@ -25,6 +26,12 @@ typedef struct _HOT_ECHO_ARG
 {
 	hpbytes bytes;
 }HOT_ECHO_ARG;
+
+#define HS_MAX_NAME_LENGTH 512
+typedef struct _HOT_IMPORT_ARG
+{
+	char file_name[HS_MAX_NAME_LENGTH];
+}HOT_IMPORT_ARG;
 
 typedef struct _HOT_FIELD_BEGIN_ARG
 {	
@@ -67,6 +74,7 @@ typedef union _HOTSCRIPT_ARGUMENT
 	HOT_VECTOR_SET_INDEX_ARG vector_set_index_arg;
 	HOT_VECTOR_ITEM_BEGIN_ARG vector_item_begin_arg;
 	HOT_JMP_ARG jmp_arg;
+	HOT_IMPORT_ARG import_arg;
 }HOTSCRIPT_ARGUMENT;
 
 //ÐéÄâ»úÖ¸Áî
@@ -83,6 +91,7 @@ typedef struct _HotOpArr
 	hpuint32 oparr_size;
 	hpuint32 next_oparr;
 }HotOpArr;
+
 
 #endif//_H_HOT_SCRIPT_OP
 

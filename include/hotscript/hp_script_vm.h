@@ -25,7 +25,7 @@ typedef void (*vm_user_putc)(HotVM *self, char c);
 typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 
 #define HS_MAX_FILE_DEEP 65536
-#define HS_MAX_NAME_LENGTH 512
+
 typedef struct _STACK_FRAME
 {
 	const HotOpArr *hotoparr;
@@ -42,6 +42,8 @@ struct _HotVM
 	HPAbstractReader *reader;
 	void *user_data;
 	vm_user_putc uputc;
+
+	const char *root_dir;
 
 
 	hotvm_execute_func op_handler[HOT_MAX];	

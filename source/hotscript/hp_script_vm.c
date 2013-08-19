@@ -38,12 +38,6 @@ hpuint32 hotoparr_get_next_op_number(HotOpArr *self)
 	return self->next_oparr;
 }
 
-static void normal_putc(HotVM *self, char c)
-{
-	fputc(c, stdout);
-}
-
-
 hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 {
 	hpuint32 i;
@@ -51,6 +45,12 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 	{
 		self->uputc(self, op->arg.echo_arg.bytes.ptr[i]);
 	}
+	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
+	return E_HP_NOERROR;
+}
+
+hpint32 hotvm_import(HotVM *self, const HotOp* op)
+{
 	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	return E_HP_NOERROR;
 }
@@ -325,6 +325,8 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 {
 	SCRIPT_PARSER sp;
 
+	self->root_dir = root_dir;
+
 	if(script_parser(&sp, file_name, root_dir) != E_HP_NOERROR)
 	{
 		self->result = sp.scanner_stack.result[0];
@@ -338,15 +340,7 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->reader = reader;	
 	self->user_data = user_data;
 	self->vector_stack_num = 0;
-
-	if(uputc == NULL)
-	{
-		self->uputc = normal_putc;
-	}
-	else
-	{
-		self->uputc = uputc;
-	}
+	self->uputc = uputc;
 
 	self->op_handler[HOT_ECHO] = hotvm_echo;
 	self->op_handler[HOT_FIELD_BEGIN] = hotvm_field_begin;
@@ -360,6 +354,7 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
+	self->op_handler[HOT_IMPORT] = hotvm_import;
 
 	while(hotvm_get_eip(self) < hotvm_get_op(self)->next_oparr)
 	{
