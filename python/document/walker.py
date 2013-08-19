@@ -3,7 +3,7 @@ from hotpot.hotdata.syntactic_node import *
 import sys
 import os
 
-class DWalker:
+class Walker:
 	def __init__(self, document):
 		self.document = document
 		self.enum_list = {}
@@ -82,7 +82,7 @@ class DWalker:
 		if val['type'] == E_SNVT_IDENTIFIER :
 			return self.get_symbol_access(val['val']['identifier'], obj)
 		elif val['type'] == E_SNVT_CHAR:
-			return val['val']['c']
+			return "'" + val['val']['c'] + "'"
 		elif val['type'] == E_SNVT_DOUBLE:
 			return val['val']['d']
 		elif val['type'] == E_SNVT_BOOL:
@@ -145,86 +145,57 @@ class DWalker:
 		self.fout.write(str)
 		self.fout.write('\n')
 
-	def on_document_begin(self, document):
+	def walk_const(self, const):
+		self.on_const(const)
 		pass
 
-	def on_document_end(self, document):
+	def walk_typedef(self, typedef):
+		self.on_typedef(typedef)
 		pass
 
-	def on_const(self, const):
-		pass
-
-	def on_typedef(self, typedef):
-		pass
-
-	def on_enum_field(self, enum_field):
-		pass
-
-	def on_enum_begin(self, enum):
-		pass
-
-	def on_enum_end(self, enum):
-		pass
-
-	def on_enum(self, enum):
+	def walk_enum(self, enum):
 		self.on_enum_begin(enum)
 		for enum_field in enum['enum_def_list']:
 			self.on_enum_field(enum_field)
 		self.on_enum_end(enum)
 		self.enum_list[enum['name']] = True
 
-	def on_struct_field(self, struct_field):
-		pass
-
-	def on_struct_begin(self, struct):
-		pass
-
-	def on_struct_end(self, struct):
-		pass
-
-	def on_struct(self, struct):
+	def walk_struct(self, struct):
 		self.on_struct_begin(struct)
 		for struct_field in struct['field_list']['field_list']:
 			self.on_struct_field(struct_field)
 		self.on_struct_end(struct)
 
-	def on_union_field(self, union_field):
-		pass
-
-	def on_union_begin(self, union):
-		pass
-
-	def on_union_end(self, union):
-		pass
-
-	def on_union(self, union):
+	def walk_union(self, union):
 		self.on_union_begin(union)
 		for union_field in union['field_list']['field_list']:
 			self.on_union_field(union_field)
 		self.on_union_end(union)
 
-	def on_import(self, de_import):
+	def walk_import(self, de_import):
+		self.on_import(de_import)
 		pass
 
-	def on_unix_comment(self, de_unix_comment):
+	def walk_unix_comment(self, de_unix_comment):
+		self.on_unix_comment(de_unix_comment)
 		pass
 
 	def walk(self):
 		self.on_document_begin(self.document)
 		for definition in self.document['definition_list']:
 			if(definition['type'] == E_DT_CONST):
-				self.on_const(definition['definition']['de_const'])
+				self.walk_const(definition['definition']['de_const'])
 			elif(definition['type'] == E_DT_TYPEDEF):
-				self.on_typedef(definition['definition']['de_typedef'])
+				self.walk_typedef(definition['definition']['de_typedef'])
 			elif(definition['type'] == E_DT_ENUM):
-				self.on_enum(definition['definition']['de_enum'])
+				self.walk_enum(definition['definition']['de_enum'])
 			elif(definition['type'] == E_DT_STRUCT):
-				self.on_struct(definition['definition']['de_struct'])
+				self.walk_struct(definition['definition']['de_struct'])
 			elif(definition['type'] == E_DT_UNION):
-				self.on_union(definition['definition']['de_union'])
+				self.walk_union(definition['definition']['de_union'])
 			elif(definition['type'] == E_DT_IMPORT):
-				self.on_import(definition['definition']['de_import'])
+				self.walk_import(definition['definition']['de_import'])
 			elif(definition['type'] == E_DT_UNIX_COMMENT):
-				self.on_unix_comment(definition['definition']['de_unix_comment'])
+				self.walk_unix_comment(definition['definition']['de_unix_comment'])
 		self.on_document_end(self.document)
 		return True

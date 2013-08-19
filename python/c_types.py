@@ -1,8 +1,8 @@
-from document.dwalker import *
+from document.walker import *
 
-class C_TYPES(DWalker):
+class C_TYPES(Walker):
 	def __init__(self, document, output_dir):
-		DWalker.__init__(self, document)
+		Walker.__init__(self, document)
 		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_TYPES'
 		self.output_dir = output_dir
 
