@@ -36,14 +36,13 @@ typedef struct tagSCRIPT_PARSER SCRIPT_PARSER;
 struct tagSCRIPT_PARSER
 {
 	SCANNER_STACK scanner_stack;
-
-	HotOpArr hotoparr;
-
-
-	HotVM hotvm;
-
 	E_SP_NODE_TYPE stack[MAX_SP_STACK_DEEP];
 	hpuint32 stack_num;
+
+	HotOpArr hotoparr;//Êä³ö
+
+
+	HotVM hotvm;	
 };
 
 hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, 
