@@ -210,9 +210,10 @@ int main(hpint32 argc, char **argv)
 				{
 					goto ERROR_RET;
 				}
-				Py_DECREF(pDict);
 			}
 		}
+
+		Py_DECREF(python_writer.stack[0]);
 	}
 
 	Py_Finalize();

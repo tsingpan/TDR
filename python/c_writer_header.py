@@ -1,6 +1,6 @@
 from document.cwalker import *
 
-class C_WRITER_HEADER(Walker):
+class C_WRITER_HEADER(CWalker):
 	def __init__(self, document, output_dir):
 		CWalker.__init__(self, document)
 		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_WRITER_HEADER'
@@ -39,8 +39,10 @@ class C_WRITER_HEADER(Walker):
 		line = 'HP_ERROR_CODE write_' + union['name'] + '(HPAbstractWriter *self, const ' + union['name'] + ' *data'
 		for value in union['parameters']['par_list']:
 			line = line + ' , '
-			line = line + self.get_type(value['type'], None)
-			line = line + ' const' + self.get_symbol_access_by_type_prefix_reverse(value['identifier'], value['type'], None) + value['identifier']
+			t = self.get_type(value['type'], None)
+			if((self.find_symbol(t) == Walker.EN_HST_STRUCT) or (self.find_symbol(t) == Walker.EN_HST_UNION)):
+				t = 'const ' + t + '*'
+			line = line + t + ' ' + value['identifier']
 		line = line + ');'
 		self.print_line(0, line)
 

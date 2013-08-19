@@ -25,13 +25,12 @@ class C_READER_HEADER(CWalker):
 		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '_number(HPAbstractReader *self, ' + enum['name'] + ' *data);')
 		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '(HPAbstractReader *self, ' + enum['name'] + ' *data);')
 		
-
 	def on_struct_begin(self, struct):
 		line = 'HP_ERROR_CODE read_' + struct['name'] + '(HPAbstractReader *self, ' + struct['name'] + ' *data'
 		for value in struct['parameters']['par_list']:
 			line = line + ' , '
 			line = line + self.get_type(value['type'], None)
-			line = line + ' *' + value['identifier']
+			line = line + ' const' + self.get_symbol_access_by_type_prefix_reverse(value['identifier'], value['type']) + value['identifier']
 		line = line + ');'
 		self.print_line(0, line)
 
@@ -40,8 +39,10 @@ class C_READER_HEADER(CWalker):
 		line = 'HP_ERROR_CODE read_' + union['name'] + '(HPAbstractReader *self, ' + union['name'] + ' *data'
 		for value in union['parameters']['par_list']:
 			line = line + ' , '
-			line = line + ' ' + self.get_type(value['type'], None)
-			line = line + ' ' + self.get_symbol_access_by_type_prefix_reverse(value['identifier'], value['type'], None) + value['identifier']
+			t = self.get_type(value['type'], None)
+			if((self.find_symbol(t) == Walker.EN_HST_STRUCT) or (self.find_symbol(t) == Walker.EN_HST_UNION)):
+				t = 'const ' + t + '*'
+			line = line + t + ' ' + value['identifier']
 		line = line + ');'
 		self.print_line(0, line)
 

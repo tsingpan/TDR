@@ -3,10 +3,19 @@ from hotpot.hotdata.syntactic_node import *
 import sys
 import os
 
+
 class Walker:
+	EN_HST_VALUE = 0,
+	EN_HST_PARAMETER = 1,
+	EN_HST_FIELD = 2,
+	EN_HST_ENUM = 3,
+	EN_HST_STRUCT = 4,
+	EN_HST_UNION = 5,
+
 	def __init__(self, document):
 		self.document = document
-		self.enum_list = {}
+		self.symbols = {}
+		self.domain = None
 
 	def print_file_prefix(self):
 		self.print_line(0, '/**')
@@ -23,32 +32,115 @@ class Walker:
 		self.fout.write(str)
 		self.fout.write('\n')
 
+	def save_symbol(self, k, v):
+		if(self.domain == None):
+			self.symbols[k] = v
+		else:
+			self.symbols[self.domain + ':' + k] = v
+
+	def find_symbol(self, k):
+		if(self.domain != None):
+			local_k = self.domain + ':' + k
+			if(local_k in self.symbols):
+				return self.symbols[local_k]
+			elif(k in self.symbols):
+				return self.symbols[k]
+			else:
+				return None
+		elif(k in self.symbols):
+			return self.symbols[k]
+		else:
+			return None
+
+	def on_const(self, const):
+		pass
+
+	def on_typedef(self, typedef):
+		pass
+
+	def on_enum_begin(self, enum):
+		pass
+
+	def on_enum_field(self, enum_field):
+		pass
+
+	def on_enum_end(self, enum):
+		pass
+
+	def on_struct_begin(self, struct):
+		pass
+
+	def on_struct_field(self, struct_field):
+		pass
+
+	def on_struct_end(self, struct):
+		pass
+
+	def on_union_begin(self, union):
+		pass
+
+	def on_union_field(self, union_field):
+		pass
+
+	def on_union_end(self, union):
+		pass
+
+	def on_import(self, de_import):
+		pass
+
+	def on_unix_comment(self, unix_import):
+		pass
+
+	def on_document_begin(self, document):
+		pass
+
+	def on_document_end(self, document):
+		pass
+
 	def walk_const(self, const):
+		self.save_symbol(const['identifier'], Walker.EN_HST_VALUE)
 		self.on_const(const)
 		pass
 
 	def walk_typedef(self, typedef):
+		if(typedef['type']['type'] == E_SNT_REFER):
+			self.save_symbol(typedef['name'], self.symbols[typedef['type']['ot']])
 		self.on_typedef(typedef)
 		pass
 
 	def walk_enum(self, enum):
+		self.save_symbol(enum['name'], Walker.EN_HST_ENUM)
 		self.on_enum_begin(enum)
 		for enum_field in enum['enum_def_list']:
+			self.save_symbol(enum_field['identifier'], Walker.EN_HST_VALUE)
 			self.on_enum_field(enum_field)
 		self.on_enum_end(enum)
-		self.enum_list[enum['name']] = True
 
 	def walk_struct(self, struct):
+		self.save_symbol(struct['name'], Walker.EN_HST_STRUCT)
+		self.domain = struct['name']
 		self.on_struct_begin(struct)
+		for par in struct['parameters']['par_list']:
+			self.save_symbol(par['identifier'], Walker.EN_HST_PARAMETER)
+
 		for struct_field in struct['field_list']['field_list']:
+			self.save_symbol(struct_field['identifier'], Walker.EN_HST_FIELD)
 			self.on_struct_field(struct_field)
 		self.on_struct_end(struct)
+		self.domain = None
 
 	def walk_union(self, union):
+		self.save_symbol(union['name'], Walker.EN_HST_UNION)
+		self.domain = union['name']
 		self.on_union_begin(union)
+		for par in union['parameters']['par_list']:
+			self.save_symbol(par['identifier'], Walker.EN_HST_PARAMETER)
+
 		for union_field in union['field_list']['field_list']:
+			self.save_symbol(union_field['identifier'], Walker.EN_HST_FIELD)
 			self.on_union_field(union_field)
 		self.on_union_end(union)
+		self.domain = None
 
 	def walk_import(self, de_import):
 		self.on_import(de_import)

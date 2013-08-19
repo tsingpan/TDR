@@ -30,7 +30,7 @@ class C_TYPES(CWalker):
 			self.print_line(0, '//' + de_unix_comment['text'])
 
 	def on_const(self, const):
-		self.print_line(0, '#define ' + const['identifier'] + ' ' + str(self.get_val(const['val'], None)))
+		self.print_line(0, '#define ' + const['identifier'] + ' ' + str(self.get_val(const['val'])))
 
 	def on_typedef(self, typedef):
 		self.print_line(0, 'typedef ' + self.get_type(typedef['type'], None) + ' ' + typedef['name'] + ';')
@@ -40,7 +40,7 @@ class C_TYPES(CWalker):
 		self.print_line(0, '{')
 
 	def on_enum_field(self, enum_field):
-		self.print_line(1, enum_field['identifier'] + ' = ' + str(self.get_val(enum_field['val'], None)))
+		self.print_line(1, enum_field['identifier'] + ' = ' + str(self.get_val(enum_field['val'])))
 
 	def on_enum_end(self, enum):
 		self.print_line(0, '}' + enum['name'] + ';')

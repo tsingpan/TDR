@@ -77,9 +77,9 @@ class CWalker(Walker):
 
 		return identifier
 
-	def get_val(self, val, obj):
+	def get_val(self, val):
 		if val['type'] == E_SNVT_IDENTIFIER :
-			return self.get_symbol_access(val['val']['identifier'], obj)
+			return val['val']['identifier']
 		elif val['type'] == E_SNVT_CHAR:
 			return "'" + val['val']['c'] + "'"
 		elif val['type'] == E_SNVT_DOUBLE:

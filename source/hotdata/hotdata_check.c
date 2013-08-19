@@ -762,7 +762,7 @@ static void dp_check_field_vector_args(DATA_PARSER *self, const YYLTYPE *yylloc,
 			{
 				if(symbol->body.field.type.type == E_SNT_SIMPLE)
 				{
-					if(!((symbol->body.field.type.type >= E_SNVT_BOOL) && (symbol->body.type.type <= E_SNVT_HEX_UINT64)))
+					if(!((symbol->body.field.type.st >= E_ST_INT8) && (symbol->body.field.type.st <= E_ST_BOOL)))
 					{
 						scanner_stack_error(&self->scanner_stack, yylloc, E_HP_ERROR);
 						goto done;
