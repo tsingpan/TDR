@@ -112,10 +112,9 @@ struct _HotVM
 	HPAbstractReader *reader;
 	void *user_data;
 	vm_user_putc uputc;
+
+
 	hotvm_execute_func op_handler[HOT_MAX];
-	
-	
-	
 	hpuint32 eip;
 	STACK_FRAME stack[MAX_FUNCTION_STACK_DEEP];
 	hpuint32 stack_num;

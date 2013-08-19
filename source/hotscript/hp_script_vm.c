@@ -322,8 +322,8 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
-	self->reader = reader;
 	self->hotoparr = hotoparr;
+	self->reader = reader;
 	self->eip = 0;
 	self->user_data = user_data;
 	self->stack_num = 0;
