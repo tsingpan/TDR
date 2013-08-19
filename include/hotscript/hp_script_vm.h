@@ -19,8 +19,6 @@ typedef enum _HOTSCRIPT_INSTRUCT
 	HOT_ECHO_FIELD						   = 9,
 	HOT_JMP								   = 10,
 	HOT_ECHO_LITERAL                       = 11,
-	HOT_CALL_FIELD_BEGIN				   = 12,
-	HOT_CALL_FIELD_END					   = 13,
 	HOT_MAX
 }HOTSCRIPT_INSTRUCT;
 
@@ -106,8 +104,6 @@ typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 typedef struct _STACK_FRAME
 {
 	hpuint32 eax;
-	hpuint32 eip;
-	hpuint32 return_eip;
 }STACK_FRAME;
 
 struct _HotVM
@@ -121,7 +117,6 @@ struct _HotVM
 	
 	
 	hpuint32 eip;
-	hpuint32 eax;
 	STACK_FRAME stack[MAX_FUNCTION_STACK_DEEP];
 	hpuint32 stack_num;
 };

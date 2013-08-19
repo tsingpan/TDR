@@ -1,5 +1,11 @@
 PROJECT(HotScript)
 
+if(WIN32)
+	if(BUILD_HotScript_PHP)
+		add_subdirectory(php)
+	endif(BUILD_HotScript_PHP)
+endif(WIN32)
+
 FILE(GLOB_RECURSE HFILE_LIST ${INCLUDE}/hotscript/*.h)
 FILE(GLOB CFILE_LIST ${SOURCE}/ *.c)
 FILE(GLOB SCRIPT_FLEX_FILE script_l.re)

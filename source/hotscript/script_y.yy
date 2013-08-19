@@ -66,7 +66,6 @@ Statement:
 
 Identifier :
 	tok_identifier {$$ = $1;$$.token = tok_identifier; }
-|	tok_call_identifier {$$ = $1;$$.token = tok_call_identifier; }
 |	tok_integer{$$ = $1;$$.token = tok_integer; }
 |	tok_auto_integer{$$ = $1;$$.token = tok_auto_integer; }
 

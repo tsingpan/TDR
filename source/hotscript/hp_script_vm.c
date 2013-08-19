@@ -127,12 +127,6 @@ hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 	}
 	else
 	{
-		self->stack[self->stack_num].eax = self->eax;
-		self->stack[self->stack_num].eip = self->eip;
-		self->stack[self->stack_num].return_eip = op->arg.field_begin_arg.lineno_after_field_end;		
-		++(self->stack_num);
-
-
 		++(self->eip);
 	}
 	
@@ -143,107 +137,23 @@ ERROR_RET:
 
 hpint32 hotvm_field_end(HotVM *self, const HotOp* op)
 {
-	if(self->stack_num <= 0 )
-	{
-		goto ERROR_RET;
-	}
-
-	self->eax = self->stack[self->stack_num - 1].eax;
-	self->eip = self->stack[self->stack_num - 1].return_eip;
-	--(self->stack_num);
-	
-
+	++(self->eip);
 	read_field_end(self->reader, NULL);
-
 	
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-}
-
-hpint32 hotvm_call_field_end(HotVM *self, const HotOp* op)
-{
-	if(self->stack_num <= 0 )
-	{
-		goto ERROR_RET;
-	}
-
-	self->eax = self->stack[self->stack_num - 1].eax;
-	self->eip = self->stack[self->stack_num - 1].return_eip;
-	--(self->stack_num);
-
-	read_field_end(self->reader, NULL);
-
-
-	return E_HP_NOERROR;
-ERROR_RET:
-	return E_HP_ERROR;
-}
-hpint32 hotvm_call_field_begin(HotVM *self, const HotOp* op)
-{
-	hpint32 i;
-	hpuint32 func_eip;
-	hpchar name[HS_MAX_NAME_LENGTH];
-
-	if(op->arg.call_field_begin_arg.name.len >= HS_MAX_NAME_LENGTH)
-	{
-		goto ERROR_RET;
-	}
-	if(self->stack_num <= 0)
-	{
-		++self->eip;
-		goto done;
-	}
-
-	memcpy(name, op->arg.call_field_begin_arg.name.ptr, HS_MAX_NAME_LENGTH);
-	name[op->arg.call_field_begin_arg.name.len] = 0;
-
-	func_eip = 0xffffffff;
-	for(i = self->stack_num - 1; i >= 0; --i)
-	{
-		const HotOp *_op = &self->hotoparr->oparr[self->stack[i].eip];
-
-		if((_op->instruct == HOT_FIELD_BEGIN) && (op->arg.call_field_begin_arg.name.len == _op->arg.field_begin_arg.name.len) 
-			&& (memcmp(_op->arg.field_begin_arg.name.ptr, op->arg.call_field_begin_arg.name.ptr, _op->arg.field_begin_arg.name.len) == 0))
-		{
-			func_eip = self->stack[i].eip + 1;
-			break;
-		}
-	}
-	if(func_eip == 0xffffffff)
-	{
-		++self->eip;
-		goto done;
-	}
-	
-	if(read_field_begin(self->reader, name) != E_HP_NOERROR)
-	{
-		self->eip = op->arg.call_field_begin_arg.lineno_after_call_field_begin;
-		goto done;
-	}
-
-	self->stack[self->stack_num].eax = self->eax;
-	self->stack[self->stack_num].eip = self->eip;
-	self->stack[self->stack_num].return_eip = op->arg.call_field_begin_arg.lineno_after_call_field_begin;
-	++(self->stack_num);
-
-	self->eip = func_eip;
-
-done:
 	return E_HP_NOERROR;
 ERROR_RET:
 	return E_HP_ERROR;
 }
 
 hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
-{
-	self->eax = 0;
+{	
 	if(read_vector_begin(self->reader) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.vector_begin_arg.failed_jmp_lineno;
 	}
 	else
 	{
+		self->stack[self->stack_num++].eax = 0;
 		++(self->eip);
 	}
 
@@ -254,6 +164,7 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 hpint32 hotvm_vector_end(HotVM *self, const HotOp* op)
 {
 	read_vector_end(self->reader);
+	--(self->stack_num);
 	++(self->eip);
 	return E_HP_NOERROR;
 }
@@ -266,7 +177,7 @@ hpint32 hotvm_vector_set_index(HotVM *self, const HotOp* op)
 	}
 
 
-	self->eax = op->arg.vector_set_index_arg.index;
+	self->stack[self->stack_num].eax = op->arg.vector_set_index_arg.index;
 
 	++(self->eip);
 	return E_HP_NOERROR;
@@ -281,7 +192,7 @@ hpint32 hotvm_vector_inc_index(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	++(self->eax);
+	++(self->stack[self->stack_num].eax);
 
 	++(self->eip);
 	return E_HP_NOERROR;
@@ -296,7 +207,7 @@ hpint32 hotvm_vector_item_begin(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_begin(self->reader, self->eax) != E_HP_NOERROR)
+	if(read_vector_item_begin(self->reader, self->stack[self->stack_num].eax) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
@@ -316,7 +227,7 @@ hpint32 hotvm_vector_item_end(HotVM *self, const HotOp* op)
 		goto ERROR_RET;
 	}
 
-	if(read_vector_item_end(self->reader, self->eax) != E_HP_NOERROR)
+	if(read_vector_item_end(self->reader, self->stack[self->stack_num].eax) != E_HP_NOERROR)
 	{
 		self->eip = op->arg.vector_item_begin_arg.failed_jmp_lineno;
 	}
@@ -438,8 +349,6 @@ hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *r
 	self->op_handler[HOT_ECHO_FIELD] = hotvm_echo_field;
 	self->op_handler[HOT_JMP] = hotvm_jmp;
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
-	self->op_handler[HOT_CALL_FIELD_BEGIN] = hotvm_call_field_begin;
-	self->op_handler[HOT_CALL_FIELD_END] = hotvm_call_field_end;
 
 	while(self->eip < self->hotoparr->next_oparr)
 	{

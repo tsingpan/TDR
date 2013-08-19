@@ -2,6 +2,10 @@ project(HotPot)
 
 cmake_minimum_required(VERSION 2.8)
 
+if(WIN32)
+option(BUILD_HotScript_PHP "only win32" 0)
+ENDIF()
+
 IF (CMAKE_BUILD_TYPE STREQUAL "")
     SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
