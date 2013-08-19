@@ -28,7 +28,7 @@ typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 
 typedef struct _STACK_FRAME
 {
-	const HotOpArr *hotoparr;
+	HotOpArr hotoparr;
 	hpuint32 eip;
 }STACK_FRAME;
 
@@ -60,7 +60,7 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip);
 
 hpuint32 hotvm_get_eip(HotVM *self);
 
-void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr);
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr hotoparr);
 
 const HotOpArr *hotvm_get_op(HotVM *self);
 

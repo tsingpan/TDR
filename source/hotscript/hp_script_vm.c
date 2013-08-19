@@ -51,8 +51,21 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_import(HotVM *self, const HotOp* op)
 {
+	SCRIPT_PARSER sp;
+
+	if(script_parser(&sp, op->arg.import_arg.file_name, self->root_dir) != E_HP_NOERROR)
+	{
+		self->result = sp.scanner_stack.result[0];
+		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
+		goto ERROR_RET;
+	}
 	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
+	hotvm_push(self, 0, sp.hotoparr);
+
+	
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpint32 hotvm_echo_literal(HotVM *self, const HotOp* op)
@@ -325,23 +338,6 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 {
 	SCRIPT_PARSER sp;
 
-	self->root_dir = root_dir;
-
-	if(script_parser(&sp, file_name, root_dir) != E_HP_NOERROR)
-	{
-		self->result = sp.scanner_stack.result[0];
-		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
-		goto ERROR_RET;
-	}
-	
-	self->stack_num = 0;
-	hotvm_push(self, 0, &sp.hotoparr);
-
-	self->reader = reader;	
-	self->user_data = user_data;
-	self->vector_stack_num = 0;
-	self->uputc = uputc;
-
 	self->op_handler[HOT_ECHO] = hotvm_echo;
 	self->op_handler[HOT_FIELD_BEGIN] = hotvm_field_begin;
 	self->op_handler[HOT_FIELD_END] = hotvm_field_end;
@@ -356,15 +352,35 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->op_handler[HOT_ECHO_LITERAL] = hotvm_echo_literal;
 	self->op_handler[HOT_IMPORT] = hotvm_import;
 
-	while(hotvm_get_eip(self) < hotvm_get_op(self)->next_oparr)
+	self->root_dir = root_dir;	
+	self->reader = reader;	
+	self->user_data = user_data;
+	self->vector_stack_num = 0;
+	self->uputc = uputc;
+
+
+	self->stack_num = 0;
+
+	if(script_parser(&sp, file_name, root_dir) != E_HP_NOERROR)
 	{
-		hotvm_execute_func func = self->op_handler[hotvm_get_op(self)->oparr[hotvm_get_eip(self)].instruct];
-		if(func(self, &hotvm_get_op(self)->oparr[hotvm_get_eip(self)]) != E_HP_NOERROR)
-		{
-			goto ERROR_RET;
-		}
+		self->result = sp.scanner_stack.result[0];
+		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
+		goto ERROR_RET;
 	}
-	hotvm_pop(self);
+	hotvm_push(self, 0, sp.hotoparr);
+	while(self->stack_num > 0)
+	{
+		while(hotvm_get_eip(self) < hotvm_get_op(self)->next_oparr)
+		{
+			hotvm_execute_func func = self->op_handler[hotvm_get_op(self)->oparr[hotvm_get_eip(self)].instruct];
+			if(func(self, &hotvm_get_op(self)->oparr[hotvm_get_eip(self)]) != E_HP_NOERROR)
+			{
+				goto ERROR_RET;
+			}
+		}
+		hotvm_pop(self);
+	}
+	
 
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -381,7 +397,7 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip)
 	self->stack[self->stack_num - 1].eip = eip;
 }
 
-void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr hotoparr)
 {
 	self->stack[self->stack_num].eip = eip;
 	self->stack[self->stack_num].hotoparr = hotoparr;
@@ -390,7 +406,7 @@ void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
 
 const HotOpArr *hotvm_get_op(HotVM *self)
 {
-	return self->stack[self->stack_num - 1].hotoparr;
+	return &self->stack[self->stack_num - 1].hotoparr;
 }
 
 void hotvm_pop(HotVM *self)
