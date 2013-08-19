@@ -1,5 +1,6 @@
 #include "hotscript/hp_script_vm.h"
 #include "hotpot/hp_error_code.h"
+#include "hotscript/hp_script_parser.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -320,9 +321,18 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 	return E_HP_NOERROR;
 }
 
-hpint32 hotvm_execute(HotVM *self, const HotOpArr *hotoparr, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
+hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc)
 {
-	self->hotoparr = hotoparr;
+	SCRIPT_PARSER sp;
+
+	if(script_parser(&sp, file_name, root_dir) != E_HP_NOERROR)
+	{
+		self->result = sp.scanner_stack.result[0];
+		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
+		goto ERROR_RET;
+	}
+	
+	self->hotoparr = &sp.hotoparr;
 	self->reader = reader;
 	self->eip = 0;
 	self->user_data = user_data;

@@ -239,7 +239,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 }
 
 extern int yyscriptparse (SCANNER_STACK *sp);
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char* root_dir)
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir)
 {
 	hpint32 ret;
 
@@ -268,12 +268,6 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractRead
 	if(scanner_stack_pop(&self->scanner_stack) != E_HP_NOERROR)
 	{
 		goto ERROR_RET;
-	}
-
-
-	if(hotvm_execute(&self->hotvm, &self->hotoparr, reader, user_data, uputc) != E_HP_NOERROR)
-	{
-		scanner_stack_error(&self->scanner_stack, NULL, E_HP_ERROR);
 	}
 
 	return E_HP_NOERROR;

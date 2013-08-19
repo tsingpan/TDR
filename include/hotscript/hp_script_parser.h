@@ -7,7 +7,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotpot/hp_error_code.h"
 #include "hotscript/hp_error_msg.h"
-#include "hotscript/hp_script_vm.h"
+#include "hotscript/hp_script_op.h"
 #include "hotscript/hp_script_lex.h"
 
 typedef struct _SP_NODE
@@ -42,11 +42,10 @@ struct tagSCRIPT_PARSER
 	HotOpArr hotoparr;//Êä³ö
 
 
-	HotVM hotvm;	
+	//HotVM hotvm;	
 };
 
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, HPAbstractReader *reader, 
-					  void *user_data, vm_user_putc uputc, const char* root_dir);
+hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir);
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 
