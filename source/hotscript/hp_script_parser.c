@@ -20,7 +20,8 @@ hpint32 hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_IMPORT;
-	snprintf(op->arg.import_arg.file_name, HS_MAX_NAME_LENGTH, import->file_name);
+	memcpy(op->arg.import_arg.file_name, import->bytes.ptr, import->bytes.len);
+	op->arg.import_arg.file_name[import->bytes.len] = 0;
 	return E_HP_NOERROR;
 }
 
@@ -173,41 +174,6 @@ void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...)
 	return;
 }
 
-static hpint32 get_token_yylval(SCRIPT_PARSER *sp, int token, YYSTYPE * yylval)
-{
-	int ret;
-	SCANNER *scanner = scanner_stack_get_scanner(&sp->scanner_stack);		
-
-	switch (token)
-	{
-	case tok_import:
-		{
-			size_t len = 0;
-			while(scanner->yy_cursor < scanner->yy_limit)
-			{
-				if(*scanner->yy_cursor == ';')
-				{
-					break;
-				}
-				else if((*scanner->yy_cursor == '\n') || (*scanner->yy_cursor == '\t') || (*scanner->yy_cursor == ' '))
-				{
-					++(scanner->yy_cursor);
-				}
-				else
-				{
-					yylval->file_name[len++] = *scanner->yy_cursor;
-					++(scanner->yy_cursor);
-				}
-			}
-			yylval->file_name[len] = 0;
-		}
-		break;
-	}
-	
-	return E_HP_NOERROR;
-}
-
-
 extern hpint32 script_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
@@ -229,15 +195,9 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 				break;
 			}
 			scanner_stack_pop(&sp->scanner_stack);
-		}		
+		}
 		else
-		{
-			if(get_token_yylval(sp, ret, yylval_param) != E_HP_NOERROR)
-			{
-				scanner_stack_error(&sp->scanner_stack, yylloc_param, E_HP_ERROR);
-				ret = -1;
-				break;
-			}
+		{		
 			break;
 		}
 	}
