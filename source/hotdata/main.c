@@ -48,6 +48,7 @@ DATA_PARSER dp;
 HP_PYTHON_WRITER python_writer;
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
+wchar_t wroot_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
 wchar_t python_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
@@ -90,9 +91,18 @@ int main(hpint32 argc, char **argv)
 		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
 	}
 
+
+	snwprintf(wroot_dir, HP_MAX_FILE_PATH_LENGTH, _wgetenv(L"HOTPOT_DIR"));
+	if(wroot_dir[wcslen(wroot_dir) - 1] != HP_FILE_SEPARATOR)
+	{
+		wroot_dir[wcslen(wroot_dir) + 1] = 0;
+		wroot_dir[wcslen(wroot_dir)] = HP_FILE_SEPARATOR;
+	}		
+	
+
 	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
-	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c", root_dir, HP_FILE_SEPARATOR);
+	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c", wroot_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
