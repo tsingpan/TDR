@@ -12,6 +12,7 @@
 #define strtoll(begin_ptr, end_ptr, radix) _strtoi64(begin_ptr, end_ptr, radix)
 #define strtoull(begin_ptr, end_ptr, radix) _strtoui64(begin_ptr, end_ptr, radix)
 #define snprintf _snprintf
+#define snwprintf _snwprintf
 
 #define PRIu64 "I64u"
 #define PRIi64 "I64d"

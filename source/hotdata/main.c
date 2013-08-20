@@ -49,7 +49,7 @@ HP_PYTHON_WRITER python_writer;
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
-char python_dir[HP_MAX_FILE_PATH_LENGTH];
+wchar_t python_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
 char path_prefix[HP_MAX_FILE_PATH_LENGTH];
 
@@ -92,7 +92,7 @@ int main(hpint32 argc, char **argv)
 
 	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
-	snprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, "%spython%c", root_dir, HP_FILE_SEPARATOR);
+	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c", root_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -170,14 +170,9 @@ int main(hpint32 argc, char **argv)
 			else if (strcmp(arg, "-python") == 0)
 			{
 				PyObject *pModule, *pDict, *pFunc, *pRetVal, *pParam;
-				char py_script[MAX_PY_SCRIPT_LENGTH];				
 				arg = argv[++j];
-				get_real_file_path(python_dir, arg);
 
-				PyRun_SimpleString("import sys;");
-				snprintf(py_script, sizeof(py_script), "sys.path.append(\"%s\")", python_dir);
-				PyRun_SimpleString(py_script);
-
+				PySys_SetPath(python_dir);
 				pModule = PyImport_ImportModule(arg);
 				if(pModule == NULL)
 				{
