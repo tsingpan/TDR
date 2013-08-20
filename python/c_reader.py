@@ -1,50 +1,62 @@
-loadfile(lua_dir .. "lib/hotdata/syntactic_node.lua")();
-loadfile(lua_dir .. "lib/common.lua")();
+from c_reader_header import *
 
-function on_enum_name(enum)
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_name(HPAbstractReader *self, ' .. enum.name .. ' *data)')
-	print_line(0, '{')
-	print_line(1, 'char name[' .. MAX_IDENTIFIER_LENGTH .. '];')
-	print_line(1, 'if(read_enum_name(self, name, ' .. MAX_IDENTIFIER_LENGTH .. ') != E_HP_NOERROR) goto ERROR_RET;')
-	for key, value in pairs(enum.enum_def_list) do
-		print_line(1, 'if(strcmp(name, \"' .. value.identifier .. '\") == 0)')
-		print_line(1, '{')
-		print_line(2, '*data = ' .. value.identifier .. ';')
-		print_line(2, 'goto done;')
-		print_line(1, '}')
-	end
-	print_line(0, 'ERROR_RET:')
-	print_line(1, 'return E_HP_ERROR;')
-	print_line(0, 'done:')
-	print_line(1, 'return E_HP_NOERROR;')
-	print_line(0, '}')
-end
-
-function on_enum_number(enum)
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '_number(HPAbstractReader *self, ' .. enum.name .. ' *data)')
-	print_line(0, '{')
-	print_line(1, 'return read_enum_number(self, (hpint32*)data);')
-	print_line(0, '}')
-end
-
-
-function on_enum(enum)
+class C_READER(C_READER_HEADER):
+	def __init__(self, document, output_dir):
+		C_READER_HEADER.__init__(self, document, output_dir)
 	
-	on_enum_name(enum)
-	on_enum_number(enum)
+	def on_document_begin(self, document):
+		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '_reader.c'
+		self.fout = open(ofile_name, "w")
 
-	print_line(0, 'HP_ERROR_CODE read_' .. enum.name .. '(HPAbstractReader *self, ' .. enum.name .. ' *data)')
-	print_line(0, '{')
-	print_line(1, 'if(read_' .. enum.name .. '_name(self, data) != E_HP_NOERROR) goto ERROR_RET;')
-	print_line(1, 'if(read_' .. enum.name .. '_number(self, data) != E_HP_NOERROR) goto ERROR_RET;')
-	print_line(1, 'return E_HP_NOERROR;')
-	print_line(0, 'ERROR_RET:')
-	print_line(1, 'return E_HP_ERROR;')
-	print_line(0, '}')
+		self.print_file_prefix()
+		self.print_line(0, '#include "hotpot/hp_platform.h"')
+		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h"')
+		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '_reader.h"')
 
-	enum_list[enum.name] = true
-end
+	def on_document_end(self, document):
+		self.fout.close()
 
+	def create_enum_name(self, enum):
+		self.print_line(0, self.get_enum_name_header(enum))
+		self.print_line(0, '{')
+		self.print_line(1, 'char name[MAX_IDENTIFIER_LENGTH];')
+		self.print_line(1, 'if(read_enum_name(self, name, MAX_IDENTIFIER_LENGTH) != E_HP_NOERROR) goto ERROR_RET;')
+		for value in enum['enum_def_list']:
+			self.print_line(1, 'if(strcmp(name, \"' + value['identifier'] + '\") == 0)')
+			self.print_line(1, '{')
+			self.print_line(2, '*data = ' + value['identifier'] + ';')
+			self.print_line(2, 'goto done;')
+			self.print_line(1, '}')
+		self.print_line(0, 'ERROR_RET:')
+		self.print_line(1, 'return E_HP_ERROR;')
+		self.print_line(0, 'done:')
+		self.print_line(1, 'return E_HP_NOERROR;')
+		self.print_line(0, '}')
+
+	def create_enum_number(self, enum):
+		self.print_line(0, self.get_enum_number_header(enum))
+		self.print_line(0, '{')
+		self.print_line(1, 'return read_enum_number(self, (hpint32*)data);')
+		self.print_line(0, '}')
+
+
+	def on_enum_begin(self, enum):
+		self.create_enum_name(enum)
+		self.create_enum_number(enum)
+
+		self.print_line(0, self.get_enum_header(enum))
+		self.print_line(0, '{')
+		self.print_line(1, 'if(read_' + enum['name'] + '_name(self, data) != E_HP_NOERROR) goto ERROR_RET;')
+		self.print_line(1, 'if(read_' + enum['name'] + '_number(self, data) != E_HP_NOERROR) goto ERROR_RET;')
+		self.print_line(1, 'return E_HP_NOERROR;')
+		self.print_line(0, 'ERROR_RET:')
+		self.print_line(1, 'return E_HP_ERROR;')
+		self.print_line(0, '}')
+
+def hpmain(document, output_dir):
+	cw = C_READER(document, output_dir)
+	return cw.walk()
+'''
 
 function on_struct(object)
 	t = 0;
@@ -242,3 +254,4 @@ function main(document)
 end
 
 main(document)
+'''

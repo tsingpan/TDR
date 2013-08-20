@@ -14,7 +14,7 @@ class C_WRITER_HEADER(CWalker):
 		self.print_line(0, '#ifndef ' + self.file_tag)
 		self.print_line(0, '#define ' + self.file_tag)
 		self.print_line(0, '#include "hotpot/hp_platform.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h')
+		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h"')
 
 	def on_document_end(self, document):
 		self.print_line(0, '#endif//' + self.file_tag)

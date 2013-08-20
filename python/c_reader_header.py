@@ -14,16 +14,26 @@ class C_READER_HEADER(CWalker):
 		self.print_line(0, '#ifndef ' + self.file_tag)
 		self.print_line(0, '#define ' + self.file_tag)
 		self.print_line(0, '#include "hotpot/hp_platform.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h')
+		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h"')
 
 	def on_document_end(self, document):
 		self.print_line(0, '#endif//' + self.file_tag)
 		self.fout.close()
 
+
+	def get_enum_header(self, enum):
+		return 'HP_ERROR_CODE read_' + enum['name'] + '(HPAbstractReader *self, ' + enum['name'] + ' *data)'
+
+	def get_enum_name_header(self, enum):
+		return 'HP_ERROR_CODE read_' + enum['name'] + '_name(HPAbstractReader *self, ' + enum['name'] + ' *data)'
+
+	def get_enum_number_header(self, enum):
+		return 'HP_ERROR_CODE read_' + enum['name'] + '_number(HPAbstractReader *self, ' + enum['name'] + ' *data)'
+
 	def on_enum_begin(self, enum):
-		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '_name(HPAbstractReader *self, ' + enum['name'] + ' *data);')
-		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '_number(HPAbstractReader *self, ' + enum['name'] + ' *data);')
-		self.print_line(0, 'HP_ERROR_CODE read_' + enum['name'] + '(HPAbstractReader *self, ' + enum['name'] + ' *data);')
+		self.print_line(0, self.get_enum_name_header(enum) + ';')
+		self.print_line(0, self.get_enum_number_header(enum) + ';')
+		self.print_line(0, self.get_enum_header(enum) + ';')
 	
 	def on_struct_begin(self, struct):
 		line = 'HP_ERROR_CODE read_' + struct['name'] + '(HPAbstractReader *self, ' + struct['name'] + ' *data'
