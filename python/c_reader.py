@@ -75,7 +75,7 @@ class C_READER(C_READER_HEADER):
 				self.print_line(t, 'if (' + op0str + ' ' + oper + ' ' + op1str + ')')
 
 			self.print_line(1, '{')
-			++t
+			t = t + 1
 		#condition
 
 		if(struct_field['type']['type'] == E_SNT_CONTAINER):
@@ -119,8 +119,7 @@ class C_READER(C_READER_HEADER):
 		
 		#condition
 		if(struct_field['condition']['empty'] == False):
-			--t
-			self.print_line(t, '}')
+			self.print_line(1, '}')
 
 	def on_struct_end(self, struct):
 		self.print_line(1, 'if(read_struct_end(self, "' + struct['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
