@@ -8,33 +8,6 @@
 #include "hotplatform/hp_platform.h"
 #include "hotlib/hp_config.h"
 #include "hotlib/hp_config_writer.h"
-HP_ERROR_CODE write_hpbool_name(HPAbstractWriter *self, const hpbool data)
-{
-    switch(data)
-    {
-        case hptrue:
-            if(write_enum_name(self, "hptrue") != E_HP_NOERROR) goto ERROR_RET;
-            break;
-        case hpfalse:
-            if(write_enum_name(self, "hpfalse") != E_HP_NOERROR) goto ERROR_RET;
-            break;
-    }
-    return E_HP_NOERROR;
-ERROR_RET:
-    return E_HP_ERROR;
-}
-HP_ERROR_CODE write_hpbool_number(HPAbstractWriter *self, const hpbool data)
-{
-    return write_enum_number(self, data);
-}
-HP_ERROR_CODE write_hpbool(HPAbstractWriter *self, const hpbool data)
-{
-    if(write_hpbool_name(self, data) != E_HP_NOERROR) goto ERROR_RET;
-    if(write_hpbool_number(self, data) != E_HP_NOERROR) goto ERROR_RET;
-    return E_HP_NOERROR;
-ERROR_RET:
-    return E_HP_ERROR;
-}
 HP_ERROR_CODE write_HPType_name(HPAbstractWriter *self, const HPType data)
 {
     switch(data)

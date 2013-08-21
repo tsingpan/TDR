@@ -18,11 +18,12 @@ typedef struct _hpbytes
 }hpbytes;
 
 typedef hpchar* hpstring;
-
+typedef hpint32 hpbool;
 
 #ifndef NULL
 #define NULL				0
 #endif
+
 
 #define HP_UINT64_MAX ((((hpuint64)0xffffffffUL) << 32) | 0xffffffffUL)
 #define HP_INT64_MAX  ((((hpint64) 0x7fffffffL) << 32) | 0xffffffffL)

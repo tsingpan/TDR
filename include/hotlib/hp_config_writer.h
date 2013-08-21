@@ -11,9 +11,6 @@
 #include "hotlib/hp_error_code.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include "hotlib/hp_config.h"
-HP_ERROR_CODE write_hpbool_name(HPAbstractWriter *self, hpbool data);
-HP_ERROR_CODE write_hpbool_number(HPAbstractWriter *self, hpbool data);
-HP_ERROR_CODE write_hpbool(HPAbstractWriter *self, hpbool data);
 HP_ERROR_CODE write_HPType_name(HPAbstractWriter *self, HPType data);
 HP_ERROR_CODE write_HPType_number(HPAbstractWriter *self, HPType data);
 HP_ERROR_CODE write_HPType(HPAbstractWriter *self, HPType data);

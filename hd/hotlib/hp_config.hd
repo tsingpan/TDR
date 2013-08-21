@@ -3,12 +3,8 @@ const string HOTPOT_VERSION = "0.0.1";
 const uint32 HP_INVALID_INDEX = 0xffffffff;
 const uint32 MAX_IDENTIFIER_LENGTH = 128;
 
-enum hpbool
-{
-	hptrue = 1,
-	hpfalse = 0,
-};
-
+const int32 hptrue = 1;
+const int32 hpfalse = 0;
 
 enum HPType
 {

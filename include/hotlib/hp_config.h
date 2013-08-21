@@ -11,11 +11,8 @@
 #define HOTPOT_VERSION "0.0.1"
 #define HP_INVALID_INDEX 4294967295
 #define MAX_IDENTIFIER_LENGTH 128
-typedef enum _hpbool
-{
-    hptrue = 1,
-    hpfalse = 0,
-}hpbool;
+#define hptrue 1
+#define hpfalse 0
 typedef enum _HPType
 {
     E_HP_INT8 = 0,
