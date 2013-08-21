@@ -1,15 +1,13 @@
 from document.cwalker import *
 
 class C_TYPES(CWalker):
-	def __init__(self, document, output_dir):
-		CWalker.__init__(self, document)
+	def __init__(self, document, target_dir):
+		CWalker.__init__(self, document, target_dir)
 		self.file_tag = '_H_' + self.get_file_tag(document['file_name']) + '_TYPES'
-		self.output_dir = output_dir
 
 
 	def on_document_begin(self, document):
-#		os.makedirs(self.output_dir, 0o777, True)
-		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '.h'
+		ofile_name = self.target_dir + '/' + self.file_name + '.h'
 		self.fout = open(ofile_name, "w")
 
 		self.print_file_prefix()

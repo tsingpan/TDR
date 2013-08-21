@@ -5,9 +5,8 @@ import sys
 import os
 
 class PYTHON_TYPES(Walker):
-	def __init__(self, document, output_dir):
-		Walker.__init__(self, document)
-		self.output_dir = output_dir
+	def __init__(self, document, target_dir):
+		Walker.__init__(self, document, target_dir)
 
 	def get_val(self, val):
 		if val['type'] == E_SNVT_IDENTIFIER:
@@ -34,13 +33,16 @@ class PYTHON_TYPES(Walker):
 		pass
 
 	def on_document_begin(self, document):
-		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '.py'
+		ofile_name = self.target_dir + '/' + self.file_name + '.py'
 		self.fout = open(ofile_name, "w")
 
 		self.print_file_prefix()
 
 	def on_document_end(self, document):
 		self.fout.close()
+
+	def on_import(self, de_import):
+		self.print_line(0, 'from ' + de_import['package_name'].rstrip('\.hd') + ' import *')
 
 	def on_const(self, const):
 		self.print_line(0, const['identifier'] + ' = ' + str(self.get_val(const['val'])))

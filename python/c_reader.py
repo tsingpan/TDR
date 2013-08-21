@@ -1,20 +1,23 @@
 from c_reader_header import *
 
 class C_READER(C_READER_HEADER):
-	def __init__(self, document, output_dir):
-		C_READER_HEADER.__init__(self, document, output_dir)
+	def __init__(self, document, target_dir):
+		C_READER_HEADER.__init__(self, document, target_dir)
 	
 	def on_document_begin(self, document):
-		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '_reader.c'
+		ofile_name = self.target_dir + '/' + self.file_name + '_reader.c'
 		self.fout = open(ofile_name, "w")
 
 		self.print_file_prefix()
 		self.print_line(0, '#include "hotpot/hp_platform.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '_reader.h"')
+		self.print_line(0, '#include "' + self.file_name + '.h"')
+		self.print_line(0, '#include "' + self.file_name + '_reader.h"')
 
 	def on_document_end(self, document):
 		self.fout.close()
+
+	def on_import(self, de_import):
+		self.print_line(0, '#include "' + de_import['package_name'].rstrip('\.hd') + '_reader.h"')
 
 	def create_enum_name(self, enum):
 		self.print_line(0, self.get_enum_name_header(enum))
@@ -38,7 +41,7 @@ class C_READER(C_READER_HEADER):
 		self.print_line(0, '{')
 		self.print_line(1, 'return read_enum_number(self, (hpint32*)data);')
 		self.print_line(0, '}')
-
+	
 
 	def on_enum_begin(self, enum):
 		self.create_enum_name(enum)

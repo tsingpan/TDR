@@ -36,8 +36,8 @@ void help()
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version					Print the compiler version\n");
 	fprintf(stderr, "  -python filename			Run the python script\n");
-	fprintf(stderr, "  -i dir					Add a directory to the list of directories\n");
-	fprintf(stderr, "  -o dir					Set the output directory\n");
+	fprintf(stderr, "  -s dir					Set the source directory\n");
+	fprintf(stderr, "  -t dir					Set the target directory\n");
 }
 
 
@@ -123,7 +123,7 @@ int main(hpint32 argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
-		else if (strcmp(arg, "-i") == 0)
+		else if (strcmp(arg, "-s") == 0)
 		{
 			arg = argv[++i];
 			if (arg == NULL)
@@ -134,7 +134,7 @@ int main(hpint32 argc, char **argv)
 			}
 			scanner_stack_add_path(&dp.scanner_stack, arg);
 		}
-		else if (strcmp(arg, "-o") == 0)
+		else if (strcmp(arg, "-t") == 0)
 		{
 			++i;
 		}
@@ -173,7 +173,7 @@ int main(hpint32 argc, char **argv)
 			}
 
 			
-			if (strcmp(arg, "-o") == 0)
+			if (strcmp(arg, "-t") == 0)
 			{
 				output_dir = argv[++j];
 			}

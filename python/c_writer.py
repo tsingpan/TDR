@@ -1,20 +1,23 @@
 from c_writer_header import *
 
 class C_WRITER(C_WRITER_HEADER):
-	def __init__(self, document, output_dir):
-		C_WRITER_HEADER.__init__(self, document, output_dir)
+	def __init__(self, document, target_dir):
+		C_WRITER_HEADER.__init__(self, document, target_dir)
 	
 	def on_document_begin(self, document):
-		ofile_name = self.output_dir + '/' + document['file_name'].rstrip('.hd') + '_writer.c'
+		ofile_name = self.target_dir + '/' + self.file_name + '_writer.c'
 		self.fout = open(ofile_name, "w")
 
 		self.print_file_prefix()
 		self.print_line(0, '#include "hotpot/hp_platform.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '.h"')
-		self.print_line(0, '#include "' + document['file_name'].rstrip('.hd') + '_writer.h"')
+		self.print_line(0, '#include "' + self.file_name + '.h"')
+		self.print_line(0, '#include "' + self.file_name + '_writer.h"')
 
 	def on_document_end(self, document):
 		self.fout.close()
+
+	def on_import(self, de_import):
+		self.print_line(0, '#include "' + de_import['package_name'].rstrip('\.hd') + '_writer.h"')
 
 	def create_enum_name(self, enum):
 		self.print_line(0, 'HP_ERROR_CODE write_' + enum['name'] + '_name(HPAbstractWriter *self, const ' + enum['name'] + ' data)')

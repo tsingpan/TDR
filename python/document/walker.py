@@ -12,10 +12,16 @@ class Walker:
 	EN_HST_STRUCT = 4,
 	EN_HST_UNION = 5,
 
-	def __init__(self, document):
+	def __init__(self, document, target_dir):
 		self.document = document
 		self.symbols = {}
 		self.domain = None
+		self.target_dir = target_dir
+		self.file_name = document['file_name'][:-3].replace('\\', '/').lstrip('./')
+
+		file_name = self.file_name.split('/')[-1]
+		output_path = target_dir.strip('/\\') + '/' + '/'.join(self.file_name.split('/')[:-1])
+		os.makedirs(output_path, 0o777, True)
 
 	def print_file_prefix(self):
 		self.print_line(0, '/**')
