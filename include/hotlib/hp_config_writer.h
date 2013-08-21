@@ -7,7 +7,7 @@
 
 #ifndef _H_hotlib_hp_config_hd_WRITER_HEADER
 #define _H_hotlib_hp_config_hd_WRITER_HEADER
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include "hotlib/hp_config.h"

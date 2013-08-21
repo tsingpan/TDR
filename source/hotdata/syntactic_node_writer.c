@@ -5,7 +5,7 @@
  *  @generated
  */
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotdata/syntactic_node.h"
 #include "hotdata/syntactic_node_writer.h"
 #include "hotlib/hp_config_writer.h"

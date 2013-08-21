@@ -2,7 +2,7 @@
 #define _H_HOTDATA_PARSER
 
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 
 #include <stdio.h>
 #include "hotlib/hp_script_lex.h"

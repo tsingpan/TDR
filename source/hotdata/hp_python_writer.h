@@ -1,7 +1,7 @@
 #ifndef _H_HP_PYTHON_WRITER
 #define _H_HP_PYTHON_WRITER
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "Python.h"

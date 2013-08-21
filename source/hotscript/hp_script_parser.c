@@ -5,7 +5,7 @@
 #include "script_y.h"
 #include <string.h>
 #include "hotlib/hp_script_lex.h"
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 
 
 hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)

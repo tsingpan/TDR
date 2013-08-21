@@ -2,7 +2,7 @@
 #define _H_HOT_VM
 
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include "hotscript/hp_script_op.h"
 #include "hotlib/hp_error_msg_reader.h"

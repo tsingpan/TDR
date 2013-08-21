@@ -5,7 +5,7 @@
  *  @generated
  */
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_config.h"
 #include "hotlib/hp_config_writer.h"
 HP_ERROR_CODE write_hpbool_name(HPAbstractWriter *self, const hpbool data)

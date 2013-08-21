@@ -7,7 +7,7 @@
 
 #ifndef _H_hotlib_hp_error_code_hd_TYPES
 #define _H_hotlib_hp_error_code_hd_TYPES
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 typedef enum _HP_ERROR_CODE
 {
     E_HP_NOERROR = 0,

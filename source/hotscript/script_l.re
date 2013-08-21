@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "script_y.h"
 #include "hotscript/hp_script_parser.h"

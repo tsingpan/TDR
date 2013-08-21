@@ -1,7 +1,7 @@
 #ifndef _H_HP_NUMBER
 #define _H_HP_NUMBER
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 
 
 

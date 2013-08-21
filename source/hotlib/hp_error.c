@@ -1,4 +1,4 @@
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error.h"
 #include "hotprotocol/hp_xml_reader.h"
 #include "hotlib/hp_error_msg_reader.h"

@@ -9,7 +9,7 @@ class C_READER(C_READER_HEADER):
 		self.fout = open(ofile_name, "w")
 
 		self.print_file_prefix()
-		self.print_line(0, '#include "hotpot/hp_platform.h"')
+		self.print_line(0, '#include "hotplatform/hp_platform.h"')
 		self.print_line(0, '#include "' + self.file_name + '.h"')
 		self.print_line(0, '#include "' + self.file_name + '_reader.h"')
 

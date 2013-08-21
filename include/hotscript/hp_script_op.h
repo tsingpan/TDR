@@ -2,7 +2,7 @@
 #define _H_HOT_SCRIPT_OP
 
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 typedef enum _HOTSCRIPT_INSTRUCT
 {

@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg.h"
 #include "hotlib/hp_script_lex.h"

@@ -1,6 +1,6 @@
 #ifndef _H_hp_error_hd_TYPES
 #define _H_hp_error_hd_TYPES
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 
 #include "hotlib/hp_error_msg.h"
 

@@ -1,7 +1,7 @@
 #ifndef _H_HP_XML_READER
 #define _H_HP_XML_READER
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include <stdio.h>
 

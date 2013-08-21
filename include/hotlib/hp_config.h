@@ -7,7 +7,7 @@
 
 #ifndef _H_hotlib_hp_config_hd_TYPES
 #define _H_hotlib_hp_config_hd_TYPES
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #define HOTPOT_VERSION "0.0.1"
 #define HP_INVALID_INDEX 4294967295
 #define MAX_IDENTIFIER_LENGTH 128

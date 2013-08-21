@@ -1,7 +1,7 @@
 #ifndef _H_HP_ABSTRACT_WRITER
 #define _H_HP_ABSTRACT_WRITER
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_config.h"
 
 typedef struct _HPAbstractWriter HPAbstractWriter;

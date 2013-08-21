@@ -7,7 +7,7 @@
 
 #ifndef _H_hotlib_hp_error_msg_hd_TYPES
 #define _H_hotlib_hp_error_msg_hd_TYPES
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #define MAX_ERROR_MSG_LENGTH 1024
 typedef struct  _HP_ERROR_MSG

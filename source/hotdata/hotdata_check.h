@@ -2,7 +2,7 @@
 #define _H_HOTDATA_CHECK
 
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 
 #include "hotdata_parser.h"
 

@@ -1,7 +1,7 @@
 #ifndef _H_HOTLEX
 #define _H_HOTLEX
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_msg.h"
 
 #include <stdarg.h>

@@ -5,7 +5,7 @@
  *  @generated
  */
 
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_code_reader.h"
 HP_ERROR_CODE read_HP_ERROR_CODE_name(HPAbstractReader *self, HP_ERROR_CODE *data)
