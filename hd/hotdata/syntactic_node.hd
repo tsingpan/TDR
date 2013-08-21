@@ -1,4 +1,5 @@
-const uint32 MAX_IDENTIFIER_LENGTH = 128;
+import "hotpot/hp_config.hd"
+
 const uint32 MAX_COMMENT_LENGTH = 1024;
 
 struct ST_UNIX_COMMENT

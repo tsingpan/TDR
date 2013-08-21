@@ -1,5 +1,5 @@
 #include "hotprotocol/hp_abstract_reader.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 
 void hp_abstract_reader_init(HPAbstractReader *self)
 {

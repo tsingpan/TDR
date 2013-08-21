@@ -5,10 +5,10 @@
  *  @generated
  */
 
-#ifndef _H_hotscript_hp_error_msg_hd_TYPES
-#define _H_hotscript_hp_error_msg_hd_TYPES
+#ifndef _H_hotlib_hp_error_msg_hd_TYPES
+#define _H_hotlib_hp_error_msg_hd_TYPES
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #define MAX_ERROR_MSG_LENGTH 1024
 typedef struct  _HP_ERROR_MSG
 {
@@ -20,4 +20,4 @@ typedef struct  _HP_ERROR_MSG_LIBRARY
 	hpuint32 error_list_num;
     HP_ERROR_MSG error_list[HP_ERROR_CODE_NUM];
 }HP_ERROR_MSG_LIBRARY;
-#endif//_H_hotscript_hp_error_msg_hd_TYPES
+#endif//_H_hotlib_hp_error_msg_hd_TYPES

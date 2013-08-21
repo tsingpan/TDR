@@ -5,7 +5,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include "hotscript/hp_script_op.h"
-#include "hotscript/hp_error_msg_reader.h"
+#include "hotlib/hp_error_msg_reader.h"
 
 
 

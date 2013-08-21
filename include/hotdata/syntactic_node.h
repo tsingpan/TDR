@@ -8,7 +8,7 @@
 #ifndef _H_hotdata_syntactic_node_hd_TYPES
 #define _H_hotdata_syntactic_node_hd_TYPES
 #include "hotpot/hp_platform.h"
-#define MAX_IDENTIFIER_LENGTH 128
+
 #define MAX_COMMENT_LENGTH 1024
 typedef struct  _ST_UNIX_COMMENT
 {

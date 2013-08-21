@@ -5,13 +5,13 @@
  *  @generated
  */
 
-#ifndef _H_hotscript_hp_error_msg_hd_READER_HEADER
-#define _H_hotscript_hp_error_msg_hd_READER_HEADER
+#ifndef _H_hotlib_hp_error_msg_hd_READER_HEADER
+#define _H_hotlib_hp_error_msg_hd_READER_HEADER
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #include "hotprotocol/hp_abstract_reader.h"
-#include "hotscript/hp_error_msg.h"
-#include "hotpot/hp_error_code_reader.h"
+#include "hotlib/hp_error_msg.h"
+#include "hotlib/hp_error_code_reader.h"
 HP_ERROR_CODE read_HP_ERROR_MSG(HPAbstractReader *self, HP_ERROR_MSG *data);
 HP_ERROR_CODE read_HP_ERROR_MSG_LIBRARY(HPAbstractReader *self, HP_ERROR_MSG_LIBRARY *data);
-#endif//_H_hotscript_hp_error_msg_hd_READER_HEADER
+#endif//_H_hotlib_hp_error_msg_hd_READER_HEADER

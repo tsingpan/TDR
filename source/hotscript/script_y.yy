@@ -7,7 +7,7 @@
 #include <stdarg.h>
 
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 
 
 

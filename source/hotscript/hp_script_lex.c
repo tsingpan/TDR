@@ -1,7 +1,6 @@
 #include "hotscript/hp_script_lex.h"
-#include "hotpot/hp_error_code.h"
-#include "hotscript/hp_error.h"
-#include "hotscript/hp_error_msg_reader.h"
+#include "hotlib/hp_error_code.h"
+#include "hotlib/hp_error_msg_reader.h"
 #include "hotprotocol/hp_xml_reader.h"
 #include <stdio.h>
 #include <string.h>

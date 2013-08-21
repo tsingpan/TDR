@@ -9,6 +9,7 @@
 #define _H_hotpot_hp_config_hd_TYPES
 #include "hotpot/hp_platform.h"
 #define HOTPOT_VERSION "0.0.1"
+#define MAX_IDENTIFIER_LENGTH 128
 #define HP_INVALID_INDEX 4294967295
 typedef enum _hpbool
 {

@@ -5,8 +5,8 @@
  *  @generated
  */
 
-#ifndef _H_hotpot_hp_error_code_hd_TYPES
-#define _H_hotpot_hp_error_code_hd_TYPES
+#ifndef _H_hotlib_hp_error_code_hd_TYPES
+#define _H_hotlib_hp_error_code_hd_TYPES
 #include "hotpot/hp_platform.h"
 typedef enum _HP_ERROR_CODE
 {
@@ -27,4 +27,4 @@ typedef enum _HP_ERROR_CODE
     E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE = -10012,
 }HP_ERROR_CODE;
 #define HP_ERROR_CODE_NUM 15
-#endif//_H_hotpot_hp_error_code_hd_TYPES
+#endif//_H_hotlib_hp_error_code_hd_TYPES

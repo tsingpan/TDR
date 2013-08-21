@@ -1,5 +1,5 @@
 #include "hp_python_writer.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #include "hotpot/hp_number.h"
 #include "hotprotocol/hp_abstract_writer.h"
 

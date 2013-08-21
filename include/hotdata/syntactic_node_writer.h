@@ -8,7 +8,7 @@
 #ifndef _H_hotdata_syntactic_node_hd_WRITER_HEADER
 #define _H_hotdata_syntactic_node_hd_WRITER_HEADER
 #include "hotpot/hp_platform.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include "hotdata/syntactic_node.h"
 HP_ERROR_CODE write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data);

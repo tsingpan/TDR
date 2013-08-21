@@ -1,7 +1,7 @@
 #include "hotpot/hp_platform.h"
-#include "hotscript/hp_error.h"
+#include "hotlib/hp_error.h"
 #include "hotprotocol/hp_xml_reader.h"
-#include "hotscript/hp_error_msg_reader.h"
+#include "hotlib/hp_error_msg_reader.h"
 
 #include <stdio.h>
 

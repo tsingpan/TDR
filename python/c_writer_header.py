@@ -13,7 +13,7 @@ class C_WRITER_HEADER(CWalker):
 		self.print_line(0, '#ifndef ' + self.file_tag)
 		self.print_line(0, '#define ' + self.file_tag)
 		self.print_line(0, '#include "hotpot/hp_platform.h"')
-		self.print_line(0, '#include "hotpot/hp_error_code.h"')
+		self.print_line(0, '#include "hotlib/hp_error_code.h"')
 		self.print_line(0, '#include "hotprotocol/hp_abstract_writer.h"')
 		self.print_line(0, '#include "' + self.file_name + '.h"')
 

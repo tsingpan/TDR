@@ -4,7 +4,7 @@
 #include "php_hotscript.h"
 #include "main/php_output.h"
 #include "hotprotocol/hp_abstract_reader.h"
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #include "hotscript/hp_script_vm.h"
 #include "hotscript/hp_script_parser.h"
 

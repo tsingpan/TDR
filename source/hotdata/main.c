@@ -1,4 +1,4 @@
-#include "hotpot/hp_error_code.h"
+#include "hotlib/hp_error_code.h"
 #include "globals.h"
 
 #include "hotscript/hp_script_vm.h"
@@ -10,8 +10,8 @@
 #include "hotprotocol/hp_xml_writer.h"
 #include "hotprotocol/hp_xml_reader.h"
 
-#include "hotscript/hp_error_msg_reader.h"
-#include "hotscript/hp_error_msg.h"
+#include "hotlib/hp_error_msg_reader.h"
+#include "hotlib/hp_error_msg.h"
 
 #include "hotdata/syntactic_node.h"
 #include "hotscript/hp_script_vm.h"

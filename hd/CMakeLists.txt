@@ -12,13 +12,13 @@ add_custom_target(hd
 	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_SOURCE} -python c_writer hotdata/syntactic_node.hd
 	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_PYTHON} -python python_types hotdata/syntactic_node.hd
 
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_types hotscript/hp_error_msg.hd
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_reader_header hotscript/hp_error_msg.hd
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_SOURCE} -python c_reader hotscript/hp_error_msg.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_types hotlib/hp_error_msg.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_reader_header hotlib/hp_error_msg.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_SOURCE} -python c_reader hotlib/hp_error_msg.hd
 
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_reader_header hotpot/hp_error_code.hd
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_SOURCE} -python c_reader hotpot/hp_error_code.hd
-	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_types hotpot/hp_error_code.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_reader_header hotlib/hp_error_code.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_SOURCE} -python c_reader hotlib/hp_error_code.hd
+	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_types hotlib/hp_error_code.hd
 
 	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_PYTHON} -python python_types hotpot/hp_config.hd
 	COMMAND HotData -s ${hd_SOURCE_DIR} -t ${GEN_INCLUDE} -python c_types hotpot/hp_config.hd
