@@ -48,9 +48,8 @@ DATA_PARSER dp;
 HP_PYTHON_WRITER python_writer;
 
 char root_dir[HP_MAX_FILE_PATH_LENGTH];
-wchar_t wroot_dir[HP_MAX_FILE_PATH_LENGTH];
 char lua_dir[HP_MAX_FILE_PATH_LENGTH];
-wchar_t python_dir[HP_MAX_FILE_PATH_LENGTH];
+char python_dir[HP_MAX_FILE_PATH_LENGTH];
 char real_script_path[HP_MAX_FILE_PATH_LENGTH];
 char path_prefix[HP_MAX_FILE_PATH_LENGTH];
 
@@ -75,6 +74,7 @@ void get_real_file_path(const char *script_dir, const char *file_name)
 SCRIPT_PARSER sp;
 
 #define MAX_PY_SCRIPT_LENGTH 32768
+char pyscript[MAX_PY_SCRIPT_LENGTH];
 
 int main(hpint32 argc, char **argv)
 {
@@ -90,20 +90,11 @@ int main(hpint32 argc, char **argv)
 		root_dir[strlen(root_dir) + 1] = 0;
 		root_dir[strlen(root_dir)] = HP_FILE_SEPARATOR;
 	}
-
-
-	snwprintf(wroot_dir, HP_MAX_FILE_PATH_LENGTH, _wgetenv(L"HOTPOT_DIR"));
-	if(wroot_dir[wcslen(wroot_dir) - 1] != HP_FILE_SEPARATOR)
-	{
-		wroot_dir[wcslen(wroot_dir) + 1] = 0;
-		wroot_dir[wcslen(wroot_dir)] = HP_FILE_SEPARATOR;
-	}		
 	
 
 	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
-	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c;C:\\Python33;C:\\Python33\\lib\\site-packages;C:\\Python33\\DLLs;C:\\Python33\\lib", wroot_dir, HP_FILE_SEPARATOR);
-	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c;", wroot_dir, HP_FILE_SEPARATOR);
+	snprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, "%spython%c", root_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -153,6 +144,9 @@ int main(hpint32 argc, char **argv)
 
 
 	Py_Initialize();
+	snprintf(pyscript, sizeof(pyscript), "import sys;sys.path.append(\'%s\');", python_dir);
+	PyRun_SimpleString(pyscript);
+
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
@@ -180,13 +174,12 @@ int main(hpint32 argc, char **argv)
 			}
 			else if (strcmp(arg, "-python") == 0)
 			{
+				
 				PyObject *pModule, *pDict, *pFunc, *pRetVal, *pParam;
 				arg = argv[++j];
 
-				pParam = PySys_GetObject("sys");
 
-				//考虑用python的环境变量替代
-				PySys_SetPath(python_dir);
+				
 				pModule = PyImport_ImportModule(arg);
 				if(pModule == NULL)
 				{

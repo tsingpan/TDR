@@ -1,8 +1,6 @@
 from hotlib.hp_config import *
 from hotdata.syntactic_node import *
 from document.walker import *
-import sys
-import os
 
 class PYTHON_TYPES(Walker):
 	def __init__(self, document, target_dir):
@@ -49,6 +47,6 @@ class PYTHON_TYPES(Walker):
 		for value in enum['enum_def_list']:
 			self.print_line(0, value['identifier'] + ' = ' + str(self.get_val(value['val'])))
 
-def hpmain(document, output_dir):
-	cw = PYTHON_TYPES(document, output_dir)
+def hpmain(document, target_dir):
+	cw = PYTHON_TYPES(document, target_dir)
 	return cw.walk()
