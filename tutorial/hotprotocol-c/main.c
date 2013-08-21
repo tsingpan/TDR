@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "hotpot/hp_platform.h"
+#include "hotplatform/hp_platform.h"
 #include "proto_types.h"
 
 #include "proto_reader.h"

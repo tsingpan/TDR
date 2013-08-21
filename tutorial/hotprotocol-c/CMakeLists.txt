@@ -11,16 +11,10 @@ INCLUDE_DIRECTORIES(
 	${HOTPOT_INCLUDE_DIR}/
 	${GEN_PATH}/
 	)
+
 set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c ${GEN_PATH}/proto_reader.h ${GEN_PATH}/proto_writer.c ${GEN_PATH}/proto_writer.h)
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH})
-
 add_custom_command(OUTPUT ${DDC_OUTPUTS}
-	COMMAND ${HOTDATA_EXECUTABLE} -lua c_types ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_types.h
-
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h'}\" -lua c_reader_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.h
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h','proto_reader.h'}\" -lua c_reader ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_reader.c
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h'}\" -lua c_writer_header ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.h
-	COMMAND ${HOTDATA_EXECUTABLE} -luastr \"ifiles={'proto_types.h','proto_writer.h'}\" -lua c_writer ${data_conversion_SOURCE_DIR}/proto.hd > ${GEN_PATH}/proto_writer.c
+	COMMAND ${HOTDATA_EXECUTABLE} -s ${data_conversion_SOURCE_DIR} -t ${GEN_PATH} -python c_types -python c_reader_header -python c_reader -python c_writer_header -python c_writer proto.hd
 )
 
 ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})
