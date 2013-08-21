@@ -103,6 +103,7 @@ int main(hpint32 argc, char **argv)
 	data_parser_init(&dp, root_dir);
 	snprintf(lua_dir, HP_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, HP_FILE_SEPARATOR);
 	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c;C:\\Python33;C:\\Python33\\lib\\site-packages;C:\\Python33\\DLLs;C:\\Python33\\lib", wroot_dir, HP_FILE_SEPARATOR);
+	snwprintf(python_dir, HP_MAX_FILE_PATH_LENGTH, L"%spython%c;", wroot_dir, HP_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -182,6 +183,9 @@ int main(hpint32 argc, char **argv)
 				PyObject *pModule, *pDict, *pFunc, *pRetVal, *pParam;
 				arg = argv[++j];
 
+				pParam = PySys_GetObject("sys");
+
+				//考虑用python的环境变量替代
 				PySys_SetPath(python_dir);
 				pModule = PyImport_ImportModule(arg);
 				if(pModule == NULL)
