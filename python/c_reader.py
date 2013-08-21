@@ -70,9 +70,9 @@ class C_READER(C_READER_HEADER):
 			op1str = str(self.get_val(struct_field['condition']['exp']['op1']))
 
 			if(struct_field['condition']['exp']['neg']):
-				self.print_line(t, 'if (!(' +  op0str + ' ' + oper + ' '+ op1str + '))')
+				self.print_line(t, 'if(!(' +  op0str + ' ' + oper + ' '+ op1str + '))')
 			else:
-				self.print_line(t, 'if (' + op0str + ' ' + oper + ' ' + op1str + ')')
+				self.print_line(t, 'if(' + op0str + ' ' + oper + ' ' + op1str + ')')
 
 			self.print_line(1, '{')
 			t = t + 1
