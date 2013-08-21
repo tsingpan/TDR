@@ -26,8 +26,6 @@ HP_API hpint32 python_write_field_begin(HPAbstractWriter *self, const char *var_
 
 HP_API hpint32 python_write_field_end(HPAbstractWriter *self, const char *var_name);
 
-HP_API hpint32 python_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index);
-
 HP_API hpint32 python_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
 
 HP_API hpint32 python_write_enum_number(HPAbstractWriter *super, const int val);

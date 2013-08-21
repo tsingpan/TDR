@@ -2,7 +2,7 @@ enum(counter = "HP_ERROR_CODE_NUM") HP_ERROR_CODE
 {
 	E_HP_NOERROR																= 0,
 	E_HP_ERROR																	= -1, 
-	E_HP_BAD_PARAMETER                                                      	= -10000,#hotscript´íÎóÂë¿ªÊ¼
+	E_HP_BAD_PARAMETER                                                      	= -10000,#hotscript
 	E_HP_SYNTAX_ERROR													    	= -10001,
 	E_HP_NOT_ENOUGH_BYTEBUFF_SIZE                                           	= -10002,
 	E_HP_NOT_ENOUGH_STRING_SIZE                                           		= -10003,
@@ -14,5 +14,5 @@ enum(counter = "HP_ERROR_CODE_NUM") HP_ERROR_CODE
 	E_HP_INVALID_CONSTANCE_TYPE													= -10009,
 	E_HP_UNKNOW_CONSTANT_VALUE													= -10010,
 	E_HP_SYMBOL_REDEFINITION													= -10011,
-	E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE						= -10012,#hotscript´íÎóÂë½áÊø
+	E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE						= -10012,#hotscript
 };

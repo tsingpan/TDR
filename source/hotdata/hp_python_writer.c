@@ -17,7 +17,6 @@ void python_writer_init(HP_PYTHON_WRITER *self)
 	self->super.write_vector_begin = python_write_vector_begin;
 	self->super.write_field_begin = python_write_field_begin;
 	self->super.write_field_end = python_write_field_end;
-	self->super.write_vector_item_begin = python_write_vector_item_begin;
 	self->super.write_vector_item_end = python_write_vector_item_end;
 
 	self->super.write_hpint8 = python_write_hpint8;
@@ -72,17 +71,9 @@ hpint32 python_write_field_end(HPAbstractWriter *super, const char *var_name)
 {
 	HP_PYTHON_WRITER *self = HP_CONTAINER_OF(super, HP_PYTHON_WRITER, super);	
 	HP_UNUSED(var_name);
-
-	PyDict_SetItem(self->stack[self->stack_num - 3], self->stack[self->stack_num - 2], self->stack[self->stack_num - 1]);
-	self->stack_num -= 2;
-	return E_HP_NOERROR;
-}
-
-
-HP_API hpint32 python_write_vector_item_begin(HPAbstractWriter *super, hpuint32 index)
-{
-	HP_PYTHON_WRITER *self = HP_CONTAINER_OF(super, HP_PYTHON_WRITER, super);
-	self->stack[self->stack_num++] = PyLong_FromUnsignedLong(index);
+	PyDict_SetItem(self->stack[self->stack_num - 3], self->stack[self->stack_num - 2], self->stack[self->stack_num - 1]);	
+	--self->stack_num;
+	--self->stack_num;
 	return E_HP_NOERROR;
 }
 
@@ -91,8 +82,8 @@ HP_API hpint32 python_write_vector_item_end(HPAbstractWriter *super, hpuint32 in
 	HP_PYTHON_WRITER *self = HP_CONTAINER_OF(super, HP_PYTHON_WRITER, super);
 	HP_UNUSED(index);
 
-	PyList_Append(self->stack[self->stack_num - 3], self->stack[self->stack_num - 1]);
-	self->stack_num -= 2;
+	PyList_Append(self->stack[self->stack_num - 2], self->stack[self->stack_num - 1]);
+	--self->stack_num;
 	return E_HP_NOERROR;
 }
 
@@ -188,6 +179,9 @@ hpint32 python_write_hpuint64(HPAbstractWriter *super, const hpuint64 val)
 hpint32 python_write_string(HPAbstractWriter *super, const hpchar* str)
 {
 	HP_PYTHON_WRITER *self = HP_CONTAINER_OF(super, HP_PYTHON_WRITER, super);
+	
+	//self->stack[self->stack_num++] = _PyUnicode_FromASCII(str, strlen(str));
+	//PyUnicode_FromString这玩意不支持中文， 会崩溃
 	self->stack[self->stack_num++] = PyUnicode_FromString(str);
 
 	return E_HP_NOERROR;

@@ -21,7 +21,7 @@ class PYTHON_TYPES(Walker):
 		elif val['type'] == E_SNVT_BOOL:
 			return val['val']['b']
 		elif val['type'] == E_SNVT_STRING:
-			return '\"' + val.val.str + '\"'
+			return '\"' + val['val']['str'] + '\"'
 		elif val['type'] == E_SNVT_INT64:
 			return val['val']['i64']
 		elif val['type'] == E_SNVT_UINT64:
