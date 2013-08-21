@@ -11,6 +11,7 @@
 #include "hotlib/hp_error_code.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include "hotdata/syntactic_node.h"
+#include "hotlib/hp_config_writer.h"
 HP_ERROR_CODE write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data);
 HP_ERROR_CODE write_SN_VALUE_TYPE_name(HPAbstractWriter *self, SN_VALUE_TYPE data);
 HP_ERROR_CODE write_SN_VALUE_TYPE_number(HPAbstractWriter *self, SN_VALUE_TYPE data);

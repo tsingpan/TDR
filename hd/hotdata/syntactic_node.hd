@@ -1,4 +1,4 @@
-import "hotpot/hp_config.hd"
+import "hotlib/hp_config.hd"
 
 const uint32 MAX_COMMENT_LENGTH = 1024;
 

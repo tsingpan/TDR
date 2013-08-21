@@ -1,4 +1,4 @@
-from hotpot.hp_config import *
+from hotlib.hp_config import *
 from hotdata.syntactic_node import *
 from document.walker import *
 import sys
@@ -40,7 +40,7 @@ class PYTHON_TYPES(Walker):
 		self.fout.close()
 
 	def on_import(self, de_import):
-		self.print_line(0, 'from ' + de_import['package_name'].rstrip('\.hd') + ' import *')
+		self.print_line(0, 'from ' + de_import['package_name'].rstrip('\.hd').replace('/', '.').replace('\\', '.') + ' import *')
 
 	def on_const(self, const):
 		self.print_line(0, const['identifier'] + ' = ' + str(self.get_val(const['val'])))

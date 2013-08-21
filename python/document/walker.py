@@ -1,4 +1,4 @@
-from hotpot.hp_config import *
+from hotlib.hp_config import *
 from hotdata.syntactic_node import *
 import sys
 import os

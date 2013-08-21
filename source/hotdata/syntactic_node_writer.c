@@ -8,6 +8,7 @@
 #include "hotpot/hp_platform.h"
 #include "hotdata/syntactic_node.h"
 #include "hotdata/syntactic_node_writer.h"
+#include "hotlib/hp_config_writer.h"
 HP_ERROR_CODE write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data)
 {
     if(write_struct_begin(self, "ST_UNIX_COMMENT") != E_HP_NOERROR) goto ERROR_RET;

@@ -1,4 +1,4 @@
-MAX_IDENTIFIER_LENGTH = 128
+from hotlib.hp_config import *
 MAX_COMMENT_LENGTH = 1024
 E_SNVT_IDENTIFIER = 0
 E_SNVT_CHAR = 1

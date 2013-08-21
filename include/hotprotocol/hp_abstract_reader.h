@@ -2,6 +2,7 @@
 #define _H_HP_ABSTRACT_READR
 
 #include "hotpot/hp_platform.h"
+#include "hotlib/hp_config.h"
 
 typedef struct _HPAbstractReader HPAbstractReader;
 struct _HPAbstractReader
