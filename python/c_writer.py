@@ -140,7 +140,7 @@ class C_WRITER(C_WRITER_HEADER):
 	def on_union_begin(self, union):
 		self.print_line(0, self.get_union_header(union))
 		self.print_line(0, '{')
-		self.print_line(0, 'if(write_struct_begin(self, "' + union['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+		self.print_line(1, 'if(write_struct_begin(self, "' + union['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
 
 		sw = 's'
 		for value in union['ta']['ta_list']:

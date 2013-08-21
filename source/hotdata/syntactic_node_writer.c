@@ -72,7 +72,7 @@ ERROR_RET:
 }
 HP_ERROR_CODE write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , SN_VALUE_TYPE s)
 {
-if(write_struct_begin(self, "UN_VALUE") != E_HP_NOERROR) goto ERROR_RET;
+    if(write_struct_begin(self, "UN_VALUE") != E_HP_NOERROR) goto ERROR_RET;
     switch(s)
     {
         case E_SNVT_INT64:
@@ -705,7 +705,7 @@ ERROR_RET:
 }
 HP_ERROR_CODE write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION *data , EN_DEFINITION_TYPE s)
 {
-if(write_struct_begin(self, "UN_DEFINITION") != E_HP_NOERROR) goto ERROR_RET;
+    if(write_struct_begin(self, "UN_DEFINITION") != E_HP_NOERROR) goto ERROR_RET;
     switch(s)
     {
         case E_DT_IMPORT:
