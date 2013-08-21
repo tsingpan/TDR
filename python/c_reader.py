@@ -93,8 +93,6 @@ class C_READER(C_READER_HEADER):
 				line = 'if(read_'
 				line = line + self.get_type(struct_field['type'], struct_field['args'])
 				line = line + '(self, &data->' + struct_field['identifier'] + '[i]'
-				for i in range(3, len(struct_field['args']['arg_list'])):
-						line = line + ', ' + self.get_identifier_c(struct_field['args']['arg_list'][i]['ot'])
 				line = line + ') != E_HP_NOERROR) goto ERROR_RET;'
 
 				self.print_line(t, line)
@@ -113,7 +111,7 @@ class C_READER(C_READER_HEADER):
 			self.print_line(t, 'if(read_field_begin(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
 			line = 'if(read_' + self.get_type(struct_field['type'], struct_field['args']) + '(self, &data->' + struct_field['identifier']
 			for arg in struct_field['args']['arg_list']:
-				line = line + ', ' + self.get_identifier_c(arg['ot'])
+				line = line + ', data->' + arg['ot']
 			line = line + ') != E_HP_NOERROR) goto ERROR_RET;'
 			self.print_line(t, line)
 			self.print_line(t, 'if(read_field_end(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
@@ -132,123 +130,46 @@ class C_READER(C_READER_HEADER):
 		self.print_line(0, '}')
 
 	def on_union_begin(self, union):
-		pass
+		self.print_line(0, self.get_union_header(union))
+		self.print_line(0, '{')
+		self.print_line(1, 'if(read_struct_begin(self, \"' + union['name'] + '\") != E_HP_NOERROR) goto ERROR_RET;')
 
+		sw = 's'
+		for value in union['ta']['ta_list']:
+			if(value['type'] == E_TA_SWITCH):
+				sw = value['val']['val']['identifier']
+
+		self.print_line(1, 'switch(data->' + sw + ')')
+		self.print_line(1, '{')
+
+	def on_union_field(self, union_field):
+		self.print_line(2, 'case ' + self.get_val(union_field['condition']['exp']['op1']) + ':')
+		self.print_line(2, '{')
+		if(union_field['type']['type'] == E_SNT_CONTAINER):
+			if(union_field['type']['ct'] == E_CT_STRING):
+				self.print_line(3, 'if(read_field_begin(self, "' + union_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(3, 'if(read_string(self, data->' + union_field['identifier'] + ', ' + union_field['args']['arg_list'][0]['ot'] + ') != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(3, 'if(read_field_end(self, "' + union_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+		else:
+			self.print_line(3, 'if(read_field_begin(self, "' + union_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+			line = 'if(read_' + self.get_type(union_field['type'], union_field['args']) + '(self, &data->' + union_field['identifier']
+			for arg in union_field['args']['arg_list']:
+				line = line + ', data->' + arg['ot']
+			line = line + ') != E_HP_NOERROR) goto ERROR_RET;'
+			self.print_line(3, line)
+			self.print_line(3, 'if(read_field_end(self, "' + union_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+
+		self.print_line(3, 'break;')
+		self.print_line(2, '}')
+
+	def on_union_end(self, union):
+		self.print_line(1, '}')
+		self.print_line(1, 'if(read_struct_end(self, "' + union['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+		self.print_line(1, 'return E_HP_NOERROR;')
+		self.print_line(0, 'ERROR_RET:')
+		self.print_line(1, 'return E_HP_ERROR;')
+		self.print_line(0, '}')
 
 def hpmain(document, output_dir):
 	cw = C_READER(document, output_dir)
 	return cw.walk()
-
-
-'''
-
-function on_union(object)
-	t = 0;
-	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
-	for key, value in pairs(object.parameters.par_list) do
-		line = line .. ' , '
-		line = line .. ' ' .. get_type(value.type, nil)
-		line = line .. ' ' .. get_symbol_access_by_type_prefix_reverse(value.identifier, value.type) .. value.identifier
-	end
-	line = line .. ')'
-	print_line(t, line)
-	print_line(t, '{')
-	t = t + 1
-	print_line(t, 'if(read_struct_begin(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
-
-	sw = 's'
-	for key, value in pairs(object.ta.ta_list) do
-		if(value.type == E_TA_SWITCH)then
-			sw = value.val.val.identifier
-		end
-	end
-
-	print_line(t, 'switch(' .. get_symbol_access(sw, object) .. ')')
-	print_line(t, '{')
-	t = t + 1
-	for key, value in pairs(object.field_list.field_list) do
-		print_line(t, 'case ' .. get_val(value.condition.exp.op1, object) .. ':')
-		print_line(t, '{')
-		t = t + 1
-		if(value.type.type == E_SNT_CONTAINER)then
-			if(value.type.ct == E_CT_VECTOR)then
-				print_line(t, 'if(read_counter(self, "' .. value.args.arg_list[3].ot .. '", &data->' .. value.args.arg_list[3].ot .. ') != E_HP_NOERROR) goto ERROR_RET;');
-				print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, '{')
-				t = t + 1
-				print_line(t, 'hpuint32 i;')
-				print_line(t, 'if(read_vector_begin(self) != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
-				print_line(t, '{')
-				t = t + 1
-				print_line(t, 'if(read_vector_item_begin(self, i) != E_HP_NOERROR) goto ERROR_RET;')
-				line = 'if(read_'
-				line = line .. get_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier .. '[i]'
-				for i=4, #value.args.arg_list do
-					line = line .. ', ' .. get_symbol_access(value.args.arg_list[i].ot, object)
-				end
-				line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
-				print_line(t, line)
-				print_line(t, 'if(read_vector_item_end(self, i) != E_HP_NOERROR) goto ERROR_RET;')
-				t = t - 1
-				print_line(t, '}')
-				print_line(t, 'if(read_vector_end(self) != E_HP_NOERROR) goto ERROR_RET;')
-				t = t - 1
-				print_line(t, '}')
-				print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'if(read_string(self, data->' .. value.identifier .. ', ' .. get_type(value.args.arg_list[1]) .. ') != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			end
-		else
-			print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			line = 'if(read_' .. get_type(value.type, value.args) .. '(self, &data->' .. value.identifier
-				for ak, av in pairs(value.args.arg_list) do
-					line = line .. ', ' .. get_symbol_access(av.ot, object)
-				end
-			line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
-			print_line(t, line)
-			print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-		end
-		print_line(t, 'break;')
-		t = t - 1
-		print_line(t, '}')
-	end
-	t = t - 1
-	print_line(t, '}')
-	print_line(t, 'if(read_struct_end(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
-	print_line(1, 'return E_HP_NOERROR;')
-	print_line(0, 'ERROR_RET:')
-	print_line(1, 'return E_HP_ERROR;')
-	t = t - 1
-	print_line(t, '}')
-end
-function main(document)
-	print_file_prefix()
-
-	print_line(0, '#include "hotpot/hp_platform.h"')
-	print_line(0, '#include "hotpot/hp_error_code.h"')
-	print_line(0, '#include "hotprotocol/hp_abstract_reader.h"')
-	print_line(0, '#include <string.h>')
-
-	if(ifiles ~= nil) then
-		for k, v in pairs(ifiles) do
-			print_line(0, '#include "' .. v .. '"')
-		end
-	end
-
-	for key, value in pairs(document['definition_list']) do
-		if(value.type == E_DT_ENUM)then
-			on_enum(value.definition.de_enum)
-		elseif(value.type == E_DT_STRUCT)then
-			on_struct(value.definition.de_struct)
-		elseif(value.type == E_DT_UNION)then
-			on_union(value.definition.de_union)
-		end
-	end
-end
-
-main(document)
-'''

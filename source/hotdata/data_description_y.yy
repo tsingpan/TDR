@@ -615,6 +615,7 @@ Parameter:
 Arguments:
 	'<' ArgumentList '>'
 	{
+		//参数只能传递本对象中的简单类型
 		$$ = $2;
 	}
 |
