@@ -605,7 +605,7 @@ Parameter:
 		$$.identifier[$2.len] = 0;
 		
 		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$2);
-		
+		//参数类型只能为简单类型
 		dp_check_Parameter_add(GET_SELF, &yylloc, &$$);
 	};
 

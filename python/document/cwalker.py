@@ -77,9 +77,16 @@ class CWalker(Walker):
 
 		return identifier
 
+	def get_identifier_c(self, identifier):
+		sym = self.find_symbol(identifier)
+		if(sym['type'] == Walker.EN_HST_FIELD):
+			return 'data->' + identifier
+		else:
+			return identifier
+
 	def get_val(self, val):
 		if val['type'] == E_SNVT_IDENTIFIER :
-			return val['val']['identifier']
+			return self.get_identifier_c(val['val']['identifier'])
 		elif val['type'] == E_SNVT_CHAR:
 			return "'" + val['val']['c'] + "'"
 		elif val['type'] == E_SNVT_DOUBLE:

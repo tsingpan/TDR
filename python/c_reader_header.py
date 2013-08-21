@@ -34,8 +34,8 @@ class C_READER_HEADER(CWalker):
 		self.print_line(0, self.get_enum_name_header(enum) + ';')
 		self.print_line(0, self.get_enum_number_header(enum) + ';')
 		self.print_line(0, self.get_enum_header(enum) + ';')
-	
-	def on_struct_begin(self, struct):
+
+	def get_struct_header(self, struct):	
 		line = 'HP_ERROR_CODE read_' + struct['name'] + '(HPAbstractReader *self, ' + struct['name'] + ' *data'
 		for value in struct['parameters']['par_list']:
 			line = line + ' , '
@@ -43,10 +43,13 @@ class C_READER_HEADER(CWalker):
 			if((self.find_symbol(t) == Walker.EN_HST_STRUCT) or (self.find_symbol(t) == Walker.EN_HST_UNION)):
 				t = 'const ' + t + '*'
 			line = line + t + ' ' + value['identifier']
-		line = line + ');'
-		self.print_line(0, line)
+		line = line + ')'
+		return line
 
-	def on_union_begin(self, union):
+	def on_struct_begin(self, struct):
+		self.print_line(0, self.get_struct_header(struct) + ';')
+
+	def get_union_header(self, union):
 		line = 'HP_ERROR_CODE read_' + union['name'] + '(HPAbstractReader *self, ' + union['name'] + ' *data'
 		for value in union['parameters']['par_list']:
 			line = line + ' , '
@@ -54,8 +57,11 @@ class C_READER_HEADER(CWalker):
 			if((self.find_symbol(t) == Walker.EN_HST_STRUCT) or (self.find_symbol(t) == Walker.EN_HST_UNION)):
 				t = 'const ' + t + '*'
 			line = line + t + ' ' + value['identifier']
-		line = line + ');'
-		self.print_line(0, line)
+		line = line + ')'
+		return line
+
+	def on_union_begin(self, union):
+		self.print_line(0, self.get_union_header(union) + ';')
 
 def hpmain(document, output_dir):
 	cw = C_READER_HEADER(document, output_dir)

@@ -53,24 +53,42 @@ class C_READER(C_READER_HEADER):
 		self.print_line(1, 'return E_HP_ERROR;')
 		self.print_line(0, '}')
 
-def hpmain(document, output_dir):
-	cw = C_READER(document, output_dir)
-	return cw.walk()
-'''
+	def on_struct_begin(self, struct):
+		self.print_line(0, self.get_struct_header(struct))
+		self.print_line(0, '{')
+		self.print_line(1, 'if(read_struct_begin(self, "' + struct['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
 
-function on_struct(object)
-	t = 0;
-	line = 'HP_ERROR_CODE read_' .. object.name .. '(HPAbstractReader *self, ' .. object.name .. ' *data'
-	for key, value in pairs(object.parameters.par_list) do
-		line = line .. ' , '
-		line = line .. get_type(value.type, nil)
-		line = line .. ' *' .. value.identifier
-	end
-	line = line .. ')'
-	print_line(t, line)
-	print_line(t, '{')
-	t = t + 1
-	print_line(t, 'if(read_struct_begin(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
+	def on_struct_field(self, struct_field):
+		if(struct_field['condition']['empty'] == False):
+			if(struct_field['condition']['exp']['oper'] == E_EO_AND):
+				oper = '&'
+			elif(struct_field['condition']['exp']['oper'] == E_EO_EQUAL):
+				oper = '=='
+
+			op0str = str(self.get_val(struct_field['condition']['exp']['op0']))
+			op1str = str(self.get_val(struct_field['condition']['exp']['op1']))
+
+			if(struct_field['condition']['exp']['neg']):
+				self.print_line(1, 'if (!(' +  op0str + ' ' + oper + ' '+ op1str + '))')
+			else:
+				self.print_line(1, 'if (' + op0str + ' ' + oper + ' ' + op1str + ')')
+
+			self.print_line(1, '{')
+
+		if(struct_field['condition']['empty'] == False):
+			self.print_line(1, '}')
+
+	def on_struct_end(self, struct):
+		self.print_line(1, 'if(read_struct_end(self, "' + struct['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+		self.print_line(1, 'return E_HP_NOERROR;')
+		self.print_line(0, 'ERROR_RET:')
+		self.print_line(1, 'return E_HP_ERROR;')
+		self.print_line(0, '}')
+
+	def on_union_begin(self, union):
+		pass
+
+'''
 	for key, value in pairs(object.field_list.field_list) do
 		if(value.condition.empty == false)then			
 			if(value.condition.exp.oper == E_EO_AND)then
@@ -130,20 +148,19 @@ function on_struct(object)
 			print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
 		end
 
-		if(value.condition.empty == false)then
-			t = t - 1
-			print_line(t, '}')
-		end
+		
 	end
-	print_line(t, 'if(read_struct_end(self, "' .. object.name .. '") != E_HP_NOERROR) goto ERROR_RET;')
-	print_line(1, 'return E_HP_NOERROR;')
-	print_line(0, 'ERROR_RET:')
-	print_line(1, 'return E_HP_ERROR;')
 
-	t = t - 1
-	print_line(t, '}')
 end
+'''
 
+
+def hpmain(document, output_dir):
+	cw = C_READER(document, output_dir)
+	return cw.walk()
+
+
+'''
 
 function on_union(object)
 	t = 0;

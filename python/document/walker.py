@@ -98,46 +98,46 @@ class Walker:
 		pass
 
 	def walk_const(self, const):
-		self.save_symbol(const['identifier'], Walker.EN_HST_VALUE)
+		self.save_symbol(const['identifier'], {'type' : Walker.EN_HST_VALUE})
 		self.on_const(const)
 		pass
 
 	def walk_typedef(self, typedef):
 		if(typedef['type']['type'] == E_SNT_REFER):
-			self.save_symbol(typedef['name'], self.symbols[typedef['type']['ot']])
+			self.save_symbol(typedef['name'], self.find_symbol(typedef['type']['ot']))
 		self.on_typedef(typedef)
 		pass
 
 	def walk_enum(self, enum):
-		self.save_symbol(enum['name'], Walker.EN_HST_ENUM)
+		self.save_symbol(enum['name'], {'type' : Walker.EN_HST_ENUM})
 		self.on_enum_begin(enum)
 		for enum_field in enum['enum_def_list']:
-			self.save_symbol(enum_field['identifier'], Walker.EN_HST_VALUE)
+			self.save_symbol(enum_field['identifier'], {'type' : Walker.EN_HST_VALUE})
 			self.on_enum_field(enum_field)
 		self.on_enum_end(enum)
 
 	def walk_struct(self, struct):
-		self.save_symbol(struct['name'], Walker.EN_HST_STRUCT)
+		self.save_symbol(struct['name'], {'type' : Walker.EN_HST_STRUCT})
 		self.domain = struct['name']
 		self.on_struct_begin(struct)
 		for par in struct['parameters']['par_list']:
-			self.save_symbol(par['identifier'], Walker.EN_HST_PARAMETER)
+			self.save_symbol(par['identifier'], {'type' : Walker.EN_HST_PARAMETER})
 
 		for struct_field in struct['field_list']['field_list']:
-			self.save_symbol(struct_field['identifier'], Walker.EN_HST_FIELD)
+			self.save_symbol(struct_field['identifier'], {'type' : Walker.EN_HST_FIELD})
 			self.on_struct_field(struct_field)
 		self.on_struct_end(struct)
 		self.domain = None
 
 	def walk_union(self, union):
-		self.save_symbol(union['name'], Walker.EN_HST_UNION)
+		self.save_symbol(union['name'], {'type' : Walker.EN_HST_UNION})
 		self.domain = union['name']
 		self.on_union_begin(union)
 		for par in union['parameters']['par_list']:
-			self.save_symbol(par['identifier'], Walker.EN_HST_PARAMETER)
+			self.save_symbol(par['identifier'], {'type' : Walker.EN_HST_PARAMETER, 'para' : par})
 
 		for union_field in union['field_list']['field_list']:
-			self.save_symbol(union_field['identifier'], Walker.EN_HST_FIELD)
+			self.save_symbol(union_field['identifier'], {'type' : Walker.EN_HST_FIELD})
 			self.on_union_field(union_field)
 		self.on_union_end(union)
 		self.domain = None

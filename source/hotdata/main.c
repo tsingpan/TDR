@@ -218,7 +218,7 @@ int main(hpint32 argc, char **argv)
 			}
 		}
 
-		Py_DECREF(python_writer.stack[0]);
+		//Py_DECREF(python_writer.stack[0]);
 	}
 
 	Py_Finalize();
