@@ -6,7 +6,6 @@
  */
 
 #include "hotpot/hp_platform.h"
-#include "hotprotocol/hp_abstract_writer.h"
 #include "hotdata/syntactic_node.h"
 #include "hotdata/syntactic_node_writer.h"
 HP_ERROR_CODE write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data)
@@ -55,7 +54,7 @@ HP_ERROR_CODE write_SN_VALUE_TYPE_name(HPAbstractWriter *self, const SN_VALUE_TY
             if(write_enum_name(self, "E_SNVT_HEX_UINT64") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -71,9 +70,9 @@ HP_ERROR_CODE write_SN_VALUE_TYPE(HPAbstractWriter *self, const SN_VALUE_TYPE da
 ERROR_RET:
     return E_HP_ERROR;
 }
-HP_ERROR_CODE write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , const SN_VALUE_TYPE s)
+HP_ERROR_CODE write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , SN_VALUE_TYPE s)
 {
-    if(write_struct_begin(self, "UN_VALUE") != E_HP_NOERROR) goto ERROR_RET;
+if(write_struct_begin(self, "UN_VALUE") != E_HP_NOERROR) goto ERROR_RET;
     switch(s)
     {
         case E_SNVT_INT64:
@@ -197,7 +196,7 @@ HP_ERROR_CODE write_SN_SIMPLE_TYPE_name(HPAbstractWriter *self, const SN_SIMPLE_
             if(write_enum_name(self, "E_ST_DOUBLE") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -224,7 +223,7 @@ HP_ERROR_CODE write_SN_CONTAINER_TYPE_name(HPAbstractWriter *self, const SN_CONT
             if(write_enum_name(self, "E_CT_STRING") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -254,7 +253,7 @@ HP_ERROR_CODE write_SN_TYPE_name(HPAbstractWriter *self, const SN_TYPE data)
             if(write_enum_name(self, "E_SNT_REFER") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -276,19 +275,19 @@ HP_ERROR_CODE write_ST_TYPE(HPAbstractWriter *self, const ST_TYPE *data)
     if(write_field_begin(self, "type") != E_HP_NOERROR) goto ERROR_RET;
     if(write_SN_TYPE(self, data->type) != E_HP_NOERROR) goto ERROR_RET;
     if(write_field_end(self, "type") != E_HP_NOERROR) goto ERROR_RET;
-    if (data->type == E_SNT_SIMPLE)
+    if(data->type == E_SNT_SIMPLE)
     {
         if(write_field_begin(self, "st") != E_HP_NOERROR) goto ERROR_RET;
         if(write_SN_SIMPLE_TYPE(self, data->st) != E_HP_NOERROR) goto ERROR_RET;
         if(write_field_end(self, "st") != E_HP_NOERROR) goto ERROR_RET;
     }
-    if (data->type == E_SNT_CONTAINER)
+    if(data->type == E_SNT_CONTAINER)
     {
         if(write_field_begin(self, "ct") != E_HP_NOERROR) goto ERROR_RET;
         if(write_SN_CONTAINER_TYPE(self, data->ct) != E_HP_NOERROR) goto ERROR_RET;
         if(write_field_end(self, "ct") != E_HP_NOERROR) goto ERROR_RET;
     }
-    if (data->type == E_SNT_REFER)
+    if(data->type == E_SNT_REFER)
     {
         if(write_field_begin(self, "ot") != E_HP_NOERROR) goto ERROR_RET;
         if(write_string(self, data->ot) != E_HP_NOERROR) goto ERROR_RET;
@@ -368,7 +367,7 @@ HP_ERROR_CODE write_ST_EXPRESSION_OPER_name(HPAbstractWriter *self, const ST_EXP
             if(write_enum_name(self, "E_EO_EQUAL") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -461,7 +460,7 @@ HP_ERROR_CODE write_TA_TYPE_name(HPAbstractWriter *self, const TA_TYPE data)
             if(write_enum_name(self, "E_TA_COUNTER") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -688,7 +687,7 @@ HP_ERROR_CODE write_EN_DEFINITION_TYPE_name(HPAbstractWriter *self, const EN_DEF
             if(write_enum_name(self, "E_DT_UNIX_COMMENT") != E_HP_NOERROR) goto ERROR_RET;
             break;
     }
-return E_HP_NOERROR;
+    return E_HP_NOERROR;
 ERROR_RET:
     return E_HP_ERROR;
 }
@@ -704,9 +703,9 @@ HP_ERROR_CODE write_EN_DEFINITION_TYPE(HPAbstractWriter *self, const EN_DEFINITI
 ERROR_RET:
     return E_HP_ERROR;
 }
-HP_ERROR_CODE write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION *data , const EN_DEFINITION_TYPE s)
+HP_ERROR_CODE write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION *data , EN_DEFINITION_TYPE s)
 {
-    if(write_struct_begin(self, "UN_DEFINITION") != E_HP_NOERROR) goto ERROR_RET;
+if(write_struct_begin(self, "UN_DEFINITION") != E_HP_NOERROR) goto ERROR_RET;
     switch(s)
     {
         case E_DT_IMPORT:

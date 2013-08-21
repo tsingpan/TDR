@@ -38,7 +38,7 @@ class C_TYPES(CWalker):
 		self.print_line(0, '{')
 
 	def on_enum_field(self, enum_field):
-		self.print_line(1, enum_field['identifier'] + ' = ' + str(self.get_val(enum_field['val'])))
+		self.print_line(1, enum_field['identifier'] + ' = ' + str(self.get_val(enum_field['val'])) + ',')
 
 	def on_enum_end(self, enum):
 		self.print_line(0, '}' + enum['name'] + ';')

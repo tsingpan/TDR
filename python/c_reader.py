@@ -141,7 +141,7 @@ class C_READER(C_READER_HEADER):
 			if(value['type'] == E_TA_SWITCH):
 				sw = value['val']['val']['identifier']
 
-		self.print_line(1, 'switch(data->' + sw + ')')
+		self.print_line(1, 'switch(' + sw + ')')
 		self.print_line(1, '{')
 
 	def on_union_field(self, union_field):
