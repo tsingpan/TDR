@@ -2,7 +2,7 @@
 #include "data_description_y.h"
 #include "hotlib/hp_error_code.h"
 #include "data_description_l.h"
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 #include "hotprotocol/hp_abstract_writer.h"
 #include <errno.h>
 #include <string.h>

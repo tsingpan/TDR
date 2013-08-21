@@ -5,7 +5,7 @@
 #include "script_y.h"
 #include "hotscript/hp_script_parser.h"
 #include "script_l.h"
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 #include <string.h>
 	
 		

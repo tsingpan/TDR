@@ -4,7 +4,7 @@
 #include "script_l.h"
 #include "script_y.h"
 #include <string.h>
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 #include "hotpot/hp_platform.h"
 
 

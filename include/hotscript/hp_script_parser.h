@@ -7,8 +7,9 @@
 #include "hotpot/hp_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg.h"
+#include "hotlib/hp_script_lex.h"
 #include "hotscript/hp_script_op.h"
-#include "hotscript/hp_script_lex.h"
+
 
 typedef struct _SP_NODE
 {

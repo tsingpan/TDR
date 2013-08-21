@@ -1,4 +1,4 @@
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg_reader.h"
 #include "hotprotocol/hp_xml_reader.h"

@@ -5,7 +5,7 @@
 #include "hotpot/hp_platform.h"
 
 #include <stdio.h>
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 #include "hotprotocol/hp_abstract_writer.h"
 
 #include "datrie/trie.h"

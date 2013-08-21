@@ -5,7 +5,7 @@
 
 #include "hotpot/hp_platform.h"
 #include "hotlib/hp_error_code.h"
-#include "hotscript/hp_script_lex.h"
+#include "hotlib/hp_script_lex.h"
 
 #include <errno.h>
 		
