@@ -1,5 +1,5 @@
-from hotpot.hotpot.hp_config import *
-from hotpot.hotdata.syntactic_node import *
+from hotpot.hp_config import *
+from hotdata.syntactic_node import *
 from document.walker import *
 
 class CWalker(Walker):

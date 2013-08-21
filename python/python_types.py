@@ -1,5 +1,5 @@
-from hotpot.hotpot.hp_config import *
-from hotpot.hotdata.syntactic_node import *
+from hotpot.hp_config import *
+from hotdata.syntactic_node import *
 from document.walker import *
 import sys
 import os
@@ -36,8 +36,6 @@ class PYTHON_TYPES(Walker):
 		ofile_name = self.target_dir + '/' + self.file_name + '.py'
 		self.fout = open(ofile_name, "w")
 
-		self.print_file_prefix()
-
 	def on_document_end(self, document):
 		self.fout.close()
 
@@ -47,7 +45,7 @@ class PYTHON_TYPES(Walker):
 	def on_const(self, const):
 		self.print_line(0, const['identifier'] + ' = ' + str(self.get_val(const['val'])))
 
-	def on_enum(self, enum):
+	def on_enum_begin(self, enum):
 		for value in enum['enum_def_list']:
 			self.print_line(0, value['identifier'] + ' = ' + str(self.get_val(value['val'])))
 
