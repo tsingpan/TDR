@@ -1,6 +1,6 @@
 #include "hotprotocol/hp_xml_reader.h"
 #include "hotlib/hp_error_code.h"
-#include "hotpot/hp_number.h"
+#include "hotlib/hp_number.h"
 #include "hotprotocol/hp_abstract_reader.h"
 #include <string.h>
 #include <assert.h>

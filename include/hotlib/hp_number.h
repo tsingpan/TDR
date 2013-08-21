@@ -74,19 +74,6 @@
 #define hp_zigzag_decode32(n) ((hpint32)((n >> 1) ^ -(hpint32)(n & 1)))
 #define hp_zigzag_decode64(n) ((hpint64)((n >> 1) ^ -(hpint64)(n & 1)))
 
-//3
-HP_API hpint32 hp_varint16_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint16 *result);
-HP_API hpint32 hp_varint16_encode(hpuint16 n, char *buff_ptr, hpuint32 *buff_size);
-
-//5
-HP_API hpint32 hp_varint32_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint32 *result);
-HP_API hpint32 hp_varint32_encode(hpuint32 n, char *buff_ptr, hpuint32 *buff_size);
-
-//10
-HP_API hpint32 hp_varint64_decode(const char *buff_ptr, hpuint32 *buff_size, hpuint64 *result);
-HP_API hpint32 hp_varint64_encode(hpuint64 n, char *buff_ptr, hpuint32 *buff_size);
-
-
 #endif //_H_XNUMBER
 
 
