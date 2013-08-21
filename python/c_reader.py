@@ -59,6 +59,7 @@ class C_READER(C_READER_HEADER):
 		self.print_line(1, 'if(read_struct_begin(self, "' + struct['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
 
 	def on_struct_field(self, struct_field):
+		t = 1
 		if(struct_field['condition']['empty'] == False):
 			if(struct_field['condition']['exp']['oper'] == E_EO_AND):
 				oper = '&'
@@ -69,14 +70,59 @@ class C_READER(C_READER_HEADER):
 			op1str = str(self.get_val(struct_field['condition']['exp']['op1']))
 
 			if(struct_field['condition']['exp']['neg']):
-				self.print_line(1, 'if (!(' +  op0str + ' ' + oper + ' '+ op1str + '))')
+				self.print_line(t, 'if (!(' +  op0str + ' ' + oper + ' '+ op1str + '))')
 			else:
-				self.print_line(1, 'if (' + op0str + ' ' + oper + ' ' + op1str + ')')
+				self.print_line(t, 'if (' + op0str + ' ' + oper + ' ' + op1str + ')')
 
 			self.print_line(1, '{')
+			++t
+		#condition
 
+		if(struct_field['type']['type'] == E_SNT_CONTAINER):
+			if(struct_field['type']['ct'] == E_CT_VECTOR):
+				self.print_line(t, 'if(read_counter(self, "' + struct_field['args']['arg_list'][2]['ot'] + '", &data->' + struct_field['args']['arg_list'][2]['ot'] + ') != E_HP_NOERROR) goto ERROR_RET;');
+				self.print_line(t, 'if(read_field_begin(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(t, '{')
+				t = t + 1
+				self.print_line(t, 'hpuint32 i;')
+				self.print_line(t, 'if(read_vector_begin(self) != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(t, 'for(i = 0; i < data->' + struct_field['args']['arg_list'][2]['ot'] + '; ++i)')
+				self.print_line(t, '{')
+				t = t + 1
+				self.print_line(t, 'if(read_vector_item_begin(self, i) != E_HP_NOERROR) goto ERROR_RET;')
+				line = 'if(read_'
+				line = line + self.get_type(struct_field['type'], struct_field['args'])
+				line = line + '(self, &data->' + struct_field['identifier'] + '[i]'
+				for i in range(3, len(struct_field['args']['arg_list'])):
+						line = line + ', ' + self.get_identifier_c(struct_field['args']['arg_list'][i]['ot'])
+				line = line + ') != E_HP_NOERROR) goto ERROR_RET;'
+
+				self.print_line(t, line)
+				self.print_line(t, 'if(read_vector_item_end(self, i) != E_HP_NOERROR) goto ERROR_RET;')
+				t = t - 1
+				self.print_line(t, '}')
+				self.print_line(t, 'if(read_vector_end(self) != E_HP_NOERROR) goto ERROR_RET;')
+				t = t - 1
+				self.print_line(t, '}')
+				self.print_line(t, 'if(read_field_end(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+			elif(struct_field['type']['ct'] == E_CT_STRING):
+				self.print_line(t, 'if(read_field_begin(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(t, 'if(read_string(self, data->' + struct_field['identifier'] + ', ' + struct_field['args']['arg_list'][0]['ot'] + ') != E_HP_NOERROR) goto ERROR_RET;')
+				self.print_line(t, 'if(read_field_end(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+		else:
+			self.print_line(t, 'if(read_field_begin(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+			line = 'if(read_' + self.get_type(struct_field['type'], struct_field['args']) + '(self, &data->' + struct_field['identifier']
+			for arg in struct_field['args']['arg_list']:
+				line = line + ', ' + self.get_identifier_c(arg['ot'])
+			line = line + ') != E_HP_NOERROR) goto ERROR_RET;'
+			self.print_line(t, line)
+			self.print_line(t, 'if(read_field_end(self, "' + struct_field['identifier'] + '") != E_HP_NOERROR) goto ERROR_RET;')
+
+		
+		#condition
 		if(struct_field['condition']['empty'] == False):
-			self.print_line(1, '}')
+			--t
+			self.print_line(t, '}')
 
 	def on_struct_end(self, struct):
 		self.print_line(1, 'if(read_struct_end(self, "' + struct['name'] + '") != E_HP_NOERROR) goto ERROR_RET;')
@@ -87,72 +133,6 @@ class C_READER(C_READER_HEADER):
 
 	def on_union_begin(self, union):
 		pass
-
-'''
-	for key, value in pairs(object.field_list.field_list) do
-		if(value.condition.empty == false)then			
-			if(value.condition.exp.oper == E_EO_AND)then
-				oper = '&'
-			elseif(value.condition.exp.oper == E_EO_EQUAL)then
-				oper = '=='
-			end
-			if(value.condition.exp.neg)then
-				print_line(t, 'if (!(' .. get_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' '.. get_val(value.condition.exp.op1, object) .. '))')
-			else
-				print_line(t, 'if (' .. get_val(value.condition.exp.op0, object) .. ' ' .. oper .. ' ' .. get_val(value.condition.exp.op1, object) .. ')')
-			end
-			print_line(t, '{')
-			t = t + 1
-		end
-
-		if(value.type.type == E_SNT_CONTAINER)then
-			if(value.type.ct == E_CT_VECTOR)then
-				print_line(t, 'if(read_counter(self, "' .. value.args.arg_list[3].ot .. '", &data->' .. value.args.arg_list[3].ot .. ') != E_HP_NOERROR) goto ERROR_RET;');
-				print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, '{')
-				t = t + 1
-				print_line(t, 'hpuint32 i;')
-				print_line(t, 'if(read_vector_begin(self) != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'for(i = 0; i < data->' .. value.args.arg_list[3].ot .. '; ++i)')
-				print_line(t, '{')
-				t = t + 1
-				print_line(t, 'if(read_vector_item_begin(self, i) != E_HP_NOERROR) goto ERROR_RET;')
-				line = 'if(read_'
-				line = line .. get_type(value.type, value.args)
-				line = line .. '(self, &data->' .. value.identifier .. '[i]'
-				for i=4, #value.args.arg_list do
-					line = line .. ', ' .. get_symbol_access(value.args.arg_list[i].ot, object)
-				end
-				line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
-				print_line(t, line)
-				print_line(t, 'if(read_vector_item_end(self, i) != E_HP_NOERROR) goto ERROR_RET;')
-				t = t - 1
-				print_line(t, '}')
-				print_line(t, 'if(read_vector_end(self) != E_HP_NOERROR) goto ERROR_RET;')
-				t = t - 1
-				print_line(t, '}')
-				print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			elseif(value.type.ct == E_CT_STRING)then
-				print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'if(read_string(self, data->' .. value.identifier .. ', ' .. get_type(value.args.arg_list[1]) .. ') != E_HP_NOERROR) goto ERROR_RET;')
-				print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			end
-		else
-			print_line(t, 'if(read_field_begin(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-			line = 'if(read_' .. get_type(value.type, value.args) .. '(self, &data->' .. value.identifier
-				for ak, av in pairs(value.args.arg_list) do
-					line = line .. ', ' .. get_symbol_access(av.ot, object)
-				end
-			line = line .. ') != E_HP_NOERROR) goto ERROR_RET;'
-			print_line(t, line)
-			print_line(t, 'if(read_field_end(self, "' .. value.identifier .. '") != E_HP_NOERROR) goto ERROR_RET;')
-		end
-
-		
-	end
-
-end
-'''
 
 
 def hpmain(document, output_dir):
