@@ -40,6 +40,8 @@ HotPot
 
 3.安装[Python](http://www.python.org/) 3.3.2
 
+		wget http://www.python.org/ftp/python/3.3.2/Python-3.3.2.tar.bz2
+
 4.安装[CMake](http://www.cmake.org/) 2.8.11.1
 
 5.下载[HotPot](https://github.com/randyliu/HotPot)源代码
