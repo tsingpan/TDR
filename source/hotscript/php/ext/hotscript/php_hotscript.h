@@ -2,10 +2,10 @@
 #define PHP_HOTSCRIPT_H
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
-#else
 # if WIN32
 #  include "config-w32.h"
+#else
+#  include "config.h"
 # endif
 #endif
 
