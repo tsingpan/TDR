@@ -305,7 +305,6 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char *working_dir)
 {
 	const HotOpArr *hotoparr;
-
 	self->op_handler[HOT_ECHO] = hotvm_echo;
 	self->op_handler[HOT_FIELD_BEGIN] = hotvm_field_begin;
 	self->op_handler[HOT_FIELD_END] = hotvm_field_end;
@@ -340,16 +339,15 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	hotvm_push(self, 0, hotoparr);
 	while(self->stack_num > 0)
 	{
-		while(hotvm_get_eip(self) < hotvm_get_op(self)->next_oparr)
-		{
-			hotvm_execute_func func = self->op_handler[hotvm_get_op(self)->oparr[hotvm_get_eip(self)].instruct];
-			if(func(self, &hotvm_get_op(self)->oparr[hotvm_get_eip(self)]) != E_HP_NOERROR)
+		while(hotvm_get_eip(self) < hotvm_get_oplimit(self))
+		{			
+			hotvm_execute_func func = self->op_handler[hotvm_get_op(self)[hotvm_get_eip(self)].instruct];
+			if(func(self, hotvm_get_op(self) + hotvm_get_eip(self)) != E_HP_NOERROR)
 			{
 				goto ERROR_RET;
 			}
 		}
-		hotoparr = hotvm_get_op(self);
-		free(hotoparr->oparr);
+		free((void*)hotvm_get_op(self));
 		hotvm_pop(self);
 	}
 
@@ -370,17 +368,22 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip)
 
 void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
 {	
-	self->stack[self->stack_num].hotoparr = *hotoparr;
+	//self->stack[self->stack_num].hotoparr = *hotoparr;
 
 	self->stack[self->stack_num].start = hotoparr->oparr;
-	self->stack[self->stack_num].limit = hotoparr->oparr + hotoparr->oparr_size;
+	self->stack[self->stack_num].limit = hotoparr->oparr + hotoparr->next_oparr;
 	self->stack[self->stack_num].eip = eip;
 	++(self->stack_num);
 }
 
-const HotOpArr *hotvm_get_op(HotVM *self)
+const HotOp *hotvm_get_op(HotVM *self)
 {
-	return &self->stack[self->stack_num - 1].hotoparr;
+	return self->stack[self->stack_num - 1].start;
+}
+
+int hotvm_get_oplimit(HotVM *self)
+{
+	return self->stack[self->stack_num - 1].limit - self->stack[self->stack_num - 1].start;
 }
 
 void hotvm_pop(HotVM *self)
