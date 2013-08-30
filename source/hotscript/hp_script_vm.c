@@ -18,15 +18,14 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 }
 
 hpint32 hotvm_import(HotVM *self, const HotOp* op)
-{
-	SCRIPT_PARSER sp;
+{	
 	const HotOpArr* oparr;
-	oparr = script_malloc(&sp, op->arg.import_arg.file_name, self->root_dir, self->working_dir);
+	oparr = script_malloc(&self->sp, op->arg.import_arg.file_name, self->root_dir, self->working_dir);
 
 	if(oparr == NULL)
 	{
-		self->result = sp.scanner_stack.result[0];
-		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
+		self->result = self->sp.scanner_stack.result[0];
+		strncpy(self->result_str, self->sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
 		goto ERROR_RET;
 	}
 	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
@@ -305,7 +304,6 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char *working_dir)
 {
-	SCRIPT_PARSER sp;
 	const HotOpArr *hotoparr;
 
 	self->op_handler[HOT_ECHO] = hotvm_echo;
@@ -332,12 +330,11 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 
 	self->stack_num = 0;
 
-	hotoparr = script_malloc(&sp, file_name, root_dir, working_dir);
-
+	hotoparr = script_malloc(&self->sp, file_name, root_dir, working_dir);
 	if(hotoparr == NULL)
 	{
-		self->result = sp.scanner_stack.result[0];
-		strncpy(self->result_str, sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
+		self->result = self->sp.scanner_stack.result[0];
+		strncpy(self->result_str, self->sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
 		goto ERROR_RET;
 	}
 	hotvm_push(self, 0, hotoparr);
@@ -352,7 +349,7 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 			}
 		}
 		hotoparr = hotvm_get_op(self);
-		free((void*)hotoparr);
+		free(hotoparr->oparr);
 		hotvm_pop(self);
 	}
 
@@ -372,9 +369,12 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip)
 }
 
 void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
-{
-	self->stack[self->stack_num].eip = eip;
+{	
 	self->stack[self->stack_num].hotoparr = *hotoparr;
+
+	self->stack[self->stack_num].start = hotoparr->oparr;
+	self->stack[self->stack_num].limit = hotoparr->oparr + hotoparr->oparr_size;
+	self->stack[self->stack_num].eip = eip;
 	++(self->stack_num);
 }
 

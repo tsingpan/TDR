@@ -1,8 +1,6 @@
 #include "hotlib/hp_error_code.h"
 #include "globals.h"
 
-#include "hotscript/hp_script_vm.h"
-#include "hotscript/hp_script_parser.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -70,8 +68,6 @@ void get_real_file_path(const char *script_dir, const char *file_name)
 	}
 }
 
-
-SCRIPT_PARSER sp;
 
 #define MAX_PY_SCRIPT_LENGTH 32768
 char pyscript[MAX_PY_SCRIPT_LENGTH];

@@ -104,8 +104,10 @@ void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NOD
 	}
 	
 	self->stack[(self->stack_num)++] = E_SP_OBJECT;
+
+	return;
 ERROR_RET:
-	yyscripterror(yylloc, &self->scanner_stack, NULL);
+	yyscripterror(yylloc, &self->scanner_stack, "");
 }
 
 void hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
@@ -205,7 +207,7 @@ const HotOpArr* script_malloc(SCRIPT_PARSER *self, const char* file_name, const 
 
 	scanner_stack_init(&self->scanner_stack, root_dir);
 
-	if(scanner_stack_add_path(&self->scanner_stack, work_dir) != E_HP_ERROR)
+	if(scanner_stack_add_path(&self->scanner_stack, work_dir) != E_HP_NOERROR)
 	{
 		goto ERROR_RET;
 	}

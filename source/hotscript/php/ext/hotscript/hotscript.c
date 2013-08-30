@@ -436,7 +436,12 @@ static PHP_FUNCTION(hs_execute_array)
 	zval *parameter = NULL;	
 	smart_str buf = {0};
 	ZVALReader reader;
-	HotVM hotvm;
+#ifndef WIN32
+	HotVM hotvm_mem;
+	HotVM *hotvm = &hotvm_mem;
+#else
+	HotVM *hotvm = (HotVM*)malloc(sizeof(HotVM));
+#endif//WIN32	
 	char *file_name = NULL;
 	int file_name_len;
 
@@ -451,18 +456,24 @@ static PHP_FUNCTION(hs_execute_array)
 	reader.stack_num = 1;
 	
 
-	if(hotvm_execute(&hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc, HOTSCRIPT_G(workingdir)) == E_HP_NOERROR)
+	if(hotvm_execute(hotvm, file_name, HOTSCRIPT_G(hotpot_dir), &reader.super, &buf, php_putc, HOTSCRIPT_G(workingdir)) == E_HP_NOERROR)
 	{
 		ZVAL_STRINGL(return_value, buf.c, buf.len, 1);		
 	}
 	else
 	{
-		HOTSCRIPT_G(error_code) = hotvm.result;
-		strncpy(HOTSCRIPT_G(error_msg), hotvm.result_str, MAX_ERROR_MSG_LENGTH);
+		HOTSCRIPT_G(error_code) = hotvm->result;
+		strncpy(HOTSCRIPT_G(error_msg), hotvm->result_str, MAX_ERROR_MSG_LENGTH);
 		ZVAL_FALSE(return_value);
 	}
 
 	smart_str_free(&buf);
+
+#ifndef WIN32
+#else
+	free(hotvm);
+#endif//WIN32	
+	
 }
 
 static PHP_FUNCTION(hs_execute)

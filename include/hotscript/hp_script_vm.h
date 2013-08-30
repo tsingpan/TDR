@@ -7,6 +7,8 @@
 #include "hotscript/hp_script_op.h"
 #include "hotlib/hp_error_msg_reader.h"
 
+#include "hotscript/hp_script_parser.h"
+
 
 
 #define MAX_VM_HO_SIZE 1024
@@ -23,6 +25,8 @@ typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 typedef struct _STACK_FRAME
 {
 	HotOpArr hotoparr;
+	HotOp *start;
+	HotOp *limit;
 	hpuint32 eip;
 }STACK_FRAME;
 
@@ -31,6 +35,9 @@ struct _HotVM
 	//这里搞个堆栈
 	STACK_FRAME stack[HS_MAX_FILE_DEEP];
 	hpuint32 stack_num;
+
+	//这玩意真心很大
+	SCRIPT_PARSER sp;
 
 	//这里加入一个script_parser
 	HPAbstractReader *reader;
