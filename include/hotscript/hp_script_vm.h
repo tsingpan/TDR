@@ -12,7 +12,9 @@
 #define MAX_VM_HO_SIZE 1024
 
 
-hpint32 hotoparr_init(HotOpArr *self);
+void hotoparr_init(HotOpArr *self);
+
+void hotoparr_fini(HotOpArr *self);
 
 HotOp *hotoparr_get_next_op(HotOpArr *self);
 
@@ -63,7 +65,7 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip);
 
 hpuint32 hotvm_get_eip(HotVM *self);
 
-void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr hotoparr);
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr);
 
 const HotOpArr *hotvm_get_op(HotVM *self);
 

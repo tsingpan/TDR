@@ -2,19 +2,38 @@
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg_reader.h"
 #include "hotprotocol/hp_xml_reader.h"
+#include "hotlib/hp_error.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
-
-hpint32 scanner_fini(SCANNER *self)
+void scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name)
 {
-	self->yy_last = NULL;
+	if(file_name)
+	{
+		strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
+	}
+	else
+	{
+		self->file_name[0] = 0;
+	}	
 
-	return E_HP_NOERROR;
+	self->yy_start = yy_start;
+	self->yy_limit = yy_limit;
+	self->yy_state = state;
+	self->yy_marker = self->yy_start;
+	self->yy_last = self->yy_start;
+	self->yy_cursor = self->yy_start;	
+	self->yylineno = 1;
+	self->yycolumn = 1;
 }
 
-hpint32 scanner_process(SCANNER *sp)
+void scanner_fini(SCANNER *self)
+{
+	self->yy_last = NULL;
+}
+
+void scanner_process(SCANNER *sp)
 {
 	const char *i;
 	for(i = sp->yy_last; i < sp->yy_cursor;++i)
@@ -34,34 +53,14 @@ hpint32 scanner_process(SCANNER *sp)
 		}
 	}
 	sp->yy_last = sp->yy_cursor;
-
-	return E_HP_NOERROR;
-}
-
-hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name)
-{
-	if(file_name)
-	{
-		strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
-	}
-	else
-	{
-		self->file_name[0] = 0;
-	}	
-
-	self->yy_start = yy_start;
-	self->yy_limit = yy_limit;
-	self->yy_state = state;
-	self->yy_marker = self->yy_start;
-	self->yy_last = self->yy_start;
-	self->yy_cursor = self->yy_start;	
-	self->yylineno = 1;
-	self->yycolumn = 1;
-	return E_HP_NOERROR;
 }
 
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
 {
+	if(self->stack_num <= 0)
+	{
+		return NULL;
+	}
 	return &self->stack[self->stack_num - 1];
 }
 
@@ -186,10 +185,16 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	hpuint32 len = 0;
 	char realPath[HP_MAX_FILE_PATH_LENGTH];
 
+	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
+	{
+		goto ERROR_RET;
+	}
+
+	//不允许递归include
 	for(i = 0; i < self->stack_num; ++i)
 		if(strcmp(self->stack[i].file_name, file_name) == 0)
 		{
-			return E_HP_ERROR;
+			goto ERROR_RET;
 		}
 
 	fin = fopen(file_name, "rb");
@@ -211,7 +216,7 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	}
 	if(fin == NULL)
 	{
-		return E_HP_ERROR;
+		goto ERROR_RET;
 	}
 	
 
@@ -219,24 +224,37 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	{
 		if(self->buff_curr == self->buff_limit)
 		{
-			return E_HP_ERROR;
+			//缓存大小不足， 解析失败
+			goto F_ERROR_RET;
 		}
 		*self->buff_curr = c;
 		++(self->buff_curr);
 	}
 	fclose(fin);
 
+	//之前已经检查过self->stack_num是否出界了
 	scanner_init(&self->stack[self->stack_num], yy_start, self->buff_curr, state, file_name);
 	++(self->stack_num);
 
 	return E_HP_NOERROR;
+F_ERROR_RET:
+	fclose(fin);
+ERROR_RET:
+	return E_HP_ERROR;
 }
 hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state)
 {
+	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
+	{
+		goto ERROR_RET;
+	}
+
 	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);
 
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 
@@ -244,12 +262,19 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 {
 	SCANNER *scanner = scanner_stack_get_scanner(self);
 
+	if(scanner == NULL)
+	{
+		goto ERROR_RET;
+	}
+
 	scanner_fini(scanner);
 	--(self->stack_num);
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
-hpint32 scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
+void scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
@@ -258,16 +283,20 @@ hpint32 scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
 	self->root_dir = root_dir;
 	self->result_num = 0;
 	hp_error_init(&self->error_msg_library);
-
-	return E_HP_NOERROR;
 }
 
 hpint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path)
 {
+	if(self->include_path_tail >= MAX_INCLUDE_PATH)
+	{
+		goto ERROR_RET;
+	}
 	strncpy(self->include_path[self->include_path_tail], path, HP_MAX_FILE_PATH_LENGTH);
 	++self->include_path_tail;
 
 	return E_HP_NOERROR;
+ERROR_RET:
+	return E_HP_ERROR;
 }
 
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
@@ -279,6 +308,11 @@ hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
 void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap) 
 {
 	hpuint32 len;
+
+	if(self->result_num >= MAX_RESULT_NUM)
+	{
+		goto done;
+	}
 
 	if((yylloc) && (yylloc->file_name[0]))
 	{
@@ -299,6 +333,10 @@ void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_
 
 	self->result[self->result_num] = result;
 	++(self->result_num);
+
+	return;
+done:
+	return;
 }
 
 
@@ -307,6 +345,11 @@ void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CO
 {
 	va_list ap;
 	const char *error_str = NULL;
+	if(self->result_num >= MAX_RESULT_NUM)
+	{
+		goto done;
+	}
+
 	hp_error_load_if_first(&self->error_msg_library, self->root_dir);
 
 	error_str = hp_error_search_msg(&self->error_msg_library, result);
@@ -314,4 +357,8 @@ void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CO
 	va_start(ap, result);
 	scanner_stack_errorap(self, yylloc, result, error_str, ap);
 	va_end(ap);
+
+	return;
+done:
+	return;
 }

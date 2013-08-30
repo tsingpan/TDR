@@ -16,11 +16,8 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 	AlphaMap *alpha_map = NULL;
 	hpuint32 i;
 
-	
-
 	self->writer = writer;	
 	self->scanner_stack.result_num = 0;
-	
 
 	alpha_map = alpha_map_new();
 
@@ -71,7 +68,6 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 	va_list ap;
 
-	
 	va_start(ap, s);
 	scanner_stack_errorap(&self->scanner_stack, yylloc, E_HP_SYNTAX_ERROR, s, ap);
 	va_end(ap);
@@ -84,38 +80,6 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 
 	switch(*token)
 	{
-		/*
-	case tok_import:
-		{
-			yylval->sn_tok_import = NULL;
-
-			while(self->yy_cursor < self->yy_limit)
-			{
-				if(*self->yy_cursor == ';')
-				{
-					*self->yy_cursor = 0;
-					++(self->yy_cursor);
-					break;
-				}
-				else if((*self->yy_cursor == '\n') || (*self->yy_cursor == '\t') || (*self->yy_cursor == ' '))
-				{
-					*self->yy_cursor = 0;
-					++(self->yy_cursor);
-				}
-				else
-				{
-					if(yylval->sn_tok_import == NULL)
-					{
-						yylval->sn_tok_import = self->yy_cursor;
-					}
-
-					++(self->yy_cursor);
-				}
-			}
-			
-			break;
-		}
-		*/
 	case tok_char:
 		{
 			if(YYCURSOR >= YYLIMIT)
@@ -390,14 +354,12 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 
 
-hpint32 data_parser_init(DATA_PARSER *self, const char* root_dir)
+void data_parser_init(DATA_PARSER *self, const char* root_dir)
 {
 	scanner_stack_init(&self->scanner_stack, root_dir);
 	self->scanner_stack.result_num = 0;
 	self->definition_list_num = 0;
 	self->domain[0] = 0;
-
-	return E_HP_NOERROR;
 }
 
 

@@ -8,32 +8,29 @@
 #include "hotplatform/hp_platform.h"
 
 
-hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
+void hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO;
 	op->arg.echo_arg.bytes = text->bytes;
-	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *import)
+void hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *import)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_IMPORT;
 	memcpy(op->arg.import_arg.file_name, import->bytes.ptr, import->bytes.len);
 	op->arg.import_arg.file_name[import->bytes.len] = 0;
-	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
+void hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
 	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 	op->instruct = HOT_ECHO_LITERAL;
 	op->arg.echo_arg.bytes = text->bytes;
-	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
+void hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
 	HotOp *op = NULL;
 	
@@ -44,10 +41,9 @@ hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP
 
 	self->stack[(self->stack_num)++] = E_SP_ARRAY;
 
-	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
+void hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
 	HotOp *op = NULL;
 	op = hotoparr_get_next_op(&self->hotoparr);
@@ -56,10 +52,9 @@ hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_N
 	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
 
 	--(self->stack_num);
-	return E_HP_NOERROR;
 }
 
-hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
+void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
 	HotOp *op = NULL;
 
@@ -109,15 +104,12 @@ hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_
 	}
 	
 	self->stack[(self->stack_num)++] = E_SP_OBJECT;
-	return E_HP_NOERROR;
 ERROR_RET:
 	yyscripterror(yylloc, &self->scanner_stack, NULL);
-	return E_HP_ERROR;
 }
 
-hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
+void hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-
 	HotOp *op = NULL;
 	if(identifier->token == tok_identifier)
 	{
@@ -149,18 +141,16 @@ hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NO
 	}
 
 	--self->stack_num;
-	return E_HP_NOERROR;
 }
 
 
-hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
+void hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
 	if(identifier->token != tok_call_identifier)
 	{
 		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
 		op->instruct = HOT_ECHO_FIELD;
 	}
-	return E_HP_NOERROR;
 }
 
 void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...) 
@@ -207,7 +197,7 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 }
 
 extern int yyscriptparse (SCANNER_STACK *sp);
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir)
+const HotOpArr* script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir)
 {
 	hpint32 ret;
 
@@ -215,7 +205,10 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* ro
 
 	scanner_stack_init(&self->scanner_stack, root_dir);
 
-	scanner_stack_add_path(&self->scanner_stack, work_dir);
+	if(scanner_stack_add_path(&self->scanner_stack, work_dir) != E_HP_ERROR)
+	{
+		goto ERROR_RET;
+	}
 
 
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
@@ -232,15 +225,17 @@ hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* ro
 
 	if(self->scanner_stack.result_num != 0)
 	{
-		goto ERROR_RET;
+		goto OP_ERROR_RET;
 	}
 
 	if(scanner_stack_pop(&self->scanner_stack) != E_HP_NOERROR)
 	{
-		goto ERROR_RET;
+		goto OP_ERROR_RET;
 	}
 
-	return E_HP_NOERROR;
+	return &self->hotoparr;
+OP_ERROR_RET:
+	hotoparr_fini(&self->hotoparr);
 ERROR_RET:
-	return E_HP_ERROR;
+	return NULL;
 }

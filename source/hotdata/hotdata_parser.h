@@ -34,7 +34,7 @@ struct _DATA_PARSER
 	hpbool in_struct;
 };
 
-hpint32 data_parser_init(DATA_PARSER *self, const char* root_dir);
+void data_parser_init(DATA_PARSER *self, const char* root_dir);
 
 hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
 

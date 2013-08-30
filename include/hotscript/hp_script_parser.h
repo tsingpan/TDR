@@ -42,28 +42,25 @@ struct tagSCRIPT_PARSER
 	hpuint32 stack_num;
 
 	HotOpArr hotoparr;//Êä³ö
-
-
-	//HotVM hotvm;	
 };
 
-hpint32 script_parser(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir);
+const HotOpArr*  script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir);
 
-hpint32 hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
+void hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 
-hpint32 hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
+void hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 
-hpint32 hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
+void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
+void hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
+void hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
+void hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
-hpint32 hotscript_do_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *current);
+void hotscript_do_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *current);
 
-hpint32 hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
+void hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier);
 
 void yyscripterror(const YYLTYPE *yylloc, SCANNER_STACK *ss, char *s, ...);
 

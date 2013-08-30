@@ -49,7 +49,8 @@ struct _SCANNER
 	hpuint32 yycolumn;
 };
 
-#define MAX_LEX_BUFF_SIZE 1000000
+//脚本文件最大10m
+#define MAX_LEX_BUFF_SIZE 10000000
 #define MAX_SCANNER_STACK_DEEP 1024
 #define MAX_INCLUDE_PATH 1024
 #define MAX_RESULT_NUM 256
@@ -65,7 +66,7 @@ typedef struct _SCANNER_STACK
 
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
-	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
+	YYCTYPE buff[MAX_LEX_BUFF_SIZE];			//对于需要频繁解析的脚本， 固定大小的缓存要比malloc效率更好。
 
 	const char *root_dir;
 	HP_ERROR_MSG_LIBRARY error_msg_library;
@@ -75,15 +76,15 @@ typedef struct _SCANNER_STACK
 	hpuint32 result_num;
 };
 
-hpint32 scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);
-hpint32 scanner_fini(SCANNER *self);
+void scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);
+void scanner_fini(SCANNER *self);
 
-hpint32 scanner_process(SCANNER *sp);
+void scanner_process(SCANNER *sp);
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
 hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state);
 hpint32 scanner_stack_pop(SCANNER_STACK *self);
-hpint32 scanner_stack_init(SCANNER_STACK *self, const char *root_dir);
+void scanner_stack_init(SCANNER_STACK *self, const char *root_dir);
 hpuint32 scanner_stack_get_num(SCANNER_STACK *self);
 hpint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path);
 void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap);
