@@ -25,8 +25,8 @@ typedef hpint32 (*hotvm_execute_func)(HotVM *self, const HotOp* op);
 typedef struct _STACK_FRAME
 {
 	//HotOpArr hotoparr;
-	HotOp *start;
-	HotOp *limit;
+	const HotOp *start;
+	const HotOp *limit;
 	hpuint32 eip;
 }STACK_FRAME;
 

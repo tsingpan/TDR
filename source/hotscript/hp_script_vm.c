@@ -347,7 +347,6 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 				goto ERROR_RET;
 			}
 		}
-		free((void*)hotvm_get_op(self));
 		hotvm_pop(self);
 	}
 
@@ -367,11 +366,11 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip)
 }
 
 void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
-{	
-	//self->stack[self->stack_num].hotoparr = *hotoparr;
-
-	self->stack[self->stack_num].start = hotoparr->oparr;
-	self->stack[self->stack_num].limit = hotoparr->oparr + hotoparr->next_oparr;
+{
+	HotOp* opa = (HotOp*)malloc(hotoparr->next_oparr * sizeof(HotOp));
+	self->stack[self->stack_num].start = opa;
+	self->stack[self->stack_num].limit = self->stack[self->stack_num].start + hotoparr->next_oparr;
+	memcpy(opa, hotoparr, hotoparr->next_oparr * sizeof(HotOp));
 	self->stack[self->stack_num].eip = eip;
 	++(self->stack_num);
 }
@@ -388,5 +387,6 @@ int hotvm_get_oplimit(HotVM *self)
 
 void hotvm_pop(HotVM *self)
 {
+	free((void*)self->stack[self->stack_num - 1].start);
 	--(self->stack_num);
 }

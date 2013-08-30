@@ -85,14 +85,14 @@ typedef struct _HotOp
 	hpuint32 lineno;
 }HotOp;
 
+#define NORMAL_OP_SIZE 1024
+
 typedef struct _HotOpArr
 {
-	HotOp *oparr;
+	HotOp oparr[NORMAL_OP_SIZE];
 	hpuint32 oparr_size;
 	hpuint32 next_oparr;
 }HotOpArr;
-
-#define NORMAL_OP_SIZE 128
 
 void hotoparr_init(HotOpArr *self);
 
