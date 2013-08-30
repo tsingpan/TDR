@@ -67,7 +67,11 @@ ZEND_GET_MODULE(hotscript)
 #endif
 
 PHP_INI_BEGIN()
+#ifdef PHP_WIN32
     STD_PHP_INI_ENTRY("hotpot.dir", "C:/Program Files/HotPot", PHP_INI_ALL, OnUpdateString, hotpot_dir, zend_hotscript_globals, hotscript_globals)
+#else
+    STD_PHP_INI_ENTRY("hotpot.dir", "/usr/local", PHP_INI_ALL, OnUpdateString, hotpot_dir, zend_hotscript_globals, hotscript_globals)
+#endif//PHP_WIN32
 	STD_PHP_INI_ENTRY("hotscript.workingdir", "./", PHP_INI_ALL, OnUpdateString, workingdir, zend_hotscript_globals, hotscript_globals)
 PHP_INI_END()
 
