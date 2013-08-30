@@ -19,17 +19,17 @@ hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 
 hpint32 hotvm_import(HotVM *self, const HotOp* op)
 {	
-	const HotOpArr* oparr;
-	oparr = script_malloc(&self->sp, op->arg.import_arg.file_name, self->root_dir, self->working_dir);
+	HotOp *start_op = self->oparr + self->oparr_size;
 
-	if(oparr == NULL)
+	if(script_malloc(&self->sp, op->arg.import_arg.file_name, self->root_dir, self->working_dir, start_op, HOTVM_MAX_OP_SIZE - self->oparr_size) != E_HP_NOERROR)
 	{
 		self->result = self->sp.scanner_stack.result[0];
 		strncpy(self->result_str, self->sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
 		goto ERROR_RET;
 	}
+	self->oparr_size += self->sp.next_op;
 	hotvm_set_eip(self, hotvm_get_eip(self) + 1);
-	hotvm_push(self, 0, oparr);
+	hotvm_push(self, 0, start_op, self->oparr + self->oparr_size);
 	
 	return E_HP_NOERROR;
 ERROR_RET:
@@ -305,6 +305,7 @@ hpint32 hotvm_jmp(HotVM *self, const HotOp* op)
 hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, HPAbstractReader *reader, void *user_data, vm_user_putc uputc, const char *working_dir)
 {
 	const HotOpArr *hotoparr;
+	self->oparr_size = 0;
 	self->op_handler[HOT_ECHO] = hotvm_echo;
 	self->op_handler[HOT_FIELD_BEGIN] = hotvm_field_begin;
 	self->op_handler[HOT_FIELD_END] = hotvm_field_end;
@@ -325,22 +326,23 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 	self->user_data = user_data;
 	self->vector_stack_num = 0;
 	self->uputc = uputc;
+	self->oparr_size = 0;
 
 
 	self->stack_num = 0;
 
-	hotoparr = script_malloc(&self->sp, file_name, root_dir, working_dir);
-	if(hotoparr == NULL)
+	if(script_malloc(&self->sp, file_name, root_dir, working_dir, self->oparr, HOTVM_MAX_OP_SIZE) != E_HP_NOERROR)
 	{
 		self->result = self->sp.scanner_stack.result[0];
 		strncpy(self->result_str, self->sp.scanner_stack.result_str[0], MAX_ERROR_MSG_LENGTH);
 		goto ERROR_RET;
 	}
-	hotvm_push(self, 0, hotoparr);
+	self->oparr_size += self->sp.next_op;
+	hotvm_push(self, 0, self->oparr, self->oparr + self->oparr_size);
 	while(self->stack_num > 0)
 	{
 		while(hotvm_get_eip(self) < hotvm_get_oplimit(self))
-		{			
+		{
 			hotvm_execute_func func = self->op_handler[hotvm_get_op(self)[hotvm_get_eip(self)].instruct];
 			if(func(self, hotvm_get_op(self) + hotvm_get_eip(self)) != E_HP_NOERROR)
 			{
@@ -365,12 +367,10 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip)
 	self->stack[self->stack_num - 1].eip = eip;
 }
 
-void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr)
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOp *start_op, const HotOp *limit_op)
 {
-	HotOp* opa = (HotOp*)malloc(hotoparr->next_oparr * sizeof(HotOp));
-	self->stack[self->stack_num].start = opa;
-	self->stack[self->stack_num].limit = self->stack[self->stack_num].start + hotoparr->next_oparr;
-	memcpy(opa, hotoparr, hotoparr->next_oparr * sizeof(HotOp));
+	self->stack[self->stack_num].start = start_op;
+	self->stack[self->stack_num].limit = limit_op;
 	self->stack[self->stack_num].eip = eip;
 	++(self->stack_num);
 }
@@ -387,6 +387,5 @@ int hotvm_get_oplimit(HotVM *self)
 
 void hotvm_pop(HotVM *self)
 {
-	free((void*)self->stack[self->stack_num - 1].start);
 	--(self->stack_num);
 }

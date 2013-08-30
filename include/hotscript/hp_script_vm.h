@@ -30,6 +30,7 @@ typedef struct _STACK_FRAME
 	hpuint32 eip;
 }STACK_FRAME;
 
+#define HOTVM_MAX_OP_SIZE 65536
 struct _HotVM
 {
 	//’‚¿Ô∏„∏ˆ∂—’ª
@@ -54,6 +55,9 @@ struct _HotVM
 
 	hpint32 result;
 	char result_str[MAX_ERROR_MSG_LENGTH];
+
+	HotOp oparr[HOTVM_MAX_OP_SIZE];
+	size_t oparr_size;
 };
 
 hpint32 hotvm_execute(HotVM *self, const char* file_name, 
@@ -64,7 +68,7 @@ void hotvm_set_eip(HotVM *self, hpuint32 eip);
 
 hpuint32 hotvm_get_eip(HotVM *self);
 
-void hotvm_push(HotVM *self, hpuint32 eip, const HotOpArr *hotoparr);
+void hotvm_push(HotVM *self, hpuint32 eip, const HotOp *start_op, const HotOp *limit_op);
 
 const HotOp *hotvm_get_op(HotVM *self);
 

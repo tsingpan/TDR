@@ -41,10 +41,14 @@ struct tagSCRIPT_PARSER
 	E_SP_NODE_TYPE stack[MAX_SP_STACK_DEEP];
 	hpuint32 stack_num;
 
-	HotOpArr hotoparr;//Êä³ö
+	HotOp *hotop;
+	size_t next_op;
+	size_t op_size;
 };
 
-const HotOpArr*  script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir);
+hpint32 script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir,
+					  HotOp *hotop, size_t hotop_size
+					  );
 
 void hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text);
 

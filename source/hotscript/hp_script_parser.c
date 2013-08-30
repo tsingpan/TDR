@@ -10,14 +10,19 @@
 
 void hotscript_do_text(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = &self->hotop[self->next_op];
+	op->lineno = self->next_op;
+	++(self->next_op);
+
 	op->instruct = HOT_ECHO;
-	op->arg.echo_arg.bytes = text->bytes;
+	op->arg.echo_arg.bytes = text->bytes;	
 }
 
 void hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *import)
 {
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = &self->hotop[self->next_op];
+	op->lineno = self->next_op;
+	++(self->next_op);
 	op->instruct = HOT_IMPORT;
 	memcpy(op->arg.import_arg.file_name, import->bytes.ptr, import->bytes.len);
 	op->arg.import_arg.file_name[import->bytes.len] = 0;
@@ -25,16 +30,20 @@ void hotscript_do_import(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NO
 
 void hotscript_do_literal(SCRIPT_PARSER *self, const YYLTYPE *yylloc, const SP_NODE *text)
 {
-	HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = &self->hotop[self->next_op];
+	op->lineno = self->next_op;
+	++(self->next_op);
+
 	op->instruct = HOT_ECHO_LITERAL;
 	op->arg.echo_arg.bytes = text->bytes;
 }
 
 void hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	HotOp *op = NULL;
-	
-	op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = &self->hotop[self->next_op];
+	op->lineno = self->next_op;
+	++(self->next_op);
+
 	op->instruct = HOT_VECTOR_BEGIN;
 
 	identifier->vector_begin_index = op->lineno;
@@ -45,11 +54,14 @@ void hotscript_do_vector_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NO
 
 void hotscript_do_vector_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE *identifier)
 {
-	HotOp *op = NULL;
-	op = hotoparr_get_next_op(&self->hotoparr);
+	HotOp *op = &self->hotop[self->next_op];
+	op->lineno = self->next_op;
+	++(self->next_op);
+
+
 	op->instruct = HOT_VECTOR_END;
 
-	self->hotoparr.oparr[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+	self->hotop[identifier->vector_begin_index].arg.vector_begin_arg.failed_jmp_lineno = self->next_op;
 
 	--(self->stack_num);
 }
@@ -60,7 +72,10 @@ void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NOD
 
 	if(identifier->token == tok_identifier)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
 		op->instruct = HOT_FIELD_BEGIN;
 		op->arg.field_begin_arg.name = identifier->bytes;
 
@@ -72,11 +87,18 @@ void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NOD
 		{
 			goto ERROR_RET;
 		}
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
+
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		op->arg.vector_set_index_arg.index = identifier->ui32;
 
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
 		identifier->vector_item_begin_index = op->lineno;	
 	}
@@ -87,7 +109,11 @@ void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NOD
 			goto ERROR_RET;
 		}
 
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
+
 		op->instruct = HOT_VECTOR_SET_INDEX;
 		if(identifier->token == tok_auto_integer)
 		{
@@ -98,7 +124,11 @@ void hotscript_do_field_begin(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NOD
 			op->arg.vector_set_index_arg.index = 0;
 		}
 		
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
+
 		op->instruct = HOT_VECTOR_ITEM_BEGIN;
 		identifier->vector_item_begin_index = op->lineno;		
 	}
@@ -115,31 +145,45 @@ void hotscript_do_field_end(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE 
 	HotOp *op = NULL;
 	if(identifier->token == tok_identifier)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
+
 		op->instruct = HOT_FIELD_END;
-		self->hotoparr.oparr[identifier->field_begin_index].arg.field_begin_arg.lineno_after_field_end = hotoparr_get_next_op_number(&self->hotoparr);
+		self->hotop[identifier->field_begin_index].arg.field_begin_arg.lineno_after_field_end = self->next_op;
 	}
 	else if(identifier->token == tok_integer)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
+
 		op->instruct = HOT_VECTOR_ITEM_END;
 
-		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+		self->hotop[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = self->next_op;
 	}
 	else if(identifier->token == tok_auto_integer)
 	{
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
 		op->instruct = HOT_VECTOR_ITEM_END;
 
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
 		op->instruct = HOT_VECTOR_INC_INDEX;
 
-		op = hotoparr_get_next_op(&self->hotoparr);
+		op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
 		op->instruct = HOT_JMP;
-		op->arg.jmp_arg.lineno = self->hotoparr.oparr[identifier->vector_item_begin_index].lineno;
+		op->arg.jmp_arg.lineno = self->hotop[identifier->vector_item_begin_index].lineno;
 
 
-		self->hotoparr.oparr[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = hotoparr_get_next_op_number(&self->hotoparr);
+		self->hotop[identifier->vector_item_begin_index].arg.vector_item_begin_arg.failed_jmp_lineno = self->next_op;
 	}
 
 	--self->stack_num;
@@ -150,7 +194,10 @@ void hotscript_do_echo_field(SCRIPT_PARSER *self, const YYLTYPE *yylloc, SP_NODE
 {
 	if(identifier->token != tok_call_identifier)
 	{
-		HotOp *op = hotoparr_get_next_op(&self->hotoparr);
+		HotOp *op = &self->hotop[self->next_op];
+		op->lineno = self->next_op;
+		++(self->next_op);
+
 		op->instruct = HOT_ECHO_FIELD;
 	}
 }
@@ -199,9 +246,15 @@ int yyscriptlex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *
 }
 
 extern int yyscriptparse (SCANNER_STACK *sp);
-const HotOpArr* script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir)
+hpint32 script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir,
+							  HotOp *hotop, size_t hotop_size
+							  )
 {
 	hpint32 ret;
+
+	self->hotop = hotop;
+	self->next_op = 0;
+	self->op_size = hotop_size;
 
 	self->stack_num = 0;
 
@@ -220,7 +273,7 @@ const HotOpArr* script_malloc(SCRIPT_PARSER *self, const char* file_name, const 
 	}
 	
 
-	hotoparr_init(&self->hotoparr);
+	//hotoparr_init(&self->hotoparr);
 
 	
 	ret = yyscriptparse(&self->scanner_stack);
@@ -235,9 +288,9 @@ const HotOpArr* script_malloc(SCRIPT_PARSER *self, const char* file_name, const 
 		goto OP_ERROR_RET;
 	}
 
-	return &self->hotoparr;
+	return E_HP_NOERROR;
 OP_ERROR_RET:
-	hotoparr_fini(&self->hotoparr);
+	//hotoparr_fini(&self->hotoparr);
 ERROR_RET:
-	return NULL;
+	return E_HP_ERROR;
 }
