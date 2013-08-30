@@ -1,6 +1,14 @@
 #ifndef PHP_HOTSCRIPT_H
 #define PHP_HOTSCRIPT_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#else
+# if WIN32
+#  include "config-w32.h"
+# endif
+#endif
+
 extern zend_module_entry hotscript_module_entry;
 #define phpext_hotscript_ptr &hotscript_module_entry
 
