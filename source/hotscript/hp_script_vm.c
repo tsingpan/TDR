@@ -6,41 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NORMAL_OP_SIZE 128
-
-
-void hotoparr_init(HotOpArr *self)
-{
-	self->oparr_size = NORMAL_OP_SIZE;
-	self->oparr = (HotOp*)malloc(sizeof(HotOp) * self->oparr_size);
-	self->next_oparr = 0;
-}
-
-void hotoparr_fini(HotOpArr *self)
-{
-	free(self->oparr);
-}
-
-HotOp *hotoparr_get_next_op(HotOpArr *self)
-{
-	HotOp *ptr;
-	if(self->next_oparr >= self->oparr_size)
-	{
-		self->oparr_size *= 2;
-		self->oparr = (HotOp*)realloc(self->oparr, sizeof(HotOp) *self->oparr_size);
-	}
-
-	ptr = &self->oparr[self->next_oparr];
-	ptr->lineno = self->next_oparr;
-	++(self->next_oparr);
-	return ptr;
-}
-
-hpuint32 hotoparr_get_next_op_number(HotOpArr *self)
-{
-	return self->next_oparr;
-}
-
 hpint32 hotvm_echo(HotVM *self, const HotOp* op)
 {
 	hpuint32 i;
@@ -127,6 +92,7 @@ hpint32 hotvm_echo_literal(HotVM *self, const HotOp* op)
 ERROR_RET:
 	return E_HP_ERROR;
 }
+
 hpint32 hotvm_field_begin(HotVM *self, const HotOp* op)
 {
 	hpchar name[HS_MAX_NAME_LENGTH];
@@ -174,7 +140,6 @@ hpint32 hotvm_vector_begin(HotVM *self, const HotOp* op)
 		self->vector_stack[self->vector_stack_num++] = 0;
 		hotvm_set_eip(self, hotvm_get_eip(self) + 1);
 	}
-
 	
 	return E_HP_NOERROR;
 }
@@ -390,7 +355,6 @@ hpint32 hotvm_execute(HotVM *self, const char* file_name, const char* root_dir, 
 		free((void*)hotoparr);
 		hotvm_pop(self);
 	}
-	
 
 	return E_HP_NOERROR;
 ERROR_RET:

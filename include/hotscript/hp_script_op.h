@@ -92,6 +92,16 @@ typedef struct _HotOpArr
 	hpuint32 next_oparr;
 }HotOpArr;
 
+#define NORMAL_OP_SIZE 128
+
+void hotoparr_init(HotOpArr *self);
+
+void hotoparr_fini(HotOpArr *self);
+
+HotOp *hotoparr_get_next_op(HotOpArr *self);
+
+hpuint32 hotoparr_get_next_op_number(HotOpArr *self);
+
 
 #endif//_H_HOT_SCRIPT_OP
 

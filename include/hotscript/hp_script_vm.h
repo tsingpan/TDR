@@ -12,14 +12,6 @@
 #define MAX_VM_HO_SIZE 1024
 
 
-void hotoparr_init(HotOpArr *self);
-
-void hotoparr_fini(HotOpArr *self);
-
-HotOp *hotoparr_get_next_op(HotOpArr *self);
-
-hpuint32 hotoparr_get_next_op_number(HotOpArr *self);
-
 typedef struct _HotVM HotVM;
 typedef void (*vm_user_putc)(HotVM *self, char c);
 
