@@ -17,7 +17,7 @@ extern zend_module_entry hotscript_module_entry;
 #endif
 
 
-#include "hotscript/hp_error_msg.h"
+#include "hotlib/hp_error_msg.h"
 #define PHP_HOTSCRIPT_VERSION HOTPOT_VERSION
 
 
