@@ -18,8 +18,7 @@ typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
 {
 	SCANNER_STACK scanner_stack;
-	TLIBC_ABSTRACT_WRITER *writer;
-	
+		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
 	//·ûºÅ±í
@@ -36,7 +35,7 @@ struct _DATA_PARSER
 
 void data_parser_init(DATA_PARSER *self, const char* root_dir);
 
-tint32 data_parser(DATA_PARSER *self, const char* file_name, TLIBC_ABSTRACT_WRITER *writer);
+tint32 data_parser(DATA_PARSER *self, const char* file_name);
 
 //do
 void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINITION *pn_definition);

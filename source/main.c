@@ -132,7 +132,7 @@ int main(tint32 argc, char **argv)
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
-		if(data_parser(&dp, argv[i], NULL) != E_TLIBC_NOERROR)
+		if(data_parser(&dp, argv[i]) != E_TLIBC_NOERROR)
 		{
 			goto ERROR_RET;
 		}

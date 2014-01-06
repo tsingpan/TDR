@@ -5,7 +5,6 @@
 
 #define YYERROR_VERBOSE
 #define GET_SELF TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
-#define GET_WRITER TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
 #define GET_DEFINITION TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
 #define YYLEX_PARAM ss
 %}
@@ -18,7 +17,6 @@
 #include "hotdata_check.h"
 #include "hotdata_parser.h"
 #include "hotdata_reduce.h"
-#include "syntactic_node_writer.h"
 #define YYSTYPE ParserNode
 
 #include <string.h>
@@ -123,24 +121,9 @@
 
 Document :
 	{
-		write_struct_begin(GET_WRITER, "ST_DOCUMENT");
-
-		write_field_begin(GET_WRITER, "file_name");
-		write_string(GET_WRITER, GET_SELF->file_name);
-		write_field_end(GET_WRITER, "file_name");
-
-		write_field_begin(GET_WRITER, "definition_list");
-		write_vector_begin(GET_WRITER);
 	}
 	DefinitionList
 	{
-		write_vector_end(GET_WRITER);
-		write_field_end(GET_WRITER, "definition_list");
-
-		write_field_begin(GET_WRITER, "definition_list_num");
-		write_tuint32(GET_WRITER, GET_SELF->definition_list_num);
-		write_field_end(GET_WRITER, "definition_list_num");
-		write_struct_end(GET_WRITER, "ST_DOCUMENT");
 	};
 
 DefinitionList :
@@ -148,9 +131,6 @@ DefinitionList :
 	{
 		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
 		{
-			write_vector_item_begin(GET_WRITER, GET_SELF->definition_list_num);
-			write_ST_DEFINITION(GET_WRITER, &GET_DEFINITION);
-			write_vector_item_end(GET_WRITER, GET_SELF->definition_list_num);
 			++GET_SELF->definition_list_num;
 		}		
 

@@ -8,7 +8,7 @@
 #ifndef _H_hotdata_syntactic_node_hd_TYPES
 #define _H_hotdata_syntactic_node_hd_TYPES
 #include "platform/tlibc_platform.h"
-#include "hp_config.h"
+#include "globals.h"
 #define MAX_COMMENT_LENGTH 1024
 typedef struct  _ST_UNIX_COMMENT
 {

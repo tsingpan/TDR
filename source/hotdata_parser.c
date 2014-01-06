@@ -10,13 +10,12 @@
 #include <stdarg.h>
 #include "globals.h"
 
-tint32 data_parser(DATA_PARSER *self, const char* file_name, TLIBC_ABSTRACT_WRITER *writer)
+tint32 data_parser(DATA_PARSER *self, const char* file_name)
 {
 	tint32 ret;
 	AlphaMap *alpha_map = NULL;
 	tuint32 i;
 
-	self->writer = writer;	
 	self->scanner_stack.result_num = 0;
 
 	alpha_map = alpha_map_new();
