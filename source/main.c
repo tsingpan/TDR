@@ -12,7 +12,7 @@
 #include "error/hp_error_msg_reader.h"
 #include "error/hp_error_msg.h"
 
-#include "parse/syntactic_node.h"
+#include "syntactic_node.h"
 
 
 void version()

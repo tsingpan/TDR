@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "data_description_l.h"
-#include "data_description_y.h"
+#include "tdata_l.h"
+#include "tdata_y.h"
 
 #include "platform/tlibc_platform.h"
 #include "error/hp_error_code.h"

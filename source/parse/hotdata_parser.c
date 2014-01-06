@@ -1,7 +1,7 @@
 #include "hotdata_parser.h"
-#include "data_description_y.h"
+#include "tdata_y.h"
 #include "error/hp_error_code.h"
-#include "data_description_l.h"
+#include "tdata_l.h"
 #include "hp_script_lex.h"
 #include "protocol/tlibc_abstract_writer.h"
 #include <errno.h>

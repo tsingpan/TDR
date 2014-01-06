@@ -17,10 +17,10 @@ source_group("generate" FILES ${GENERATE_FILE_LIST})
 FILE(GLOB_RECURSE FLEX_FILE *.re)
 FILE(GLOB_RECURSE BISON_FILE *.yy)
 
-set(FLEX_HEADER ${_BUILD_INCLUDE}/data_description_l.h)
-set(FLEX_OUTPUTS ${_BUILD_SOURCE}/data_description_l.c)
-set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/data_description_y.h)
-set(BISON_OUTPUTS ${_BUILD_SOURCE}/data_description_y.c)
+set(FLEX_HEADER ${_BUILD_INCLUDE}/tdata_l.h)
+set(FLEX_OUTPUTS ${_BUILD_SOURCE}/tdata_l.c)
+set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/tdata_y.h)
+set(BISON_OUTPUTS ${_BUILD_SOURCE}/tdata_y.c)
 
 
 #linux 需要创建目录，否则Flex和Bison无法生成文件
