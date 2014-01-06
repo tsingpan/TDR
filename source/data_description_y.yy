@@ -13,10 +13,10 @@
 %code requires
 {
 
-#include "hp_script_lex.h"
-#include "hotdata_check.h"
-#include "hotdata_parser.h"
-#include "hotdata_reduce.h"
+#include "parse/hp_script_lex.h"
+#include "parse/hotdata_check.h"
+#include "parse/hotdata_parser.h"
+#include "parse/hotdata_reduce.h"
 #define YYSTYPE ParserNode
 
 #include <string.h>

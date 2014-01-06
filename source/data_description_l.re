@@ -4,8 +4,8 @@
 #include "data_description_y.h"
 
 #include "platform/tlibc_platform.h"
-#include "hp_error_code.h"
-#include "hp_script_lex.h"
+#include "error/hp_error_code.h"
+#include "parse/hp_script_lex.h"
 
 #include <errno.h>
 		

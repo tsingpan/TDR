@@ -1,17 +1,18 @@
-#include "hp_error_code.h"
+#include "error/hp_error_code.h"
 #include "globals.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "hotdata_parser.h"
+#include <io.h>
+#include "parse/hotdata_parser.h"
 #include "protocol/tlibc_xml_writer.h"
 #include "protocol/tlibc_xml_reader.h"
 
-#include "hp_error_msg_reader.h"
-#include "hp_error_msg.h"
+#include "error/hp_error_msg_reader.h"
+#include "error/hp_error_msg.h"
 
-#include "syntactic_node.h"
+#include "parse/syntactic_node.h"
 
 
 void version()

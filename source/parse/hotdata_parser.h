@@ -9,7 +9,7 @@
 #include "protocol/tlibc_abstract_writer.h"
 
 #include "datrie/trie.h"
-#include "hp_error_msg.h"
+#include "error/hp_error_msg.h"
 
 
 #include "parser_node.h"

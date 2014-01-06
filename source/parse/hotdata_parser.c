@@ -1,6 +1,6 @@
 #include "hotdata_parser.h"
 #include "data_description_y.h"
-#include "hp_error_code.h"
+#include "error/hp_error_code.h"
 #include "data_description_l.h"
 #include "hp_script_lex.h"
 #include "protocol/tlibc_abstract_writer.h"
