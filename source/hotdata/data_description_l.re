@@ -3,7 +3,7 @@
 #include "data_description_l.h"
 #include "data_description_y.h"
 
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_script_lex.h"
 
@@ -17,7 +17,7 @@ static void ddekit_reserved_keyword(const char* keyword)
 }
 
 
-hpint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
+tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)

@@ -7,11 +7,11 @@
 
 #ifndef _H_hotlib_hp_config_hd_WRITER_HEADER
 #define _H_hotlib_hp_config_hd_WRITER_HEADER
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 #include "hotlib/hp_error_code.h"
-#include "hotprotocol/hp_abstract_writer.h"
+#include "protocol/tlibc_abstract_writer.h"
 #include "hotlib/hp_config.h"
-HP_ERROR_CODE write_HPType_name(HPAbstractWriter *self, HPType data);
-HP_ERROR_CODE write_HPType_number(HPAbstractWriter *self, HPType data);
-HP_ERROR_CODE write_HPType(HPAbstractWriter *self, HPType data);
+TLIBC_ERROR_CODE write_HPType_name(TLIBC_ABSTRACT_WRITER *self, HPType data);
+TLIBC_ERROR_CODE write_HPType_number(TLIBC_ABSTRACT_WRITER *self, HPType data);
+TLIBC_ERROR_CODE write_HPType(TLIBC_ABSTRACT_WRITER *self, HPType data);
 #endif//_H_hotlib_hp_config_hd_WRITER_HEADER

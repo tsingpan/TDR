@@ -3,18 +3,18 @@
 #include "hotlib/hp_error_code.h"
 #include "data_description_l.h"
 #include "hotlib/hp_script_lex.h"
-#include "hotprotocol/hp_abstract_writer.h"
+#include "protocol/tlibc_abstract_writer.h"
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include "globals.h"
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer)
+tint32 data_parser(DATA_PARSER *self, const char* file_name, TLIBC_ABSTRACT_WRITER *writer)
 {
-	hpint32 ret;
+	tint32 ret;
 	AlphaMap *alpha_map = NULL;
-	hpuint32 i;
+	tuint32 i;
 
 	self->writer = writer;	
 	self->scanner_stack.result_num = 0;
@@ -30,15 +30,15 @@ hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *
 
 	if(file_name == NULL)
 	{
-		self->scanner_stack.result[0] = E_HP_ERROR;
+		self->scanner_stack.result[0] = E_TLIBC_ERROR;
 		self->scanner_stack.result_num = 1;		
 		goto done;
 	}
 
 	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
-	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TLIBC_NOERROR)
 	{
-		self->scanner_stack.result[0] = E_HP_ERROR;
+		self->scanner_stack.result[0] = E_TLIBC_ERROR;
 		self->scanner_stack.result_num = 1;		
 		goto done;
 	}
@@ -54,27 +54,27 @@ done:
 
 	if(self->scanner_stack.result_num == 0)
 	{
-		return E_HP_NOERROR;
+		return E_TLIBC_NOERROR;
 	}
 	else
 	{
-		return E_HP_ERROR;
+		return E_TLIBC_ERROR;
 	}
 }
 
 
 void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
-	DATA_PARSER *self = HP_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
+	DATA_PARSER *self = TLIBC_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
 	va_list ap;
 
 	va_start(ap, s);
-	scanner_stack_errorap(&self->scanner_stack, yylloc, E_HP_SYNTAX_ERROR, s, ap);
+	scanner_stack_errorap(&self->scanner_stack, yylloc, E_TLIBC_SYNTAX_ERROR, s, ap);
 	va_end(ap);
 }
 
 
-hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
+tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 
@@ -84,7 +84,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 		{
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
 				break;
 			}
 			if(*YYCURSOR == '\\')
@@ -135,16 +135,16 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			}
 			else
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
 			}
 			break;
 		}
 	case tok_string:
 		{
-			hpuint32 len = 0;
+			tuint32 len = 0;
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
 				break;
 			}
 			yylval->sn_string = YYCURSOR;
@@ -171,7 +171,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			}
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
 			}
 			else
 			{				
@@ -204,7 +204,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{	
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
 				}
 			}
 			break;
@@ -216,7 +216,7 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
 			}
 			break;
 		}
@@ -232,14 +232,14 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_HP_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
 				}
 			}
 			break;
 		}
 	case tok_unixcomment:
 		{
-			hpuint32 len = yyleng;
+			tuint32 len = yyleng;
 			yylval->sn_tok_unixcomment = yytext + 1;
 			while(len - 1 > 0)
 			{
@@ -314,13 +314,13 @@ hpint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YY
 		}
 	}
 
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 }
 
-extern hpint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
+extern tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
-	DATA_PARSER *jp = HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
+	DATA_PARSER *jp = TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
 	int ret = 0;
 	
 	for(;;)
@@ -340,7 +340,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		}
 		else
 		{
-			if(get_token_yylval(jp, &ret, yylval_param, yylloc_param) != E_HP_NOERROR)
+			if(get_token_yylval(jp, &ret, yylval_param, yylloc_param) != E_TLIBC_NOERROR)
 			{
 				ret = -1;
 				break;
@@ -368,11 +368,11 @@ void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINIT
 {
 	if(pn_definition->type == E_DT_IMPORT)
 	{
-		char file_name[HP_MAX_FILE_PATH_LENGTH];
-		snprintf(file_name, HP_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
-		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_HP_NOERROR)
+		char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
+		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
+		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TLIBC_NOERROR)
 		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_HP_CAN_NOT_OPEN_FILE, file_name);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_TLIBC_CAN_NOT_OPEN_FILE, file_name);
 		}
 	}
 }

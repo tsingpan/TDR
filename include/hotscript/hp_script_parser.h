@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg.h"
 #include "hotlib/hp_script_lex.h"
@@ -14,16 +14,16 @@
 typedef struct _SP_NODE
 {
 	int token;
-	hpbytes bytes;
-	hpuint32 ui32;
+	tbytes bytes;
+	tuint32 ui32;
 	char file_name[HS_MAX_NAME_LENGTH];
 
 	//以下几个玩意记录需要回溯处理的指令	
-	hpuint32 call_field_begin_index;
-	hpuint32 field_begin_index;
-	hpuint32 vector_begin_index;
-	hpuint32 vector_item_begin_index;
-	hpuint32 echo_field_index;	
+	tuint32 call_field_begin_index;
+	tuint32 field_begin_index;
+	tuint32 vector_begin_index;
+	tuint32 vector_item_begin_index;
+	tuint32 echo_field_index;	
 }SP_NODE;
 
 
@@ -39,14 +39,14 @@ struct tagSCRIPT_PARSER
 {
 	SCANNER_STACK scanner_stack;
 	E_SP_NODE_TYPE stack[MAX_SP_STACK_DEEP];
-	hpuint32 stack_num;
+	tuint32 stack_num;
 
 	HotOp *hotop;
 	size_t next_op;
 	size_t op_size;
 };
 
-hpint32 script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir,
+tint32 script_malloc(SCRIPT_PARSER *self, const char* file_name, const char* root_dir, const char *work_dir,
 					  HotOp *hotop, size_t hotop_size
 					  );
 

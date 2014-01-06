@@ -1,7 +1,7 @@
 #include "hotlib/hp_script_lex.h"
 #include "hotlib/hp_error_code.h"
 #include "hotlib/hp_error_msg_reader.h"
-#include "hotprotocol/hp_xml_reader.h"
+#include "protocol/tlibc_xml_reader.h"
 #include "hotlib/hp_error.h"
 #include <stdio.h>
 #include <string.h>
@@ -64,25 +64,25 @@ SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-static hpint32 fix_path(char* _path, hpuint32 *_len)
+static tint32 fix_path(char* _path, tuint32 *_len)
 {	
-	char path[HP_MAX_FILE_PATH_LENGTH];
-	char *p[HP_MAX_FILE_PATH_LENGTH];
-	hpuint32 ptail = 0;
-	hpint32 first = 1;
-	hpuint32 i = 0;
-	hpuint32 j = 0;
-	hpuint32 len = 0;
-	hpuint32 tlen = 0;
+	char path[TLIBC_MAX_FILE_PATH_LENGTH];
+	char *p[TLIBC_MAX_FILE_PATH_LENGTH];
+	tuint32 ptail = 0;
+	tint32 first = 1;
+	tuint32 i = 0;
+	tuint32 j = 0;
+	tuint32 len = 0;
+	tuint32 tlen = 0;
 
 	if((_path == NULL) || (_len == NULL))
 	{
-		return E_HP_ERROR;
+		return E_TLIBC_ERROR;
 	}
-	len = (hpuint32)strlen(_path);
+	len = (tuint32)strlen(_path);
 
-	snprintf(path, HP_MAX_FILE_PATH_LENGTH, "%s", _path);
-	if(HP_FILE_SEPARATOR == '/')
+	snprintf(path, TLIBC_MAX_FILE_PATH_LENGTH, "%s", _path);
+	if(TLIBC_FILE_SEPARATOR == '/')
 	{
 		if(_path[0] == '/')
 		{
@@ -109,7 +109,7 @@ static hpint32 fix_path(char* _path, hpuint32 *_len)
 	{
 		if(p[i][0] == '.')
 		{
-			tlen = (hpuint32)strlen(p[i]);			
+			tlen = (tuint32)strlen(p[i]);			
 			for(j = i - 1; (tlen > 1) && (j >= 0); --j)
 			{
 				if(p[j][0] == '.')
@@ -141,20 +141,20 @@ static hpint32 fix_path(char* _path, hpuint32 *_len)
 
 	for(i = 0; i < ptail; ++i)
 	{
-		if((len > 0) && (strlen(p[i]) > 0) && (_path[len - 1] != HP_FILE_SEPARATOR))
+		if((len > 0) && (strlen(p[i]) > 0) && (_path[len - 1] != TLIBC_FILE_SEPARATOR))
 		{
 			if(len < *_len)
 			{
-				_path[len++] += HP_FILE_SEPARATOR;
+				_path[len++] += TLIBC_FILE_SEPARATOR;
 			}
 			else
 			{
 				*_len = len;
-				return E_HP_ERROR;
+				return E_TLIBC_ERROR;
 			}
 		}
 
-		for(j = 0; j < (hpint32)strlen(p[i]); ++j)
+		for(j = 0; j < (tint32)strlen(p[i]); ++j)
 		{
 			if(len < *_len)
 			{
@@ -163,7 +163,7 @@ static hpint32 fix_path(char* _path, hpuint32 *_len)
 			else
 			{
 				*_len = len;
-				return E_HP_ERROR;
+				return E_TLIBC_ERROR;
 			}
 		}
 	}
@@ -173,17 +173,17 @@ static hpint32 fix_path(char* _path, hpuint32 *_len)
 		_path[len++] = 0;
 		*_len = len;
 	}
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 }
 
-hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state)
+tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
 	YYCTYPE* yy_start = self->buff_curr;
-	hpuint32 i = 0;
-	hpuint32 len = 0;
-	char realPath[HP_MAX_FILE_PATH_LENGTH];
+	tuint32 i = 0;
+	tuint32 len = 0;
+	char realPath[TLIBC_MAX_FILE_PATH_LENGTH];
 
 	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
 	{
@@ -202,9 +202,9 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	{
 		for(i = 0; i < self->include_path_tail; ++i)
 		{
-			snprintf(realPath, HP_MAX_FILE_PATH_LENGTH, "%s%c%s", self->include_path[i], HP_FILE_SEPARATOR, file_name);
-			len = HP_MAX_FILE_PATH_LENGTH;
-			if(fix_path(realPath, &len) == E_HP_NOERROR)
+			snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->include_path[i], TLIBC_FILE_SEPARATOR, file_name);
+			len = TLIBC_MAX_FILE_PATH_LENGTH;
+			if(fix_path(realPath, &len) == E_TLIBC_NOERROR)
 			{
 				fin = fopen(realPath, "r");
 				if(fin != NULL)
@@ -236,13 +236,13 @@ hpint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int 
 	scanner_init(&self->stack[self->stack_num], yy_start, self->buff_curr, state, file_name);
 	++(self->stack_num);
 
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 F_ERROR_RET:
 	fclose(fin);
 ERROR_RET:
-	return E_HP_ERROR;
+	return E_TLIBC_ERROR;
 }
-hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state)
+tint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state)
 {
 	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
 	{
@@ -252,13 +252,13 @@ hpint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, 
 	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);
 
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 ERROR_RET:
-	return E_HP_ERROR;
+	return E_TLIBC_ERROR;
 }
 
 
-hpint32 scanner_stack_pop(SCANNER_STACK *self)
+tint32 scanner_stack_pop(SCANNER_STACK *self)
 {
 	SCANNER *scanner = scanner_stack_get_scanner(self);
 
@@ -269,9 +269,9 @@ hpint32 scanner_stack_pop(SCANNER_STACK *self)
 
 	scanner_fini(scanner);
 	--(self->stack_num);
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 ERROR_RET:
-	return E_HP_ERROR;
+	return E_TLIBC_ERROR;
 }
 
 void scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
@@ -285,29 +285,29 @@ void scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
 	hp_error_init(&self->error_msg_library);
 }
 
-hpint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path)
+tint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path)
 {
 	if(self->include_path_tail >= MAX_INCLUDE_PATH)
 	{
 		goto ERROR_RET;
 	}
-	strncpy(self->include_path[self->include_path_tail], path, HP_MAX_FILE_PATH_LENGTH);
+	strncpy(self->include_path[self->include_path_tail], path, TLIBC_MAX_FILE_PATH_LENGTH);
 	++self->include_path_tail;
 
-	return E_HP_NOERROR;
+	return E_TLIBC_NOERROR;
 ERROR_RET:
-	return E_HP_ERROR;
+	return E_TLIBC_ERROR;
 }
 
-hpuint32 scanner_stack_get_num(SCANNER_STACK *self)
+tuint32 scanner_stack_get_num(SCANNER_STACK *self)
 {
 	return self->stack_num;
 }
 
 
-void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, const char *s, va_list ap) 
+void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TLIBC_ERROR_CODE result, const char *s, va_list ap) 
 {
-	hpuint32 len;
+	tuint32 len;
 
 	if(self->result_num >= MAX_RESULT_NUM)
 	{
@@ -341,7 +341,7 @@ done:
 
 
 
-void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, HP_ERROR_CODE result, ...) 
+void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, TLIBC_ERROR_CODE result, ...) 
 {
 	va_list ap;
 	const char *error_str = NULL;

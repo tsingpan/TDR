@@ -2,7 +2,7 @@
 #define _H_HOTDATA_REDUCE
 
 
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 
 #include "hotdata_parser.h"
 
@@ -12,7 +12,7 @@ void dp_reduce_Definition_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEF
 
 void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_DEFINITION *pn_current, const PN_TYPEDEF* pn_typedef);
 
-void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring str);
+void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const tstring str);
 
 void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier);
 
@@ -22,23 +22,23 @@ void dp_reduce_ContainerType_tok_t_string(DATA_PARSER *self, const YYLTYPE *yyll
 
 void dp_reduce_SimpleType(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *current, const SN_SIMPLE_TYPE type);
 
-void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier);
+void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tbytes sn_identifier);
 
 void dp_reduce_Value_tok_char(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const PN_CHAR pn_char);
 
-void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64);
+void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tint64 i64);
 
-void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64);
+void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tint64 i64);
 
-void dp_reduce_Value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64);
+void dp_reduce_Value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tuint64 ui64);
 
-void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64);
+void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tuint64 ui64);
 
 void dp_reduce_Value_tok_double(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const double d);
 
-void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbool b);
+void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tbool b);
 
-void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpstring str);
+void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tstring str);
 
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONST* current, const PN_TYPE *type, const PN_IDENTIFIER *identifier, const PN_VALUE *val);

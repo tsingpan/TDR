@@ -4,9 +4,9 @@
 
 
 #define YYERROR_VERBOSE
-#define GET_SELF HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
-#define GET_WRITER HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
-#define GET_DEFINITION HP_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
+#define GET_SELF TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
+#define GET_WRITER TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->writer
+#define GET_DEFINITION TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
 #define YYLEX_PARAM ss
 %}
 %locations
@@ -138,7 +138,7 @@ Document :
 		write_field_end(GET_WRITER, "definition_list");
 
 		write_field_begin(GET_WRITER, "definition_list_num");
-		write_hpuint32(GET_WRITER, GET_SELF->definition_list_num);
+		write_tuint32(GET_WRITER, GET_SELF->definition_list_num);
 		write_field_end(GET_WRITER, "definition_list_num");
 		write_struct_end(GET_WRITER, "ST_DOCUMENT");
 	};

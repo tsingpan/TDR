@@ -5,75 +5,76 @@
  *  @generated
  */
 
-#include "hotplatform/hp_platform.h"
-#include "hotlib/hp_config.h"
-#include "hotlib/hp_config_writer.h"
-HP_ERROR_CODE write_HPType_name(HPAbstractWriter *self, const HPType data)
+#include "platform/tlibc_platform.h"
+#include "protocol/tlibc_abstract_writer.h"
+#include "lib/tlibc_error_code.h"
+
+TLIBC_ERROR_CODE write_HPType_name(TLIBC_ABSTRACT_WRITER *self, const HPType data)
 {
     switch(data)
     {
-        case E_HP_INT8:
-            if(write_enum_name(self, "E_HP_INT8") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_INT8:
+            if(write_enum_name(self, "E_HP_INT8") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_INT16:
-            if(write_enum_name(self, "E_HP_INT16") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_INT16:
+            if(write_enum_name(self, "E_HP_INT16") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_INT32:
-            if(write_enum_name(self, "E_HP_INT32") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_INT32:
+            if(write_enum_name(self, "E_HP_INT32") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_INT64:
-            if(write_enum_name(self, "E_HP_INT64") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_INT64:
+            if(write_enum_name(self, "E_HP_INT64") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_UINT8:
-            if(write_enum_name(self, "E_HP_UINT8") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_UINT8:
+            if(write_enum_name(self, "E_HP_UINT8") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_UINT16:
-            if(write_enum_name(self, "E_HP_UINT16") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_UINT16:
+            if(write_enum_name(self, "E_HP_UINT16") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_UINT32:
-            if(write_enum_name(self, "E_HP_UINT32") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_UINT32:
+            if(write_enum_name(self, "E_HP_UINT32") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_UINT64:
-            if(write_enum_name(self, "E_HP_UINT64") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_UINT64:
+            if(write_enum_name(self, "E_HP_UINT64") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_CHAR:
-            if(write_enum_name(self, "E_HP_CHAR") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_CHAR:
+            if(write_enum_name(self, "E_HP_CHAR") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_BYTES:
-            if(write_enum_name(self, "E_HP_BYTES") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_BYTES:
+            if(write_enum_name(self, "E_HP_BYTES") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_STRING:
-            if(write_enum_name(self, "E_HP_STRING") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_STRING:
+            if(write_enum_name(self, "E_HP_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_DOUBLE:
-            if(write_enum_name(self, "E_HP_DOUBLE") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_DOUBLE:
+            if(write_enum_name(self, "E_HP_DOUBLE") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_BOOL:
-            if(write_enum_name(self, "E_HP_BOOL") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_BOOL:
+            if(write_enum_name(self, "E_HP_BOOL") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_NULL:
-            if(write_enum_name(self, "E_HP_NULL") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_NULL:
+            if(write_enum_name(self, "E_HP_NULL") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_VECTOR:
-            if(write_enum_name(self, "E_HP_VECTOR") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_VECTOR:
+            if(write_enum_name(self, "E_HP_VECTOR") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
-        case E_HP_OBJECT:
-            if(write_enum_name(self, "E_HP_OBJECT") != E_HP_NOERROR) goto ERROR_RET;
+        case E_TLIBC_OBJECT:
+            if(write_enum_name(self, "E_HP_OBJECT") != E_TLIBC_NOERROR) goto ERROR_RET;
             break;
     }
-    return E_HP_NOERROR;
+    return E_TLIBC_NOERROR;
 ERROR_RET:
-    return E_HP_ERROR;
+    return E_TLIBC_ERROR;
 }
-HP_ERROR_CODE write_HPType_number(HPAbstractWriter *self, const HPType data)
+TLIBC_ERROR_CODE write_HPType_number(TLIBC_ABSTRACT_WRITER *self, const HPType data)
 {
-    return write_enum_number(self, data);
+    return write_enum_number(self, (tint32)data);
 }
-HP_ERROR_CODE write_HPType(HPAbstractWriter *self, const HPType data)
+TLIBC_ERROR_CODE write_HPType(TLIBC_ABSTRACT_WRITER *self, const HPType data)
 {
-    if(write_HPType_name(self, data) != E_HP_NOERROR) goto ERROR_RET;
-    if(write_HPType_number(self, data) != E_HP_NOERROR) goto ERROR_RET;
-    return E_HP_NOERROR;
+    if(write_HPType_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;
+    if(write_HPType_number(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;
+    return E_TLIBC_NOERROR;
 ERROR_RET:
-    return E_HP_ERROR;
+    return E_TLIBC_ERROR;
 }

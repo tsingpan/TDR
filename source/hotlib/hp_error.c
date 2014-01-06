@@ -1,13 +1,13 @@
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 #include "hotlib/hp_error.h"
-#include "hotprotocol/hp_xml_reader.h"
+#include "protocol/tlibc_xml_reader.h"
 #include "hotlib/hp_error_msg_reader.h"
 
 #include <stdio.h>
 
-const char* hp_error_search_msg(const HP_ERROR_MSG_LIBRARY *hp_error_msg_library, HP_ERROR_CODE sid)
+const char* hp_error_search_msg(const TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library, TLIBC_ERROR_CODE sid)
 {
-	hpuint32 l, r, m;
+	tuint32 l, r, m;
 
 	l = 0;
 	r = hp_error_msg_library->error_list_num;
@@ -33,13 +33,13 @@ ERROR_RET:
 	return NULL;
 }
 
-static void sort_library(HP_ERROR_MSG_LIBRARY *hp_error_msg_library)
+static void sort_library(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library)
 {
-	hpuint32 i,j;
+	tuint32 i,j;
 	for(i = 0; i < hp_error_msg_library->error_list_num; ++i)
 	{
-		HP_ERROR_MSG tmp;
-		hpuint32 min_j = i;
+		TLIBC_ERROR_MSG tmp;
+		tuint32 min_j = i;
 
 		for(j = i + 1; j < hp_error_msg_library->error_list_num; ++j)
 		{
@@ -57,33 +57,33 @@ static void sort_library(HP_ERROR_MSG_LIBRARY *hp_error_msg_library)
 	}
 }
 
-void hp_error_init(HP_ERROR_MSG_LIBRARY *hp_error_msg_library)
+void hp_error_init(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library)
 {
 	hp_error_msg_library->error_list_num = 0;
 }
 
-HP_ERROR_CODE hp_error_load_if_first(HP_ERROR_MSG_LIBRARY *hp_error_msg_library, const char *root_dir)
+TLIBC_ERROR_CODE hp_error_load_if_first(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library, const char *root_dir)
 {
-	char language_path[HP_MAX_FILE_PATH_LENGTH];
-	HP_XML_READER xml_reader;
+	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
+	TLIBC_XML_READER xml_reader;
 	FILE* fin_xml;
-	HP_ERROR_CODE ret = E_HP_NOERROR;
+	TLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;
 
 	if(hp_error_msg_library->error_list_num != 0)
 	{
 		goto done;
 	}
-	snprintf(language_path, HP_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR, HP_FILE_SEPARATOR);
+	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 	fin_xml = fopen(language_path, "r");
 	if(fin_xml == NULL)
 	{
-		ret = E_HP_CAN_NOT_OPEN_FILE;
+		ret = E_TLIBC_CAN_NOT_OPEN_FILE;
 		goto done;
 	}
 
 	xml_reader_init(&xml_reader, fin_xml);
-	ret = read_HP_ERROR_MSG_LIBRARY(&xml_reader.super, hp_error_msg_library);
-	if(ret != E_HP_NOERROR)
+	ret = read_TLIBC_ERROR_MSG_LIBRARY(&xml_reader.super, hp_error_msg_library);
+	if(ret != E_TLIBC_NOERROR)
 	{
 		goto f_done;
 	}	

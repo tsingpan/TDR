@@ -2,10 +2,6 @@ project(HotPot)
 
 cmake_minimum_required(VERSION 2.8)
 
-if(WIN32)
-option(BUILD_HotScript_PHP "only win32" 0)
-ENDIF()
-
 IF (CMAKE_BUILD_TYPE STREQUAL "")
     SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
@@ -18,6 +14,7 @@ ELSE()
 	SET(CMAKE_C_FLAGS_RELEASE "-O2 -Wall")
 ENDIF()
 
+SET(CMAKE_MODULE_PATH "$ENV{TLibC_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
 set(DIR_HOME ${HotPot_SOURCE_DIR})
 set(BUILD_HOME ${HotPot_BINARY_DIR})
 set(LIBRARY_PATH "lib")

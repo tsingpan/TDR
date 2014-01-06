@@ -2,11 +2,11 @@
 #define _H_HOTDATA_PARSER
 
 
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 
 #include <stdio.h>
 #include "hotlib/hp_script_lex.h"
-#include "hotprotocol/hp_abstract_writer.h"
+#include "protocol/tlibc_abstract_writer.h"
 
 #include "datrie/trie.h"
 #include "hotlib/hp_error_msg.h"
@@ -18,7 +18,7 @@ typedef struct _DATA_PARSER DATA_PARSER;
 struct _DATA_PARSER 
 {
 	SCANNER_STACK scanner_stack;
-	HPAbstractWriter *writer;
+	TLIBC_ABSTRACT_WRITER *writer;
 	
 	char file_name[MAX_FILE_NAME_LENGTH];
 
@@ -29,14 +29,14 @@ struct _DATA_PARSER
 	PN_DEFINITION pn_definition;
 	PN_FIELD_LIST pn_field_list;
 	PN_FIELD pn_field;
-	hpuint32 definition_list_num;
-	hpbool in_union;
-	hpbool in_struct;
+	tuint32 definition_list_num;
+	tbool in_union;
+	tbool in_struct;
 };
 
 void data_parser_init(DATA_PARSER *self, const char* root_dir);
 
-hpint32 data_parser(DATA_PARSER *self, const char* file_name, HPAbstractWriter *writer);
+tint32 data_parser(DATA_PARSER *self, const char* file_name, TLIBC_ABSTRACT_WRITER *writer);
 
 //do
 void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINITION *pn_definition);

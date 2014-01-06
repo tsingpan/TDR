@@ -7,52 +7,52 @@
 
 #ifndef _H_hotdata_syntactic_node_hd_WRITER_HEADER
 #define _H_hotdata_syntactic_node_hd_WRITER_HEADER
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 #include "hotlib/hp_error_code.h"
-#include "hotprotocol/hp_abstract_writer.h"
+#include "protocol/tlibc_abstract_writer.h"
 #include "hotdata/syntactic_node.h"
 #include "hotlib/hp_config_writer.h"
-HP_ERROR_CODE write_ST_UNIX_COMMENT(HPAbstractWriter *self, const ST_UNIX_COMMENT *data);
-HP_ERROR_CODE write_SN_VALUE_TYPE_name(HPAbstractWriter *self, SN_VALUE_TYPE data);
-HP_ERROR_CODE write_SN_VALUE_TYPE_number(HPAbstractWriter *self, SN_VALUE_TYPE data);
-HP_ERROR_CODE write_SN_VALUE_TYPE(HPAbstractWriter *self, SN_VALUE_TYPE data);
-HP_ERROR_CODE write_UN_VALUE(HPAbstractWriter *self, const UN_VALUE *data , SN_VALUE_TYPE s);
-HP_ERROR_CODE write_ST_VALUE(HPAbstractWriter *self, const ST_VALUE *data);
-HP_ERROR_CODE write_SN_SIMPLE_TYPE_name(HPAbstractWriter *self, SN_SIMPLE_TYPE data);
-HP_ERROR_CODE write_SN_SIMPLE_TYPE_number(HPAbstractWriter *self, SN_SIMPLE_TYPE data);
-HP_ERROR_CODE write_SN_SIMPLE_TYPE(HPAbstractWriter *self, SN_SIMPLE_TYPE data);
-HP_ERROR_CODE write_SN_CONTAINER_TYPE_name(HPAbstractWriter *self, SN_CONTAINER_TYPE data);
-HP_ERROR_CODE write_SN_CONTAINER_TYPE_number(HPAbstractWriter *self, SN_CONTAINER_TYPE data);
-HP_ERROR_CODE write_SN_CONTAINER_TYPE(HPAbstractWriter *self, SN_CONTAINER_TYPE data);
-HP_ERROR_CODE write_SN_TYPE_name(HPAbstractWriter *self, SN_TYPE data);
-HP_ERROR_CODE write_SN_TYPE_number(HPAbstractWriter *self, SN_TYPE data);
-HP_ERROR_CODE write_SN_TYPE(HPAbstractWriter *self, SN_TYPE data);
-HP_ERROR_CODE write_ST_TYPE(HPAbstractWriter *self, const ST_TYPE *data);
-HP_ERROR_CODE write_ST_Parameter(HPAbstractWriter *self, const ST_Parameter *data);
-HP_ERROR_CODE write_ST_Parameters(HPAbstractWriter *self, const ST_Parameters *data);
-HP_ERROR_CODE write_ST_ARGUMENTS(HPAbstractWriter *self, const ST_ARGUMENTS *data);
-HP_ERROR_CODE write_ST_EXPRESSION_OPER_name(HPAbstractWriter *self, ST_EXPRESSION_OPER data);
-HP_ERROR_CODE write_ST_EXPRESSION_OPER_number(HPAbstractWriter *self, ST_EXPRESSION_OPER data);
-HP_ERROR_CODE write_ST_EXPRESSION_OPER(HPAbstractWriter *self, ST_EXPRESSION_OPER data);
-HP_ERROR_CODE write_ST_Expression(HPAbstractWriter *self, const ST_Expression *data);
-HP_ERROR_CODE write_ST_CONDITION(HPAbstractWriter *self, const ST_CONDITION *data);
-HP_ERROR_CODE write_ST_FIELD(HPAbstractWriter *self, const ST_FIELD *data);
-HP_ERROR_CODE write_TA_TYPE_name(HPAbstractWriter *self, TA_TYPE data);
-HP_ERROR_CODE write_TA_TYPE_number(HPAbstractWriter *self, TA_TYPE data);
-HP_ERROR_CODE write_TA_TYPE(HPAbstractWriter *self, TA_TYPE data);
-HP_ERROR_CODE write_ST_TypeAnnotation(HPAbstractWriter *self, const ST_TypeAnnotation *data);
-HP_ERROR_CODE write_ST_TypeAnnotations(HPAbstractWriter *self, const ST_TypeAnnotations *data);
-HP_ERROR_CODE write_ST_Import(HPAbstractWriter *self, const ST_Import *data);
-HP_ERROR_CODE write_ST_Const(HPAbstractWriter *self, const ST_Const *data);
-HP_ERROR_CODE write_ST_ENUM_DEF(HPAbstractWriter *self, const ST_ENUM_DEF *data);
-HP_ERROR_CODE write_ST_ENUM(HPAbstractWriter *self, const ST_ENUM *data);
-HP_ERROR_CODE write_ST_FIELD_LIST(HPAbstractWriter *self, const ST_FIELD_LIST *data);
-HP_ERROR_CODE write_ST_STRUCT(HPAbstractWriter *self, const ST_STRUCT *data);
-HP_ERROR_CODE write_ST_UNION(HPAbstractWriter *self, const ST_UNION *data);
-HP_ERROR_CODE write_ST_TYPEDEF(HPAbstractWriter *self, const ST_TYPEDEF *data);
-HP_ERROR_CODE write_EN_DEFINITION_TYPE_name(HPAbstractWriter *self, EN_DEFINITION_TYPE data);
-HP_ERROR_CODE write_EN_DEFINITION_TYPE_number(HPAbstractWriter *self, EN_DEFINITION_TYPE data);
-HP_ERROR_CODE write_EN_DEFINITION_TYPE(HPAbstractWriter *self, EN_DEFINITION_TYPE data);
-HP_ERROR_CODE write_UN_DEFINITION(HPAbstractWriter *self, const UN_DEFINITION *data , EN_DEFINITION_TYPE s);
-HP_ERROR_CODE write_ST_DEFINITION(HPAbstractWriter *self, const ST_DEFINITION *data);
+TLIBC_ERROR_CODE write_ST_UNIX_COMMENT(TLIBC_ABSTRACT_WRITER *self, const ST_UNIX_COMMENT *data);
+TLIBC_ERROR_CODE write_SN_VALUE_TYPE_name(TLIBC_ABSTRACT_WRITER *self, SN_VALUE_TYPE data);
+TLIBC_ERROR_CODE write_SN_VALUE_TYPE_number(TLIBC_ABSTRACT_WRITER *self, SN_VALUE_TYPE data);
+TLIBC_ERROR_CODE write_SN_VALUE_TYPE(TLIBC_ABSTRACT_WRITER *self, SN_VALUE_TYPE data);
+TLIBC_ERROR_CODE write_UN_VALUE(TLIBC_ABSTRACT_WRITER *self, const UN_VALUE *data , SN_VALUE_TYPE s);
+TLIBC_ERROR_CODE write_ST_VALUE(TLIBC_ABSTRACT_WRITER *self, const ST_VALUE *data);
+TLIBC_ERROR_CODE write_SN_SIMPLE_TYPE_name(TLIBC_ABSTRACT_WRITER *self, SN_SIMPLE_TYPE data);
+TLIBC_ERROR_CODE write_SN_SIMPLE_TYPE_number(TLIBC_ABSTRACT_WRITER *self, SN_SIMPLE_TYPE data);
+TLIBC_ERROR_CODE write_SN_SIMPLE_TYPE(TLIBC_ABSTRACT_WRITER *self, SN_SIMPLE_TYPE data);
+TLIBC_ERROR_CODE write_SN_CONTAINER_TYPE_name(TLIBC_ABSTRACT_WRITER *self, SN_CONTAINER_TYPE data);
+TLIBC_ERROR_CODE write_SN_CONTAINER_TYPE_number(TLIBC_ABSTRACT_WRITER *self, SN_CONTAINER_TYPE data);
+TLIBC_ERROR_CODE write_SN_CONTAINER_TYPE(TLIBC_ABSTRACT_WRITER *self, SN_CONTAINER_TYPE data);
+TLIBC_ERROR_CODE write_SN_TYPE_name(TLIBC_ABSTRACT_WRITER *self, SN_TYPE data);
+TLIBC_ERROR_CODE write_SN_TYPE_number(TLIBC_ABSTRACT_WRITER *self, SN_TYPE data);
+TLIBC_ERROR_CODE write_SN_TYPE(TLIBC_ABSTRACT_WRITER *self, SN_TYPE data);
+TLIBC_ERROR_CODE write_ST_TYPE(TLIBC_ABSTRACT_WRITER *self, const ST_TYPE *data);
+TLIBC_ERROR_CODE write_ST_Parameter(TLIBC_ABSTRACT_WRITER *self, const ST_Parameter *data);
+TLIBC_ERROR_CODE write_ST_Parameters(TLIBC_ABSTRACT_WRITER *self, const ST_Parameters *data);
+TLIBC_ERROR_CODE write_ST_ARGUMENTS(TLIBC_ABSTRACT_WRITER *self, const ST_ARGUMENTS *data);
+TLIBC_ERROR_CODE write_ST_EXPRESSION_OPER_name(TLIBC_ABSTRACT_WRITER *self, ST_EXPRESSION_OPER data);
+TLIBC_ERROR_CODE write_ST_EXPRESSION_OPER_number(TLIBC_ABSTRACT_WRITER *self, ST_EXPRESSION_OPER data);
+TLIBC_ERROR_CODE write_ST_EXPRESSION_OPER(TLIBC_ABSTRACT_WRITER *self, ST_EXPRESSION_OPER data);
+TLIBC_ERROR_CODE write_ST_Expression(TLIBC_ABSTRACT_WRITER *self, const ST_Expression *data);
+TLIBC_ERROR_CODE write_ST_CONDITION(TLIBC_ABSTRACT_WRITER *self, const ST_CONDITION *data);
+TLIBC_ERROR_CODE write_ST_FIELD(TLIBC_ABSTRACT_WRITER *self, const ST_FIELD *data);
+TLIBC_ERROR_CODE write_TA_TYPE_name(TLIBC_ABSTRACT_WRITER *self, TA_TYPE data);
+TLIBC_ERROR_CODE write_TA_TYPE_number(TLIBC_ABSTRACT_WRITER *self, TA_TYPE data);
+TLIBC_ERROR_CODE write_TA_TYPE(TLIBC_ABSTRACT_WRITER *self, TA_TYPE data);
+TLIBC_ERROR_CODE write_ST_TypeAnnotation(TLIBC_ABSTRACT_WRITER *self, const ST_TypeAnnotation *data);
+TLIBC_ERROR_CODE write_ST_TypeAnnotations(TLIBC_ABSTRACT_WRITER *self, const ST_TypeAnnotations *data);
+TLIBC_ERROR_CODE write_ST_Import(TLIBC_ABSTRACT_WRITER *self, const ST_Import *data);
+TLIBC_ERROR_CODE write_ST_Const(TLIBC_ABSTRACT_WRITER *self, const ST_Const *data);
+TLIBC_ERROR_CODE write_ST_ENUM_DEF(TLIBC_ABSTRACT_WRITER *self, const ST_ENUM_DEF *data);
+TLIBC_ERROR_CODE write_ST_ENUM(TLIBC_ABSTRACT_WRITER *self, const ST_ENUM *data);
+TLIBC_ERROR_CODE write_ST_FIELD_LIST(TLIBC_ABSTRACT_WRITER *self, const ST_FIELD_LIST *data);
+TLIBC_ERROR_CODE write_ST_STRUCT(TLIBC_ABSTRACT_WRITER *self, const ST_STRUCT *data);
+TLIBC_ERROR_CODE write_ST_UNION(TLIBC_ABSTRACT_WRITER *self, const ST_UNION *data);
+TLIBC_ERROR_CODE write_ST_TYPEDEF(TLIBC_ABSTRACT_WRITER *self, const ST_TYPEDEF *data);
+TLIBC_ERROR_CODE write_EN_DEFINITION_TYPE_name(TLIBC_ABSTRACT_WRITER *self, EN_DEFINITION_TYPE data);
+TLIBC_ERROR_CODE write_EN_DEFINITION_TYPE_number(TLIBC_ABSTRACT_WRITER *self, EN_DEFINITION_TYPE data);
+TLIBC_ERROR_CODE write_EN_DEFINITION_TYPE(TLIBC_ABSTRACT_WRITER *self, EN_DEFINITION_TYPE data);
+TLIBC_ERROR_CODE write_UN_DEFINITION(TLIBC_ABSTRACT_WRITER *self, const UN_DEFINITION *data , EN_DEFINITION_TYPE s);
+TLIBC_ERROR_CODE write_ST_DEFINITION(TLIBC_ABSTRACT_WRITER *self, const ST_DEFINITION *data);
 #endif//_H_hotdata_syntactic_node_hd_WRITER_HEADER

@@ -1,61 +1,61 @@
-#ifndef _H_HP_PYTHON_WRITER
-#define _H_HP_PYTHON_WRITER
+#ifndef _H_TLIBC_PYTHON_WRITER
+#define _H_TLIBC_PYTHON_WRITER
 
-#include "hotplatform/hp_platform.h"
-#include "hotprotocol/hp_abstract_writer.h"
+#include "platform/tlibc_platform.h"
+#include "protocol/tlibc_abstract_writer.h"
 
 #include "Python.h"
 
 #define HP_PYTHON_MAX_STACK_NUM 1024
-typedef struct _HP_PYTHON_WRITER
+typedef struct _TLIBC_PYTHON_WRITER
 {
-	HPAbstractWriter super;
+	TLIBC_ABSTRACT_WRITER super;
 	PyObject *stack[HP_PYTHON_MAX_STACK_NUM];
-	hpuint32 stack_num;
-}HP_PYTHON_WRITER;
+	tuint32 stack_num;
+}TLIBC_PYTHON_WRITER;
 
 
-HP_API void python_writer_init(HP_PYTHON_WRITER *self);
+void python_writer_init(TLIBC_PYTHON_WRITER *self);
 
 //virtual functions
-HP_API hpint32 python_write_struct_begin(HPAbstractWriter *self, const char *struct_name);
+tint32 python_write_struct_begin(TLIBC_ABSTRACT_WRITER *self, const char *struct_name);
 
-HP_API hpint32 python_write_vector_begin(HPAbstractWriter *self);
+ tint32 python_write_vector_begin(TLIBC_ABSTRACT_WRITER *self);
 
-HP_API hpint32 python_write_field_begin(HPAbstractWriter *self, const char *var_name);
+ tint32 python_write_field_begin(TLIBC_ABSTRACT_WRITER *self, const char *var_name);
 
-HP_API hpint32 python_write_field_end(HPAbstractWriter *self, const char *var_name);
+ tint32 python_write_field_end(TLIBC_ABSTRACT_WRITER *self, const char *var_name);
 
-HP_API hpint32 python_write_vector_item_end(HPAbstractWriter *super, hpuint32 index);
+ tint32 python_write_vector_item_end(TLIBC_ABSTRACT_WRITER *super, tuint32 index);
 
-HP_API hpint32 python_write_enum_number(HPAbstractWriter *super, const int val);
+ tint32 python_write_enum_number(TLIBC_ABSTRACT_WRITER *super, const int val);
 
-HP_API hpint32 python_write_hpchar(HPAbstractWriter *super, const char val);
+ tint32 python_write_tchar(TLIBC_ABSTRACT_WRITER *super, const char val);
 
-HP_API hpint32 python_write_hpdouble(HPAbstractWriter *super, const double val);
+ tint32 python_write_tdouble(TLIBC_ABSTRACT_WRITER *super, const double val);
 
-HP_API hpint32 python_write_hpint8(HPAbstractWriter *super, const hpint8 val);
+ tint32 python_write_tint8(TLIBC_ABSTRACT_WRITER *super, const tint8 val);
 
-HP_API hpint32 python_write_hpint16(HPAbstractWriter *super, const hpint16 val);
+ tint32 python_write_tint16(TLIBC_ABSTRACT_WRITER *super, const tint16 val);
 
-HP_API hpint32 python_write_hpint32(HPAbstractWriter *super, const hpint32 val);
+ tint32 python_write_tint32(TLIBC_ABSTRACT_WRITER *super, const tint32 val);
 
-HP_API hpint32 python_write_hpint64(HPAbstractWriter *super, const hpint64 val);
+ tint32 python_write_tint64(TLIBC_ABSTRACT_WRITER *super, const tint64 val);
 
-HP_API hpint32 python_write_hpuint8(HPAbstractWriter *super, const hpuint8 val);
+ tint32 python_write_tuint8(TLIBC_ABSTRACT_WRITER *super, const tuint8 val);
 
-HP_API hpint32 python_write_hpuint16(HPAbstractWriter *super, const hpuint16 val);
+ tint32 python_write_tuint16(TLIBC_ABSTRACT_WRITER *super, const tuint16 val);
 
-HP_API hpint32 python_write_hpuint32(HPAbstractWriter *super, const hpuint32 val);
+ tint32 python_write_tuint32(TLIBC_ABSTRACT_WRITER *super, const tuint32 val);
 
-HP_API hpint32 python_write_hpuint64(HPAbstractWriter *super, const hpuint64 val);
+ tint32 python_write_tuint64(TLIBC_ABSTRACT_WRITER *super, const tuint64 val);
 
-HP_API hpint32 python_write_string(HPAbstractWriter *super, const hpchar* str);
+ tint32 python_write_string(TLIBC_ABSTRACT_WRITER *super, const tchar* str);
 
-HP_API hpint32 python_write_hpbool(HPAbstractWriter *super, const hpbool val);
+ tint32 python_write_tbool(TLIBC_ABSTRACT_WRITER *super, const tbool val);
 
-HP_API hpint32 python_write_null(HPAbstractWriter *super);
+ tint32 python_write_null(TLIBC_ABSTRACT_WRITER *super);
 
-HP_API hpint32 python_write_counter(HPAbstractWriter *super, const hpchar *name, const hpuint32 val);
+ tint32 python_write_counter(TLIBC_ABSTRACT_WRITER *super, const tchar *name, const tuint32 val);
 
-#endif//_H_HP_PYTHON_WRITER
+#endif//_H_TLIBC_PYTHON_WRITER

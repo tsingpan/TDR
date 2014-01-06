@@ -2,7 +2,7 @@
 #define _H_PARSER_NODE
 
 
-#include "hotplatform/hp_platform.h"
+#include "platform/tlibc_platform.h"
 
 #include "hotdata/syntactic_node.h"
 
@@ -13,11 +13,11 @@ typedef ST_Const PN_CONST;
 typedef ST_VALUE PN_VALUE;
 typedef ST_TYPE PN_TYPE;
 typedef ST_TYPEDEF PN_TYPEDEF;
-typedef hpchar PN_CHAR;
+typedef tchar PN_CHAR;
 typedef ST_Import PN_IMPORT;
-typedef hpbytes PN_IDENTIFIER;
-typedef hpdouble PN_TOK_DOUBLE;
-typedef hpstring PN_TOK_STRING;
+typedef tbytes PN_IDENTIFIER;
+typedef tdouble PN_TOK_DOUBLE;
+typedef tstring PN_TOK_STRING;
 typedef ST_ARGUMENTS PN_ARGUMENTS;
 typedef ST_TypeAnnotation PN_TypeAnnotation;
 typedef ST_TypeAnnotations PN_TypeAnnotations;
@@ -45,13 +45,13 @@ union _ParserNode
 
 
 	const char* sn_tok_unixcomment;
-	hpbool sn_bool;
-	hpuint64 sn_uint64;
-	hpint64 sn_int64;
-	hpdouble sn_d;
-	hpuint64 sn_hex_uint64;
-	hpint64 sn_hex_int64;
-	hpstring sn_string;
+	tbool sn_bool;
+	tuint64 sn_uint64;
+	tint64 sn_int64;
+	tdouble sn_d;
+	tuint64 sn_hex_uint64;
+	tint64 sn_hex_int64;
+	tstring sn_string;
 	PN_CHAR sn_char;
 	SN_SIMPLE_TYPE sn_st;
 

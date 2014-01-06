@@ -20,14 +20,14 @@ void dp_reduce_Definition_Typedef(DATA_PARSER *self, const YYLTYPE *yylloc, PN_D
 	pn_current->definition.de_typedef = *pn_typedef;
 }
 
-void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const hpstring str)
+void dp_reduce_Import_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_IMPORT* current, const tstring str)
 {
 	snprintf(current->package_name, sizeof(current->package_name), str);
 }
 
 void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE* current, const PN_IDENTIFIER *tok_identifier)
 {
-	hpuint32 i;
+	tuint32 i;
 	char id[1024];
 	PN_TYPE *type;
 
@@ -61,10 +61,10 @@ void dp_reduce_SimpleType(DATA_PARSER *self, const YYLTYPE *yylloc, PN_TYPE *cur
 	current->st = type;
 }
 
-void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbytes sn_identifier)
+void dp_reduce_Value_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tbytes sn_identifier)
 {
-	hpuint32 data;
-	hpuint32 i;
+	tuint32 data;
+	tuint32 i;
 
 	current->type = E_SNVT_IDENTIFIER;
 	memcpy(current->val.identifier, sn_identifier.ptr, sn_identifier.len);
@@ -84,25 +84,25 @@ void dp_reduce_Value_tok_char(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE
 	current->val.c = pn_char;
 }
 
-void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
+void dp_reduce_Value_tok_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tint64 i64)
 {
 	current->type = E_SNVT_INT64;
 	current->val.i64 = i64;
 }
 
-void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpint64 i64)
+void dp_reduce_Value_tok_hex_int64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tint64 i64)
 {
 	current->type = E_SNVT_HEX_INT64;
 	current->val.i64 = i64;
 }
 
-void dp_reduce_Value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
+void dp_reduce_Value_tok_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tuint64 ui64)
 {
 	current->type = E_SNVT_UINT64;
 	current->val.ui64 = ui64;
 }
 
-void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpuint64 ui64)
+void dp_reduce_Value_tok_hex_uint64(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tuint64 ui64)
 {
 	current->type = E_SNVT_HEX_UINT64;
 	current->val.ui64 = ui64;
@@ -114,13 +114,13 @@ void dp_reduce_Value_tok_double(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VAL
 	current->val.d = d;
 }
 
-void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpbool b)
+void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tbool b)
 {
 	current->type = E_SNVT_BOOL;
 	current->val.b = b;
 }
 
-void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const hpstring str)
+void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, PN_VALUE* current, const tstring str)
 {
 	current->type = E_SNVT_STRING;
 	strncpy(current->val.str, str, MAX_IDENTIFIER_LENGTH);
@@ -159,7 +159,7 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(DATA_PARSER *self, const YY
 
 void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, PN_CONDITION *current, const PN_VALUE *val)
 {
-	hpuint32 i;
+	tuint32 i;
 	const ST_TypeAnnotations *ta = NULL;
 
 	if(self->in_struct)
