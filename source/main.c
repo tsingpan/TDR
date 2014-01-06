@@ -14,8 +14,6 @@
 #include "syntactic_node.h"
 
 
-#include "Python.h"
-
 void version()
 {
 	printf("HotData version %s\n", HOTPOT_VERSION);
@@ -39,10 +37,6 @@ void help()
 
 
 DATA_PARSER dp;
-
-#include "hp_python_writer.h"
-
-TLIBC_PYTHON_WRITER python_writer;
 
 char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
 char lua_dir[TLIBC_MAX_FILE_PATH_LENGTH];
@@ -134,15 +128,11 @@ int main(tint32 argc, char **argv)
 	
 
 
-	Py_Initialize();
-	snprintf(pyscript, sizeof(pyscript), "import sys;sys.path.append(\'%s\');", python_dir);
-	PyRun_SimpleString(pyscript);
-
+	
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
-		python_writer_init(&python_writer);
-		if(data_parser(&dp, argv[i], &python_writer.super) != E_TLIBC_NOERROR)
+		if(data_parser(&dp, argv[i], NULL) != E_TLIBC_NOERROR)
 		{
 			goto ERROR_RET;
 		}
@@ -163,58 +153,10 @@ int main(tint32 argc, char **argv)
 			{
 				output_dir = argv[++j];
 			}
-			else if (strcmp(arg, "-python") == 0)
-			{
-				
-				PyObject *pModule, *pDict, *pFunc, *pRetVal, *pParam;
-				arg = argv[++j];
-
-
-				
-				pModule = PyImport_ImportModule(arg);
-				if(pModule == NULL)
-				{
-					goto PYTHON_ERROR;
-				}				
-
-				pFunc = PyObject_GetAttrString(pModule, "hpmain");
-				if(pFunc == NULL)
-				{
-					goto PYTHON_ERROR;
-				}
-
-				pDict = python_writer.stack[0];
-				if(pDict == NULL)
-				{
-					goto PYTHON_ERROR;
-				}
-
-				pParam = PyTuple_New(2);
-				PyTuple_SetItem(pParam, 0, pDict);
-				PyTuple_SetItem(pParam, 1, PyUnicode_FromString(output_dir));
-				pRetVal = PyObject_CallObject(pFunc, pParam);
-
-				if(!pRetVal)
-				{
-					goto PYTHON_ERROR;
-				}
-
-				if(pRetVal != Py_True)
-				{
-					goto ERROR_RET;
-				}
-			}
 		}
-
-		//Py_DECREF(python_writer.stack[0]);
 	}
 
-	Py_Finalize();
-
 	return 0;
-PYTHON_ERROR:
-	PyErr_Print();
-	Py_Finalize();
 ERROR_RET:
 	return 1;
 }
