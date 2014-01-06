@@ -1,4 +1,4 @@
-project(HotPot)
+project(TData)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -15,8 +15,8 @@ ELSE()
 ENDIF()
 
 SET(CMAKE_MODULE_PATH "$ENV{TLibC_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
-set(DIR_HOME ${HotPot_SOURCE_DIR})
-set(BUILD_HOME ${HotPot_BINARY_DIR})
+set(DIR_HOME ${TData_SOURCE_DIR})
+set(BUILD_HOME ${TData_BINARY_DIR})
 set(LIBRARY_PATH "lib")
 set(BINARY_PATH "bin")
 
@@ -27,10 +27,7 @@ set(INCLUDE  ${DIR_HOME}/include)
 set(SOURCE  ${DIR_HOME}/source)
 
 add_subdirectory(source)
-add_subdirectory(hd)
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(DIRECTORY hd DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN CMakeLists.txt EXCLUDE)
-install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY language DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY python DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY tutorial DESTINATION ${CMAKE_INSTALL_PREFIX})

@@ -1,2 +1,50 @@
-add_subdirectory(hotdata)
-add_subdirectory(hotlib)
+PROJECT(TData)
+
+FILE(GLOB FILE_LIST *.h *.c)
+FILE(GLOB HFILE_LIST ${INCLUDE}/hotdata/*.h)
+FILE(GLOB DATRIE_FILE_LIST datrie/*.h datrie/*.c)
+source_group("datrie" FILES ${DATRIE_FILE_LIST})
+
+FILE(GLOB_RECURSE FLEX_FILE *.re)
+FILE(GLOB_RECURSE BISON_FILE *.yy)
+
+set(FLEX_HEADER ${_BUILD_INCLUDE}/data_description_l.h)
+set(FLEX_OUTPUTS ${_BUILD_SOURCE}/data_description_l.c)
+set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/data_description_y.h)
+set(BISON_OUTPUTS ${_BUILD_SOURCE}/data_description_y.c)
+
+
+#linux 需要创建目录，否则Flex和Bison无法生成文件
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_INCLUDE})
+
+SET(CMAKE_MODULE_PATH "$ENV{TLibC_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
+
+find_package(PythonLibs REQUIRED)
+find_package(TLibC REQUIRED)
+
+add_custom_command(OUTPUT ${FLEX_OUTPUTS} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS} ${FLEX_HEADER}
+	COMMAND re2c -c -F -t${FLEX_HEADER} -o${FLEX_OUTPUTS} ${FLEX_FILE}
+	COMMAND bison -pyydata -o${BISON_OUTPUTS} ${BISON_FILE}
+	COMMAND bison -pyydata --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
+)
+INCLUDE_DIRECTORIES(
+	${INCLUDE}
+	${TLIBC_INCLUDE_DIR}
+	${_BUILD_INCLUDE}
+	datrie
+	${PYTHON_INCLUDE_PATH}
+	.
+	)
+#add_definitions(-DPy_NO_ENABLE_SHARED)
+ADD_EXECUTABLE(TData ${FILE_LIST} ${HFILE_LIST} ${DDGEN_FILE_LIST} ${DATRIE_FILE_LIST} ${LUA_FILE_LIST} ${FLEX_FILE} ${BISON_FILE} ${FLEX_OUTPUTS} ${FLEX_HEADER} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS})
+SET_TARGET_PROPERTIES(TData PROPERTIES OUTPUT_NAME tdata)
+
+INSTALL(TARGETS TData RUNTIME DESTINATION ${BINARY_PATH})
+
+if(WIN32)
+	TARGET_LINK_LIBRARIES(TData ${PYTHON_LIBRARIES} ${TLIBC_LIBRARIES})
+else()
+	TARGET_LINK_LIBRARIES(TData ${PYTHON_LIBRARIES} ${TLIBC_LIBRARIES} dl m pthread util)
+endif(WIN32)
+
