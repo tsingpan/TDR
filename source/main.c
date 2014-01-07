@@ -16,27 +16,27 @@
 
 void version()
 {
-	printf("HotData version %s\n", TDATA_VERSION);
+	printf("TData version %s\n", TDATA_VERSION);
 }
 
 void usage()
 {
-	fprintf(stderr, "Usage: hotdata [options] file\n\n");
-	fprintf(stderr, "Use hotdata -help for a list of options\n");
+	fprintf(stderr, "Usage: tdata [options] file\n\n");
+	fprintf(stderr, "Use tdata -help for a list of options\n");
 }
 
 void help()
 {
-	fprintf(stderr, "Usage: hotdata [options] file\n");
+	fprintf(stderr, "Usage: tdata [options] file\n");
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version					Print the compiler version\n");
-	fprintf(stderr, "  -python filename			Run the python script\n");
+	fprintf(stderr, "  -gen types				Gen source\n");
 	fprintf(stderr, "  -s dir					Set the source directory\n");
 	fprintf(stderr, "  -t dir					Set the target directory\n");
 }
 
 
-DATA_PARSER dp;
+PARSER dp;
 
 char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
 char lua_dir[TLIBC_MAX_FILE_PATH_LENGTH];
@@ -77,7 +77,7 @@ int main(tint32 argc, char **argv)
 	}
 	
 
-	data_parser_init(&dp, root_dir);
+	parser_init(&dp, root_dir);
 	snprintf(lua_dir, TLIBC_MAX_FILE_PATH_LENGTH, "%slua%c", root_dir, TLIBC_FILE_SEPARATOR);
 	snprintf(python_dir, TLIBC_MAX_FILE_PATH_LENGTH, "%spython%c", root_dir, TLIBC_FILE_SEPARATOR);
 	for (i = 1; i < argc; ++i)
@@ -132,7 +132,7 @@ int main(tint32 argc, char **argv)
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
-		if(data_parser(&dp, argv[i]) != E_TD_NOERROR)
+		if(parser_parse(&dp, argv[i]) != E_TD_NOERROR)
 		{
 			goto ERROR_RET;
 		}
@@ -148,7 +148,6 @@ int main(tint32 argc, char **argv)
 				++arg;
 			}
 
-			
 			if (strcmp(arg, "-t") == 0)
 			{
 				output_dir = argv[++j];

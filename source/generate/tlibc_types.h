@@ -1,4 +1,4 @@
-#ifndef _H_C_TYPES
-#define _H_C_TYPES
+#ifndef _H_TLIBC_TYPES
+#define _H_TLIBC_TYPES
 
-#endif
+#endif//_H_TLIBC_TYPES

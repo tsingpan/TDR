@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-tint32 data_parser(DATA_PARSER *self, const char* file_name)
+tint32 parser_parse(PARSER *self, const char* file_name)
 {
 	tint32 ret;
 	AlphaMap *alpha_map = NULL;
@@ -25,7 +25,7 @@ tint32 data_parser(DATA_PARSER *self, const char* file_name)
 	alpha_map_add_range(alpha_map, 'A', 'Z');
 	alpha_map_add_range(alpha_map, '0', '9');
 	alpha_map_add_range(alpha_map, '_', '_');
-	self->hotdata_symbols = trie_new(alpha_map);
+	self->symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
 
 	if(file_name == NULL)
@@ -65,7 +65,7 @@ done:
 
 void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
-	DATA_PARSER *self = TLIBC_CONTAINER_OF(jp, DATA_PARSER, scanner_stack);
+	PARSER *self = TLIBC_CONTAINER_OF(jp, PARSER, scanner_stack);
 	va_list ap;
 
 	va_start(ap, s);
@@ -74,7 +74,7 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 }
 
 
-tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
+tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
 	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
 
@@ -320,7 +320,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 extern tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
-	DATA_PARSER *jp = TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack);
+	PARSER *jp = TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack);
 	int ret = 0;
 	
 	for(;;)
@@ -354,17 +354,16 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 
 
-void data_parser_init(DATA_PARSER *self, const char* root_dir)
+void parser_init(PARSER *self, const char* root_dir)
 {
 	scanner_stack_init(&self->scanner_stack, root_dir);
 	self->scanner_stack.result_num = 0;
-	self->definition_list_num = 0;
 	self->domain[0] = 0;
 }
 
 
 //do
-void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
 {
 	if(pn_definition->type == E_DT_IMPORT)
 	{

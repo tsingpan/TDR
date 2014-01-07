@@ -4,8 +4,8 @@
 
 
 #define YYERROR_VERBOSE
-#define GET_SELF TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)
-#define GET_DEFINITION TLIBC_CONTAINER_OF(ss, DATA_PARSER, scanner_stack)->pn_definition
+#define GET_SELF TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack)
+#define GET_DEFINITION GET_SELF->pn_definition
 #define YYLEX_PARAM ss
 %}
 %locations
@@ -17,7 +17,7 @@
 #include "parse/check.h"
 #include "parse/parser.h"
 #include "parse/reduce.h"
-#define YYSTYPE ParserNode
+#define YYSTYPE PARSER_VALUE
 
 #include <string.h>
 }
@@ -129,12 +129,7 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
-		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
-		{
-			++GET_SELF->definition_list_num;
-		}		
-
-		dp_do_Definition(GET_SELF, &yylloc, &GET_DEFINITION);
+		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
 |	{
 	};

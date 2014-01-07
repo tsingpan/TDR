@@ -12,7 +12,7 @@
 #include "error/error_msg.h"
 #include "definition.h"
 
-typedef union _ParserNode
+typedef union _PARSER_VALUE
 {
 	ST_Import sn_import;
 
@@ -54,34 +54,32 @@ typedef union _ParserNode
 	ST_Expression sn_expression;
 	ST_CONDITION sn_condition;
 
-}ParserNode;
+}PARSER_VALUE;
 
 
-typedef struct _DATA_PARSER DATA_PARSER;
-struct _DATA_PARSER 
+typedef struct _PARSER PARSER;
+struct _PARSER 
 {
 	SCANNER_STACK scanner_stack;
 		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
 	//·ûºÅ±í
-	Trie *hotdata_symbols;
+	Trie *symbols;
 	char domain[MAX_FILE_NAME_LENGTH];
 
 	ST_DEFINITION pn_definition;
 	ST_FIELD_LIST pn_field_list;
 	ST_FIELD pn_field;
-	tuint32 definition_list_num;
 	tbool in_union;
 	tbool in_struct;
 };
 
-void data_parser_init(DATA_PARSER *self, const char* root_dir);
+void parser_init(PARSER *self, const char* root_dir);
 
-tint32 data_parser(DATA_PARSER *self, const char* file_name);
+tint32 parser_parse(PARSER *self, const char* file_name);
 
-//do
-void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
 
 #endif//_H_HOTDATA_PARSER
 

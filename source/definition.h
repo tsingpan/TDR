@@ -5,8 +5,9 @@
  *  @generated
  */
 
-#ifndef _H_hotdata_syntactic_node_hd_TYPES
-#define _H_hotdata_syntactic_node_hd_TYPES
+#ifndef _H_DEFINITION
+#define _H_DEFINITION
+
 #include "platform/tlibc_platform.h"
 #define TD_MAX_COMMENT_LENGTH 1024
 
@@ -212,4 +213,4 @@ typedef struct  _ST_DEFINITION
     EN_DEFINITION_TYPE type;
     UN_DEFINITION definition;
 }ST_DEFINITION;
-#endif//_H_hotdata_syntactic_node_hd_TYPES
+#endif//_H_DEFINITION

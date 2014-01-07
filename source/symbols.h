@@ -1,5 +1,5 @@
-#ifndef _H_HOTDATA_SYMBOLS
-#define _H_HOTDATA_SYMBOLS
+#ifndef _H_SYMBOLS
+#define _H_SYMBOLS
 
 #include "definition.h"
 
@@ -28,4 +28,4 @@ typedef struct _HOTDATA_SYMBOLS
 	HOTDATA_SYMBOLS_BODY body;
 }HOTDATA_SYMBOLS;
 
-#endif //_H_HOTDATA_SYMBOLS
+#endif //_H_SYMBOLS

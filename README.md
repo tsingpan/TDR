@@ -72,6 +72,6 @@ TData
 		Windows
 			新建一个环境变量TDATA_HOME=C:\Program Files\TData
 		Linux
-			export HOTPOT_DIR=/usr/local
+			export TDATA_HOME=/usr/local
 		OS X
-			export HOTPOT_DIR=/usr/local
+			export TDATA_HOME=/usr/local

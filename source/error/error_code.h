@@ -1,5 +1,6 @@
-#ifndef _H_hotlib_hp_error_code_hd_TYPES
-#define _H_hotlib_hp_error_code_hd_TYPES
+#ifndef _H_ERROR_CODE
+#define _H_ERROR_CODE
+
 #include "platform/tlibc_platform.h"
 typedef enum _TD_ERROR_CODE
 {
@@ -19,5 +20,6 @@ typedef enum _TD_ERROR_CODE
     E_TD_SYMBOL_REDEFINITION = -10011,
     E_TD_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE = -10012,
 }TD_ERROR_CODE;
-#define TLIBC_ERROR_CODE_NUM 15
-#endif//_H_hotlib_hp_error_code_hd_TYPES
+#define TD_ERROR_CODE_NUM 15
+
+#endif//_H_ERROR_CODE
