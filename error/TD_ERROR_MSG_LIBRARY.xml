@@ -1,4 +1,4 @@
-<HP_ERROR_MSG_LIBRARY>
+<TD_ERROR_MSG_LIBRARY>
 	<error_list_num>11</error_list_num>
 	<error_list>
 		<[0]>
@@ -46,4 +46,4 @@
 			<error_msg>typedef只可以支持简单类型和对象类型</error_msg>
 		</[10]>
 	<error_list>
-</HP_ERROR_MSG_LIBRARY>
+</TD_ERROR_MSG_LIBRARY>

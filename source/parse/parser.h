@@ -11,6 +11,7 @@
 #include "datrie/trie.h"
 #include "error/error_msg.h"
 #include "definition.h"
+#include "generator.h"
 
 typedef union _PARSER_VALUE
 {
@@ -61,6 +62,7 @@ typedef struct _PARSER PARSER;
 struct _PARSER 
 {
 	SCANNER_STACK scanner_stack;
+	GENERATOR *generator;
 		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
@@ -77,7 +79,7 @@ struct _PARSER
 
 void parser_init(PARSER *self, const char* root_dir);
 
-tint32 parser_parse(PARSER *self, const char* file_name);
+tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR *generator);
 
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
 

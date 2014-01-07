@@ -11,13 +11,14 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-tint32 parser_parse(PARSER *self, const char* file_name)
+tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR *generator)
 {
 	tint32 ret;
 	AlphaMap *alpha_map = NULL;
 	tuint32 i;
 
 	self->scanner_stack.result_num = 0;
+	self->generator = generator;
 
 	alpha_map = alpha_map_new();
 

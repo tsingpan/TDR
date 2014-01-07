@@ -5,7 +5,7 @@ TData
 - cmake 用于cmake工程的脚本文件
 - source 源代码
 - tutorial 使用例子
-- language 语言包
+- error 错误码语言包
 
 问题和反馈
 ==========

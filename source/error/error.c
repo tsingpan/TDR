@@ -74,7 +74,7 @@ TD_ERROR_CODE hp_error_load_if_first(TD_ERROR_MSG_LIBRARY *hp_error_msg_library,
 	{
 		goto done;
 	}
-	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%csimplified_chinese.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
+	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%cerror%cTD_ERROR_MSG_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 	fin_xml = fopen(language_path, "r");
 	if(fin_xml == NULL)
 	{

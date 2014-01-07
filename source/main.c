@@ -11,6 +11,8 @@
 #include "error/error_msg_reader.h"
 #include "error/error_msg.h"
 
+#include "generate/tlibc_types.h"
+
 #define TDATA_VERSION "0.0.1"
 
 
@@ -60,6 +62,9 @@ void get_real_file_path(const char *script_dir, const char *file_name)
 
 #define MAX_PY_SCRIPT_LENGTH 32768
 char pyscript[MAX_PY_SCRIPT_LENGTH];
+
+
+TLIBC_TYPES_GENERATOR tlibc_types_generator;
 
 int main(tint32 argc, char **argv)
 {
@@ -126,13 +131,13 @@ int main(tint32 argc, char **argv)
 		}
 	}
 	
-
-
+	
+	tlibc_types_generator_init(&tlibc_types_generator);
 	
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
-		if(parser_parse(&dp, argv[i]) != E_TD_NOERROR)
+		if(parser_parse(&dp, argv[i], &tlibc_types_generator.super) != E_TD_NOERROR)
 		{
 			goto ERROR_RET;
 		}
