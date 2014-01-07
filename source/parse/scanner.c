@@ -3,6 +3,7 @@
 #include "error/error_msg_reader.h"
 #include "protocol/tlibc_xml_reader.h"
 #include "error/error.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -64,43 +65,43 @@ SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-static tint32 fix_path(char* _path, tuint32 *_len)
-{	
-	char path[TLIBC_MAX_FILE_PATH_LENGTH];
+static tint32 path_repair(char* path, tuint32 *len)
+{
+	char file_path[TLIBC_MAX_FILE_PATH_LENGTH];
 	char *p[TLIBC_MAX_FILE_PATH_LENGTH];
 	tuint32 ptail = 0;
 	tint32 first = 1;
 	tuint32 i = 0;
 	tuint32 j = 0;
-	tuint32 len = 0;
+	tuint32 file_path_len = 0;
 	tuint32 tlen = 0;
 
-	if((_path == NULL) || (_len == NULL))
+	if((path == NULL) || (len == NULL))
 	{
 		return E_TD_ERROR;
 	}
-	len = (tuint32)strlen(_path);
+	file_path_len = (tuint32)strlen(path);
 
-	snprintf(path, TLIBC_MAX_FILE_PATH_LENGTH, "%s", _path);
+	snprintf(file_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s", path);
 	if(TLIBC_FILE_SEPARATOR == '/')
 	{
-		if(_path[0] == '/')
+		if(path[0] == '/')
 		{
 			p[0] = "/";
 			ptail = 1;
 		}
 	}
 
-	for(i = 0; i < len; ++i)
+	for(i = 0; i < file_path_len; ++i)
 	{
-		if((path[i] == '/') || (path[i] == '\\'))
+		if((file_path[i] == '/') || (file_path[i] == '\\'))
 		{
-			path[i] = 0;
+			file_path[i] = 0;
 			first = 1;
 		}
 		else if(first)
 		{
-			p[ptail++] = &path[i];
+			p[ptail++] = &file_path[i];
 			first = 0;
 		}
 	}
@@ -136,42 +137,46 @@ static tint32 fix_path(char* _path, tuint32 *_len)
 		}
 	}
 
-	memset(_path, 0, len);
-	len = 0;
+	memset(path, 0, file_path_len);
+	file_path_len = 0;
 
 	for(i = 0; i < ptail; ++i)
 	{
-		if((len > 0) && (strlen(p[i]) > 0) && (_path[len - 1] != TLIBC_FILE_SEPARATOR))
+		if((file_path_len > 0) && (strlen(p[i]) > 0) && (path[file_path_len - 1] != TLIBC_FILE_SEPARATOR))
 		{
-			if(len < *_len)
+			if(file_path_len < *len)
 			{
-				_path[len++] += TLIBC_FILE_SEPARATOR;
+				path[file_path_len++] += TLIBC_FILE_SEPARATOR;
 			}
 			else
 			{
-				*_len = len;
+				*len = file_path_len;
 				return E_TD_ERROR;
 			}
 		}
 
 		for(j = 0; j < (tint32)strlen(p[i]); ++j)
 		{
-			if(len < *_len)
+			if(file_path_len < *len)
 			{
-				_path[len++] = p[i][j];
+				path[file_path_len++] = p[i][j];
 			}
 			else
 			{
-				*_len = len;
+				*len = file_path_len;
 				return E_TD_ERROR;
 			}
 		}
 	}
 
-	if(len < *_len)
+	if(file_path_len < *len)
 	{
-		_path[len++] = 0;
-		*_len = len;
+		path[file_path_len++] = 0;
+		*len = file_path_len;
+	}
+	else
+	{
+		return E_TD_ERROR;
 	}
 	return E_TD_NOERROR;
 }
@@ -204,7 +209,7 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 		{
 			snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->include_path[i], TLIBC_FILE_SEPARATOR, file_name);
 			len = TLIBC_MAX_FILE_PATH_LENGTH;
-			if(fix_path(realPath, &len) == E_TD_NOERROR)
+			if(path_repair(realPath, &len) == E_TD_NOERROR)
 			{
 				fin = fopen(realPath, "r");
 				if(fin != NULL)

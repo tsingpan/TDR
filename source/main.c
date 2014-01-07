@@ -27,7 +27,7 @@ void help()
 	fprintf(stderr, "  -t dir					Set the target directory\n");
 }
 
-
+const char *target_dir = "./";
 PARSER parser;
 
 TLIBC_TYPES_GENERATOR tlibc_types_generator;
@@ -72,8 +72,7 @@ int main(tint32 argc, char **argv)
 			scanner_stack_add_path(&parser.scanner_stack, source_dir);
 		}
 		else if (strcmp(arg, "-t") == 0)
-		{
-			const char *target_dir = "./";
+		{			
 			target_dir = argv[++i];
 			if (target_dir == NULL)
 			{
@@ -87,7 +86,7 @@ int main(tint32 argc, char **argv)
 			arg = argv[++i];
 			if(strcmp(arg, "tlibc") == 0)
 			{
-				tlibc_types_generator_init(&tlibc_types_generator);
+				tlibc_types_generator_init(&tlibc_types_generator, target_dir);
 				parser_add_generator(&parser, &tlibc_types_generator.super);
 			}
 		}		

@@ -121,9 +121,19 @@
 
 Document :
 	{
+		tuint32 i;
+		for(i = 0; i < GET_SELF->generator_num; ++i)
+		{
+			generator_on_document_begin(GET_SELF->generator_list[i], GET_SELF->file_name);
+		}
 	}
 	DefinitionList
 	{
+		tuint32 i;
+		for(i = 0; i < GET_SELF->generator_num; ++i)
+		{
+			generator_on_document_end(GET_SELF->generator_list[i], GET_SELF->file_name);
+		}
 	};
 
 DefinitionList :
