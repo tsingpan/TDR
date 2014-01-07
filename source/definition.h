@@ -8,12 +8,12 @@
 #ifndef _H_hotdata_syntactic_node_hd_TYPES
 #define _H_hotdata_syntactic_node_hd_TYPES
 #include "platform/tlibc_platform.h"
-#include "globals.h"
-#define MAX_COMMENT_LENGTH 1024
+#define TD_MAX_COMMENT_LENGTH 1024
+
 typedef struct  _ST_UNIX_COMMENT
 {
     tbool empty;
-    tchar text[MAX_COMMENT_LENGTH];
+    tchar text[TD_MAX_COMMENT_LENGTH];
 }ST_UNIX_COMMENT;
 typedef enum _SN_VALUE_TYPE
 {
@@ -33,11 +33,11 @@ typedef union  _UN_VALUE
     tint64 hex_i64;
     tuint64 ui64;
     tuint64 hex_ui64;
-    tchar str[MAX_IDENTIFIER_LENGTH];
+    tchar str[TLIBC_MAX_IDENTIFIER_LENGTH];
     tbool b;
     tdouble d;
     tchar c;
-    tchar identifier[MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
 }UN_VALUE;
 typedef struct  _ST_VALUE
 {
@@ -74,12 +74,12 @@ typedef struct  _ST_TYPE
     SN_TYPE type;
     SN_SIMPLE_TYPE st;
     SN_CONTAINER_TYPE ct;
-    tchar ot[MAX_IDENTIFIER_LENGTH];
+    tchar ot[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
     ST_TYPE type;
-    tchar identifier[MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_Parameter;
 #define MAX_PARAMETER_NUM 16
 typedef struct  _ST_Parameters
@@ -115,7 +115,7 @@ typedef struct  _ST_FIELD
     ST_CONDITION condition;
     ST_TYPE type;
     ST_ARGUMENTS args;
-    tchar identifier[MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_UNIX_COMMENT comment;
 }ST_FIELD;
 #define MAX_TA_LIST_NUM 4
@@ -145,19 +145,19 @@ typedef struct  _ST_Import
 typedef struct  _ST_Const
 {
     ST_TYPE type;
-    tchar identifier[MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_VALUE val;
 }ST_Const;
 typedef struct  _ST_ENUM_DEF
 {
-    tchar identifier[MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_VALUE val;
     ST_UNIX_COMMENT comment;
 }ST_ENUM_DEF;
 #define MAX_ENUM_DEF_LIST_NUM 65536
 typedef struct  _ST_ENUM
 {
-    tchar name[MAX_IDENTIFIER_LENGTH];
+    tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_TypeAnnotations type_annotations;
 	tuint32 enum_def_list_num;
     ST_ENUM_DEF enum_def_list[MAX_ENUM_DEF_LIST_NUM];
@@ -171,21 +171,21 @@ typedef struct  _ST_FIELD_LIST
 typedef struct  _ST_STRUCT
 {
     ST_TypeAnnotations ta;
-    tchar name[MAX_IDENTIFIER_LENGTH];
+    tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_Parameters parameters;
     ST_FIELD_LIST field_list;
 }ST_STRUCT;
 typedef struct  _ST_UNION
 {
     ST_TypeAnnotations ta;
-    tchar name[MAX_IDENTIFIER_LENGTH];
+    tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_Parameters parameters;
     ST_FIELD_LIST field_list;
 }ST_UNION;
 typedef struct  _ST_TYPEDEF
 {
     ST_TYPE type;
-    tchar name[MAX_IDENTIFIER_LENGTH];
+    tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_TYPEDEF;
 typedef enum _EN_DEFINITION_TYPE
 {

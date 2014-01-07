@@ -617,14 +617,14 @@ UnixComment:
 	tok_unixcomment
 	{
 		$$.empty = hpfalse;
-		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
+		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
 	};
 
 UnixCommentOrNot:
 	tok_unixcomment
 	{
 		$$.empty = hpfalse;
-		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
+		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
 	}
 |
 	{

@@ -4,7 +4,8 @@
 #include "error/error_code.h"
 #include "protocol/tlibc_abstract_reader.h"
 #include "error/error_code.h"
-TLIBC_ERROR_CODE read_TLIBC_ERROR_CODE_name(TLIBC_ABSTRACT_READER *self, TLIBC_ERROR_CODE *data);
-TLIBC_ERROR_CODE read_TLIBC_ERROR_CODE_number(TLIBC_ABSTRACT_READER *self, TLIBC_ERROR_CODE *data);
-TLIBC_ERROR_CODE read_TLIBC_ERROR_CODE(TLIBC_ABSTRACT_READER *self, TLIBC_ERROR_CODE *data);
+#include "lib/tlibc_error_code.h"
+TLIBC_ERROR_CODE read_TD_ERROR_CODE_name(TLIBC_ABSTRACT_READER *self, TD_ERROR_CODE *data);
+TLIBC_ERROR_CODE read_TD_ERROR_CODE_number(TLIBC_ABSTRACT_READER *self, TD_ERROR_CODE *data);
+TLIBC_ERROR_CODE read_TD_ERROR_CODE(TLIBC_ABSTRACT_READER *self, TD_ERROR_CODE *data);
 #endif//_H_hotlib_hp_error_code_hd_READER_HEADER

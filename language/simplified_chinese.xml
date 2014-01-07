@@ -2,47 +2,47 @@
 	<error_list_num>11</error_list_num>
 	<error_list>
 		<[0]>
-			<error_code>E_HP_NOERROR</error_code>
+			<error_code>E_TD_NOERROR</error_code>
 			<error_msg>没有错误</error_msg>
 		</[0]>
 		<[1]>
-			<error_code>E_HP_ERROR</error_code>
+			<error_code>E_TD_ERROR</error_code>
 			<error_msg>未知错误</error_msg>
 		</[1]>
 		<[2]>
-			<error_code>E_HP_CONSTANT_REDEFINITION</error_code>
+			<error_code>E_TD_CONSTANT_REDEFINITION</error_code>
 			<error_msg>常量[%s]重定义</error_msg>
 		</[2]>
 		<[3]>
-			<error_code>E_HP_INTEGER_OVERFLOW</error_code>
+			<error_code>E_TD_INTEGER_OVERFLOW</error_code>
 			<error_msg>整数溢出</error_msg>
 		</[3]>
 		<[4]>
-			<error_code>E_HP_CAN_NOT_OPEN_FILE</error_code>
+			<error_code>E_TD_CAN_NOT_OPEN_FILE</error_code>
 			<error_msg>不能打开文件[%s]</error_msg>
 		</[4]>
 		<[5]>
-			<error_code>E_HP_CAN_NOT_FIND_CONSTANCE</error_code>
+			<error_code>E_TD_CAN_NOT_FIND_CONSTANCE</error_code>
 			<error_msg>找不到常量[%s]</error_msg>
 		</[5]>
 		<[6]>
-			<error_code>E_HP_CONSTANCE_TYPE_TOO_SMALL</error_code>
+			<error_code>E_TD_CONSTANCE_TYPE_TOO_SMALL</error_code>
 			<error_msg>常量类型太小[%s]</error_msg>
 		</[6]>
 		<[7]>
-			<error_code>E_HP_INVALID_CONSTANCE_TYPE</error_code>
+			<error_code>E_TD_INVALID_CONSTANCE_TYPE</error_code>
 			<error_msg>错误的常量类型</error_msg>
 		</[7]>
 		<[8]>
-			<error_code>E_HP_UNKNOW_CONSTANT_VALUE</error_code>
+			<error_code>E_TD_UNKNOW_CONSTANT_VALUE</error_code>
 			<error_msg>无法识别的常量值</error_msg>
 		</[8]>
 		<[9]>
-			<error_code>E_HP_SYMBOL_REDEFINITION</error_code>
+			<error_code>E_TD_SYMBOL_REDEFINITION</error_code>
 			<error_msg>符号[%s]重定义</error_msg>
 		</[9]>
 		<[10]>
-			<error_code>E_HP_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE</error_code>
+			<error_code>E_TD_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE</error_code>
 			<error_msg>typedef只可以支持简单类型和对象类型</error_msg>
 		</[10]>
 	<error_list>

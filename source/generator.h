@@ -1,10 +1,10 @@
-#ifndef _H_TLIBC_ABSTRACT_WRITER
-#define _H_TLIBC_ABSTRACT_WRITER
+#ifndef _H_TD_ABSTRACT_WRITER
+#define _H_TD_ABSTRACT_WRITER
 
 #include "platform/tlibc_platform.h"
 
-typedef struct _TLIBC_ABSTRACT_WRITER TLIBC_ABSTRACT_WRITER;
-struct _TLIBC_ABSTRACT_WRITER
+typedef struct _TD_ABSTRACT_WRITER TLIBC_ABSTRACT_WRITER;
+struct _TD_ABSTRACT_WRITER
 {
 	tint32 (*write_struct_begin)(TLIBC_ABSTRACT_WRITER *self, const char *struct_name);
 	tint32 (*write_struct_end)(TLIBC_ABSTRACT_WRITER *self, const char *struct_name);

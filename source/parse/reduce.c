@@ -38,7 +38,7 @@ void dp_reduce_ObjectType_tok_identifier(DATA_PARSER *self, const YYLTYPE *yyllo
 		id[i] = tok_identifier->ptr[i];
 	}
 	id[i] = 0;
-	strncpy(current->ot, id, MAX_IDENTIFIER_LENGTH);
+	strncpy(current->ot, id, TLIBC_MAX_IDENTIFIER_LENGTH);
 done:
 	return;
 }
@@ -123,7 +123,7 @@ void dp_reduce_Value_tok_bool(DATA_PARSER *self, const YYLTYPE *yylloc, ST_VALUE
 void dp_reduce_Value_tok_string(DATA_PARSER *self, const YYLTYPE *yylloc, ST_VALUE* current, const tstring str)
 {
 	current->type = E_SNVT_STRING;
-	strncpy(current->val.str, str, MAX_IDENTIFIER_LENGTH);
+	strncpy(current->val.str, str, TLIBC_MAX_IDENTIFIER_LENGTH);
 }
 
 void dp_reduce_Const(DATA_PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
@@ -174,12 +174,12 @@ void dp_reduce_Condition_tok_case(DATA_PARSER *self, const YYLTYPE *yylloc, ST_C
 	current->empty = hpfalse;
 	current->exp.neg = hpfalse;
 	current->exp.op0.type = E_SNVT_IDENTIFIER;		
-	snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, "s");
+	snprintf(current->exp.op0.val.identifier, TLIBC_MAX_IDENTIFIER_LENGTH, "s");
 	for(i = 0; i < ta->ta_list_num; ++i)
 	{
 		if(ta->ta_list[i].type == E_TA_SWITCH)
 		{
-			snprintf(current->exp.op0.val.identifier, MAX_IDENTIFIER_LENGTH, ta->ta_list[i].val.val.identifier);			
+			snprintf(current->exp.op0.val.identifier, TLIBC_MAX_IDENTIFIER_LENGTH, ta->ta_list[i].val.val.identifier);			
 		}
 	}
 	current->exp.oper = E_EO_EQUAL;

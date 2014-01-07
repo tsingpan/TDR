@@ -1,5 +1,4 @@
 #include "error/error_code.h"
-#include "globals.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -12,10 +11,12 @@
 #include "error/error_msg_reader.h"
 #include "error/error_msg.h"
 
+#define TDATA_VERSION "0.0.1"
+
 
 void version()
 {
-	printf("HotData version %s\n", HOTPOT_VERSION);
+	printf("HotData version %s\n", TDATA_VERSION);
 }
 
 void usage()
@@ -131,7 +132,7 @@ int main(tint32 argc, char **argv)
 	for(i = option_end; i < argc; ++i)
 	{
 		const char *output_dir = "./";
-		if(data_parser(&dp, argv[i]) != E_TLIBC_NOERROR)
+		if(data_parser(&dp, argv[i]) != E_TD_NOERROR)
 		{
 			goto ERROR_RET;
 		}

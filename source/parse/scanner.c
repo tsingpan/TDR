@@ -77,7 +77,7 @@ static tint32 fix_path(char* _path, tuint32 *_len)
 
 	if((_path == NULL) || (_len == NULL))
 	{
-		return E_TLIBC_ERROR;
+		return E_TD_ERROR;
 	}
 	len = (tuint32)strlen(_path);
 
@@ -150,7 +150,7 @@ static tint32 fix_path(char* _path, tuint32 *_len)
 			else
 			{
 				*_len = len;
-				return E_TLIBC_ERROR;
+				return E_TD_ERROR;
 			}
 		}
 
@@ -163,7 +163,7 @@ static tint32 fix_path(char* _path, tuint32 *_len)
 			else
 			{
 				*_len = len;
-				return E_TLIBC_ERROR;
+				return E_TD_ERROR;
 			}
 		}
 	}
@@ -173,7 +173,7 @@ static tint32 fix_path(char* _path, tuint32 *_len)
 		_path[len++] = 0;
 		*_len = len;
 	}
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 }
 
 tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state)
@@ -204,7 +204,7 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 		{
 			snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->include_path[i], TLIBC_FILE_SEPARATOR, file_name);
 			len = TLIBC_MAX_FILE_PATH_LENGTH;
-			if(fix_path(realPath, &len) == E_TLIBC_NOERROR)
+			if(fix_path(realPath, &len) == E_TD_NOERROR)
 			{
 				fin = fopen(realPath, "r");
 				if(fin != NULL)
@@ -236,11 +236,11 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 	scanner_init(&self->stack[self->stack_num], yy_start, self->buff_curr, state, file_name);
 	++(self->stack_num);
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 F_ERROR_RET:
 	fclose(fin);
 ERROR_RET:
-	return E_TLIBC_ERROR;
+	return E_TD_ERROR;
 }
 tint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state)
 {
@@ -252,9 +252,9 @@ tint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, i
 	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 ERROR_RET:
-	return E_TLIBC_ERROR;
+	return E_TD_ERROR;
 }
 
 
@@ -269,9 +269,9 @@ tint32 scanner_stack_pop(SCANNER_STACK *self)
 
 	scanner_fini(scanner);
 	--(self->stack_num);
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 ERROR_RET:
-	return E_TLIBC_ERROR;
+	return E_TD_ERROR;
 }
 
 void scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
@@ -294,9 +294,9 @@ tint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path)
 	strncpy(self->include_path[self->include_path_tail], path, TLIBC_MAX_FILE_PATH_LENGTH);
 	++self->include_path_tail;
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 ERROR_RET:
-	return E_TLIBC_ERROR;
+	return E_TD_ERROR;
 }
 
 tuint32 scanner_stack_get_num(SCANNER_STACK *self)
@@ -305,7 +305,7 @@ tuint32 scanner_stack_get_num(SCANNER_STACK *self)
 }
 
 
-void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TLIBC_ERROR_CODE result, const char *s, va_list ap) 
+void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, const char *s, va_list ap) 
 {
 	tuint32 len;
 
@@ -316,20 +316,20 @@ void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TLIBC_ERR
 
 	if((yylloc) && (yylloc->file_name[0]))
 	{
-		snprintf(self->result_str[self->result_num], MAX_ERROR_MSG_LENGTH, "%s", yylloc->file_name);
+		snprintf(self->result_str[self->result_num], TD_MAX_ERROR_MSG_LENGTH, "%s", yylloc->file_name);
 	}
 	
 	if(yylloc)
 	{
 		len = strlen(self->result_str[self->result_num]);
-		snprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, "(%d): ", yylloc->first_line);
+		snprintf(self->result_str[self->result_num] + len, TD_MAX_ERROR_MSG_LENGTH - len, "(%d): ", yylloc->first_line);
 	}
 
 	len = strlen(self->result_str[self->result_num]);
-	snprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, "error %d: ", self->result[self->result_num]);
+	snprintf(self->result_str[self->result_num] + len, TD_MAX_ERROR_MSG_LENGTH - len, "error %d: ", self->result[self->result_num]);
 	
 	len = strlen(self->result_str[self->result_num]);
-	vsnprintf(self->result_str[self->result_num] + len, MAX_ERROR_MSG_LENGTH - len, s, ap);
+	vsnprintf(self->result_str[self->result_num] + len, TD_MAX_ERROR_MSG_LENGTH - len, s, ap);
 
 	self->result[self->result_num] = result;
 	++(self->result_num);
@@ -341,7 +341,7 @@ done:
 
 
 
-void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, TLIBC_ERROR_CODE result, ...) 
+void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, ...) 
 {
 	va_list ap;
 	const char *error_str = NULL;

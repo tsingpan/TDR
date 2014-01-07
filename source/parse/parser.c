@@ -10,7 +10,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "globals.h"
 
 tint32 data_parser(DATA_PARSER *self, const char* file_name)
 {
@@ -31,15 +30,15 @@ tint32 data_parser(DATA_PARSER *self, const char* file_name)
 
 	if(file_name == NULL)
 	{
-		self->scanner_stack.result[0] = E_TLIBC_ERROR;
+		self->scanner_stack.result[0] = E_TD_ERROR;
 		self->scanner_stack.result_num = 1;		
 		goto done;
 	}
 
 	strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
-	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TLIBC_NOERROR)
+	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
 	{
-		self->scanner_stack.result[0] = E_TLIBC_ERROR;
+		self->scanner_stack.result[0] = E_TD_ERROR;
 		self->scanner_stack.result_num = 1;		
 		goto done;
 	}
@@ -55,11 +54,11 @@ done:
 
 	if(self->scanner_stack.result_num == 0)
 	{
-		return E_TLIBC_NOERROR;
+		return E_TD_NOERROR;
 	}
 	else
 	{
-		return E_TLIBC_ERROR;
+		return E_TD_ERROR;
 	}
 }
 
@@ -70,7 +69,7 @@ void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	scanner_stack_errorap(&self->scanner_stack, yylloc, E_TLIBC_SYNTAX_ERROR, s, ap);
+	scanner_stack_errorap(&self->scanner_stack, yylloc, E_TD_SYNTAX_ERROR, s, ap);
 	va_end(ap);
 }
 
@@ -85,7 +84,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 		{
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_ERROR);
 				break;
 			}
 			if(*YYCURSOR == '\\')
@@ -136,7 +135,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 			}
 			else
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_ERROR);
 			}
 			break;
 		}
@@ -145,7 +144,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 			tuint32 len = 0;
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_ERROR);
 				break;
 			}
 			yylval->sn_string = YYCURSOR;
@@ -172,7 +171,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 			}
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_ERROR);
+				scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_ERROR);
 			}
 			else
 			{				
@@ -205,7 +204,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{	
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_INTEGER_OVERFLOW);
 				}
 			}
 			break;
@@ -217,7 +216,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_INTEGER_OVERFLOW);
 			}
 			break;
 		}
@@ -233,7 +232,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_stack_error(&dp->scanner_stack, yylloc, E_TLIBC_INTEGER_OVERFLOW);
+					scanner_stack_error(&dp->scanner_stack, yylloc, E_TD_INTEGER_OVERFLOW);
 				}
 			}
 			break;
@@ -315,7 +314,7 @@ tint32 get_token_yylval(DATA_PARSER *dp, int *token, YYSTYPE * yylval, const YYL
 		}
 	}
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 }
 
 extern tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
@@ -341,7 +340,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 		}
 		else
 		{
-			if(get_token_yylval(jp, &ret, yylval_param, yylloc_param) != E_TLIBC_NOERROR)
+			if(get_token_yylval(jp, &ret, yylval_param, yylloc_param) != E_TD_NOERROR)
 			{
 				ret = -1;
 				break;
@@ -371,9 +370,9 @@ void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_DEFINIT
 	{
 		char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
 		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
-		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TLIBC_NOERROR)
+		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
 		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TLIBC_CAN_NOT_OPEN_FILE, file_name);
+			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_CAN_NOT_OPEN_FILE, file_name);
 		}
 	}
 }

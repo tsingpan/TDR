@@ -2,10 +2,11 @@
 #include "error.h"
 #include "protocol/tlibc_xml_reader.h"
 #include "error_msg_reader.h"
+#include "lib/tlibc_error_code.h"
 
 #include <stdio.h>
 
-const char* hp_error_search_msg(const TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library, TLIBC_ERROR_CODE sid)
+const char* hp_error_search_msg(const TD_ERROR_MSG_LIBRARY *hp_error_msg_library, TD_ERROR_CODE sid)
 {
 	tuint32 l, r, m;
 
@@ -33,12 +34,12 @@ ERROR_RET:
 	return NULL;
 }
 
-static void sort_library(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library)
+static void sort_library(TD_ERROR_MSG_LIBRARY *hp_error_msg_library)
 {
 	tuint32 i,j;
 	for(i = 0; i < hp_error_msg_library->error_list_num; ++i)
 	{
-		TLIBC_ERROR_MSG tmp;
+		TD_ERROR_MSG tmp;
 		tuint32 min_j = i;
 
 		for(j = i + 1; j < hp_error_msg_library->error_list_num; ++j)
@@ -57,17 +58,17 @@ static void sort_library(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library)
 	}
 }
 
-void hp_error_init(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library)
+void hp_error_init(TD_ERROR_MSG_LIBRARY *hp_error_msg_library)
 {
 	hp_error_msg_library->error_list_num = 0;
 }
 
-TLIBC_ERROR_CODE hp_error_load_if_first(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library, const char *root_dir)
+TD_ERROR_CODE hp_error_load_if_first(TD_ERROR_MSG_LIBRARY *hp_error_msg_library, const char *root_dir)
 {
 	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
 	TLIBC_XML_READER xml_reader;
 	FILE* fin_xml;
-	TLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;
+	TD_ERROR_CODE ret = E_TD_NOERROR;
 
 	if(hp_error_msg_library->error_list_num != 0)
 	{
@@ -77,14 +78,14 @@ TLIBC_ERROR_CODE hp_error_load_if_first(TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_li
 	fin_xml = fopen(language_path, "r");
 	if(fin_xml == NULL)
 	{
-		ret = E_TLIBC_CAN_NOT_OPEN_FILE;
+		ret = E_TD_CAN_NOT_OPEN_FILE;
 		goto done;
 	}
 
 	xml_reader_init(&xml_reader, fin_xml);
-	ret = read_TLIBC_ERROR_MSG_LIBRARY(&xml_reader.super, hp_error_msg_library);
-	if(ret != E_TLIBC_NOERROR)
+	if(read_TD_ERROR_MSG_LIBRARY(&xml_reader.super, hp_error_msg_library) != E_TLIBC_NOERROR)
 	{
+		ret = E_TD_CAN_NOT_OPEN_FILE;
 		goto f_done;
 	}	
 	sort_library(hp_error_msg_library);
