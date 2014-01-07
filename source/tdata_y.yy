@@ -129,6 +129,7 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
+		generator_on_definition(GET_SELF->generator, &GET_DEFINITION);
 		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
 |	{
