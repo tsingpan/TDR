@@ -73,9 +73,6 @@ void dp_reduce_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_VALU
 	
 done:
 	return;
-error_ret:
-	current->type = E_SNVT_IDENTIFIER;
-	return;
 }
 
 void dp_reduce_Value_tok_char(PARSER *self, const YYLTYPE *yylloc, ST_VALUE* current, const tchar pn_char)

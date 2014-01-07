@@ -57,12 +57,14 @@ typedef union _PARSER_VALUE
 
 }PARSER_VALUE;
 
-
+#define TD_MAX_GENERATOR 16
 typedef struct _PARSER PARSER;
 struct _PARSER 
 {
 	SCANNER_STACK scanner_stack;
-	GENERATOR *generator;
+
+	GENERATOR *generator_list[TD_MAX_GENERATOR];
+	tuint32 generator_num;
 		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
@@ -77,9 +79,11 @@ struct _PARSER
 	tbool in_struct;
 };
 
-void parser_init(PARSER *self, const char* root_dir);
+void parser_init(PARSER *self);
 
-tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR *generator);
+tint32 parser_add_generator(PARSER *self, GENERATOR *generator);
+
+tint32 parser_parse(PARSER *self, const char* file_name);
 
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
 

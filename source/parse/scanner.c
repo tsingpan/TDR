@@ -274,15 +274,13 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-void scanner_stack_init(SCANNER_STACK *self, const char *root_dir)
+void scanner_stack_init(SCANNER_STACK *self)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 	self->include_path_tail = 0;
-	self->root_dir = root_dir;
 	self->result_num = 0;
-	hp_error_init(&self->error_msg_library);
 }
 
 tint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path)
@@ -350,9 +348,7 @@ void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CO
 		goto done;
 	}
 
-	hp_error_load_if_first(&self->error_msg_library, self->root_dir);
-
-	error_str = hp_error_search_msg(&self->error_msg_library, result);
+	error_str = error_search_msg(result);
 	self->result[self->result_num] = result;
 	va_start(ap, result);
 	scanner_stack_errorap(self, yylloc, result, error_str, ap);

@@ -129,7 +129,15 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
-		generator_on_definition(GET_SELF->generator, &GET_DEFINITION);
+		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
+		{
+			tuint32 i;
+			for(i = 0; i < GET_SELF->generator_num; ++i)
+			{
+				generator_on_definition(GET_SELF->generator_list[i], &GET_DEFINITION);
+			}
+		}		
+		
 		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
 |	{

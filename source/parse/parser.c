@@ -4,21 +4,34 @@
 #include "tdata_y.h"
 #include "tdata_l.h"
 #include "parse/scanner.h"
-#include "protocol/tlibc_abstract_writer.h"
 
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
-tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR *generator)
+tint32 parser_add_generator(PARSER *self, GENERATOR *generator)
+{
+	if(self->generator_num >= TD_MAX_GENERATOR)
+	{
+		goto ERROR_RET;
+	}
+	self->generator_list[self->generator_num] = generator;
+	++self->generator_num;
+
+	return E_TD_NOERROR;
+ERROR_RET:
+	return E_TD_ERROR;
+}
+
+tint32 parser_parse(PARSER *self, const char* file_name)
 {
 	tint32 ret;
 	AlphaMap *alpha_map = NULL;
 	tuint32 i;
 
 	self->scanner_stack.result_num = 0;
-	self->generator = generator;
+	
 
 	alpha_map = alpha_map_new();
 
@@ -47,6 +60,7 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR *generator)
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
 done:
+	trie_free(self->symbols);
 	for(i = 0;i < self->scanner_stack.result_num; ++i)
 	{
 		fprintf(stderr, self->scanner_stack.result_str[i]);
@@ -355,11 +369,12 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 
 
 
-void parser_init(PARSER *self, const char* root_dir)
+void parser_init(PARSER *self)
 {
-	scanner_stack_init(&self->scanner_stack, root_dir);
+	scanner_stack_init(&self->scanner_stack);
 	self->scanner_stack.result_num = 0;
 	self->domain[0] = 0;
+	self->generator_num = 0;
 }
 
 
