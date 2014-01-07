@@ -3,7 +3,7 @@
 
 #include "definition.h"
 
-typedef enum _HOTDATA_SYMBOLS_TYPE
+typedef enum _SYMBOLS_TYPE
 {
 	EN_HST_VALUE = 0,
 	EN_HST_TYPE = 1,
@@ -12,20 +12,20 @@ typedef enum _HOTDATA_SYMBOLS_TYPE
 	EN_HST_ENUM = 4,
 	EN_HST_STRUCT = 5,
 	EN_HST_UNION = 6,
-}HOTDATA_SYMBOLS_TYPE;
+}SYMBOLS_TYPE;
 
-typedef union _HOTDATA_SYMBOLS_BODY
+typedef union _SYMBOLS_BODY
 {
 	ST_VALUE val;
 	ST_TYPE type;
 	ST_Parameter para;
 	ST_FIELD field;
-}HOTDATA_SYMBOLS_BODY;
+}SYMBOLS_BODY;
 
-typedef struct _HOTDATA_SYMBOLS
+typedef struct _SYMBOLS
 {
-	HOTDATA_SYMBOLS_TYPE type;
-	HOTDATA_SYMBOLS_BODY body;
-}HOTDATA_SYMBOLS;
+	SYMBOLS_TYPE type;
+	SYMBOLS_BODY body;
+}SYMBOLS;
 
 #endif //_H_SYMBOLS

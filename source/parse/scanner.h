@@ -1,5 +1,5 @@
-#ifndef _H_HOTLEX
-#define _H_HOTLEX
+#ifndef _H_SCANNER
+#define _H_SCANNER
 
 #include "platform/tlibc_platform.h"
 #include "error/error_msg.h"
@@ -90,5 +90,5 @@ tint32 scanner_stack_add_path(SCANNER_STACK *self, const char* path);
 void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, const char *s, va_list ap);
 void scanner_stack_error(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, ...);
 
-#endif//_H_HOTLEX
+#endif//_H_SCANNER
 

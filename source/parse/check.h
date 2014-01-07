@@ -1,5 +1,5 @@
-#ifndef _H_HOTDATA_CHECK
-#define _H_HOTDATA_CHECK
+#ifndef _H_CHECK
+#define _H_CHECK
 
 
 #include "platform/tlibc_platform.h"
@@ -58,4 +58,4 @@ void dp_check_Struct_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_
 
 void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
 
-#endif //_H_HOTDATA_CHECK
+#endif //_H_CHECK

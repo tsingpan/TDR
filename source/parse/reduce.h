@@ -1,5 +1,5 @@
-#ifndef _H_HOTDATA_REDUCE
-#define _H_HOTDATA_REDUCE
+#ifndef _H_REDUCE
+#define _H_REDUCE
 
 
 #include "platform/tlibc_platform.h"
@@ -52,4 +52,4 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, const YYLTYPE
 void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDITION *current, const ST_VALUE *val);
 
 
-#endif //_H_HOTDATA_REDUCE
+#endif //_H_REDUCE

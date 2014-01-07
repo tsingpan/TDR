@@ -1,5 +1,5 @@
-#ifndef _H_HOTDATA_PARSER
-#define _H_HOTDATA_PARSER
+#ifndef _H_PARSER
+#define _H_PARSER
 
 
 #include "platform/tlibc_platform.h"
@@ -81,5 +81,5 @@ tint32 parser_parse(PARSER *self, const char* file_name);
 
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
 
-#endif//_H_HOTDATA_PARSER
+#endif//_H_PARSER
 
