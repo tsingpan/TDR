@@ -1,7 +1,7 @@
 #include "platform/tlibc_platform.h"
-#include "hp_error.h"
+#include "error.h"
 #include "protocol/tlibc_xml_reader.h"
-#include "hp_error_msg_reader.h"
+#include "error_msg_reader.h"
 
 #include <stdio.h>
 

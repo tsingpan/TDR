@@ -1,7 +1,7 @@
 #ifndef _H_HOTDATA_SYMBOLS
 #define _H_HOTDATA_SYMBOLS
 
-#include "syntactic_node.h"
+#include "definition.h"
 
 typedef enum _HOTDATA_SYMBOLS_TYPE
 {

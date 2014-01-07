@@ -1,8 +1,8 @@
-#include "hp_script_lex.h"
-#include "error/hp_error_code.h"
-#include "error/hp_error_msg_reader.h"
+#include "parse/scanner.h"
+#include "error/error_code.h"
+#include "error/error_msg_reader.h"
 #include "protocol/tlibc_xml_reader.h"
-#include "error/hp_error.h"
+#include "error/error.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>

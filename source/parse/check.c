@@ -1,5 +1,5 @@
-#include "hotdata_check.h"
-#include "hotdata_symbols.h"
+#include "parse/check.h"
+#include "symbols.h"
 #include <string.h>
 
 static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const char* name)
@@ -28,7 +28,7 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_by_string(DATA_PARSER *self, const 
 	return symbol;
 }
 
-static const HOTDATA_SYMBOLS* dp_find_symbol(DATA_PARSER *self, const PN_IDENTIFIER* tok_identifier)
+static const HOTDATA_SYMBOLS* dp_find_symbol(DATA_PARSER *self, const tbytes* tok_identifier)
 {
 	char name[MAX_IDENTIFIER_LENGTH];
 	memcpy(name, tok_identifier->ptr, tok_identifier->len);
@@ -58,7 +58,7 @@ static const HOTDATA_SYMBOLS* dp_find_symbol_by_string_local(DATA_PARSER *self, 
 	return symbol;
 }
 
-static const HOTDATA_SYMBOLS* dp_find_symbol_local(DATA_PARSER *self, const PN_IDENTIFIER* tok_identifier)
+static const HOTDATA_SYMBOLS* dp_find_symbol_local(DATA_PARSER *self, const tbytes* tok_identifier)
 {
 	char name[MAX_IDENTIFIER_LENGTH];
 	memcpy(name, tok_identifier->ptr, tok_identifier->len);
@@ -89,7 +89,7 @@ static tint32 dp_save_symbol_string(DATA_PARSER *self, const char *name, const H
 	return E_TLIBC_NOERROR;
 }
 
-static tint32 dp_save_symbol(DATA_PARSER *self, const PN_IDENTIFIER *tok_identifier, const HOTDATA_SYMBOLS *symbol)
+static tint32 dp_save_symbol(DATA_PARSER *self, const tbytes *tok_identifier, const HOTDATA_SYMBOLS *symbol)
 {
 	char name[MAX_IDENTIFIER_LENGTH];
 	memcpy(name, tok_identifier->ptr, tok_identifier->len);
@@ -150,7 +150,7 @@ static const ST_VALUE* get_value(DATA_PARSER *self, const ST_VALUE* sn_value)
 	}
 }
 
-void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	char id[MAX_IDENTIFIER_LENGTH];
 
@@ -163,10 +163,10 @@ void dp_check_Const_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, con
 	}
 }
 
-void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const PN_VALUE *pn_value)
+void dp_check_Const_add_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_VALUE *pn_value)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
-	const PN_VALUE *val = get_value(self, pn_value);
+	const ST_VALUE *val = get_value(self, pn_value);
 	char id[1024];
 	memcpy(id, tok_identifier->ptr, tok_identifier->len);
 	id[tok_identifier->len] = 0;
@@ -188,7 +188,7 @@ done:
 	return;
 }
 
-void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const PN_IDENTIFIER* tok_identifier, const PN_VALUE* sn_value)
+void dp_check_constant_value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const tbytes* tok_identifier, const ST_VALUE* sn_value)
 {
 	char id[MAX_IDENTIFIER_LENGTH];
 	const ST_VALUE* val = get_value(self, sn_value);
@@ -315,7 +315,7 @@ done:
 	return;
 }
 
-void dp_check_domain_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_domain_begin(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	memcpy(self->domain, tok_identifier->ptr, tok_identifier->len);
 	self->domain[tok_identifier->len] = 0;
@@ -326,7 +326,7 @@ void dp_check_domain_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 	self->domain[0] = 0;
 }
 
-void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_Parameter *pn_parameter)
+void dp_check_Parameter_add(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_Parameter *pn_parameter)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 
@@ -341,7 +341,7 @@ done:
 	return;
 }
 
-void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
 	if(symbol != NULL)
@@ -355,7 +355,7 @@ done:
 }
 
 
-void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_tok_identifier_local(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol_local(self, tok_identifier);
 	if(symbol != NULL)
@@ -368,7 +368,7 @@ done:
 	return;
 }
 
-void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_EnumDef_tok_identifier(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	const HOTDATA_SYMBOLS *symbol = dp_find_symbol(self, tok_identifier);
 	if(symbol != NULL)
@@ -381,9 +381,9 @@ done:
 	return;
 }
 
-void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
-	const PN_TypeAnnotations *ta = &self->pn_definition.definition.de_enum.type_annotations;
+	const ST_TypeAnnotations *ta = &self->pn_definition.definition.de_enum.type_annotations;
 	tuint32 i, j;
 	tint64 i64;
 	val = get_value(self, val);
@@ -440,7 +440,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 			{
 				const ST_VALUE *_val = val;
 				tint64 _i64;
-				const PN_VALUE *lower_bound = get_value(self, &ta->ta_list[i].val);
+				const ST_VALUE *lower_bound = get_value(self, &ta->ta_list[i].val);
 				tint64 li64;
 				if(lower_bound == NULL)
 				{
@@ -482,7 +482,7 @@ void dp_check_EnumDef_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_V
 			{
 				const ST_VALUE *_val = val;
 				tint64 _i64;
-				const PN_VALUE *upper_bound = get_value(self, &ta->ta_list[i].val);
+				const ST_VALUE *upper_bound = get_value(self, &ta->ta_list[i].val);
 				tint64 upi64;
 				if(upper_bound == NULL)
 				{
@@ -528,7 +528,7 @@ done:
 }
 
 
-void dp_check_TypeAnnotation_tok_unique_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+void dp_check_TypeAnnotation_tok_unique_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
 	if(val->type != E_SNVT_BOOL)
 	{
@@ -540,7 +540,7 @@ done:
 	return;
 }
 
-void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+void dp_check_TypeAnnotation_bound_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
 	val = get_value(self, val);
 
@@ -555,7 +555,7 @@ done:
 }
 
 
-void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+void dp_check_TypeAnnotation_tok_switch_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
 	if(val->type != E_SNVT_IDENTIFIER)
 	{
@@ -567,7 +567,7 @@ done:
 	return;
 }
 
-void dp_check_TypeAnnotation_tok_counter_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_VALUE *val)
+void dp_check_TypeAnnotation_tok_counter_Value(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 
@@ -638,7 +638,7 @@ void dp_check_Struct_end(DATA_PARSER *self, const YYLTYPE *yylloc)
 
 static void dp_check_expression_value_type(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *type)
 {
-	const PN_TYPE *pn_type = get_type(self, type);
+	const ST_TYPE *pn_type = get_type(self, type);
 	if(pn_type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TLIBC_ERROR);
@@ -688,7 +688,7 @@ void dp_check_FieldExpression_Value(DATA_PARSER *self, const YYLTYPE *yylloc, co
 			{
 			case EN_HST_VALUE:
 				{
-					const PN_VALUE *val = get_value(self, &symbol->body.val);
+					const ST_VALUE *val = get_value(self, &symbol->body.val);
 					if(val == NULL)
 					{
 						scanner_stack_error(&self->scanner_stack, yylloc, E_TLIBC_ERROR);
@@ -795,7 +795,7 @@ done:
 	return;
 }
 
-void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
+void dp_check_Field(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
 	if(self->in_union)
 	{
@@ -993,7 +993,7 @@ done:
 	return;
 }
 
-void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_FIELD *pn_field)
+void dp_check_Field_add(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 
@@ -1009,7 +1009,7 @@ done:
 }
 
 
-void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier, const ST_ENUM *pn_enum)
+void dp_check_Enum_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_ENUM *pn_enum)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 	tuint32 i;
@@ -1040,7 +1040,7 @@ done:
 	return;
 }
 
-void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_Struct_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 
@@ -1054,7 +1054,7 @@ done:
 	return;
 }
 
-void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_IDENTIFIER *tok_identifier)
+void dp_check_Union_Add(DATA_PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
 	HOTDATA_SYMBOLS *ptr = (HOTDATA_SYMBOLS*)malloc(sizeof(HOTDATA_SYMBOLS));
 

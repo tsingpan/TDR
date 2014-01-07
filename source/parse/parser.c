@@ -1,9 +1,11 @@
-#include "hotdata_parser.h"
+#include "parse/parser.h"
+#include "error/error_code.h"
+
 #include "tdata_y.h"
-#include "error/hp_error_code.h"
 #include "tdata_l.h"
-#include "hp_script_lex.h"
+#include "parse/scanner.h"
 #include "protocol/tlibc_abstract_writer.h"
+
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -363,7 +365,7 @@ void data_parser_init(DATA_PARSER *self, const char* root_dir)
 
 
 //do
-void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const PN_DEFINITION *pn_definition)
+void dp_do_Definition(DATA_PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
 {
 	if(pn_definition->type == E_DT_IMPORT)
 	{

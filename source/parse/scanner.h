@@ -2,7 +2,7 @@
 #define _H_HOTLEX
 
 #include "platform/tlibc_platform.h"
-#include "error/hp_error_msg.h"
+#include "error/error_msg.h"
 
 #include <stdarg.h>
 

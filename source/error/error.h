@@ -2,7 +2,7 @@
 #define _H_hp_error_hd_TYPES
 #include "platform/tlibc_platform.h"
 
-#include "hp_error_msg.h"
+#include "error/error_msg.h"
 
 
 const char* hp_error_search_msg(const TLIBC_ERROR_MSG_LIBRARY *hp_error_msg_library, TLIBC_ERROR_CODE sid);

@@ -1,6 +1,6 @@
 #include "platform/tlibc_platform.h"
-#include "hp_error_code.h"
-#include "hp_error_code_reader.h"
+#include "error/error_code.h"
+#include "error/error_code_reader.h"
 #include "globals.h"
 #include <string.h>
 TLIBC_ERROR_CODE read_TLIBC_ERROR_CODE_name(TLIBC_ABSTRACT_READER *self, TLIBC_ERROR_CODE *data)
