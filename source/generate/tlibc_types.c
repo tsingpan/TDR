@@ -9,28 +9,6 @@
 
 static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 {
-	TLIBC_TYPES_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_TYPES_GENERATOR, super);
-	tuint32 i, length;
-	strncpy(self->document_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
-	length = strlen(self->document_name);
-	for(i = 0;i < length; ++i)
-	{
-		if((self->document_name[i] >= 'a') && (self->document_name[i] <= 'z'))
-		{
-			self->document_name[i] = 'A' + self->document_name[i] - 'a';
-		}
-		else if ((self->document_name[i] >= 'A') && (self->document_name[i] <= 'Z'))
-		{
-		}
-		else if ((self->document_name[i] >= '0') && (self->document_name[i] <= '9'))
-		{
-		}
-		else
-		{
-			self->document_name[i] = '_';
-		}
-	}
-
 	generator_open(super, file_name, TLIBC_TYPES_SUFFIX);
 
 	generator_print(super, "/**\n");
@@ -43,8 +21,8 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 
 
 
-	generator_print(super, "#ifndef _H_%s\n", self->document_name);
-	generator_print(super, "#define _H_%s\n", self->document_name);
+	generator_print(super, "#ifndef _H_%s\n", super->document_name);
+	generator_print(super, "#define _H_%s\n", super->document_name);
 	generator_print(super, "\n");
 	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
 	generator_print(super, "\n");
@@ -54,11 +32,8 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 
 static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
 {	
-	TLIBC_TYPES_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_TYPES_GENERATOR, super);
-	(void)file_name;
-
 	generator_print(super, "\n");
-	generator_print(super, "#endif //_H_%s\n", self->document_name);
+	generator_print(super, "#endif //_H_%s\n", super->document_name);
 	generator_print(super, "\n");
 
 	generator_close(super);
@@ -67,27 +42,11 @@ static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
 
 static TD_ERROR_CODE _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de_import)
 {
-	char name[MAX_PACKAGE_NAME_LENGTH];
-	tuint32 i, name_length;
+	char name[MAX_PACKAGE_NAME_LENGTH];	
 	strncpy(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH);
 	name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
-
-	name_length = strlen(name);
-	for(i = name_length - 1; i > 0; --i)
-	{
-		if(name[i] == '.')
-		{
-			name[i] = 0;
-			name_length = i;
-			break;
-		}
-		else if(name[i] == TLIBC_FILE_SEPARATOR)
-		{
-			break;
-		}
-	}
-	
-	generator_print(&self->super, "#include \"%s%s\"\n", name, TLIBC_TYPES_SUFFIX);
+	generator_replace_extension(name, MAX_PACKAGE_NAME_LENGTH, TLIBC_TYPES_SUFFIX);
+	generator_print(&self->super, "#include \"%s\"\n", name);
 
 	return E_TD_NOERROR;
 }
@@ -160,7 +119,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de
 		}
 		generator_print(&self->super, ";\n");
 	}
-	generator_print(&self->super, "}\n");
+	generator_print(&self->super, "};\n");
 
 	return E_TD_NOERROR;
 }
@@ -190,7 +149,7 @@ static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_u
 		}
 		generator_print(&self->super, ";\n");
 	}
-	generator_print(&self->super, "}\n");
+	generator_print(&self->super, "};\n");
 
 	return E_TD_NOERROR;
 }
@@ -234,18 +193,13 @@ static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *defini
 		case E_DT_UNIX_COMMENT:
 			return _on_comment(self, &definition->definition.de_unix_comment);
 		default:
-			goto ERROR_RET;
-			break;
+			return E_TD_ERROR;
 	}
-	
-	return E_TD_NOERROR;
-ERROR_RET:
-	return E_TD_ERROR;
 }
 
-void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const char *target_dir)
+void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self)
 {
-	generator_init(&self->super, target_dir);
+	generator_init(&self->super);
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;

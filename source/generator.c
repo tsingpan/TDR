@@ -1,76 +1,113 @@
 #include "generator.h"
 #include "error/error_code.h"
+#include "globals.h"
 
 #include <string.h>
 #include <stdlib.h>
 #include <direct.h>
 #include <stdarg.h>
 
-void generator_init(GENERATOR *self, const char *target_dir)
+void generator_init(GENERATOR *self)
 {
-	self->target_dir = target_dir;
 	self->fout = NULL;
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
 	self->on_document_end = NULL;
 }
 
-
-TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
+TD_ERROR_CODE generator_replace_extension(char *filename, tuint32 filename_length, const char *suffix)
 {
-	char path[TLIBC_MAX_FILE_PATH_LENGTH];
-	tuint32 path_length = 0;
-	char file[TLIBC_MAX_FILE_PATH_LENGTH];
-	tuint32 file_length = 0;
 	tuint32 i;
+	tuint32 length = strlen(filename);
 
-	//step 1复制字符串
-	if(strlen(self->target_dir) + strlen(primary_file) + 1 >= TLIBC_MAX_FILE_PATH_LENGTH - 1)
+	if((filename == NULL) || (suffix == NULL))
 	{
 		goto ERROR_RET;
 	}
-	snprintf(file, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->target_dir, TLIBC_FILE_SEPARATOR, primary_file);
-	file[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
-	file_length = strlen(file);
 
-
-	//step 2删除扩展名
-	for(i = file_length; i > 0; --i)
+	for(i = length; i > 0; --i)
 	{
-		if(file[i] == '.')
+		if(filename[i] == '.')
 		{
-			file[i] = 0;
-			file_length = i;
+			filename[i] = 0;
+			length = i;
 			break;
 		}
-		else if(file[i] == TLIBC_FILE_SEPARATOR)
+		else if(filename[i] == TLIBC_FILE_SEPARATOR)
 		{
 			break;
 		}
 	}
 
-	//step 4获取路径
-	strncpy(path, file, TLIBC_MAX_FILE_PATH_LENGTH);
-	path[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
-	path_length = strlen(path);
+	if(length + strlen(suffix) + 1 >= filename_length)
+	{
+		goto ERROR_RET;
+	}
+	strncpy(filename + length, suffix, filename_length - length);
+	filename[filename_length - 1] = 0;
+
+	return E_TD_NOERROR;
+ERROR_RET:
+	return E_TD_ERROR;
+}
+TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
+{
+	char primary[TLIBC_MAX_FILE_PATH_LENGTH];
+	char target_path[TLIBC_MAX_FILE_PATH_LENGTH];
+	tuint32 path_length = 0;
+	tuint32 i, document_name_length;
+
+	//把扩展名替换为指定后缀
+	if(strlen(primary_file) + 1 >= TLIBC_MAX_FILE_PATH_LENGTH)
+	{
+		goto ERROR_RET;
+	}
+	strncpy(primary, primary_file, TLIBC_MAX_FILE_PATH_LENGTH);
+	generator_replace_extension(primary, TLIBC_MAX_FILE_PATH_LENGTH, suffix);
+
+	//创建目录
+	if(strlen(g_target_dir) + strlen(primary) + 1 + 1 >= TLIBC_MAX_FILE_PATH_LENGTH)
+	{
+		goto ERROR_RET;
+	}
+	snprintf(target_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", g_target_dir, TLIBC_FILE_SEPARATOR, primary);
+	target_path[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	path_length = strlen(target_path);
 	for(i = 0; i < path_length; ++i)
 	{
-		if(path[i] == TLIBC_FILE_SEPARATOR)
+		if(target_path[i] == TLIBC_FILE_SEPARATOR)
 		{
-			path[i] = 0;
-			mkdir(path);
-			path[i] = TLIBC_FILE_SEPARATOR;
+			target_path[i] = 0;
+			mkdir(target_path);
+			target_path[i] = TLIBC_FILE_SEPARATOR;
 		}
 	}
 
-	//step 4添加后缀
-	if(file_length + strlen(suffix) < TLIBC_MAX_FILE_PATH_LENGTH - 1)
+	//计算文档名字
+	strncpy(self->document_name, primary, TLIBC_MAX_FILE_PATH_LENGTH);
+	self->document_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	document_name_length = strlen(self->document_name);
+	for(i = 0;i < document_name_length; ++i)
 	{
-		strncpy(file + file_length, suffix, TLIBC_MAX_FILE_PATH_LENGTH - file_length);
-		file[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+		if((self->document_name[i] >= 'a') && (self->document_name[i] <= 'z'))
+		{
+			self->document_name[i] = 'A' + self->document_name[i] - 'a';
+		}
+		else if ((self->document_name[i] >= 'A') && (self->document_name[i] <= 'Z'))
+		{
+		}
+		else if ((self->document_name[i] >= '0') && (self->document_name[i] <= '9'))
+		{
+		}
+		else
+		{
+			self->document_name[i] = '_';
+		}
 	}
 
-	self->fout = fopen(file, "w");
+
+
+	self->fout = fopen(target_path, "w");
 	if(self->fout == NULL)
 	{
 		goto ERROR_RET;

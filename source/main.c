@@ -2,6 +2,8 @@
 #include "parse/parser.h"
 #include "generate/tlibc_types.h"
 #include "error/error.h"
+#include <string.h>
+#include "globals.h"
 
 #include "version.h"
 
@@ -26,7 +28,6 @@ void help()
 	fprintf(stderr, "  -t dir					Set the target directory\n");
 }
 
-const char *target_dir = "./";
 PARSER parser;
 
 TLIBC_TYPES_GENERATOR tlibc_types_generator;
@@ -72,8 +73,8 @@ int main(tint32 argc, char **argv)
 		}
 		else if (strcmp(arg, "-t") == 0)
 		{			
-			target_dir = argv[++i];
-			if (target_dir == NULL)
+			g_target_dir = argv[++i];
+			if (g_target_dir == NULL)
 			{
 				fprintf(stderr, "Missing target directory specification\n");
 				usage();
@@ -85,7 +86,7 @@ int main(tint32 argc, char **argv)
 			arg = argv[++i];
 			if(strcmp(arg, "tlibc") == 0)
 			{
-				tlibc_types_generator_init(&tlibc_types_generator, target_dir);
+				tlibc_types_generator_init(&tlibc_types_generator);
 				parser_add_generator(&parser, &tlibc_types_generator.super);
 			}
 		}		
