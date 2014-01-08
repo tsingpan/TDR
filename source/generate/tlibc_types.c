@@ -94,40 +94,46 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
+static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_LIST *field_list)
 {
 	tuint32 i;
-	generator_print(&self->super, "\n");
-	generator_print(&self->super, "typedef struct _%s %s;\n", de_struct->name, de_struct->name);
-	generator_print(&self->super, "struct _%s\n", de_struct->name);
-	generator_print(&self->super, "{\n");
-	for(i = 0; i < de_struct->field_list.field_list_num; ++i)
+	for(i = 0; i < field_list->field_list_num; ++i)
 	{
-		if(de_struct->field_list.field_list[i].type.type == E_SNT_CONTAINER)
+		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
 		{
-			if(de_struct->field_list.field_list[i].type.ct == E_CT_VECTOR)
+			if(field_list->field_list[i].type.ct == E_CT_VECTOR)
 			{
-				generator_print(&self->super, "\ttuint32 %s;\n", de_struct->field_list.field_list[i].args.arg_list[2].ot);
+				generator_print(&self->super, "\ttuint32 %s;\n", field_list->field_list[i].args.arg_list[2].ot);
 			}
 		}
 
-
 		generator_print(&self->super, "\t");
-		generator_print_type(&self->super, &de_struct->field_list.field_list[i].type, &de_struct->field_list.field_list[i].args);
-		generator_print(&self->super, " %s", de_struct->field_list.field_list[i].identifier);
-		if(de_struct->field_list.field_list[i].type.type == E_SNT_CONTAINER)
+		generator_print_type(&self->super, &field_list->field_list[i].type, &field_list->field_list[i].args);
+		generator_print(&self->super, " %s", field_list->field_list[i].identifier);
+		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
 		{
-			if(de_struct->field_list.field_list[i].type.ct == E_CT_VECTOR)
+			if(field_list->field_list[i].type.ct == E_CT_VECTOR)
 			{
-				generator_print(&self->super, "[%s]", de_struct->field_list.field_list[i].args.arg_list[1].ot);
+				generator_print(&self->super, "[%s]", field_list->field_list[i].args.arg_list[1].ot);
 			}
-			else if(de_struct->field_list.field_list[i].type.ct == E_CT_STRING)
+			else if(field_list->field_list[i].type.ct == E_CT_STRING)
 			{
-				generator_print(&self->super, "[%s]", de_struct->field_list.field_list[i].args.arg_list[0].ot);
+				generator_print(&self->super, "[%s]", field_list->field_list[i].args.arg_list[0].ot);
 			}
 		}
 		generator_print(&self->super, ";\n");
 	}
+
+	return E_TD_NOERROR;
+}
+
+static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
+{
+	generator_print(&self->super, "\n");
+	generator_print(&self->super, "typedef struct _%s %s;\n", de_struct->name, de_struct->name);
+	generator_print(&self->super, "struct _%s\n", de_struct->name);
+	generator_print(&self->super, "{\n");
+	_on_field_list(self, &de_struct->field_list);
 	generator_print(&self->super, "};\n");
 
 	return E_TD_NOERROR;
@@ -135,37 +141,11 @@ static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de
 
 static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
 {
-	tuint32 i;
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef union _%s %s;\n", de_union->name, de_union->name);
 	generator_print(&self->super, "union _%s\n", de_union->name);
 	generator_print(&self->super, "{\n");
-	for(i = 0; i < de_union->field_list.field_list_num; ++i)
-	{
-		if(de_union->field_list.field_list[i].type.type == E_SNT_CONTAINER)
-		{
-			if(de_union->field_list.field_list[i].type.ct == E_CT_VECTOR)
-			{
-				generator_print(&self->super, "\ttuint32 %s;\n", de_union->field_list.field_list[i].args.arg_list[2].ot);
-			}
-		}
-
-		generator_print(&self->super, "\t");
-		generator_print_type(&self->super, &de_union->field_list.field_list[i].type, &de_union->field_list.field_list[i].args);
-		generator_print(&self->super, " %s", de_union->field_list.field_list[i].identifier);
-		if(de_union->field_list.field_list[i].type.type == E_SNT_CONTAINER)
-		{
-			if(de_union->field_list.field_list[i].type.ct == E_CT_VECTOR)
-			{
-				generator_print(&self->super, "[%s]", de_union->field_list.field_list[i].args.arg_list[1].ot);
-			}
-			else if(de_union->field_list.field_list[i].type.ct == E_CT_STRING)
-			{
-				generator_print(&self->super, "[%s]", de_union->field_list.field_list[i].args.arg_list[0].ot);
-			}
-		}
-		generator_print(&self->super, ";\n");
-	}
+	_on_field_list(self, &de_union->field_list);
 	generator_print(&self->super, "};\n");
 
 	return E_TD_NOERROR;
