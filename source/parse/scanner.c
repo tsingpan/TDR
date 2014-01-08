@@ -1,5 +1,5 @@
 #include "parse/scanner.h"
-#include "error/error_code.h"
+#include "error/error_code_types.h"
 #include "error/error_msg_reader.h"
 #include "protocol/tlibc_xml_reader.h"
 #include "error/error.h"

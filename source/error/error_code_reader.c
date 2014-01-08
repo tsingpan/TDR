@@ -1,7 +1,7 @@
 #include "platform/tlibc_platform.h"
 #include "lib/tlibc_error_code.h"
 
-#include "error/error_code.h"
+#include "error/error_code_types.h"
 #include "error/error_code_reader.h"
 #include <string.h>
 TLIBC_ERROR_CODE read_TD_ERROR_CODE_name(TLIBC_ABSTRACT_READER *self, TD_ERROR_CODE *data)

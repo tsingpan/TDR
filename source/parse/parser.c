@@ -1,5 +1,5 @@
 #include "parse/parser.h"
-#include "error/error_code.h"
+#include "error/error_code_types.h"
 
 #include "tdata_y.h"
 #include "tdata_l.h"

@@ -9,7 +9,7 @@
 #include "protocol/tlibc_abstract_writer.h"
 
 #include "datrie/trie.h"
-#include "error/error_msg.h"
+#include "error/error_msg_types.h"
 #include "definition.h"
 #include "generator.h"
 

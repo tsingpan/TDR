@@ -2,7 +2,7 @@
 #define _H_ERROR
 #include "platform/tlibc_platform.h"
 
-#include "error/error_msg.h"
+#include "error/error_msg_types.h"
 
 
 const char* error_search_msg(TD_ERROR_CODE sid);

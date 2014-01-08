@@ -4,7 +4,7 @@
 #include "tdata_y.h"
 
 #include "platform/tlibc_platform.h"
-#include "error/error_code.h"
+#include "error/error_code_types.h"
 #include "parse/scanner.h"
 
 #include <errno.h>

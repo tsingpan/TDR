@@ -1,5 +1,5 @@
 #include "generator.h"
-#include "error/error_code.h"
+#include "error/error_code_types.h"
 #include "globals.h"
 
 #include <string.h>

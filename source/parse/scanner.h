@@ -2,7 +2,7 @@
 #define _H_SCANNER
 
 #include "platform/tlibc_platform.h"
-#include "error/error_msg.h"
+#include "error/error_msg_types.h"
 
 #include <stdarg.h>
 
