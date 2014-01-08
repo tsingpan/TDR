@@ -10,7 +10,7 @@ struct _TLIBC_TYPES_GENERATOR
 {
 	GENERATOR super;
 
-	char tag[TLIBC_MAX_FILE_PATH_LENGTH];
+	char document_name[TLIBC_MAX_FILE_PATH_LENGTH];
 };
 
 #define TLIBC_TYPES_SUFFIX "_types.h"

@@ -3,8 +3,7 @@
 #include "generate/tlibc_types.h"
 #include "error/error.h"
 
-#define TDATA_VERSION "0.0.1"
-
+#include "version.h"
 
 void version()
 {

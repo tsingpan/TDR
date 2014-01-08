@@ -106,7 +106,7 @@ static tint32 path_repair(char* path, tuint32 *len)
 		}
 	}
 
-	for(i = 0; i < ptail; ++i)
+	for(i = 1; i < ptail; ++i)
 	{
 		if(p[i][0] == '.')
 		{

@@ -26,7 +26,9 @@ TD_ERROR_CODE generator_print(GENERATOR *self, const char* fmt, ...);
 
 TD_ERROR_CODE generator_close(GENERATOR *self);
 
+TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val);
 
+TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type, const ST_ARGUMENTS *arg);
 
 //virtual functions
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition);

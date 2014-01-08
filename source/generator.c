@@ -29,8 +29,9 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 	{
 		goto ERROR_RET;
 	}
-		snprintf(file, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->target_dir, TLIBC_FILE_SEPARATOR, primary_file);
-	file_length = TLIBC_MAX_FILE_PATH_LENGTH;
+	snprintf(file, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", self->target_dir, TLIBC_FILE_SEPARATOR, primary_file);
+	file[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	file_length = strlen(file);
 
 
 	//step 2删除扩展名
@@ -50,6 +51,7 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 
 	//step 4获取路径
 	strncpy(path, file, TLIBC_MAX_FILE_PATH_LENGTH);
+	path[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
 	path_length = strlen(path);
 	for(i = 0; i < path_length; ++i)
 	{
@@ -65,6 +67,7 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 	if(file_length + strlen(suffix) < TLIBC_MAX_FILE_PATH_LENGTH - 1)
 	{
 		strncpy(file + file_length, suffix, TLIBC_MAX_FILE_PATH_LENGTH - file_length);
+		file[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
 	}
 
 	self->fout = fopen(file, "w");
@@ -113,6 +116,91 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
+TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
+{
+	switch (val->type)
+	{
+	case E_SNVT_IDENTIFIER:
+		return generator_print(self, "%s", val->val.identifier);
+	case E_SNVT_CHAR:
+		//转义？
+		return generator_print(self, "\'%c\'", val->val.c);
+	case E_SNVT_DOUBLE:
+		return generator_print(self, "%d", val->val.d);
+	case E_SNVT_BOOL:
+		if(val->val.b)
+		{
+			return generator_print(self, "hptrue");
+		}
+		else
+		{
+			return generator_print(self, "hpfalse");
+		}
+	case E_SNVT_INT64:
+		return generator_print(self, "%lld", val->val.i64);
+	case E_SNVT_UINT64:
+		return generator_print(self, "%llu", val->val.ui64);
+	case E_SNVT_HEX_INT64:
+		return generator_print(self, "%llx", val->val.i64);
+	case E_SNVT_HEX_UINT64:
+		return generator_print(self, "%llx", val->val.ui64);
+	default:
+		return E_TD_ERROR;
+	}
+}
+
+TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type, const ST_ARGUMENTS *arg)
+{
+	if(type->type == E_SNT_SIMPLE)
+	{
+		switch(type->st)
+		{
+		case E_ST_INT8:
+			return generator_print(self, "tint8");
+		case E_ST_INT16:
+			return generator_print(self, "tint16");
+		case E_ST_INT32:
+			return generator_print(self, "tint32");
+		case E_ST_INT64:
+			return generator_print(self, "tint64");
+
+		case E_ST_UINT8:
+			return generator_print(self, "tuint8");
+		case E_ST_UINT16:
+			return generator_print(self, "tuint16");
+		case E_ST_UINT32:
+			return generator_print(self, "tuint32");
+		case E_ST_UINT64:
+			return generator_print(self, "tuint64");
+
+		case E_ST_CHAR:
+			return generator_print(self, "tchar");
+		case E_ST_BOOL:
+			return generator_print(self, "tbool");
+		case E_ST_DOUBLE:
+			return generator_print(self, "tdouble");
+		default:
+			return E_TD_ERROR;
+		}
+	}
+	else if(type->type == E_SNT_CONTAINER)
+	{
+		if(type->ct == E_CT_VECTOR)
+		{
+			return generator_print(self, arg->arg_list[0].ot);
+		}
+		else if(type->ct == E_CT_STRING)
+		{
+			return generator_print(self, "tchar");
+		}
+	}
+	else if(type->type == E_SNT_REFER)
+	{
+		return generator_print(self, type->ot);
+	}
+
+	return E_TD_ERROR;
+}
 
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition)
 {
