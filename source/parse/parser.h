@@ -4,7 +4,6 @@
 
 #include "platform/tlibc_platform.h"
 
-#include <stdio.h>
 #include "parse/scanner.h"
 #include "protocol/tlibc_abstract_writer.h"
 
@@ -13,6 +12,8 @@
 #include "definition.h"
 #include "generator.h"
 #include "symbols.h"
+
+#include <stdio.h>
 
 typedef union _PARSER_VALUE
 {

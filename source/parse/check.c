@@ -2,58 +2,6 @@
 #include "symbols.h"
 #include <string.h>
 #include "tdata/tdata_types.h"
-
-static const ST_TYPE* symbols_get_real_type(PARSER *self, const ST_TYPE* sn_type)
-{
-	if(sn_type->type == E_SNT_SIMPLE)
-	{
-		if(sn_type->st.st == E_ST_REFER)
-		{
-			const SYMBOL *ptr = symbols_search_string(&self->symbols, sn_type->st.st_refer, hpfalse);
-			if(ptr == NULL)
-			{
-				goto ERROR_RET;
-			}
-			if(ptr->type != EN_HST_TYPE)
-			{
-				goto ERROR_RET;
-			}
-			return symbols_get_real_type(self, &ptr->body.type);
-		}
-		else
-		{
-			return sn_type;
-		}
-	}
-
-
-	return sn_type;
-ERROR_RET:
-	return NULL;
-}
-
-static const ST_VALUE* symbols_get_real_value(PARSER *self, const ST_VALUE* sn_value)
-{
-	if(sn_value->type == E_SNVT_IDENTIFIER)
-	{
-		const SYMBOL *ptr = symbols_search_string(&self->symbols, sn_value->val.identifier, hpfalse);
-		if(ptr == NULL)
-		{
-			goto ERROR_RET;
-		}
-
-		if(ptr->type != EN_HST_VALUE)
-		{
-			goto ERROR_RET;			
-		}
-		return symbols_get_real_value(self, &ptr->body.val);
-	}
-
-	return sn_value;
-ERROR_RET:
-	return NULL;
-}
-
 void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
 {
 	const ST_TYPE *real_type = NULL;
@@ -71,7 +19,7 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, cons
 	}
 
 	//2, ÅÐ¶ÏÀàÐÍ
-	real_type = symbols_get_real_type(self, type);
+	real_type = symbols_get_real_type(&self->symbols, type);
 	if(real_type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -92,7 +40,7 @@ done:
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
 {
 	SYMBOL *symbol = (SYMBOL*)malloc(sizeof(SYMBOL));
-	const ST_TYPE*type = symbols_get_real_type(self, &sn_typedef->type);
+	const ST_TYPE*type = symbols_get_real_type(&self->symbols, &sn_typedef->type);
 	if(type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -201,7 +149,7 @@ void dp_check_Struct_end(PARSER *self, const YYLTYPE *yylloc)
 
 static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *type)
 {
-	const ST_TYPE *pn_type = symbols_get_real_type(self, type);
+	const ST_TYPE *pn_type = symbols_get_real_type(&self->symbols, type);
 	if(pn_type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);

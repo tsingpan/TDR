@@ -152,15 +152,15 @@ DefinitionList :
 Definition :
 	Import
 	{
-		dp_reduce_Definition_Import(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+		dp_reduce_Definition_Import(GET_SELF, &GET_DEFINITION, &$1);
 	}
 |	Const
 	{
-		dp_reduce_Definition_Const(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+		dp_reduce_Definition_Const(GET_SELF, &GET_DEFINITION, &$1);
 	}
 | Typedef
 	{
-		dp_reduce_Definition_Typedef(GET_SELF, &yylloc, &GET_DEFINITION, &$1);
+		dp_reduce_Definition_Typedef(GET_SELF, &GET_DEFINITION, &$1);
 	}
 | Struct
 	{
@@ -183,13 +183,13 @@ Definition :
 Import :
 	tok_import tok_string
 	{
-		dp_reduce_Import_tok_string(GET_SELF, &yylloc, &$$, $2);
+		dp_reduce_Import_tok_string(GET_SELF, &$$, $2);
 	};
 
 Typedef :
 	tok_typedef Type tok_identifier ';'
 	{
-		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &yylloc, &$$, &$2, &$3);
+		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &$$, &$2, &$3);
 
 		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		dp_check_Typedef(GET_SELF, &yylloc, &$$);
@@ -200,7 +200,7 @@ Const :
 	{
 		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
 
-		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
+		dp_reduce_Const(GET_SELF, &$$, &$2, &$3, &$5);
 		
 		symbols_add_Const(&GET_SELF->symbols, &$$);
 	}
@@ -210,39 +210,39 @@ Const :
 Value :
 	tok_uint64
 	{
-		dp_reduce_Value_tok_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_uint64(GET_SELF, &$$, $1);
 	}
 |	tok_hex_uint64
 	{
-		dp_reduce_Value_tok_hex_uint64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_hex_uint64(GET_SELF, &$$, $1);
 	}
 |	tok_int64
 	{
-		dp_reduce_Value_tok_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_int64(GET_SELF, &$$, $1);
 	}
 |	tok_hex_int64
 	{
-		dp_reduce_Value_tok_hex_int64(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_hex_int64(GET_SELF, &$$, $1);
 	}
 |	tok_bool
 	{
-		dp_reduce_Value_tok_bool(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_bool(GET_SELF, &$$, $1);
 	}
 |	tok_double
 	{
-		dp_reduce_Value_tok_double(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_double(GET_SELF, &$$, $1);
 	}
 |	tok_string
 	{
-		dp_reduce_Value_tok_string(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_string(GET_SELF, &$$, $1);
 	}
 |	tok_char
 	{
-		dp_reduce_Value_tok_char(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_char(GET_SELF, &$$, $1);
 	}
 |	tok_identifier
 	{
-		dp_reduce_Value_tok_identifier(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_Value_tok_identifier(GET_SELF, &$$, $1);
 	}
 |	Function
 	{
@@ -253,7 +253,7 @@ Value :
 Function:
 	tok_count '(' tok_identifier ')'
 	{
-		dp_reduce_Function_tok_count(GET_SELF, &yylloc, &$$, &$3);
+		dp_reduce_Function_tok_count(GET_SELF, &$$, &$3);
 	};
 
 Enum :
@@ -437,7 +437,7 @@ Condition :
 	}
 |	tok_case Value ':'
 	{
-		dp_reduce_Condition_tok_case(GET_SELF, &yylloc, &$$, &$2);
+		dp_reduce_Condition_tok_case(GET_SELF, &$$, &$2);
 	};
 
 
@@ -445,7 +445,7 @@ Condition :
 Type :
 	SimpleType
 	{
-		dp_reduce_Type_SimpleType(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_Type_SimpleType(GET_SELF, &$$, &$1);
 	}
 |	ContainerType
 	{
@@ -455,62 +455,62 @@ Type :
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
 	{
-		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &yylloc, &$$, &$3, &$5);
+		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, &$5);
 	}
 |	tok_t_string '<' tok_identifier '>'
 	{
-		dp_reduce_ContainerType_tok_t_string(GET_SELF, &yylloc, &$$, &$3);
+		dp_reduce_ContainerType_tok_t_string(GET_SELF, &$$, &$3);
 	};
 
 	
 SimpleType:
 	tok_t_bool
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_char
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_double
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_int8
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_int16
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_int32
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_int64
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_uint8 
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_uint16 
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_uint32 
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_t_uint64
 	{
-		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+		dp_reduce_SimpleType(GET_SELF, &$$, $1);
 	}
 |	tok_identifier
    	{
-		dp_reduce_SimpleType_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, &$1);
 	};
 
 Parameters :
@@ -565,11 +565,11 @@ Arguments:
 ArgumentList:
 	ArgumentList ',' tok_identifier
 	{
-		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &yylloc, &$$, &$1, &$3);
+		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, &$3);
 	}
 |	tok_identifier
 	{
-		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &$$, &$1);
 	};
 
 UnixComment:
