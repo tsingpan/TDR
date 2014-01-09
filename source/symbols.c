@@ -151,3 +151,55 @@ void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
 done:
 	return;
 }
+
+void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef)
+{
+	SYMBOL *symbol = (SYMBOL*)malloc(sizeof(SYMBOL));
+	symbol->type = EN_HST_TYPE;
+	symbol->body.type = pn_typedef->type;
+	if(symbols_save(self, pn_typedef->name, symbol) != E_TD_NOERROR)
+	{
+		goto done;
+	}
+done:
+	return;
+}
+
+void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	tuint32 i;
+
+	ptr->type = EN_HST_ENUM;
+	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;
+
+	if(symbols_save(self, pn_enum->name, ptr) != E_TD_NOERROR)
+	{
+		goto done;
+	}
+
+done:
+	return;
+}
+
+void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	const ST_VALUE *val = symbols_get_real_value(self, &pn_enum_def->val);
+
+	if(val == NULL)
+	{
+		goto done;
+	}
+
+	ptr->type = EN_HST_VALUE;
+	ptr->body.val = *val;
+
+	if(symbols_save(self, pn_enum_def->identifier, ptr) != E_TD_NOERROR)
+	{
+		goto done;
+	}
+done:
+	return;
+
+}

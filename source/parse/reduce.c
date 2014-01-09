@@ -20,7 +20,7 @@ void dp_reduce_Definition_Typedef(PARSER *self, ST_DEFINITION *pn_current, const
 	pn_current->definition.de_typedef = *pn_typedef;
 }
 
-void dp_reduce_Import_tok_string(PARSER *self, ST_Import* current, const tstring str)
+void dp_reduce_Import(PARSER *self, ST_Import* current, const tstring str)
 {
 	snprintf(current->package_name, sizeof(current->package_name), str);
 }
@@ -162,7 +162,7 @@ void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, 
 	++(current->arg_list_num);
 }
 
-void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, ST_TYPEDEF *current, ST_TYPE* type, const tbytes *tok_identifier)
+void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_TYPE* type, const tbytes *tok_identifier)
 {
 	current->type = *type;
 	memcpy(current->name, tok_identifier->ptr, tok_identifier->len);

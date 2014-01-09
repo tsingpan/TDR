@@ -38,8 +38,7 @@ done:
 }
 
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
-{
-	SYMBOL *symbol = (SYMBOL*)malloc(sizeof(SYMBOL));
+{	
 	const ST_TYPE*type = symbols_get_real_type(&self->symbols, &sn_typedef->type);
 	if(type == NULL)
 	{
@@ -51,15 +50,7 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 		goto done;
-	}
-
-	symbol->type = EN_HST_TYPE;
-	symbol->body.type = *type;
-	if(symbols_save(&self->symbols, sn_typedef->name, symbol) != E_TD_NOERROR)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_SYMBOL_REDEFINITION, sn_typedef->name);
-		goto done;
-	}
+	}	
 
 done:
 	return;
@@ -80,36 +71,9 @@ done:
 	return;
 }
 
-void dp_check_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
+void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *enum_def)
 {
-	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
-	if(symbol != NULL)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-		goto done;
-	}
-
-done:
-	return;
-}
-
-
-void dp_check_tok_identifier_local(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
-{
-	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
-	if(symbol != NULL)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-		goto done;
-	}
-
-done:
-	return;
-}
-
-void dp_check_EnumDef_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
-{
-	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
+	const SYMBOL *symbol = symbols_search_string(&self->symbols, enum_def->identifier, hpfalse);
 	if(symbol != NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -380,24 +344,6 @@ void dp_check_Field_add(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}
-done:
-	return;
-}
-
-
-void dp_check_Enum_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_ENUM *pn_enum)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-	tuint32 i;
-
-	ptr->type = EN_HST_ENUM;
-	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;
-
-	if(symbols_save(&self->symbols, pn_enum->name, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-	}
-
 done:
 	return;
 }

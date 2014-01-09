@@ -135,15 +135,6 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
-		if(scanner_stack_get_num(&GET_SELF->scanner_stack) == 1)
-		{
-			tuint32 i;
-			for(i = 0; i < GET_SELF->generator_num; ++i)
-			{
-				generator_on_definition(GET_SELF->generator_list[i], &GET_DEFINITION);
-			}
-		}		
-		
 		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
 |	{
@@ -183,16 +174,17 @@ Definition :
 Import :
 	tok_import tok_string
 	{
-		dp_reduce_Import_tok_string(GET_SELF, &$$, $2);
+		dp_reduce_Import(GET_SELF, &$$, $2);
 	};
 
 Typedef :
 	tok_typedef Type tok_identifier ';'
 	{
-		dp_reduce_Typedef_Type_Arguments_tok_identifier(GET_SELF, &$$, &$2, &$3);
-
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		dp_check_Typedef(GET_SELF, &yylloc, &$$);
+
+		dp_reduce_Typedef(GET_SELF, &$$, &$2, &$3);
+
+		symbols_add_Typedef(&GET_SELF->symbols, &$$);
 	};
 
 Const :
@@ -261,17 +253,13 @@ Enum :
 	{
 		memcpy(GET_DEFINITION.definition.de_enum.name, $2.ptr, $2.len);
 		GET_DEFINITION.definition.de_enum.name[$2.len] = 0;
-		
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$2);
-		
-		
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
 	}
 	'{' EnumDefList '}'
 	{ }
 	';'
 	{
-		dp_check_Enum_Add(GET_SELF, &yylloc, &$2, &GET_DEFINITION.definition.de_enum);
+		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
 	};
     
 EnumDefList :
@@ -289,18 +277,16 @@ EnumDefList :
 	}
 	
 EnumDef : 
-	tok_identifier 
-	{
-		dp_check_EnumDef_tok_identifier(GET_SELF, &yylloc, &$1);
-	}
-	'=' Value ',' UnixCommentOrNot
+	tok_identifier '=' Value ',' UnixCommentOrNot
 	{	
-//		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$1, &$4);		
-		
+		dp_check_EnumDef(GET_SELF, &yylloc, &$1);
+
 		memcpy($$.identifier, $1.ptr, $1.len);
 		$$.identifier[$1.len] = 0;
-		$$.val = $4;
-		$$.comment = $6;
+		$$.val = $3;
+		$$.comment = $5;
+
+		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};
     
 
@@ -314,7 +300,6 @@ Union :
 		memcpy(GET_DEFINITION.definition.de_union.name, $3.ptr, $3.len);
 		GET_DEFINITION.definition.de_union.name[$3.len] = 0;
 		
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		
 		symbols_domain_begin(&GET_SELF->symbols, &$3);
 	}
@@ -389,7 +374,6 @@ FieldList:
 Field : 
 	FieldCondition Type tok_identifier Arguments
 	{
-		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$3);
 	}
 	';' UnixCommentOrNot
 	{
@@ -546,7 +530,6 @@ Parameter:
 		memcpy($$.identifier, $2.ptr, $2.len);
 		$$.identifier[$2.len] = 0;
 		
-		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$2);
 		//参数类型只能为简单类型
 		dp_check_Parameter_add(GET_SELF, &yylloc, &$$);
 	};

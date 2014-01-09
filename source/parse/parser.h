@@ -72,6 +72,8 @@ struct _PARSER
 	ST_DEFINITION pn_definition;
 	ST_FIELD_LIST pn_field_list;
 	ST_FIELD pn_field;
+
+
 	tbool in_union;
 	tbool in_struct;
 };
