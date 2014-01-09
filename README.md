@@ -2,10 +2,11 @@ TData
 ======
 **多平台多语言的数据描述工具!**
 
-- cmake 用于cmake工程的脚本文件
-- source 源代码
-- tutorial 使用例子
-- error 错误码语言包
+- cmake 编译器的cmake脚本文件
+- source 编译器源代码
+- error 编译器错误提示
+- tdata 公共数据定义
+- tutorial 使用范例
 
 问题和反馈
 ==========

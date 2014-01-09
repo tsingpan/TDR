@@ -1,6 +1,7 @@
 #include "parse/check.h"
 #include "symbols.h"
 #include <string.h>
+#include "tdata/tdata_types.h"
 
 static const SYMBOLS* dp_find_symbol_by_string(PARSER *self, const char* name)
 {
