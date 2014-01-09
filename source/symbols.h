@@ -58,4 +58,10 @@ void symbols_domain_begin(SYMBOLS *self, const tbytes *tok_identifier);
 //”ÚΩ· ¯
 void symbols_domain_end(SYMBOLS *self);
 
+const ST_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_TYPE* sn_type);
+
+const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value);
+
+void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
+
 #endif //_H_SYMBOLS

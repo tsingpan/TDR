@@ -6,11 +6,8 @@
 
 #include "parse/parser.h"
 
-void dp_check_Const_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
+void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val);
 
-void dp_check_Const_add_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_VALUE *pn_value);
-
-void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const tbytes* tok_identifier, const ST_VALUE* sn_value);
 
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef);
 

@@ -33,7 +33,7 @@ tint32 parser_parse(PARSER *self, const char* file_name)
 
 	self->scanner_stack.result_num = 0;
 		
-	symbols_init(&self->parser_symbols);
+	symbols_init(&self->symbols);
 	
 
 	if(file_name == NULL)
@@ -54,7 +54,7 @@ tint32 parser_parse(PARSER *self, const char* file_name)
 	ret = tdataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
 done:
-	symbols_fini(&self->parser_symbols);
+	symbols_fini(&self->symbols);
 	for(i = 0;i < self->scanner_stack.result_num; ++i)
 	{
 		fprintf(stderr, self->scanner_stack.result_str[i]);
@@ -368,7 +368,7 @@ void parser_init(PARSER *self)
 	scanner_stack_init(&self->scanner_stack);
 	self->scanner_stack.result_num = 0;
 	self->generator_num = 0;
-	symbols_init(&self->parser_symbols);
+	symbols_init(&self->symbols);
 }
 
 

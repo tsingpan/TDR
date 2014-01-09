@@ -196,17 +196,13 @@ Typedef :
 	};
 
 Const :
-	tok_const Type tok_identifier
+	tok_const Type tok_identifier '=' Value ';'
 	{
-		dp_check_Const_tok_identifier(GET_SELF, &yylloc, &$3);
-	}
-	'=' Value ';'
-	{
-		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$6);
+		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
+
+		dp_reduce_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
 		
-		dp_check_constant_value(GET_SELF, &yylloc, &$2, &$3, &$6);
-				
-		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$3, &$6);
+		symbols_add_Const(&GET_SELF->symbols, &$$);
 	}
 
 
@@ -299,7 +295,7 @@ EnumDef :
 	}
 	'=' Value ',' UnixCommentOrNot
 	{	
-		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$1, &$4);		
+//		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$1, &$4);		
 		
 		memcpy($$.identifier, $1.ptr, $1.len);
 		$$.identifier[$1.len] = 0;
@@ -320,7 +316,7 @@ Union :
 		
 		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		
-		symbols_domain_begin(&GET_SELF->parser_symbols, &$3);
+		symbols_domain_begin(&GET_SELF->symbols, &$3);
 	}
 	Parameters
 	{
@@ -336,7 +332,7 @@ Union :
 	}
 	'}'
 	{
-		symbols_domain_end(&GET_SELF->parser_symbols);
+		symbols_domain_end(&GET_SELF->symbols);
 	}
 	';'
 	{
@@ -353,7 +349,7 @@ Struct :
 	}
 	tok_identifier
 	{
-		symbols_domain_begin(&GET_SELF->parser_symbols, &$3);
+		symbols_domain_begin(&GET_SELF->symbols, &$3);
 	}
 	Parameters
 	{
@@ -361,7 +357,7 @@ Struct :
 	}
 	'{' FieldList '}' ';'
 	{
-		symbols_domain_end(&GET_SELF->parser_symbols);
+		symbols_domain_end(&GET_SELF->symbols);
 
 		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
 		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;

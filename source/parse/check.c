@@ -3,192 +3,88 @@
 #include <string.h>
 #include "tdata/tdata_types.h"
 
-static const ST_TYPE* get_type(PARSER *self, const ST_TYPE* sn_type)
+static const ST_TYPE* symbols_get_real_type(PARSER *self, const ST_TYPE* sn_type)
 {
 	if(sn_type->type == E_SNT_SIMPLE)
 	{
 		if(sn_type->st.st == E_ST_REFER)
 		{
-			const SYMBOL *ptr = symbols_search_string(&self->parser_symbols, sn_type->st.st_refer, hptrue);
+			const SYMBOL *ptr = symbols_search_string(&self->symbols, sn_type->st.st_refer, hpfalse);
 			if(ptr == NULL)
 			{
-				return NULL;
+				goto ERROR_RET;
 			}
-			if(ptr->type == EN_HST_TYPE)
+			if(ptr->type != EN_HST_TYPE)
 			{
-				return &ptr->body.type;
+				goto ERROR_RET;
 			}
-			else
-			{
-				return sn_type;
-			}
+			return symbols_get_real_type(self, &ptr->body.type);
 		}
 		else
 		{
 			return sn_type;
 		}
-	}	
-	else
-	{
-		return sn_type;
 	}
+
+
+	return sn_type;
+ERROR_RET:
+	return NULL;
 }
 
-static const ST_VALUE* get_value(PARSER *self, const ST_VALUE* sn_value)
+static const ST_VALUE* symbols_get_real_value(PARSER *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		const SYMBOL *ptr = symbols_search_string(&self->parser_symbols, sn_value->val.identifier, hptrue);
+		const SYMBOL *ptr = symbols_search_string(&self->symbols, sn_value->val.identifier, hpfalse);
 		if(ptr == NULL)
-		{	
-			return NULL;
+		{
+			goto ERROR_RET;
 		}
 
-		if(ptr->type == EN_HST_VALUE)
+		if(ptr->type != EN_HST_VALUE)
 		{
-			return &ptr->body.val;
+			goto ERROR_RET;			
 		}
-		else
-		{			
-			return NULL;
-		}
+		return symbols_get_real_value(self, &ptr->body.val);
 	}
-	else
-	{
-		return sn_value;
-	}
+
+	return sn_value;
+ERROR_RET:
+	return NULL;
 }
 
-void dp_check_Const_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
+void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
 {
+	const ST_TYPE *real_type = NULL;
 	char id[TLIBC_MAX_IDENTIFIER_LENGTH];
 
-	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	id[tok_identifier->len] = 0;
+	memcpy(id, identifier->ptr, identifier->len);
+	id[identifier->len] = 0;
 
-	if(symbols_search_identifier(&self->parser_symbols, tok_identifier, hpfalse) != NULL)
+
+	//1, 判断符号是否重复
+	if(symbols_search_string(&self->symbols, id, hpfalse) != NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_SYMBOL_REDEFINITION, id);
+		goto done;
 	}
-}
 
-void dp_check_Const_add_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_VALUE *pn_value)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-	const ST_VALUE *val = get_value(self, pn_value);
-	char id[TLIBC_MAX_IDENTIFIER_LENGTH];
-	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	id[tok_identifier->len] = 0;
-
-	if(val == NULL)
+	//2, 判断类型
+	real_type = symbols_get_real_type(self, type);
+	if(real_type == NULL)
+	{
+		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
+		goto done;
+	}
+	if((real_type->type == E_SNT_CONTAINER) && (real_type->ct == E_CT_VECTOR))
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 		goto done;
 	}
 
-	ptr->type = EN_HST_VALUE;
-	ptr->body.val = *val;
-	
-	if(symbols_save(&self->parser_symbols, id, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR, id);
-	}
-done:
-	return;
-}
-
-void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE* sn_type, const tbytes* tok_identifier, const ST_VALUE* sn_value)
-{
-	char id[TLIBC_MAX_IDENTIFIER_LENGTH];
-	const ST_VALUE* val = get_value(self, sn_value);
-	const ST_TYPE* type = get_type(self, sn_type);
-
-	if((type == NULL) || (val == NULL))
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR, id);
-		goto done;
-	}
-
-	memcpy(id, tok_identifier->ptr, tok_identifier->len);
-	id[tok_identifier->len] = 0;	
-	
-	if(type->type == E_SNT_SIMPLE)
-	{
-		
-		switch(type->st.st)
-		{
-		case E_ST_INT8:
-		case E_ST_INT16:
-		case E_ST_INT32:
-		case E_ST_INT64:
-		case E_ST_UINT8:
-		case E_ST_UINT16:
-		case E_ST_UINT32:
-		case E_ST_UINT64:
-		case E_ST_CHAR:
-		case E_ST_DOUBLE:
-			break;
-		default:
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_INVALID_CONSTANCE_TYPE);
-			goto done;
-		}
-		if((val->type == E_SNVT_UINT64) || (val->type == E_SNVT_HEX_UINT64))
-		{
-			tuint64 tmp = val->val.ui64 >> 32;
-			tmp >>= 32;
-			if(tmp)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_CONSTANCE_TYPE_TOO_SMALL, id);
-				goto done;
-			}
-		}
-		else if((val->type == E_SNVT_INT64) || (val->type == E_SNVT_HEX_INT64))
-		{
-			tint64 tmp = val->val.ui64 >> 32;
-			tmp >>= 32;
-			if(tmp)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_CONSTANCE_TYPE_TOO_SMALL, id);
-				goto done;
-			}
-		}
-		else if(val->type == E_SNVT_IDENTIFIER)
-		{
-
-		}
-		else if(val->type == E_SNVT_DOUBLE)
-		{
-
-		}
-		else if(val->type == E_SNVT_CHAR)
-		{
-
-		}
-		else if(val->type == E_SNVT_BOOL)
-		{
-
-		}
-		else
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_UNKNOW_CONSTANT_VALUE);
-			goto done;
-		}
-	}	
-	else if(type->type == E_SNT_CONTAINER)
-	{
-		if(type->ct == E_CT_STRING)
-		{
-			if(sn_value->type != E_SNVT_STRING)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR, id);
-			}
-		}
-		else
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR, id);
-		}
-	}
-
+	//3, 判断值是否会溢出
+	//todo
 done:
 	return;
 }
@@ -196,7 +92,7 @@ done:
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
 {
 	SYMBOL *symbol = (SYMBOL*)malloc(sizeof(SYMBOL));
-	const ST_TYPE*type = get_type(self, &sn_typedef->type);
+	const ST_TYPE*type = symbols_get_real_type(self, &sn_typedef->type);
 	if(type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -211,7 +107,7 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_
 
 	symbol->type = EN_HST_TYPE;
 	symbol->body.type = *type;
-	if(symbols_save(&self->parser_symbols, sn_typedef->name, symbol) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, sn_typedef->name, symbol) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_SYMBOL_REDEFINITION, sn_typedef->name);
 		goto done;
@@ -228,7 +124,7 @@ void dp_check_Parameter_add(PARSER *self, const YYLTYPE *yylloc, const ST_Parame
 	ptr->type = EN_HST_PARAMETER;
 	ptr->body.para = *pn_parameter;
 
-	if(symbols_save(&self->parser_symbols, pn_parameter->identifier, ptr) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, pn_parameter->identifier, ptr) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}
@@ -238,7 +134,7 @@ done:
 
 void dp_check_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
-	const SYMBOL *symbol = symbols_search_identifier(&self->parser_symbols, tok_identifier, hpfalse);
+	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
 	if(symbol != NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -252,7 +148,7 @@ done:
 
 void dp_check_tok_identifier_local(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
-	const SYMBOL *symbol = symbols_search_identifier(&self->parser_symbols, tok_identifier, hpfalse);
+	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
 	if(symbol != NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -265,7 +161,7 @@ done:
 
 void dp_check_EnumDef_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
 {
-	const SYMBOL *symbol = symbols_search_identifier(&self->parser_symbols, tok_identifier, hpfalse);
+	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, tok_identifier, hpfalse);
 	if(symbol != NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -305,7 +201,7 @@ void dp_check_Struct_end(PARSER *self, const YYLTYPE *yylloc)
 
 static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *type)
 {
-	const ST_TYPE *pn_type = get_type(self, type);
+	const ST_TYPE *pn_type = symbols_get_real_type(self, type);
 	if(pn_type == NULL)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -316,7 +212,7 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 	{
 		if(pn_type->st.st == E_ST_REFER)
 		{
-			const SYMBOL *symbols = symbols_search_string(&self->parser_symbols, pn_type->st.st_refer, hptrue);
+			const SYMBOL *symbols = symbols_search_string(&self->symbols, pn_type->st.st_refer, hptrue);
 			if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -356,7 +252,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 	{
 		if(pn_field->type.st.st == E_ST_REFER)
 		{
-			const SYMBOL *symbol = symbols_search_string(&self->parser_symbols, pn_field->type.st.st_refer, hptrue);
+			const SYMBOL *symbol = symbols_search_string(&self->symbols, pn_field->type.st.st_refer, hptrue);
 			if(symbol == NULL)
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -532,7 +428,7 @@ void dp_check_Field_add(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_
 	ptr->type = EN_HST_FIELD;
 	ptr->body.field = *pn_field;
 
-	if(symbols_save(&self->parser_symbols, pn_field->identifier, ptr) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, pn_field->identifier, ptr) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}
@@ -549,7 +445,7 @@ void dp_check_Enum_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_id
 	ptr->type = EN_HST_ENUM;
 	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;
 
-	if(symbols_save(&self->parser_symbols, pn_enum->name, ptr) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, pn_enum->name, ptr) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}
@@ -565,7 +461,7 @@ void dp_check_Struct_Add(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *d
 	ptr->type = EN_HST_STRUCT;
 	ptr->body.field_list_num = de_struct->field_list.field_list_num;
 
-	if(symbols_save(&self->parser_symbols, de_struct->name, ptr) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, de_struct->name, ptr) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}
@@ -581,7 +477,7 @@ void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_
 	ptr->type = EN_HST_UNION;
 	ptr->body.field_list_num = de_union->field_list.field_list_num;
 
-	if(symbols_save(&self->parser_symbols, de_union->name, ptr) != E_TD_NOERROR)
+	if(symbols_save(&self->symbols, de_union->name, ptr) != E_TD_NOERROR)
 	{
 		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 	}

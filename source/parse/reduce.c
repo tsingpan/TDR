@@ -178,7 +178,7 @@ void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDIT
 
 void dp_reduce_Function_tok_count(PARSER *self, const YYLTYPE *yylloc, ST_VALUE *current, const tbytes *identifier)
 {
-	const SYMBOL *symbols = symbols_search_identifier(&self->parser_symbols, identifier, hpfalse);
+	const SYMBOL *symbols = symbols_search_identifier(&self->symbols, identifier, hpfalse);
 
 	current->type = E_SNVT_UINT64;
 	switch(symbols->type)

@@ -66,7 +66,7 @@ struct _PARSER
 		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
-	SYMBOLS parser_symbols;
+	SYMBOLS symbols;
 
 	ST_DEFINITION pn_definition;
 	ST_FIELD_LIST pn_field_list;

@@ -78,3 +78,76 @@ const SYMBOL* symbols_search_string(SYMBOLS *self, const char* name, tbool back_
 ERROR_RET:
 	return NULL;
 }
+
+const ST_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_TYPE* sn_type)
+{
+	if(sn_type->type == E_SNT_SIMPLE)
+	{
+		if(sn_type->st.st == E_ST_REFER)
+		{
+			const SYMBOL *ptr = symbols_search_string(self, sn_type->st.st_refer, hpfalse);
+			if(ptr == NULL)
+			{
+				goto ERROR_RET;
+			}
+			if(ptr->type != EN_HST_TYPE)
+			{
+				goto ERROR_RET;
+			}
+			return symbols_get_real_type(self, &ptr->body.type);
+		}
+		else
+		{
+			return sn_type;
+		}
+	}
+
+
+	return sn_type;
+ERROR_RET:
+	return NULL;
+}
+
+const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
+{
+	if(sn_value->type == E_SNVT_IDENTIFIER)
+	{
+		const SYMBOL *ptr = symbols_search_string(self, sn_value->val.identifier, hpfalse);
+		if(ptr == NULL)
+		{
+			goto ERROR_RET;
+		}
+
+		if(ptr->type != EN_HST_VALUE)
+		{
+			goto ERROR_RET;			
+		}
+		return symbols_get_real_value(self, &ptr->body.val);
+	}
+
+	return sn_value;
+ERROR_RET:
+	return NULL;
+}
+
+
+void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	const ST_VALUE *val = symbols_get_real_value(self, &pn_const->val);
+
+	if(val == NULL)
+	{
+		goto done;
+	}
+
+	ptr->type = EN_HST_VALUE;
+	ptr->body.val = *val;
+
+	if(symbols_save(self, pn_const->identifier, ptr) != E_TD_NOERROR)
+	{
+		goto done;
+	}
+done:
+	return;
+}
