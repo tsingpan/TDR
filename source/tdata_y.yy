@@ -419,6 +419,7 @@ FieldCondition:
 		$$.oper = E_EO_NON;
 	};
 
+//这里要检查Value， 保证只能是整数, 还得有符号无符号匹配
 Condition : 
 	tok_if 	'(' Value '&' Value	')'	
 	{
@@ -437,15 +438,10 @@ Condition :
 		$$.op0 = $3;
 		$$.oper = E_EO_UNEQUAL;
 		$$.op1 = $5;
-
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$3);
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$5);
 	}
-|	tok_case tok_identifier ':'
+|	tok_case Value ':'
 	{
 		dp_reduce_Condition_tok_case(GET_SELF, &yylloc, &$$, &$2);
-
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$$.op0);
 	};
 
 

@@ -338,131 +338,6 @@ done:
 	return;
 }
 
-void dp_check_FieldExpression_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val)
-{
-	switch(val->type)
-	{
-	case E_SNVT_IDENTIFIER:
-		{
-			const SYMBOL *symbol = symbols_search_string(&self->parser_symbols, val->val.identifier, hptrue);
-			if(symbol == NULL)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-			
-			switch(symbol->type)
-			{
-			case EN_HST_VALUE:
-				{
-					const ST_VALUE *val = get_value(self, &symbol->body.val);
-					if(val == NULL)
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-
-					if((val->type != E_SNVT_INT64) && (val->type != E_SNVT_UINT64)
-						&& (val->type != E_SNVT_HEX_INT64) && (val->type != E_SNVT_HEX_UINT64))
-					{					
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-					break;
-				}
-			case EN_HST_FIELD:
-				{
-					dp_check_expression_value_type(self, yylloc, &symbol->body.field.type);
-					break;
-				}
-			case EN_HST_PARAMETER:
-				{
-					dp_check_expression_value_type(self, yylloc, &symbol->body.para.type);
-					break;
-				}
-			default:
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-
-			break;
-		}
-	case E_SNVT_INT64:
-	case E_SNVT_UINT64:
-	case E_SNVT_HEX_INT64:
-	case E_SNVT_HEX_UINT64:
-		break;
-	default:
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-		goto done;
-	}
-done:
-	return;
-}
-
-static void dp_check_field_vector_args(PARSER *self, const YYLTYPE *yylloc, const ST_ARGUMENTS *args, tuint32 start_index)
-{
-	/*
-	tuint32 i;
-	for(i = start_index; i < args->arg_list_num; ++i)
-	{
-		if(args->arg_list[i].type == E_SNT_REFER)
-		{
-			const SYMBOLS *symbol = dp_find_symbol_by_string(self, args->arg_list[i].ot);
-			if(symbol == NULL)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-
-			if(symbol->type == EN_HST_VALUE)
-			{
-				if(!((symbol->body.val.type >= E_SNVT_BOOL) && (symbol->body.val.type <= E_SNVT_HEX_UINT64)))
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-			}
-			else if(symbol->type == EN_HST_PARAMETER)
-			{
-			}
-			else if(symbol->type == EN_HST_FIELD)
-			{
-				if(symbol->body.field.type.type == E_SNT_SIMPLE)
-				{
-					if(!((symbol->body.field.type.st >= E_ST_INT8) && (symbol->body.field.type.st <= E_ST_BOOL)))
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-				}
-				else if(symbol->body.field.type.type == E_SNT_REFER)
-				{
-
-				}
-				else
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-			}
-			else
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-		}
-		else
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
-		}
-	}
-
-done:
-*/
-	return;
-}
 
 void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
@@ -492,7 +367,6 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 				goto done;
 			}
-			dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
 		}
 		else if(pn_field->args.arg_list_num != 0)
 		{			

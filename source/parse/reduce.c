@@ -169,13 +169,11 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, const YYLTYPE
 	current->name[tok_identifier->len] = 0;
 }
 
-void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDITION *current, const tbytes *identifier)
+void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDITION *current, const ST_VALUE *val)
 {
 	tuint32 i;
 	current->oper = E_EO_CASE;
-	current->op0.type = E_SNVT_IDENTIFIER;
-	memcpy(current->op0.val.identifier, identifier->ptr, identifier->len);
-	current->op0.val.identifier[identifier->len] = 0;
+	current->op0 = *val;
 }
 
 void dp_reduce_Function_tok_count(PARSER *self, const YYLTYPE *yylloc, ST_VALUE *current, const tbytes *identifier)

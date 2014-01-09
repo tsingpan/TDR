@@ -32,8 +32,6 @@ void dp_check_Struct_begin(PARSER *self, const YYLTYPE *yylloc);
 
 void dp_check_Struct_end(PARSER *self, const YYLTYPE *yylloc);
 
-void dp_check_FieldExpression_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
 void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
 
 void dp_check_Field_add(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
