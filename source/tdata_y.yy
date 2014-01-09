@@ -20,6 +20,9 @@
 #define YYSTYPE PARSER_VALUE
 
 #include <string.h>
+
+int tdatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss);
+void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 }
 
 %define api.pure

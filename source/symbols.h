@@ -42,14 +42,20 @@ typedef struct _PARSER_SYMBOLS
 
 
 void symbols_init(SYMBOLS *self);
+
 void symbols_fini(SYMBOLS *self);
-const SYMBOL* symbols_find_by_string(SYMBOLS *self, const char* name);
-const SYMBOL* symbols_find(SYMBOLS *self, const tbytes* tok_identifier);
-const SYMBOL* symbols_find_by_string_local(SYMBOLS *self, const char* name);
-const SYMBOL* symbols_find_local(SYMBOLS *self, const tbytes* tok_identifier);
-tint32 symbols_save_string(SYMBOLS *self, const char *name, const SYMBOL *symbol);
-tint32 symbols_save(SYMBOLS *self, const tbytes *tok_identifier, const SYMBOL *symbol);
+
+//back_searching为true时， 首先在当前域下搜索符号， 如果找不到那么到上一层进行搜索
+const SYMBOL* symbols_search_string(SYMBOLS *self, const char* name, tbool back_searching);
+const SYMBOL* symbols_search_identifier(SYMBOLS *self, const tbytes* tok_identifier, tbool back_searching);
+
+//保存符号到当前域
+tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol);
+
+//域开始
 void symbols_domain_begin(SYMBOLS *self, const tbytes *tok_identifier);
+
+//域结束
 void symbols_domain_end(SYMBOLS *self);
 
 #endif //_H_SYMBOLS

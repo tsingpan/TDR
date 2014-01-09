@@ -51,7 +51,7 @@ tint32 parser_parse(PARSER *self, const char* file_name)
 		goto done;
 	}
 
-	ret = yydataparse(&self->scanner_stack);
+	ret = tdataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
 done:
 	symbols_fini(&self->parser_symbols);
@@ -72,7 +72,7 @@ done:
 }
 
 
-void yydataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
+void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
 	PARSER *self = TLIBC_CONTAINER_OF(jp, PARSER, scanner_stack);
 	va_list ap;
@@ -326,8 +326,8 @@ tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE 
 	return E_TD_NOERROR;
 }
 
-extern tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
-int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
+extern tint32 tdata_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
+int tdatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
 	PARSER *jp = TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack);
 	int ret = 0;
@@ -336,7 +336,7 @@ int yydatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss
 	{
 		SCANNER *scanner = scanner_stack_get_scanner(ss);
 		yylloc_param->file_name = scanner->file_name;
-		ret = ddc_lex_scan(scanner, yylloc_param, yylval_param);
+		ret = tdata_lex_scan(scanner, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
 		if(ret <= 0)

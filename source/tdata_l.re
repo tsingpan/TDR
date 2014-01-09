@@ -17,7 +17,7 @@ static void ddekit_reserved_keyword(const char* keyword)
 }
 
 
-tint32 ddc_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
+tint32 tdata_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
