@@ -14,13 +14,15 @@ void dp_reduce_Definition_Typedef(PARSER *self, const YYLTYPE *yylloc, ST_DEFINI
 
 void dp_reduce_Import_tok_string(PARSER *self, const YYLTYPE *yylloc, ST_Import* current, const tstring str);
 
-void dp_reduce_ObjectType_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_TYPE* current, const tbytes *tok_identifier);
+void dp_reduce_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tbytes *tok_identifier);
 
-void dp_reduce_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current);
+void dp_reduce_ContainerType_tok_t_string(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const tbytes *tok_identifier);
 
-void dp_reduce_ContainerType_tok_t_string(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current);
+void dp_reduce_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE *current, const SN_SIMPLE_TYPE type);
 
-void dp_reduce_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const SN_SIMPLE_TYPE type);
+void dp_reduce_SimpleType_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* current, const tbytes *tok_identifier);
+
+void dp_reduce_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type);
 
 void dp_reduce_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_VALUE* current, const tbytes sn_identifier);
 
@@ -43,9 +45,9 @@ void dp_reduce_Value_tok_string(PARSER *self, const YYLTYPE *yylloc, ST_VALUE* c
 
 void dp_reduce_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val);
 
-void dp_reduce_ArgumentList_Type(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_TYPE *pn_type);
+void dp_reduce_ArgumentList_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const tbytes *identifier);
 
-void dp_reduce_ArgumentList_ArgumentList_Type(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const ST_TYPE *pn_type);
+void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tbytes *identifier);
 
 void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_TYPEDEF *current, ST_TYPE* type, const tbytes *tok_identifier);
 

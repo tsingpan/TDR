@@ -87,7 +87,8 @@
 %type<sn_unix_comment> UnixComment UnixCommentOrNot
 
 %type<sn_bool> tok_bool
-%type<sn_type> Type SimpleType ObjectType ContainerType
+%type<sn_simple_type> SimpleType
+%type<sn_type> Type ContainerType
 %type<sn_value> Value
 %type<sn_const> Const
 %type<pn_tok_double> tok_double
@@ -396,17 +397,18 @@ FieldList:
 	
 
 Field : 
-	FieldCondition Type Arguments tok_identifier
+	FieldCondition Type tok_identifier Arguments
 	{
-		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$4);
+		dp_check_tok_identifier_local(GET_SELF, &yylloc, &$3);
 	}
 	';' UnixCommentOrNot
 	{
 		GET_SELF->pn_field.condition = $1;
 		GET_SELF->pn_field.type = $2;
-		GET_SELF->pn_field.args = $3;		
-		memcpy(GET_SELF->pn_field.identifier, $4.ptr, $4.len);
-		GET_SELF->pn_field.identifier[$4.len] = 0;		
+		
+		memcpy(GET_SELF->pn_field.identifier, $3.ptr, $3.len);
+		GET_SELF->pn_field.identifier[$3.len] = 0;
+		GET_SELF->pn_field.args = $4;
 		GET_SELF->pn_field.comment = $7;
 
 		dp_check_Field(GET_SELF, &yylloc, &GET_SELF->pn_field);
@@ -491,31 +493,21 @@ FieldExpression :
 Type :
 	SimpleType
 	{
-		$$ = $1;
+		dp_reduce_Type_SimpleType(GET_SELF, &yylloc, &$$, &$1);
 	}
 |	ContainerType
 	{
 		$$ = $1;
 	}	
-|	ObjectType
-	{
-		$$ = $1;
-	};
-
-ObjectType:
-	tok_identifier
-   	{
-		dp_reduce_ObjectType_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
-	};
 
 ContainerType:
-	tok_t_vector
+	tok_t_vector '<' SimpleType ',' tok_identifier '>'
 	{
-		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &yylloc, &$$);
+		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &yylloc, &$$, &$3, &$5);
 	}
-|	tok_t_string
+|	tok_t_string '<' tok_identifier '>'
 	{
-		dp_reduce_ContainerType_tok_t_string(GET_SELF, &yylloc, &$$);
+		dp_reduce_ContainerType_tok_t_string(GET_SELF, &yylloc, &$$, &$3);
 	};
 
 	
@@ -563,6 +555,10 @@ SimpleType:
 |	tok_t_uint64
 	{
 		dp_reduce_SimpleType(GET_SELF, &yylloc, &$$, $1);
+	}
+|	tok_identifier
+   	{
+		dp_reduce_SimpleType_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 Parameters :
@@ -607,7 +603,7 @@ Parameter:
 
 
 Arguments:
-	'<' ArgumentList '>'
+	'(' ArgumentList ')'
 	{
 		//参数只能传递本对象中的简单类型
 		$$ = $2;
@@ -618,13 +614,13 @@ Arguments:
 	};
 	
 ArgumentList:
-	ArgumentList ',' Type
+	ArgumentList ',' tok_identifier
 	{
-		dp_reduce_ArgumentList_ArgumentList_Type(GET_SELF, &yylloc, &$$, &$1, &$3);
+		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &yylloc, &$$, &$1, &$3);
 	}
-|	Type
+|	tok_identifier
 	{
-		dp_reduce_ArgumentList_Type(GET_SELF, &yylloc, &$$, &$1);
+		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &yylloc, &$$, &$1);
 	};
 
 UnixComment:

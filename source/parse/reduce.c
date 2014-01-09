@@ -25,40 +25,52 @@ void dp_reduce_Import_tok_string(PARSER *self, const YYLTYPE *yylloc, ST_Import*
 	snprintf(current->package_name, sizeof(current->package_name), str);
 }
 
-void dp_reduce_ObjectType_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_TYPE* current, const tbytes *tok_identifier)
+void dp_reduce_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tbytes *tok_identifier)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = E_CT_VECTOR;
+
+	current->vector_type = *simple_type;
+	memcpy(current->vector_length, tok_identifier->ptr, tok_identifier->len);
+	current->vector_length[tok_identifier->len] = 0;
+}
+
+void dp_reduce_ContainerType_tok_t_string(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const tbytes *tok_identifier)
+{
+	current->type = E_SNT_CONTAINER;
+	current->ct = E_CT_STRING;
+
+	memcpy(current->string_length, tok_identifier->ptr, tok_identifier->len);
+	current->string_length[tok_identifier->len] = 0;
+}
+
+void dp_reduce_SimpleType_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* current, const tbytes *tok_identifier)
 {
 	tuint32 i;
 	char id[1024];
 	ST_TYPE *type;
 
-	current->type = E_SNT_REFER;
+	current->st = E_ST_REFER;
 
 	for(i = 0; i < tok_identifier->len; ++i)
 	{
 		id[i] = tok_identifier->ptr[i];
 	}
 	id[i] = 0;
-	strncpy(current->ot, id, TLIBC_MAX_IDENTIFIER_LENGTH);
+	strncpy(current->st_refer, id, TLIBC_MAX_IDENTIFIER_LENGTH);
 done:
 	return;
 }
 
-void dp_reduce_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current)
+void dp_reduce_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE *current, const SN_SIMPLE_TYPE type)
 {
-	current->type = E_SNT_CONTAINER;
-	current->ct = E_CT_VECTOR;
+	current->st = type;
 }
 
-void dp_reduce_ContainerType_tok_t_string(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current)
-{
-	current->type = E_SNT_CONTAINER;
-	current->ct = E_CT_STRING;
-}
-
-void dp_reduce_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const SN_SIMPLE_TYPE type)
+void dp_reduce_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
 {
 	current->type = E_SNT_SIMPLE;
-	current->st = type;
+	current->st = *simple_type;
 }
 
 void dp_reduce_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_VALUE* current, const tbytes sn_identifier)
@@ -133,17 +145,20 @@ void dp_reduce_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, con
 	current->val = *val;
 }
 
-void dp_reduce_ArgumentList_ArgumentList_Type(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const ST_TYPE *pn_type)
+void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tbytes *identifier)
 {
 	*current = *argument_list;
-	current->arg_list[current->arg_list_num] = *pn_type;
+
+	memcpy(current->arg_list[current->arg_list_num], identifier->ptr, identifier->len);
+	current->arg_list[current->arg_list_num][identifier->len] = 0;
 	++(current->arg_list_num);
 }
 
-void dp_reduce_ArgumentList_Type(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const ST_TYPE *pn_type)
+void dp_reduce_ArgumentList_tok_identifier(PARSER *self, const YYLTYPE *yylloc, ST_ARGUMENTS* current, const tbytes *identifier)
 {
 	current->arg_list_num = 0;
-	current->arg_list[current->arg_list_num] = *pn_type;
+	memcpy(current->arg_list[current->arg_list_num], identifier->ptr, identifier->len);
+	current->arg_list[current->arg_list_num][identifier->len] = 0;
 	++(current->arg_list_num);
 }
 

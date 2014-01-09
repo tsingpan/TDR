@@ -100,26 +100,18 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 	tuint32 i;
 	for(i = 0; i < field_list->field_list_num; ++i)
 	{
-		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
-		{
-			if(field_list->field_list[i].type.ct == E_CT_VECTOR)
-			{
-				generator_print(&self->super, "\ttuint32 %s;\n", field_list->field_list[i].args.arg_list[2].ot);
-			}
-		}
-
 		generator_print(&self->super, "\t");
-		generator_print_type(&self->super, &field_list->field_list[i].type, &field_list->field_list[i].args);
+		generator_print_type(&self->super, &field_list->field_list[i].type);
 		generator_print(&self->super, " %s", field_list->field_list[i].identifier);
 		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
 		{
 			if(field_list->field_list[i].type.ct == E_CT_VECTOR)
 			{
-				generator_print(&self->super, "[%s]", field_list->field_list[i].args.arg_list[1].ot);
+				generator_print(&self->super, "[%s]", field_list->field_list[i].type.vector_length);
 			}
 			else if(field_list->field_list[i].type.ct == E_CT_STRING)
 			{
-				generator_print(&self->super, "[%s]", field_list->field_list[i].args.arg_list[0].ot);
+				generator_print(&self->super, "[%s]", field_list->field_list[i].type.string_length);
 			}
 		}
 		generator_print(&self->super, ";\n");
@@ -156,7 +148,7 @@ static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *
 {
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef ");
-	generator_print_type(&self->super, &de_typedef->type, NULL);
+	generator_print_type(&self->super, &de_typedef->type);
 	generator_print(&self->super, " %s", de_typedef->name);
 	generator_print(&self->super, ";\n");
 	return E_TD_NOERROR;

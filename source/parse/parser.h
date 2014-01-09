@@ -18,6 +18,7 @@ typedef union _PARSER_VALUE
 	ST_Import sn_import;
 
 	ST_TYPE sn_type;
+	ST_SIMPLE_TYPE sn_simple_type;
 	ST_VALUE sn_value;	
 	tbytes sn_tok_identifier;
 

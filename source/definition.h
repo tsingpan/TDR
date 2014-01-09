@@ -54,6 +54,7 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_BOOL = 8,
     E_ST_CHAR = 9,
     E_ST_DOUBLE = 10,
+	E_ST_REFER = 11,
 }SN_SIMPLE_TYPE;
 typedef enum _SN_CONTAINER_TYPE
 {
@@ -64,14 +65,24 @@ typedef enum _SN_TYPE
 {
     E_SNT_SIMPLE = 0,
     E_SNT_CONTAINER = 1,
-    E_SNT_REFER = 2,
 }SN_TYPE;
+typedef struct _ST_SIMPLE_TYPE
+{
+	SN_SIMPLE_TYPE st;
+	tchar st_refer[TLIBC_MAX_IDENTIFIER_LENGTH];
+}ST_SIMPLE_TYPE;
+
 typedef struct  _ST_TYPE
 {
     SN_TYPE type;
-    SN_SIMPLE_TYPE st;
-    SN_CONTAINER_TYPE ct;
-    tchar ot[TLIBC_MAX_IDENTIFIER_LENGTH];
+    
+	ST_SIMPLE_TYPE st;
+
+	SN_CONTAINER_TYPE ct;
+	ST_SIMPLE_TYPE vector_type;
+	tchar vector_length[TLIBC_MAX_IDENTIFIER_LENGTH];
+
+	tchar string_length[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
@@ -88,7 +99,7 @@ typedef struct  _ST_Parameters
 typedef struct  _ST_ARGUMENTS
 {
 	tuint32 arg_list_num;
-    ST_TYPE arg_list[MAX_ARGUMENT_NUM];
+    tchar arg_list[MAX_ARGUMENT_NUM][TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_ARGUMENTS;
 typedef enum _ST_EXPRESSION_OPER
 {

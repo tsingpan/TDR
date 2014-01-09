@@ -10,6 +10,7 @@ struct TD_ERROR_MSG
 
 struct TD_ERROR_MSG_LIBRARY
 {
-	vector<TD_ERROR_MSG, TD_ERROR_CODE_NUM, error_list_num> error_list;
+	uint32 error_list_num;
+	vector<TD_ERROR_MSG, TD_ERROR_CODE_NUM> error_list(error_list_num);
 };
 

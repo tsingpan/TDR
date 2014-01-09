@@ -102,24 +102,27 @@ static const ST_TYPE* get_type(PARSER *self, const ST_TYPE* sn_type)
 {
 	if(sn_type->type == E_SNT_SIMPLE)
 	{
-		return sn_type;
-	}
-	else if(sn_type->type == E_SNT_REFER)
-	{
-		const SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_type->ot);
-		if(ptr == NULL)
+		if(sn_type->st.st == E_ST_REFER)
 		{
-			return NULL;
-		}
-		if(ptr->type == EN_HST_TYPE)
-		{
-			return &ptr->body.type;
+			const SYMBOLS *ptr = dp_find_symbol_by_string(self, sn_type->st.st_refer);
+			if(ptr == NULL)
+			{
+				return NULL;
+			}
+			if(ptr->type == EN_HST_TYPE)
+			{
+				return &ptr->body.type;
+			}
+			else
+			{
+				return sn_type;
+			}
 		}
 		else
 		{
 			return sn_type;
 		}
-	}
+	}	
 	else
 	{
 		return sn_type;
@@ -206,7 +209,8 @@ void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE*
 	
 	if(type->type == E_SNT_SIMPLE)
 	{
-		switch(type->st)
+		
+		switch(type->st.st)
 		{
 		case E_ST_INT8:
 		case E_ST_INT16:
@@ -264,11 +268,7 @@ void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE*
 			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_UNKNOW_CONSTANT_VALUE);
 			goto done;
 		}
-	}
-	else if(type->type == E_SNT_REFER)
-	{
-		scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR, id);
-	}
+	}	
 	else if(type->type == E_SNT_CONTAINER)
 	{
 		if(type->ct == E_CT_STRING)
@@ -648,16 +648,16 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 
 	if(pn_type->type == E_SNT_SIMPLE)
 	{
-		if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_BOOL))
+		if(pn_type->st.st == E_ST_REFER)
 		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
+			const SYMBOLS *symbols = dp_find_symbol_by_string(self, pn_type->st.st_refer);
+			if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
+			{
+				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
+				goto done;
+			}
 		}
-	}
-	else if(pn_type->type == E_SNT_REFER)
-	{
-		const SYMBOLS *symbols = dp_find_symbol_by_string(self, pn_type->ot);
-		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
+		else if((pn_type->st.st < E_ST_INT8) || (pn_type->st.st > E_ST_BOOL))
 		{
 			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 			goto done;
@@ -736,6 +736,7 @@ done:
 
 static void dp_check_field_vector_args(PARSER *self, const YYLTYPE *yylloc, const ST_ARGUMENTS *args, tuint32 start_index)
 {
+	/*
 	tuint32 i;
 	for(i = start_index; i < args->arg_list_num; ++i)
 	{
@@ -793,6 +794,7 @@ static void dp_check_field_vector_args(PARSER *self, const YYLTYPE *yylloc, cons
 	}
 
 done:
+*/
 	return;
 }
 
@@ -823,32 +825,33 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 
 	if(pn_field->type.type == E_SNT_SIMPLE)
 	{
-		if(pn_field->args.arg_list_num != 0)
+		if(pn_field->type.st.st == E_ST_REFER)
+		{
+			const SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->type.st.st_refer);
+			if(symbol == NULL)
+			{
+				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
+				goto done;
+			}
+			if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
+			{
+				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
+				goto done;
+			}
+			dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
+		}
+		else if(pn_field->args.arg_list_num != 0)
 		{
 			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 			goto done;
 		}
-	}
-	else if(pn_field->type.type == E_SNT_REFER)
-	{
-		const SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->type.ot);
-		if(symbol == NULL)
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
-		}
-		if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
-		}
-		dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
-	}
+	}	
 	else if(pn_field->type.type == E_SNT_CONTAINER)
 	{
 		switch(pn_field->type.ct)
 		{
 		case E_CT_VECTOR:
+			/*
 			if(pn_field->args.arg_list_num < 3)
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -947,9 +950,9 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 				goto done;
-			}
+			}*/
 			break;
-		case E_CT_STRING:
+		case E_CT_STRING:/*
 			if(pn_field->args.arg_list_num != 1)
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
@@ -985,7 +988,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 			{
 				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 				goto done;
-			}
+			}*/
 			break;
 		}
 	}

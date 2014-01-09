@@ -186,57 +186,57 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 	}
 }
 
-TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type, const ST_ARGUMENTS *arg)
+TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
 {
-	if(type->type == E_SNT_SIMPLE)
-	{
-		switch(type->st)
-		{
-		case E_ST_INT8:
-			return generator_print(self, "tint8");
-		case E_ST_INT16:
-			return generator_print(self, "tint16");
-		case E_ST_INT32:
-			return generator_print(self, "tint32");
-		case E_ST_INT64:
-			return generator_print(self, "tint64");
+	ST_SIMPLE_TYPE st;
 
-		case E_ST_UINT8:
-			return generator_print(self, "tuint8");
-		case E_ST_UINT16:
-			return generator_print(self, "tuint16");
-		case E_ST_UINT32:
-			return generator_print(self, "tuint32");
-		case E_ST_UINT64:
-			return generator_print(self, "tuint64");
-
-		case E_ST_CHAR:
-			return generator_print(self, "tchar");
-		case E_ST_BOOL:
-			return generator_print(self, "tbool");
-		case E_ST_DOUBLE:
-			return generator_print(self, "tdouble");
-		default:
-			return E_TD_ERROR;
-		}
-	}
-	else if(type->type == E_SNT_CONTAINER)
+	if(type->type == E_SNT_CONTAINER)
 	{
 		if(type->ct == E_CT_VECTOR)
 		{
-			return generator_print(self, arg->arg_list[0].ot);
+			st = type->vector_type;
 		}
 		else if(type->ct == E_CT_STRING)
 		{
-			return generator_print(self, "tchar");
+			st.st = E_ST_CHAR;
 		}
 	}
-	else if(type->type == E_SNT_REFER)
+	else
 	{
-		return generator_print(self, type->ot);
+		st = type->st;
 	}
 
-	return E_TD_ERROR;
+	switch(st.st)
+	{
+	case E_ST_INT8:
+		return generator_print(self, "tint8");
+	case E_ST_INT16:
+		return generator_print(self, "tint16");
+	case E_ST_INT32:
+		return generator_print(self, "tint32");
+	case E_ST_INT64:
+		return generator_print(self, "tint64");
+
+	case E_ST_UINT8:
+		return generator_print(self, "tuint8");
+	case E_ST_UINT16:
+		return generator_print(self, "tuint16");
+	case E_ST_UINT32:
+		return generator_print(self, "tuint32");
+	case E_ST_UINT64:
+		return generator_print(self, "tuint64");
+
+	case E_ST_CHAR:
+		return generator_print(self, "tchar");
+	case E_ST_BOOL:
+		return generator_print(self, "tbool");
+	case E_ST_DOUBLE:
+		return generator_print(self, "tdouble");
+	case E_ST_REFER:
+		return generator_print(self, st.st_refer);
+	default:
+		return E_TD_ERROR;
+	}
 }
 
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition)
