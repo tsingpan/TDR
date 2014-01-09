@@ -104,7 +104,6 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %type<sn_parameter> Parameter
 %type<sn_parameters> Parameters ParameterList
 
-%type<sn_expression> FieldExpression
 %type<sn_condition> Condition FieldCondition
 
 
@@ -417,71 +416,37 @@ FieldCondition:
 	}	
 |
 	{
-		$$.empty = hptrue;
+		$$.oper = E_EO_NON;
 	};
 
 Condition : 
-	tok_if 	'(' FieldExpression	')'	
+	tok_if 	'(' Value '&' Value	')'	
 	{
-		$$.empty = hpfalse;
-		$$.exp = $3;
+		$$.op0 = $3;
+		$$.oper = E_EO_AND;
+		$$.op1 = $5;
 	}
-|	tok_if '!' '(' FieldExpression ')'
+|	tok_if 	'(' Value tok_equal Value	')'	
 	{
-		$$.empty = hpfalse;
-		$$.exp = $4;
-		$$.exp.neg = hptrue;
+		$$.op0 = $3;
+		$$.oper = E_EO_EQUAL;
+		$$.op1 = $5;
 	}
 |	tok_if '(' Value tok_unequal Value ')'
 	{
-		$$.empty = hpfalse;
-		$$.exp.neg = hptrue;
-		$$.exp.op0 = $3;
-		$$.exp.oper = E_EO_EQUAL;
-		$$.exp.op1 = $5;
+		$$.op0 = $3;
+		$$.oper = E_EO_UNEQUAL;
+		$$.op1 = $5;
 
 		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$3);
 		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$5);
 	}
-|	tok_case Value ':'
+|	tok_case tok_identifier ':'
 	{
 		dp_reduce_Condition_tok_case(GET_SELF, &yylloc, &$$, &$2);
 
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$$.exp.op0);
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$2);
+		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$$.op0);
 	};
-
-
-FieldExpression :
-	Value
-	{
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$1);
-	}
-	tok_equal
-	Value
-	{
-		$$.neg = hpfalse;
-		$$.op0 = $1;
-		$$.oper = E_EO_EQUAL;
-		$$.op1 = $4;
-
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$4);
-	}
-|	Value
-	{
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$1);
-	}
-	'&'
-	Value
-	{
-		$$.neg = hpfalse;
-		$$.op0 = $1;
-		$$.oper = E_EO_AND;
-		$$.op1 = $4;
-
-		dp_check_FieldExpression_Value(GET_SELF, &yylloc, &$4);
-	}
-	;
 
 
 

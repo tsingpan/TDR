@@ -468,19 +468,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 {
 	if(self->in_union)
 	{
-		if(pn_field->condition.empty)
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
-		}
-
-		if(pn_field->condition.exp.neg)
-		{
-			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-			goto done;
-		}
-
-		if(pn_field->condition.exp.oper != E_EO_EQUAL)
+		if(pn_field->condition.oper != E_EO_CASE)
 		{
 			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 			goto done;
@@ -507,7 +495,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 			dp_check_field_vector_args(self, yylloc, &pn_field->args, 0);
 		}
 		else if(pn_field->args.arg_list_num != 0)
-		{
+		{			
 			scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
 			goto done;
 		}

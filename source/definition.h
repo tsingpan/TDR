@@ -102,27 +102,24 @@ typedef struct  _ST_ARGUMENTS
 }ST_ARGUMENTS;
 typedef enum _ST_EXPRESSION_OPER
 {
-    E_EO_AND = 0,
-    E_EO_EQUAL = 1,
+	E_EO_NON = 0,
+	E_EO_CASE = 1,
+    E_EO_AND = 2,
+    E_EO_EQUAL = 3,
+	E_EO_UNEQUAL = 4,
 }ST_EXPRESSION_OPER;
-typedef struct  _ST_Expression
-{
-    tbool neg;
-    ST_VALUE op0;
-    ST_EXPRESSION_OPER oper;
-    ST_VALUE op1;
-}ST_Expression;
 typedef struct  _ST_CONDITION
 {
-    tbool empty;
-    ST_Expression exp;
+	ST_EXPRESSION_OPER oper;
+	ST_VALUE op0;    
+	ST_VALUE op1;
 }ST_CONDITION;
 typedef struct  _ST_FIELD
 {
     ST_CONDITION condition;
-    ST_TYPE type;
-    ST_ARGUMENTS args;
+    ST_TYPE type;    
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
+	ST_ARGUMENTS args;
     ST_UNIX_COMMENT comment;
 }ST_FIELD;
 #define MAX_PACKAGE_NAME_LENGTH 1024

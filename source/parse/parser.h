@@ -51,7 +51,6 @@ typedef union _PARSER_VALUE
 	ST_Parameter sn_parameter;
 	ST_Parameters sn_parameters;
 
-	ST_Expression sn_expression;
 	ST_CONDITION sn_condition;
 
 }PARSER_VALUE;
