@@ -51,14 +51,9 @@
 %token tok_equal
 %token tok_unequal
 %token tok_count
-%token tok_typename
 %token tok_case
 %token tok_unixcomment
-%token tok_unique
-%token tok_lower_bound
-%token tok_upper_bound
 %token tok_typedef
-%token tok_switch
 %token tok_t_int8
 %token tok_t_int16
 %token tok_t_int32
@@ -94,8 +89,6 @@
 %type<pn_tok_double> tok_double
 %type<sn_string> tok_string
 %type<sn_typedef> Typedef
-%type<sn_type_annotation> TypeAnnotation
-%type<sn_type_annotations> TypeAnnotations TypeAnnotationList
 
 %type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
 %type<sn_ct> tok_t_vector tok_t_string
@@ -266,16 +259,12 @@ Function:
 	};
 
 Enum :
-	tok_enum TypeAnnotations
+	tok_enum tok_identifier	
 	{
-		GET_DEFINITION.definition.de_enum.type_annotations = $2;
-	}
-	tok_identifier	
-	{
-		memcpy(GET_DEFINITION.definition.de_enum.name, $4.ptr, $4.len);
-		GET_DEFINITION.definition.de_enum.name[$4.len] = 0;
+		memcpy(GET_DEFINITION.definition.de_enum.name, $2.ptr, $2.len);
+		GET_DEFINITION.definition.de_enum.name[$2.len] = 0;
 		
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$4);
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$2);
 		
 		
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
@@ -284,7 +273,7 @@ Enum :
 	{ }
 	';'
 	{
-		dp_check_Enum_Add(GET_SELF, &yylloc, &$4, &GET_DEFINITION.definition.de_enum);
+		dp_check_Enum_Add(GET_SELF, &yylloc, &$2, &GET_DEFINITION.definition.de_enum);
 	};
     
 EnumDefList :
@@ -308,8 +297,6 @@ EnumDef :
 	}
 	'=' Value ',' UnixCommentOrNot
 	{	
-		dp_check_EnumDef_Value(GET_SELF, &yylloc, &$4);
-		
 		dp_check_Const_add_tok_identifier(GET_SELF, &yylloc, &$1, &$4);		
 		
 		memcpy($$.identifier, $1.ptr, $1.len);
@@ -324,22 +311,18 @@ Union :
 	{
 		dp_check_Union_begin(GET_SELF, &yylloc);
 	}
-	TypeAnnotations 
-	{
-		GET_DEFINITION.definition.de_union.ta = $3;
-	}
 	tok_identifier
 	{
-		memcpy(GET_DEFINITION.definition.de_union.name, $5.ptr, $5.len);
-		GET_DEFINITION.definition.de_union.name[$5.len] = 0;
+		memcpy(GET_DEFINITION.definition.de_union.name, $3.ptr, $3.len);
+		GET_DEFINITION.definition.de_union.name[$3.len] = 0;
 		
-		dp_check_tok_identifier(GET_SELF, &yylloc, &$5);
+		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		
-		parser_symbol_domain_begin(GET_SELF, &yylloc, &$5);
+		parser_symbol_domain_begin(GET_SELF, &yylloc, &$3);
 	}
 	Parameters
 	{
-		GET_DEFINITION.definition.de_union.parameters = $7;
+		GET_DEFINITION.definition.de_union.parameters = $5;
 		
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
 		
@@ -366,9 +349,9 @@ Struct :
 	{
 		dp_check_Struct_begin(GET_SELF, &yylloc);
 	}
-	TypeAnnotations tok_identifier
+	tok_identifier
 	{
-		parser_symbol_domain_begin(GET_SELF, &yylloc, &$4);
+		parser_symbol_domain_begin(GET_SELF, &yylloc, &$3);
 	}
 	Parameters
 	{
@@ -378,10 +361,9 @@ Struct :
 	{
 		parser_symbol_domain_end(GET_SELF, &yylloc);
 
-		GET_DEFINITION.definition.de_struct.ta = $3;
-		memcpy(GET_DEFINITION.definition.de_struct.name, $4.ptr, $4.len);
-		GET_DEFINITION.definition.de_struct.name[$4.len] = 0;
-		GET_DEFINITION.definition.de_struct.parameters = $6;
+		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
+		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
+		GET_DEFINITION.definition.de_struct.parameters = $5;
 		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
 
 		dp_check_Struct_end(GET_SELF, &yylloc);
@@ -572,7 +554,7 @@ SimpleType:
 	};
 
 Parameters :
-	'<' ParameterList '>'
+	'(' ParameterList ')'
 	{
 		$$ = $2;
 	}
@@ -608,9 +590,6 @@ Parameter:
 		//参数类型只能为简单类型
 		dp_check_Parameter_add(GET_SELF, &yylloc, &$$);
 	};
-
-
-
 
 Arguments:
 	'(' ArgumentList ')'
@@ -650,61 +629,5 @@ UnixCommentOrNot:
 	{
 		$$.empty = hptrue;
 	};
-
-TypeAnnotations:
-	'('	TypeAnnotationList	')'
-	{
-		$$ = $2;
-	}
-|
-    {
-		$$.ta_list_num = 0;
-    };
-
-TypeAnnotationList:
-  TypeAnnotationList ',' TypeAnnotation
-    {
-		$$ = $1;
-		$$.ta_list[$$.ta_list_num] = $3;
-		++$$.ta_list_num;
-    }
-| TypeAnnotation
-    {
-		$$.ta_list_num = 0;
-		$$.ta_list[$$.ta_list_num] = $1;
-		++$$.ta_list_num;
-    };
-
-TypeAnnotation:
-	tok_unique '=' Value
-    {
-		dp_check_TypeAnnotation_tok_unique_Value(GET_SELF, &yylloc, &$3);
-    
-		$$.type = E_TA_UNIQUE;
-		$$.val = $3;
-    }
-|	tok_lower_bound '=' Value
-	{
-		dp_check_TypeAnnotation_bound_Value(GET_SELF, &yylloc, &$3);
-		
-		$$.type = E_TA_LOWER_BOUND;
-		$$.val = $3;
-	}
-|	tok_upper_bound '=' Value
-	{
-		dp_check_TypeAnnotation_bound_Value(GET_SELF, &yylloc, &$3);
-		
-		$$.type = E_TA_UPPER_BOUND;
-		$$.val = $3;
-	}
-|	tok_switch '=' Value
-	{
-		dp_check_TypeAnnotation_tok_switch_Value(GET_SELF, &yylloc, &$3);
-	
-		$$.type = E_TA_SWITCH;
-		$$.val = $3;
-	}
-	;
-
     
 %%

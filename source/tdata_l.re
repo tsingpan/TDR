@@ -61,12 +61,7 @@ anychar			([^])
 <INITIAL>"const"				{return tok_const;																}
 <INITIAL>"enum"					{return tok_enum;																}
 <INITIAL>"case"                 {return tok_case;																}
-<INITIAL>"typename"				{return tok_typename;															}
-<INITIAL>"unique"				{return tok_unique;																}
 <INITIAL>"typedef"				{return tok_typedef;															}
-<INITIAL>"lower_bound"			{return tok_lower_bound;														}
-<INITIAL>"upper_bound"			{return tok_upper_bound;														}
-<INITIAL>"switch"				{return tok_switch;																}
 
 <INITIAL>"int8"					{return tok_t_int8;																}
 <INITIAL>"int16"				{return tok_t_int16;															}
@@ -213,6 +208,8 @@ anychar			([^])
 <INITIAL>"void"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"byte"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"namespace"          { ddekit_reserved_keyword(yytext); }
+<INITIAL>"typename"			  { ddekit_reserved_keyword(yytext); }
+<INITIAL>"switch"			  { ddekit_reserved_keyword(yytext); }
 
 <*>{anychar}					{ goto restart;					 }	
 */	

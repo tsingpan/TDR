@@ -26,14 +26,6 @@ void dp_check_tok_identifier_local(PARSER *self, const YYLTYPE *yylloc, const tb
 
 void dp_check_EnumDef_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
 
-void dp_check_EnumDef_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
-void dp_check_TypeAnnotation_tok_unique_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
-void dp_check_TypeAnnotation_bound_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
-void dp_check_TypeAnnotation_tok_switch_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
 void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
 void dp_check_Union_begin(PARSER *self, const YYLTYPE *yylloc);

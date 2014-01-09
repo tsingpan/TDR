@@ -126,24 +126,6 @@ typedef struct  _ST_FIELD
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_UNIX_COMMENT comment;
 }ST_FIELD;
-#define MAX_TA_LIST_NUM 4
-typedef enum _TA_TYPE
-{
-    E_TA_SWITCH = 0,
-    E_TA_UNIQUE = 1,
-    E_TA_LOWER_BOUND = 2,
-    E_TA_UPPER_BOUND = 3,
-}TA_TYPE;
-typedef struct  _ST_TypeAnnotation
-{
-    TA_TYPE type;
-    ST_VALUE val;
-}ST_TypeAnnotation;
-typedef struct  _ST_TypeAnnotations
-{
-	tuint32 ta_list_num;
-    ST_TypeAnnotation ta_list[MAX_TA_LIST_NUM];
-}ST_TypeAnnotations;
 #define MAX_PACKAGE_NAME_LENGTH 1024
 typedef struct  _ST_Import
 {
@@ -165,7 +147,6 @@ typedef struct  _ST_ENUM_DEF
 typedef struct  _ST_ENUM
 {
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
-    ST_TypeAnnotations type_annotations;
 	tuint32 enum_def_list_num;
     ST_ENUM_DEF enum_def_list[MAX_ENUM_DEF_LIST_NUM];
 }ST_ENUM;
@@ -177,14 +158,12 @@ typedef struct  _ST_FIELD_LIST
 }ST_FIELD_LIST;
 typedef struct  _ST_STRUCT
 {
-    ST_TypeAnnotations ta;
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_Parameters parameters;
     ST_FIELD_LIST field_list;
 }ST_STRUCT;
 typedef struct  _ST_UNION
 {
-    ST_TypeAnnotations ta;
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_Parameters parameters;
     ST_FIELD_LIST field_list;

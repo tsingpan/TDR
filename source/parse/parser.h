@@ -45,9 +45,6 @@ typedef union _PARSER_VALUE
 
 	ST_TYPEDEF sn_typedef;
 
-	ST_TypeAnnotation sn_type_annotation;
-	ST_TypeAnnotations sn_type_annotations;
-
 	ST_UNIX_COMMENT sn_unix_comment;
 
 	ST_ENUM_DEF sn_enum_def;

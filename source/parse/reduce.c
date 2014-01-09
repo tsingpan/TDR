@@ -172,28 +172,10 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, const YYLTYPE
 void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDITION *current, const ST_VALUE *val)
 {
 	tuint32 i;
-	const ST_TypeAnnotations *ta = NULL;
-
-	if(self->in_struct)
-	{
-		ta = &self->pn_definition.definition.de_struct.ta;
-	}
-	else
-	{
-		ta = &self->pn_definition.definition.de_union.ta;
-	}
-
 	current->empty = hpfalse;
 	current->exp.neg = hpfalse;
 	current->exp.op0.type = E_SNVT_IDENTIFIER;		
 	snprintf(current->exp.op0.val.identifier, TLIBC_MAX_IDENTIFIER_LENGTH, "s");
-	for(i = 0; i < ta->ta_list_num; ++i)
-	{
-		if(ta->ta_list[i].type == E_TA_SWITCH)
-		{
-			snprintf(current->exp.op0.val.identifier, TLIBC_MAX_IDENTIFIER_LENGTH, ta->ta_list[i].val.val.identifier);			
-		}
-	}
 	current->exp.oper = E_EO_EQUAL;
 	current->exp.op1 = *val;
 }
