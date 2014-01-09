@@ -1,4 +1,4 @@
-enum(counter = "TD_ERROR_CODE_NUM") TD_ERROR_CODE
+enum TD_ERROR_CODE
 {
 	E_TD_NOERROR																= 0,
 	E_TD_ERROR																	= -1, 
@@ -16,3 +16,5 @@ enum(counter = "TD_ERROR_CODE_NUM") TD_ERROR_CODE
 	E_TD_SYMBOL_REDEFINITION													= -10011,
 	E_TD_TYPEDEF_ONLY_SUPPORT_SIMPLEY_TYPE_OR_OBJECCT_TYPE						= -10012,#parser
 };
+
+const uint32 TD_ERROR_CODE_NUM = count(TD_ERROR_CODE);

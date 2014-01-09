@@ -50,11 +50,11 @@
 %token tok_enum 
 %token tok_equal
 %token tok_unequal
+%token tok_count
 %token tok_typename
 %token tok_case
 %token tok_unixcomment
 %token tok_unique
-%token tok_counter
 %token tok_lower_bound
 %token tok_upper_bound
 %token tok_typedef
@@ -89,7 +89,7 @@
 %type<sn_bool> tok_bool
 %type<sn_simple_type> SimpleType
 %type<sn_type> Type ContainerType
-%type<sn_value> Value
+%type<sn_value> Value Function
 %type<sn_const> Const
 %type<pn_tok_double> tok_double
 %type<sn_string> tok_string
@@ -252,8 +252,18 @@ Value :
 |	tok_identifier
 	{
 		dp_reduce_Value_tok_identifier(GET_SELF, &yylloc, &$$, $1);
-	};
+	}
+|	Function
+	{
+		$$ = $1;
+	}
+;
 
+Function:
+	tok_count '(' tok_identifier ')'
+	{
+		dp_reduce_Function_tok_count(GET_SELF, &yylloc, &$$, &$3);
+	};
 
 Enum :
 	tok_enum TypeAnnotations
@@ -325,7 +335,7 @@ Union :
 		
 		dp_check_tok_identifier(GET_SELF, &yylloc, &$5);
 		
-		dp_check_domain_begin(GET_SELF, &yylloc, &$5);
+		parser_symbol_domain_begin(GET_SELF, &yylloc, &$5);
 	}
 	Parameters
 	{
@@ -341,13 +351,13 @@ Union :
 	}
 	'}'
 	{
-		dp_check_domain_end(GET_SELF, &yylloc);
+		parser_symbol_domain_end(GET_SELF, &yylloc);
 	}
 	';'
 	{
 		dp_check_Union_end(GET_SELF, &yylloc);
 
-		dp_check_Union_Add(GET_SELF, &yylloc, &$5);
+		dp_check_Union_Add(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
 	};
 	
 	
@@ -358,7 +368,7 @@ Struct :
 	}
 	TypeAnnotations tok_identifier
 	{
-		dp_check_domain_begin(GET_SELF, &yylloc, &$4);
+		parser_symbol_domain_begin(GET_SELF, &yylloc, &$4);
 	}
 	Parameters
 	{
@@ -366,7 +376,7 @@ Struct :
 	}
 	'{' FieldList '}' ';'
 	{
-		dp_check_domain_end(GET_SELF, &yylloc);
+		parser_symbol_domain_end(GET_SELF, &yylloc);
 
 		GET_DEFINITION.definition.de_struct.ta = $3;
 		memcpy(GET_DEFINITION.definition.de_struct.name, $4.ptr, $4.len);
@@ -376,7 +386,7 @@ Struct :
 
 		dp_check_Struct_end(GET_SELF, &yylloc);
 
-		dp_check_Struct_Add(GET_SELF, &yylloc, &$4);
+		dp_check_Struct_Add(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_struct);
 	};
 	
 
@@ -692,13 +702,6 @@ TypeAnnotation:
 		dp_check_TypeAnnotation_tok_switch_Value(GET_SELF, &yylloc, &$3);
 	
 		$$.type = E_TA_SWITCH;
-		$$.val = $3;
-	}
-|	tok_counter '=' Value
-	{
-		dp_check_TypeAnnotation_tok_counter_Value(GET_SELF, &yylloc, &$3);
-	
-		$$.type = E_TA_COUNTER;
 		$$.val = $3;
 	}
 	;

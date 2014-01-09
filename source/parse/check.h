@@ -14,9 +14,9 @@ void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE*
 
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef);
 
-void dp_check_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
+void parser_symbol_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
 
-void dp_check_domain_end(PARSER *self, const YYLTYPE *yylloc);
+void parser_symbol_domain_end(PARSER *self, const YYLTYPE *yylloc);
 
 void dp_check_Parameter_add(PARSER *self, const YYLTYPE *yylloc, const ST_Parameter *pn_parameter);
 
@@ -33,8 +33,6 @@ void dp_check_TypeAnnotation_tok_unique_Value(PARSER *self, const YYLTYPE *yyllo
 void dp_check_TypeAnnotation_bound_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
 
 void dp_check_TypeAnnotation_tok_switch_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
-
-void dp_check_TypeAnnotation_tok_counter_Value(PARSER *self, const YYLTYPE *yylloc, const ST_VALUE *val);
 
 void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
@@ -54,8 +52,8 @@ void dp_check_Field_add(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_
 
 void dp_check_Enum_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier, const ST_ENUM *pn_enum);
 
-void dp_check_Struct_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
+void dp_check_Struct_Add(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct);
 
-void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
+void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
 #endif //_H_CHECK

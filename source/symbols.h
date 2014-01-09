@@ -20,6 +20,8 @@ typedef union _SYMBOLS_BODY
 	ST_TYPE type;
 	ST_Parameter para;
 	ST_FIELD field;
+	tuint32 enum_def_list_num;
+	tuint32 field_list_num;
 }SYMBOLS_BODY;
 
 typedef struct _SYMBOLS

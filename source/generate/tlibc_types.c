@@ -84,14 +84,6 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 	}
 	generator_print(&self->super, "};\n");
 
-	for(i = 0; i < de_enum->type_annotations.ta_list_num; ++i)
-	{
-		if(de_enum->type_annotations.ta_list[i].type == E_TA_COUNTER)
-		{
-			generator_print(&self->super, "#define %s %u\n", de_enum->type_annotations.ta_list[i].val.val.str, de_enum->enum_def_list_num);
-		}
-	}
-
 	return E_TD_NOERROR;
 }
 

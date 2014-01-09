@@ -5,6 +5,8 @@
 #include "tdata_l.h"
 #include "parse/scanner.h"
 
+#include "symbols.h"
+
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -392,3 +394,110 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITI
 	}
 }
 
+
+const SYMBOLS* parser_symbol_find_by_string(PARSER *self, const char* name)
+{
+	const SYMBOLS *symbol;
+	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
+
+	if(self->domain[0])
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+
+	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
+	{
+		if(!trie_retrieve(self->symbols, name, (void**)&symbol))
+		{
+			return NULL;
+		}
+	}
+
+	//printf("find: %s : %x\n", name, symbol);
+	return symbol;
+}
+
+const SYMBOLS* parser_symbol_find(PARSER *self, const tbytes* tok_identifier)
+{
+	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return parser_symbol_find_by_string(self, name);
+}
+
+
+const SYMBOLS* parser_symbol_find_by_string_local(PARSER *self, const char* name)
+{
+	const SYMBOLS *symbol;
+	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
+
+	if(self->domain[0])
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+
+	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
+	{
+		return NULL;
+	}
+	return symbol;
+}
+
+const SYMBOLS* parser_symbol__find_local(PARSER *self, const tbytes* tok_identifier)
+{
+	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return parser_symbol_find_by_string_local(self, name);
+}
+
+tint32 parser_symbol_save_string(PARSER *self, const char *name, const SYMBOLS *symbol)
+{
+	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
+
+
+
+	if(self->domain[0])
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
+	}
+	else
+	{
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
+	}
+
+	//printf("save %s : %x\n", global_name, symbol);
+	if(!trie_store_if_absent(self->symbols, global_name, symbol))
+	{
+		return E_TD_ERROR;
+	}
+	return E_TD_NOERROR;
+}
+
+tint32 parser_symbol_save(PARSER *self, const tbytes *tok_identifier, const SYMBOLS *symbol)
+{
+	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	memcpy(name, tok_identifier->ptr, tok_identifier->len);
+	name[tok_identifier->len] = 0;
+	return parser_symbol_save_string(self, name, symbol);
+}
+
+
+void parser_symbol_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
+{
+	memcpy(self->domain, tok_identifier->ptr, tok_identifier->len);
+	self->domain[tok_identifier->len] = 0;
+}
+
+void parser_symbol_domain_end(PARSER *self, const YYLTYPE *yylloc)
+{
+	self->domain[0] = 0;
+}

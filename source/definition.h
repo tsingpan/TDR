@@ -133,7 +133,6 @@ typedef enum _TA_TYPE
     E_TA_UNIQUE = 1,
     E_TA_LOWER_BOUND = 2,
     E_TA_UPPER_BOUND = 3,
-    E_TA_COUNTER = 4,
 }TA_TYPE;
 typedef struct  _ST_TypeAnnotation
 {

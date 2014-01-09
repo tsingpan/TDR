@@ -53,5 +53,6 @@ void dp_reduce_Typedef_Type_Arguments_tok_identifier(PARSER *self, const YYLTYPE
 
 void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDITION *current, const ST_VALUE *val);
 
+void dp_reduce_Function_tok_count(PARSER *self, const YYLTYPE *yylloc, ST_VALUE *current, const tbytes *identifier);
 
 #endif //_H_REDUCE

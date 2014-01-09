@@ -197,3 +197,22 @@ void dp_reduce_Condition_tok_case(PARSER *self, const YYLTYPE *yylloc, ST_CONDIT
 	current->exp.oper = E_EO_EQUAL;
 	current->exp.op1 = *val;
 }
+
+void dp_reduce_Function_tok_count(PARSER *self, const YYLTYPE *yylloc, ST_VALUE *current, const tbytes *identifier)
+{
+	const SYMBOLS *symbols = parser_symbol_find(self, identifier);
+
+	current->type = E_SNVT_UINT64;
+	switch(symbols->type)
+	{
+	case EN_HST_ENUM:		
+		current->val.ui64 = symbols->body.enum_def_list_num;
+		break;
+	case EN_HST_STRUCT:
+		current->val.ui64 = symbols->body.enum_def_list_num;
+		break;
+	case EN_HST_UNION:
+		current->val.ui64 = symbols->body.enum_def_list_num;
+		break;
+	}
+}
