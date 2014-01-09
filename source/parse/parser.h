@@ -67,9 +67,7 @@ struct _PARSER
 		
 	char file_name[MAX_FILE_NAME_LENGTH];
 
-	//·ûºÅ±í
-	Trie *symbols;
-	char domain[MAX_FILE_NAME_LENGTH];
+	SYMBOLS parser_symbols;
 
 	ST_DEFINITION pn_definition;
 	ST_FIELD_LIST pn_field_list;
@@ -80,21 +78,12 @@ struct _PARSER
 
 void parser_init(PARSER *self);
 
+
 tint32 parser_add_generator(PARSER *self, GENERATOR *generator);
 
 tint32 parser_parse(PARSER *self, const char* file_name);
 
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
-
-const SYMBOLS* parser_symbol_find_by_string(PARSER *self, const char* name);
-const SYMBOLS* parser_symbol_find(PARSER *self, const tbytes* tok_identifier);
-const SYMBOLS* parser_symbol_find_by_string_local(PARSER *self, const char* name);
-const SYMBOLS* parser_symbol__find_local(PARSER *self, const tbytes* tok_identifier);
-
-tint32 parser_symbol_save_string(PARSER *self, const char *name, const SYMBOLS *symbol);
-tint32 parser_symbol_save(PARSER *self, const tbytes *tok_identifier, const SYMBOLS *symbol);
-void parser_symbol_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
-void parser_symbol_domain_end(PARSER *self, const YYLTYPE *yylloc);
 
 #endif//_H_PARSER
 

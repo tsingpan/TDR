@@ -28,21 +28,13 @@ ERROR_RET:
 
 tint32 parser_parse(PARSER *self, const char* file_name)
 {
-	tint32 ret;
-	AlphaMap *alpha_map = NULL;
+	tint32 ret;	
 	tuint32 i;
 
 	self->scanner_stack.result_num = 0;
+		
+	symbols_init(&self->parser_symbols);
 	
-
-	alpha_map = alpha_map_new();
-
-	alpha_map_add_range(alpha_map, 'a', 'z');
-	alpha_map_add_range(alpha_map, 'A', 'Z');
-	alpha_map_add_range(alpha_map, '0', '9');
-	alpha_map_add_range(alpha_map, '_', '_');
-	self->symbols = trie_new(alpha_map);
-	alpha_map_free(alpha_map);
 
 	if(file_name == NULL)
 	{
@@ -62,7 +54,7 @@ tint32 parser_parse(PARSER *self, const char* file_name)
 	ret = yydataparse(&self->scanner_stack);
 	scanner_stack_pop(&self->scanner_stack);
 done:
-	trie_free(self->symbols);
+	symbols_fini(&self->parser_symbols);
 	for(i = 0;i < self->scanner_stack.result_num; ++i)
 	{
 		fprintf(stderr, self->scanner_stack.result_str[i]);
@@ -375,8 +367,8 @@ void parser_init(PARSER *self)
 {
 	scanner_stack_init(&self->scanner_stack);
 	self->scanner_stack.result_num = 0;
-	self->domain[0] = 0;
 	self->generator_num = 0;
+	symbols_init(&self->parser_symbols);
 }
 
 
@@ -395,109 +387,33 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITI
 }
 
 
-const SYMBOLS* parser_symbol_find_by_string(PARSER *self, const char* name)
+
+
+
+
+
+
+
+
+
+
+
+void symbols_init(SYMBOLS *self)
 {
-	const SYMBOLS *symbol;
-	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
-
-	if(self->domain[0])
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
-	}
-	else
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
-	}
-
-	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
-	{
-		if(!trie_retrieve(self->symbols, name, (void**)&symbol))
-		{
-			return NULL;
-		}
-	}
-
-	//printf("find: %s : %x\n", name, symbol);
-	return symbol;
-}
-
-const SYMBOLS* parser_symbol_find(PARSER *self, const tbytes* tok_identifier)
-{
-	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	memcpy(name, tok_identifier->ptr, tok_identifier->len);
-	name[tok_identifier->len] = 0;
-	return parser_symbol_find_by_string(self, name);
-}
-
-
-const SYMBOLS* parser_symbol_find_by_string_local(PARSER *self, const char* name)
-{
-	const SYMBOLS *symbol;
-	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
-
-	if(self->domain[0])
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
-	}
-	else
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
-	}
-
-	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
-	{
-		return NULL;
-	}
-	return symbol;
-}
-
-const SYMBOLS* parser_symbol__find_local(PARSER *self, const tbytes* tok_identifier)
-{
-	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	memcpy(name, tok_identifier->ptr, tok_identifier->len);
-	name[tok_identifier->len] = 0;
-	return parser_symbol_find_by_string_local(self, name);
-}
-
-tint32 parser_symbol_save_string(PARSER *self, const char *name, const SYMBOLS *symbol)
-{
-	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH * 2];
-
-
-
-	if(self->domain[0])
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s:%s", self->domain, name);
-	}
-	else
-	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH * 2, "%s", name);
-	}
-
-	//printf("save %s : %x\n", global_name, symbol);
-	if(!trie_store_if_absent(self->symbols, global_name, symbol))
-	{
-		return E_TD_ERROR;
-	}
-	return E_TD_NOERROR;
-}
-
-tint32 parser_symbol_save(PARSER *self, const tbytes *tok_identifier, const SYMBOLS *symbol)
-{
-	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	memcpy(name, tok_identifier->ptr, tok_identifier->len);
-	name[tok_identifier->len] = 0;
-	return parser_symbol_save_string(self, name, symbol);
-}
-
-
-void parser_symbol_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier)
-{
-	memcpy(self->domain, tok_identifier->ptr, tok_identifier->len);
-	self->domain[tok_identifier->len] = 0;
-}
-
-void parser_symbol_domain_end(PARSER *self, const YYLTYPE *yylloc)
-{
+	AlphaMap *alpha_map = NULL;
 	self->domain[0] = 0;
+	
+	alpha_map = alpha_map_new();
+
+	alpha_map_add_range(alpha_map, 'a', 'z');
+	alpha_map_add_range(alpha_map, 'A', 'Z');
+	alpha_map_add_range(alpha_map, '0', '9');
+	alpha_map_add_range(alpha_map, '_', '_');
+	self->symbols = trie_new(alpha_map);
+	alpha_map_free(alpha_map);
+}
+
+void symbols_fini(SYMBOLS *self)
+{
+	trie_free(self->symbols);
 }

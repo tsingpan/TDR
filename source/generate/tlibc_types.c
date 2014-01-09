@@ -76,7 +76,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 		generator_print(&self->super, "\t%s = ", de_enum->enum_def_list[i].identifier);
 		generator_print_value(&self->super, &de_enum->enum_def_list[i].val);
 		generator_print(&self->super, ",");
-		if(!de_enum->enum_def_list[i].comment.empty)
+		if(de_enum->enum_def_list[i].comment.text[0])
 		{
 			generator_print(&self->super, "//%s", de_enum->enum_def_list[i].comment.text);
 		}
@@ -106,7 +106,12 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 				generator_print(&self->super, "[%s]", field_list->field_list[i].type.string_length);
 			}
 		}
-		generator_print(&self->super, ";\n");
+		generator_print(&self->super, ";");
+		if(field_list->field_list[i].comment.text[0])
+		{
+			generator_print(&self->super, "//%s", field_list->field_list[i].comment.text);
+		}
+		generator_print(&self->super, "\n");
 	}
 
 	return E_TD_NOERROR;
@@ -148,7 +153,7 @@ static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *
 
 static TD_ERROR_CODE _on_comment(TLIBC_TYPES_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
 {
-	if(!de_unix_comment->empty)
+	if(de_unix_comment->text[0])
 	{
 		generator_print(&self->super, "//%s\n", de_unix_comment->text);
 	}

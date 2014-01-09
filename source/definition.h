@@ -9,7 +9,6 @@
 
 typedef struct  _ST_UNIX_COMMENT
 {
-    tbool empty;
     tchar text[TD_MAX_COMMENT_LENGTH];
 }ST_UNIX_COMMENT;
 typedef enum _SN_VALUE_TYPE

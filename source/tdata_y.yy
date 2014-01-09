@@ -318,7 +318,7 @@ Union :
 		
 		dp_check_tok_identifier(GET_SELF, &yylloc, &$3);
 		
-		parser_symbol_domain_begin(GET_SELF, &yylloc, &$3);
+		symbols_domain_begin(&GET_SELF->parser_symbols, &$3);
 	}
 	Parameters
 	{
@@ -334,7 +334,7 @@ Union :
 	}
 	'}'
 	{
-		parser_symbol_domain_end(GET_SELF, &yylloc);
+		symbols_domain_end(&GET_SELF->parser_symbols);
 	}
 	';'
 	{
@@ -351,7 +351,7 @@ Struct :
 	}
 	tok_identifier
 	{
-		parser_symbol_domain_begin(GET_SELF, &yylloc, &$3);
+		symbols_domain_begin(&GET_SELF->parser_symbols, &$3);
 	}
 	Parameters
 	{
@@ -359,7 +359,7 @@ Struct :
 	}
 	'{' FieldList '}' ';'
 	{
-		parser_symbol_domain_end(GET_SELF, &yylloc);
+		symbols_domain_end(&GET_SELF->parser_symbols);
 
 		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
 		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
@@ -615,19 +615,19 @@ ArgumentList:
 UnixComment:
 	tok_unixcomment
 	{
-		$$.empty = hpfalse;
 		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
+		$$.text[TD_MAX_COMMENT_LENGTH - 1] = 0;
 	};
 
 UnixCommentOrNot:
 	tok_unixcomment
 	{
-		$$.empty = hpfalse;
 		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
+		$$.text[TD_MAX_COMMENT_LENGTH - 1] = 0;
 	}
 |
 	{
-		$$.empty = hptrue;
+		$$.text[0] = 0;
 	};
     
 %%

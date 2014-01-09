@@ -14,10 +14,6 @@ void dp_check_constant_value(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE*
 
 void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef);
 
-void parser_symbol_domain_begin(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
-
-void parser_symbol_domain_end(PARSER *self, const YYLTYPE *yylloc);
-
 void dp_check_Parameter_add(PARSER *self, const YYLTYPE *yylloc, const ST_Parameter *pn_parameter);
 
 void dp_check_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tbytes *tok_identifier);
