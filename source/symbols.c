@@ -100,29 +100,25 @@ ERROR_RET:
 	return NULL;
 }
 
-const ST_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_TYPE* sn_type)
+const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type)
 {
-	if(sn_type->type == E_SNT_SIMPLE)
+	if(sn_type->st == E_ST_REFER)
 	{
-		if(sn_type->st.st == E_ST_REFER)
+		const SYMBOL *ptr = symbols_search_string(self, sn_type->st_refer, hpfalse);
+		if(ptr == NULL)
 		{
-			const SYMBOL *ptr = symbols_search_string(self, sn_type->st.st_refer, hpfalse);
-			if(ptr == NULL)
-			{
-				goto ERROR_RET;
-			}
-			if(ptr->type != EN_HST_TYPE)
-			{
-				goto ERROR_RET;
-			}
-			return symbols_get_real_type(self, &ptr->body.type);
+			goto ERROR_RET;
 		}
-		else
+		if(ptr->type != EN_HST_TYPE)
 		{
-			return sn_type;
+			goto ERROR_RET;
 		}
+		return symbols_get_real_type(self, &ptr->body.type);
 	}
-
+	else
+	{
+		return sn_type;
+	}
 
 	return sn_type;
 ERROR_RET:

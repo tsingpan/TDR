@@ -30,8 +30,6 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val);
 
 TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type);
 
-TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type);
-
 TD_ERROR_CODE generator_replace_extension(char *filename, tuint32 filename_length, const char *suffix);
 
 //virtual functions

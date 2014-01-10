@@ -221,26 +221,6 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 	}
 }
 
-TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
-{
-	ST_SIMPLE_TYPE st;
-
-	if(type->type == E_SNT_CONTAINER)
-	{
-		if(type->ct == E_CT_VECTOR)
-		{
-			st = type->vector_type;
-		}
-	}
-	else
-	{
-		st = type->st;
-	}
-
-
-	return generator_print_simple_type(self, &st);	
-}
-
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition)
 {
 	if(self->on_definition != NULL)

@@ -49,8 +49,6 @@ void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMEN
 
 void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tbytes *tok_identifier);
 
-void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_VALUE *val);
-
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier);
 
 

@@ -104,7 +104,6 @@ typedef struct  _ST_ARGUMENTS
 typedef enum _ST_EXPRESSION_OPER
 {
 	E_EO_NON = 0,
-	E_EO_CASE = 1,
     E_EO_AND = 2,
     E_EO_EQUAL = 3,
 	E_EO_UNEQUAL = 4,
@@ -173,7 +172,6 @@ typedef struct  _ST_FIELD_LIST
 typedef struct  _ST_STRUCT
 {
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
-    ST_Parameters parameters;
     ST_FIELD_LIST field_list;
 }ST_STRUCT;
 typedef struct  _ST_UNION

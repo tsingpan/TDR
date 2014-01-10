@@ -189,7 +189,7 @@ static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *
 {
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef ");
-	generator_print_type(&self->super, &de_typedef->type);
+	generator_print_simple_type(&self->super, &de_typedef->type);
 	generator_print(&self->super, " %s", de_typedef->name);
 	generator_print(&self->super, ";\n");
 	return E_TD_NOERROR;

@@ -170,13 +170,6 @@ void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, 
 	current->name[tok_identifier->len] = 0;
 }
 
-void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_VALUE *val)
-{
-	tuint32 i;
-	current->oper = E_EO_CASE;
-	current->op0 = *val;
-}
-
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier)
 {
 	const SYMBOL *symbols = symbols_search_identifier(&self->symbols, identifier, hpfalse);

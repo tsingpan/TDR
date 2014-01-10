@@ -60,7 +60,6 @@ anychar			([^])
 <INITIAL>"if"					{return tok_if;																	}
 <INITIAL>"const"				{return tok_const;																}
 <INITIAL>"enum"					{return tok_enum;																}
-<INITIAL>"case"                 {return tok_case;																}
 <INITIAL>"typedef"				{return tok_typedef;															}
 
 <INITIAL>"int8"					{return tok_t_int8;																}
@@ -210,7 +209,7 @@ anychar			([^])
 <INITIAL>"namespace"          { ddekit_reserved_keyword(yytext); }
 <INITIAL>"typename"			  { ddekit_reserved_keyword(yytext); }
 <INITIAL>"switch"			  { ddekit_reserved_keyword(yytext); }
-
+<INITIAL>"case"               { ddekit_reserved_keyword(yytext); }
 <*>{anychar}					{ goto restart;					 }	
 */	
 }

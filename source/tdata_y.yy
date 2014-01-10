@@ -54,7 +54,6 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %token tok_equal
 %token tok_unequal
 %token tok_count
-%token tok_case
 %token tok_unixcomment
 %token tok_typedef
 %token tok_t_int8
@@ -224,7 +223,7 @@ EnumDef :
 		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};
     
-
+//只允许有一个类型为枚举， 名字叫selector的形式参数
 Union :
 	tok_union
 	{
@@ -270,9 +269,6 @@ Struct :
 	tok_identifier
 	{
 		symbols_domain_begin(&GET_SELF->symbols, &$3);
-	}
-	Parameters
-	{
 		GET_SELF->pn_field_list.field_list_num = 0;
 	}
 	'{' FieldList '}' ';'
@@ -281,7 +277,6 @@ Struct :
 
 		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
 		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
-		GET_DEFINITION.definition.de_struct.parameters = $5;
 		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
 
 		dp_check_Struct_end(GET_SELF, &yylloc);
@@ -306,9 +301,9 @@ UnionFieldList:
 	};
 	
 UnionField : 
-	tok_case tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
+	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
-		dp_reduce_UnionField(GET_SELF, &GET_SELF->pn_union_field, &$2, &$4, &$5, &$7);
+		dp_reduce_UnionField(GET_SELF, &GET_SELF->pn_union_field, &$1, &$3, &$4, &$6);
 	};
 
 
@@ -326,6 +321,7 @@ FieldList:
 		++(GET_SELF->pn_field_list.field_list_num);
 	};
 
+//只允许类型为union的成员， 传递一个类型为枚举的实际参数， 并且枚举类型要和形式参数匹配
 Field : 
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
@@ -359,10 +355,6 @@ Condition :
 		$$.op0 = $3;
 		$$.oper = E_EO_UNEQUAL;
 		$$.op1 = $5;
-	}
-|	tok_case Value ':'
-	{
-		dp_reduce_Condition_tok_case(GET_SELF, &$$, &$2);
 	}
 |
 	{
