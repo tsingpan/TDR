@@ -41,13 +41,13 @@ void dp_reduce_Value_tok_bool(PARSER *self, ST_VALUE* current, const tbool b);
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const tstring str);
 
 
-void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val);
+void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tbytes *identifier, const ST_VALUE *val);
 
 void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const tbytes *identifier);
 
 void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tbytes *identifier);
 
-void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_TYPE* type, const tbytes *tok_identifier);
+void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tbytes *tok_identifier);
 
 void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_VALUE *val);
 

@@ -136,7 +136,7 @@ void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const tstring s
 	strncpy(current->val.str, str, TLIBC_MAX_IDENTIFIER_LENGTH);
 }
 
-void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
+void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
 {
 	current->type = *type;
 	//warning
@@ -163,7 +163,7 @@ void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, 
 	++(current->arg_list_num);
 }
 
-void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_TYPE* type, const tbytes *tok_identifier)
+void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tbytes *tok_identifier)
 {
 	current->type = *type;
 	memcpy(current->name, tok_identifier->ptr, tok_identifier->len);

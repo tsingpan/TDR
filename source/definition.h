@@ -86,7 +86,7 @@ typedef struct  _ST_TYPE
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
-    ST_TYPE type;
+    ST_SIMPLE_TYPE type;
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_Parameter;
 #define MAX_PARAMETER_NUM 16
@@ -147,7 +147,7 @@ typedef struct  _ST_Import
 }ST_Import;
 typedef struct  _ST_Const
 {
-    ST_TYPE type;
+    ST_SIMPLE_TYPE type;
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_VALUE val;
 }ST_Const;
@@ -184,7 +184,7 @@ typedef struct  _ST_UNION
 }ST_UNION;
 typedef struct  _ST_TYPEDEF
 {
-    ST_TYPE type;
+    ST_SIMPLE_TYPE type;
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_TYPEDEF;
 typedef enum _EN_DEFINITION_TYPE

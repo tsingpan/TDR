@@ -18,7 +18,7 @@ typedef enum _SYMBOL_TYPE
 typedef union _SYMBOL_BODY
 {
 	ST_VALUE val;
-	ST_TYPE type;
+	ST_SIMPLE_TYPE type;
 	ST_Parameter para;
 	ST_FIELD field;
 	tuint32 enum_def_list_num;

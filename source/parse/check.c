@@ -2,7 +2,7 @@
 #include "symbols.h"
 #include <string.h>
 #include "tdata/tdata_types.h"
-void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
+void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_SIMPLE_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
 {
 	const ST_TYPE *real_type = NULL;
 	char id[TLIBC_MAX_IDENTIFIER_LENGTH];

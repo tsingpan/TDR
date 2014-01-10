@@ -170,7 +170,7 @@ Import :
 	};
 
 Typedef :
-	tok_typedef Type tok_identifier ';'
+	tok_typedef SimpleType tok_identifier ';'
 	{
 		dp_check_Typedef(GET_SELF, &yylloc, &$$);
 
@@ -180,7 +180,7 @@ Typedef :
 	};
 
 Const :
-	tok_const Type tok_identifier '=' Value ';'
+	tok_const SimpleType tok_identifier '=' Value ';'
 	{
 		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
 
@@ -474,7 +474,7 @@ ParameterList:
 	
 	
 Parameter:
-	Type tok_identifier
+	SimpleType tok_identifier
 	{
 		$$.type = $1;
 		memcpy($$.identifier, $2.ptr, $2.len);
