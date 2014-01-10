@@ -207,7 +207,7 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 		return generator_print(self, "tuint32");
 	case E_ST_UINT64:
 		return generator_print(self, "tuint64");
-
+	case E_ST_STRING:
 	case E_ST_CHAR:
 		return generator_print(self, "tchar");
 	case E_ST_BOOL:
@@ -230,10 +230,6 @@ TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
 		if(type->ct == E_CT_VECTOR)
 		{
 			st = type->vector_type;
-		}
-		else if(type->ct == E_CT_STRING)
-		{
-			st.st = E_ST_CHAR;
 		}
 	}
 	else

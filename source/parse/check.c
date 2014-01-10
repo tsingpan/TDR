@@ -288,44 +288,6 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 				goto done;
 			}*/
 			break;
-		case E_CT_STRING:/*
-			if(pn_field->args.arg_list_num != 1)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-			if(pn_field->args.arg_list[0].type == E_SNT_REFER)
-			{
-				const SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
-				if(symbol == NULL)
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-				if(symbol->type == EN_HST_VALUE)
-				{
-					if((symbol->body.val.type >= E_SNVT_INT64) && (symbol->body.val.type <= E_SNVT_HEX_UINT64))
-					{
-
-					}
-					else
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-				}
-				else
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-			}
-			else
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}*/
-			break;
 		}
 	}
 

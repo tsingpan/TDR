@@ -16,7 +16,7 @@ void dp_reduce_Import(PARSER *self, ST_Import* current, const tstring str);
 
 void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tbytes *tok_identifier);
 
-void dp_reduce_ContainerType_tok_t_string(PARSER *self, ST_TYPE *current, const tbytes *tok_identifier);
+void dp_reduce_SimpleType_tok_t_string(PARSER *self, ST_SIMPLE_TYPE *current, const tbytes *tok_identifier);
 
 void dp_reduce_SimpleType_tok_identifier(PARSER *self, ST_SIMPLE_TYPE* current, const tbytes *tok_identifier);
 

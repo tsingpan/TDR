@@ -35,13 +35,19 @@ void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const 
 	current->vector_length[tok_identifier->len] = 0;
 }
 
-void dp_reduce_ContainerType_tok_t_string(PARSER *self, ST_TYPE *current, const tbytes *tok_identifier)
+void dp_reduce_SimpleType_tok_t_string(PARSER *self, ST_SIMPLE_TYPE *current, const tbytes *tok_identifier)
 {
-	current->type = E_SNT_CONTAINER;
-	current->ct = E_CT_STRING;
+	current->st = E_ST_STRING;
 
-	memcpy(current->string_length, tok_identifier->ptr, tok_identifier->len);
-	current->string_length[tok_identifier->len] = 0;
+	if(tok_identifier == NULL)
+	{
+		current->string_length[0] = 0;
+	}
+	else
+	{
+		memcpy(current->string_length, tok_identifier->ptr, tok_identifier->len);
+		current->string_length[tok_identifier->len] = 0;
+	}
 }
 
 void dp_reduce_SimpleType_tok_identifier(PARSER *self, ST_SIMPLE_TYPE* current, const tbytes *tok_identifier)

@@ -302,6 +302,11 @@ tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE 
 			yylval->sn_st = E_ST_UINT64;
 			break;
 		}
+	case tok_t_string:
+		{
+			yylval->sn_st = E_ST_STRING;
+			break;
+		}
 	}
 
 	return E_TD_NOERROR;

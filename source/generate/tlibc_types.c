@@ -101,11 +101,15 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 			{
 				generator_print(&self->super, "[%s]", field_list->field_list[i].type.vector_length);
 			}
-			else if(field_list->field_list[i].type.ct == E_CT_STRING)
+		}
+		else
+		{
+			if(field_list->field_list[i].type.st.st == E_ST_STRING)
 			{
-				generator_print(&self->super, "[%s]", field_list->field_list[i].type.string_length);
+				generator_print(&self->super, "[%s]", field_list->field_list[i].type.st.string_length);
 			}
 		}
+
 		generator_print(&self->super, ";");
 		if(field_list->field_list[i].comment.text[0])
 		{
@@ -138,6 +142,10 @@ static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_
 		generator_print(&self->super, "\t");
 		generator_print_simple_type(&self->super, &union_field_list->union_field_list[i].simple_type);
 		generator_print(&self->super, " %s", union_field_list->union_field_list[i].name);
+		if(union_field_list->union_field_list[i].simple_type.st == E_ST_STRING)
+		{
+			generator_print(&self->super, "[%s]", union_field_list->union_field_list[i].simple_type.string_length);
+		}
 		generator_print(&self->super, ";");
 		if(union_field_list->union_field_list[i].comment.text[0])
 		{

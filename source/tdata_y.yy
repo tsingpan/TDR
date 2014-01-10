@@ -93,8 +93,8 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %type<sn_string> tok_string
 %type<sn_typedef> Typedef
 
-%type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64
-%type<sn_ct> tok_t_vector tok_t_string
+%type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64 tok_t_string
+%type<sn_ct> tok_t_vector
 
 %type<sn_arguments> Arguments ArgumentList
 
@@ -386,12 +386,7 @@ ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
 	{
 		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, &$5);
-	}
-|	tok_t_string '<' tok_identifier '>'
-	{
-		dp_reduce_ContainerType_tok_t_string(GET_SELF, &$$, &$3);
 	};
-
 	
 SimpleType:
 	tok_t_bool
@@ -441,7 +436,16 @@ SimpleType:
 |	tok_identifier
    	{
 		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, &$1);
+	}
+|	tok_t_string '<' tok_identifier '>'
+	{
+		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, &$3);
+	}
+|	tok_t_string
+	{
+		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, NULL);
 	};
+
 
 Parameters :
 	'(' ParameterList ')'

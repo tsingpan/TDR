@@ -53,12 +53,12 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_BOOL = 8,
     E_ST_CHAR = 9,
     E_ST_DOUBLE = 10,
-	E_ST_REFER = 11,
+	E_ST_STRING = 11,
+	E_ST_REFER = 12,
 }SN_SIMPLE_TYPE;
 typedef enum _SN_CONTAINER_TYPE
 {
     E_CT_VECTOR = 0,
-    E_CT_STRING = 1,
 }SN_CONTAINER_TYPE;
 typedef enum _SN_TYPE
 {
@@ -68,6 +68,9 @@ typedef enum _SN_TYPE
 typedef struct _ST_SIMPLE_TYPE
 {
 	SN_SIMPLE_TYPE st;
+	
+	tchar string_length[TLIBC_MAX_IDENTIFIER_LENGTH];
+
 	tchar st_refer[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_SIMPLE_TYPE;
 
@@ -80,8 +83,6 @@ typedef struct  _ST_TYPE
 	SN_CONTAINER_TYPE ct;
 	ST_SIMPLE_TYPE vector_type;
 	tchar vector_length[TLIBC_MAX_IDENTIFIER_LENGTH];
-
-	tchar string_length[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
