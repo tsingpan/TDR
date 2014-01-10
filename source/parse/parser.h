@@ -53,7 +53,6 @@ typedef union _PARSER_VALUE
 	ST_Parameters sn_parameters;
 
 	ST_CONDITION sn_condition;
-
 }PARSER_VALUE;
 
 #define TD_MAX_GENERATOR 16
@@ -74,6 +73,8 @@ struct _PARSER
 	ST_FIELD_LIST pn_field_list;
 	ST_FIELD pn_field;
 
+	ST_UNION_FIELD_LIST pn_union_field_list;
+	ST_UNION_FIELD pn_union_field;
 
 	tbool in_union;
 	tbool in_struct;

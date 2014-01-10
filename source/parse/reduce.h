@@ -53,4 +53,7 @@ void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_
 
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier);
 
+
+void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tbytes *key, const ST_SIMPLE_TYPE *simple_type, const tbytes *identifier, const ST_UNIX_COMMENT *comment);
+
 #endif //_H_REDUCE

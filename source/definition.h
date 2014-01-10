@@ -122,6 +122,23 @@ typedef struct  _ST_FIELD
 	ST_ARGUMENTS args;
     ST_UNIX_COMMENT comment;
 }ST_FIELD;
+
+
+typedef struct  _ST_UNION_FIELD
+{
+	tchar key[TLIBC_MAX_IDENTIFIER_LENGTH];
+	ST_SIMPLE_TYPE simple_type;
+	tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	ST_UNIX_COMMENT comment;
+}ST_UNION_FIELD;
+#define MAX_UNION_FIELD_LIST_NUM 65536
+typedef struct  _ST_UNION_FIELD_LIST
+{
+	tuint32 union_field_list_num;
+	ST_UNION_FIELD union_field_list[MAX_UNION_FIELD_LIST_NUM];
+}ST_UNION_FIELD_LIST;
+
+
 #define MAX_PACKAGE_NAME_LENGTH 1024
 typedef struct  _ST_Import
 {
@@ -162,7 +179,7 @@ typedef struct  _ST_UNION
 {
     tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
     ST_Parameters parameters;
-    ST_FIELD_LIST field_list;
+    ST_UNION_FIELD_LIST union_field_list;
 }ST_UNION;
 typedef struct  _ST_TYPEDEF
 {

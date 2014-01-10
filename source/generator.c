@@ -186,27 +186,9 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 	}
 }
 
-TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
+TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
 {
-	ST_SIMPLE_TYPE st;
-
-	if(type->type == E_SNT_CONTAINER)
-	{
-		if(type->ct == E_CT_VECTOR)
-		{
-			st = type->vector_type;
-		}
-		else if(type->ct == E_CT_STRING)
-		{
-			st.st = E_ST_CHAR;
-		}
-	}
-	else
-	{
-		st = type->st;
-	}
-
-	switch(st.st)
+	switch(simple_type->st)
 	{
 	case E_ST_INT8:
 		return generator_print(self, "tint8");
@@ -233,10 +215,34 @@ TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
 	case E_ST_DOUBLE:
 		return generator_print(self, "tdouble");
 	case E_ST_REFER:
-		return generator_print(self, st.st_refer);
+		return generator_print(self, simple_type->st_refer);
 	default:
 		return E_TD_ERROR;
 	}
+}
+
+TD_ERROR_CODE generator_print_type(GENERATOR *self, const ST_TYPE *type)
+{
+	ST_SIMPLE_TYPE st;
+
+	if(type->type == E_SNT_CONTAINER)
+	{
+		if(type->ct == E_CT_VECTOR)
+		{
+			st = type->vector_type;
+		}
+		else if(type->ct == E_CT_STRING)
+		{
+			st.st = E_ST_CHAR;
+		}
+	}
+	else
+	{
+		st = type->st;
+	}
+
+
+	return generator_print_simple_type(self, &st);	
 }
 
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition)

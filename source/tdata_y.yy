@@ -246,9 +246,9 @@ Union :
 		
 		GET_SELF->pn_field_list.field_list_num = 0;
 	}
-	'{' FieldList
+	'{' UnionFieldList
 	{
-		GET_DEFINITION.definition.de_union.field_list = GET_SELF->pn_field_list;
+		GET_DEFINITION.definition.de_union.union_field_list = GET_SELF->pn_union_field_list;
 	}
 	'}'
 	{
@@ -291,6 +291,27 @@ Struct :
 	
 
 	
+UnionFieldList: 
+	UnionFieldList UnionField
+	{
+		GET_SELF->pn_union_field_list.union_field_list[GET_SELF->pn_union_field_list.union_field_list_num] = GET_SELF->pn_union_field;
+		++(GET_SELF->pn_union_field_list.union_field_list_num);
+	}
+|	
+	UnionField
+	{
+		GET_SELF->pn_union_field_list.union_field_list_num = 0;
+		GET_SELF->pn_union_field_list.union_field_list[GET_SELF->pn_union_field_list.union_field_list_num] = GET_SELF->pn_union_field;
+		++(GET_SELF->pn_union_field_list.union_field_list_num);
+	};
+	
+UnionField : 
+	tok_case tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
+	{
+		dp_reduce_UnionField(GET_SELF, &GET_SELF->pn_union_field, &$2, &$4, &$5, &$7);
+	};
+
+
 FieldList: 
 	FieldList Field
 	{
@@ -304,7 +325,6 @@ FieldList:
 		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
 		++(GET_SELF->pn_field_list.field_list_num);
 	};
-	
 
 Field : 
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot

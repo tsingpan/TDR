@@ -189,3 +189,16 @@ void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *id
 		break;
 	}
 }
+
+void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tbytes *key, const ST_SIMPLE_TYPE *simple_type, const tbytes *identifier, const ST_UNIX_COMMENT *comment)
+{
+	strncpy(current->key, key->ptr, key->len);
+	current->key[key->len] = 0;
+
+	current->simple_type = *simple_type;
+
+	strncpy(current->name, identifier->ptr, identifier->len);
+	current->name[identifier->len] = 0;
+
+	current->comment = *comment;
+}

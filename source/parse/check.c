@@ -369,7 +369,7 @@ void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_
 	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
 
 	ptr->type = EN_HST_UNION;
-	ptr->body.field_list_num = de_union->field_list.field_list_num;
+	ptr->body.field_list_num = de_union->union_field_list.union_field_list_num;
 
 	if(symbols_save(&self->symbols, de_union->name, ptr) != E_TD_NOERROR)
 	{

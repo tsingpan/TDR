@@ -129,13 +129,33 @@ static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de
 	return E_TD_NOERROR;
 }
 
+
+static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_UNION_FIELD_LIST *union_field_list)
+{
+	tuint32 i;
+	for(i = 0; i < union_field_list->union_field_list_num; ++i)
+	{
+		generator_print(&self->super, "\t");
+		generator_print_simple_type(&self->super, &union_field_list->union_field_list[i].simple_type);
+		generator_print(&self->super, " %s", union_field_list->union_field_list[i].name);
+		generator_print(&self->super, ";");
+		if(union_field_list->union_field_list[i].comment.text[0])
+		{
+			generator_print(&self->super, "//%s", union_field_list->union_field_list[i].comment.text);
+		}
+		generator_print(&self->super, "\n");
+	}
+
+	return E_TD_NOERROR;
+}
+
 static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
 {
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef union _%s %s;\n", de_union->name, de_union->name);
 	generator_print(&self->super, "union _%s\n", de_union->name);
 	generator_print(&self->super, "{\n");
-	_on_field_list(self, &de_union->field_list);
+	_on_union_field_list(self, &de_union->union_field_list);
 	generator_print(&self->super, "};\n");
 
 	return E_TD_NOERROR;
