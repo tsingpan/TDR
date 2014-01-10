@@ -45,21 +45,6 @@ done:
 	return;
 }
 
-void dp_check_Parameter_add(PARSER *self, const YYLTYPE *yylloc, const ST_Parameter *pn_parameter)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-
-	ptr->type = EN_HST_PARAMETER;
-	ptr->body.para = *pn_parameter;
-
-	if(symbols_save(&self->symbols, pn_parameter->identifier, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_ERROR);
-	}
-done:
-	return;
-}
-
 void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tbytes *identifier, const ST_VALUE *st_value)
 {
 	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, identifier, hpfalse);
@@ -78,26 +63,6 @@ void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNI
 	tuint32 i, j;
 done:
 	return;
-}
-
-void dp_check_Union_begin(PARSER *self, const YYLTYPE *yylloc)
-{
-	self->in_union = hptrue;
-}
-
-void dp_check_Union_end(PARSER *self, const YYLTYPE *yylloc)
-{
-	self->in_union = hpfalse;
-}
-
-void dp_check_Struct_begin(PARSER *self, const YYLTYPE *yylloc)
-{
-	self->in_struct = hptrue;
-}
-
-void dp_check_Struct_end(PARSER *self, const YYLTYPE *yylloc)
-{
-	self->in_struct = hpfalse;
 }
 
 static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type)
@@ -261,52 +226,6 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 		}
 	}
 
-done:
-	return;
-}
-
-void dp_check_Field_add(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-
-	ptr->type = EN_HST_FIELD;
-	ptr->body.field = *pn_field;
-
-	if(symbols_save(&self->symbols, pn_field->identifier, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_ERROR);
-	}
-done:
-	return;
-}
-
-void dp_check_Struct_Add(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-
-	ptr->type = EN_HST_STRUCT;
-	ptr->body.field_list_num = de_struct->field_list.field_list_num;
-
-	if(symbols_save(&self->symbols, de_struct->name, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_ERROR);
-	}
-
-done:
-	return;
-}
-
-void dp_check_Union_Add(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-
-	ptr->type = EN_HST_UNION;
-	ptr->body.field_list_num = de_union->union_field_list.union_field_list_num;
-
-	if(symbols_save(&self->symbols, de_union->name, ptr) != E_TD_NOERROR)
-	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_ERROR);
-	}
 done:
 	return;
 }

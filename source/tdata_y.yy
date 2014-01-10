@@ -225,21 +225,17 @@ EnumDef :
     
 //只允许有一个类型为枚举， 名字叫selector的形式参数
 Union :
-	tok_union
+	tok_union tok_identifier
 	{
-		dp_check_Union_begin(GET_SELF, &yylloc);
-	}
-	tok_identifier
-	{
-		memcpy(GET_DEFINITION.definition.de_union.name, $3.ptr, $3.len);
-		GET_DEFINITION.definition.de_union.name[$3.len] = 0;
+		memcpy(GET_DEFINITION.definition.de_union.name, $2.ptr, $2.len);
+		GET_DEFINITION.definition.de_union.name[$2.len] = 0;
 		
 		
-		symbols_domain_begin(&GET_SELF->symbols, &$3);
+		symbols_domain_begin(&GET_SELF->symbols, &$2);
 	}
 	Parameters
 	{
-		GET_DEFINITION.definition.de_union.parameters = $5;
+		GET_DEFINITION.definition.de_union.parameters = $4;
 		
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
 		
@@ -255,33 +251,25 @@ Union :
 	}
 	';'
 	{
-		dp_check_Union_end(GET_SELF, &yylloc);
-
-		dp_check_Union_Add(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
+		symbols_add_Union(&GET_SELF->symbols, &GET_DEFINITION.definition.de_union);
 	};
 	
 	
 Struct : 
-	tok_struct
+	tok_struct tok_identifier
 	{
-		dp_check_Struct_begin(GET_SELF, &yylloc);
-	}
-	tok_identifier
-	{
-		symbols_domain_begin(&GET_SELF->symbols, &$3);
+		symbols_domain_begin(&GET_SELF->symbols, &$2);
 		GET_SELF->pn_field_list.field_list_num = 0;
 	}
 	'{' FieldList '}' ';'
 	{
 		symbols_domain_end(&GET_SELF->symbols);
 
-		memcpy(GET_DEFINITION.definition.de_struct.name, $3.ptr, $3.len);
-		GET_DEFINITION.definition.de_struct.name[$3.len] = 0;
+		memcpy(GET_DEFINITION.definition.de_struct.name, $2.ptr, $2.len);
+		GET_DEFINITION.definition.de_struct.name[$2.len] = 0;
 		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
 
-		dp_check_Struct_end(GET_SELF, &yylloc);
-
-		dp_check_Struct_Add(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_struct);
+		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
 	};
 	
 
@@ -334,7 +322,7 @@ Field :
 		GET_SELF->pn_field.comment = $6;
 
 		dp_check_Field(GET_SELF, &yylloc, &GET_SELF->pn_field);
-		dp_check_Field_add(GET_SELF, &yylloc, &GET_SELF->pn_field);
+		symbols_add_Field(&GET_SELF->symbols, &GET_SELF->pn_field);
 	};
 	
 Condition : 
@@ -472,8 +460,7 @@ Parameter:
 		memcpy($$.identifier, $2.ptr, $2.len);
 		$$.identifier[$2.len] = 0;
 		
-		//参数类型只能为简单类型
-		dp_check_Parameter_add(GET_SELF, &yylloc, &$$);
+		symbols_add_Parameter(&GET_SELF->symbols, &$$);
 	};
 
 Arguments:

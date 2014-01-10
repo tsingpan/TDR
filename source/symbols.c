@@ -220,3 +220,43 @@ done:
 	return;
 
 }
+
+void symbols_add_Parameter(SYMBOLS *self, const ST_Parameter *pn_parameter)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+
+	ptr->type = EN_HST_PARAMETER;
+	ptr->body.para = *pn_parameter;
+
+	symbols_save(self, pn_parameter->identifier, ptr);
+}
+
+void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+
+	ptr->type = EN_HST_FIELD;
+	ptr->body.field = *pn_field;
+
+	symbols_save(self, pn_field->identifier, ptr);
+}
+
+void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+
+	ptr->type = EN_HST_STRUCT;
+	ptr->body.field_list_num = de_struct->field_list.field_list_num;
+
+	symbols_save(self, de_struct->name, ptr);
+}
+
+void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
+{
+	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+
+	ptr->type = EN_HST_UNION;
+	ptr->body.field_list_num = de_union->union_field_list.union_field_list_num;
+
+	symbols_save(self, de_union->name, ptr);
+}

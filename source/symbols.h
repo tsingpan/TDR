@@ -70,4 +70,12 @@ void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum);
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def);
 
+void symbols_add_Parameter(SYMBOLS *self, const ST_Parameter *pn_parameter);
+
+void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field);
+
+void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct);
+
+void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union);
+
 #endif //_H_SYMBOLS

@@ -75,9 +75,6 @@ struct _PARSER
 
 	ST_UNION_FIELD_LIST pn_union_field_list;
 	ST_UNION_FIELD pn_union_field;
-
-	tbool in_union;
-	tbool in_struct;
 };
 
 void parser_init(PARSER *self);
