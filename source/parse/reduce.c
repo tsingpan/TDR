@@ -62,11 +62,6 @@ done:
 	return;
 }
 
-void dp_reduce_SimpleType(PARSER *self, ST_SIMPLE_TYPE *current, const SN_SIMPLE_TYPE type)
-{
-	current->st = type;
-}
-
 void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
 {
 	current->type = E_SNT_SIMPLE;
@@ -176,7 +171,7 @@ void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_
 	current->op0 = *val;
 }
 
-void dp_reduce_Function_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier)
+void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier)
 {
 	const SYMBOL *symbols = symbols_search_identifier(&self->symbols, identifier, hpfalse);
 

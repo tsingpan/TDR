@@ -14,7 +14,7 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_
 
 void dp_check_Parameter_add(PARSER *self, const YYLTYPE *yylloc, const ST_Parameter *pn_parameter);
 
-void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *enum_def);
+void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tbytes *identifier, const ST_VALUE *st_value);
 
 void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 

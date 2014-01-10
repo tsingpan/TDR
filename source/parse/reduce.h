@@ -18,8 +18,6 @@ void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const 
 
 void dp_reduce_ContainerType_tok_t_string(PARSER *self, ST_TYPE *current, const tbytes *tok_identifier);
 
-void dp_reduce_SimpleType(PARSER *self, ST_SIMPLE_TYPE *current, const SN_SIMPLE_TYPE type);
-
 void dp_reduce_SimpleType_tok_identifier(PARSER *self, ST_SIMPLE_TYPE* current, const tbytes *tok_identifier);
 
 void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type);
@@ -53,6 +51,6 @@ void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_TYPE* type, const t
 
 void dp_reduce_Condition_tok_case(PARSER *self, ST_CONDITION *current, const ST_VALUE *val);
 
-void dp_reduce_Function_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier);
+void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tbytes *identifier);
 
 #endif //_H_REDUCE

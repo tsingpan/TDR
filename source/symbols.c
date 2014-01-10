@@ -2,6 +2,27 @@
 #include <string.h>
 #include "error/error_code_types.h"
 
+
+void symbols_init(SYMBOLS *self)
+{
+	AlphaMap *alpha_map = NULL;
+	self->domain[0] = 0;
+
+	alpha_map = alpha_map_new();
+
+	alpha_map_add_range(alpha_map, 'a', 'z');
+	alpha_map_add_range(alpha_map, 'A', 'Z');
+	alpha_map_add_range(alpha_map, '0', '9');
+	alpha_map_add_range(alpha_map, '_', '_');
+	self->symbols = trie_new(alpha_map);
+	alpha_map_free(alpha_map);
+}
+
+void symbols_fini(SYMBOLS *self)
+{
+	trie_free(self->symbols);
+}
+
 const SYMBOL* symbols_search_identifier(SYMBOLS *self, const tbytes* tok_identifier, tbool back_searching)
 {
 	char name[TLIBC_MAX_IDENTIFIER_LENGTH];

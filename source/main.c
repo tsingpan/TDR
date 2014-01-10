@@ -69,7 +69,7 @@ int main(tint32 argc, char **argv)
 				usage();
 				goto ERROR_RET;
 			}
-			scanner_stack_add_path(&parser.scanner_stack, source_dir);
+			scanner_stack_set_root_dir(&parser.scanner_stack, source_dir);
 		}
 		else if (strcmp(arg, "-t") == 0)
 		{			

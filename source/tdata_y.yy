@@ -87,7 +87,7 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %type<sn_bool> tok_bool
 %type<sn_simple_type> SimpleType
 %type<sn_type> Type ContainerType
-%type<sn_value> Value Function
+%type<sn_value> Value
 %type<sn_const> Const
 %type<pn_tok_double> tok_double
 %type<sn_string> tok_string
@@ -104,7 +104,7 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %type<sn_parameter> Parameter
 %type<sn_parameters> Parameters ParameterList
 
-%type<sn_condition> Condition FieldCondition
+%type<sn_condition> Condition
 
 
 
@@ -117,19 +117,11 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 
 Document :
 	{
-		tuint32 i;
-		for(i = 0; i < GET_SELF->generator_num; ++i)
-		{
-			generator_on_document_begin(GET_SELF->generator_list[i], GET_SELF->file_name);
-		}
+		parser_on_document_begin(GET_SELF);
 	}
 	DefinitionList
 	{
-		tuint32 i;
-		for(i = 0; i < GET_SELF->generator_num; ++i)
-		{
-			generator_on_document_end(GET_SELF->generator_list[i], GET_SELF->file_name);
-		}
+		parser_on_document_end(GET_SELF);		
 	};
 
 DefinitionList :
@@ -149,23 +141,23 @@ Definition :
 	{
 		dp_reduce_Definition_Const(GET_SELF, &GET_DEFINITION, &$1);
 	}
-| Typedef
+|	Typedef
 	{
 		dp_reduce_Definition_Typedef(GET_SELF, &GET_DEFINITION, &$1);
 	}
-| Struct
+|	Struct
 	{
 		GET_DEFINITION.type = E_DT_STRUCT;
 	}
-| Union
+|	Union
 	{
 		GET_DEFINITION.type = E_DT_UNION;
 	}
-| Enum
+|	Enum
 	{
 		GET_DEFINITION.type = E_DT_ENUM;
 	}
-| UnixComment
+|	UnixComment
 	{
 		GET_DEFINITION.type = E_DT_UNIX_COMMENT;
 		GET_DEFINITION.definition.de_unix_comment = $1;
@@ -197,68 +189,11 @@ Const :
 		symbols_add_Const(&GET_SELF->symbols, &$$);
 	}
 
-
-
-Value :
-	tok_uint64
-	{
-		dp_reduce_Value_tok_uint64(GET_SELF, &$$, $1);
-	}
-|	tok_hex_uint64
-	{
-		dp_reduce_Value_tok_hex_uint64(GET_SELF, &$$, $1);
-	}
-|	tok_int64
-	{
-		dp_reduce_Value_tok_int64(GET_SELF, &$$, $1);
-	}
-|	tok_hex_int64
-	{
-		dp_reduce_Value_tok_hex_int64(GET_SELF, &$$, $1);
-	}
-|	tok_bool
-	{
-		dp_reduce_Value_tok_bool(GET_SELF, &$$, $1);
-	}
-|	tok_double
-	{
-		dp_reduce_Value_tok_double(GET_SELF, &$$, $1);
-	}
-|	tok_string
-	{
-		dp_reduce_Value_tok_string(GET_SELF, &$$, $1);
-	}
-|	tok_char
-	{
-		dp_reduce_Value_tok_char(GET_SELF, &$$, $1);
-	}
-|	tok_identifier
-	{
-		dp_reduce_Value_tok_identifier(GET_SELF, &$$, $1);
-	}
-|	Function
-	{
-		$$ = $1;
-	}
-;
-
-Function:
-	tok_count '(' tok_identifier ')'
-	{
-		dp_reduce_Function_tok_count(GET_SELF, &$$, &$3);
-	};
-
 Enum :
-	tok_enum tok_identifier	
+	tok_enum tok_identifier	'{' EnumDefList '}'	';'
 	{
 		memcpy(GET_DEFINITION.definition.de_enum.name, $2.ptr, $2.len);
 		GET_DEFINITION.definition.de_enum.name[$2.len] = 0;
-		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
-	}
-	'{' EnumDefList '}'
-	{ }
-	';'
-	{
 		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
 	};
     
@@ -278,8 +213,8 @@ EnumDefList :
 	
 EnumDef : 
 	tok_identifier '=' Value ',' UnixCommentOrNot
-	{	
-		dp_check_EnumDef(GET_SELF, &yylloc, &$1);
+	{
+		dp_check_EnumDef(GET_SELF, &yylloc, &$1, &$3);
 
 		memcpy($$.identifier, $1.ptr, $1.len);
 		$$.identifier[$1.len] = 0;
@@ -372,10 +307,7 @@ FieldList:
 	
 
 Field : 
-	FieldCondition Type tok_identifier Arguments
-	{
-	}
-	';' UnixCommentOrNot
+	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
 		GET_SELF->pn_field.condition = $1;
 		GET_SELF->pn_field.type = $2;
@@ -383,23 +315,12 @@ Field :
 		memcpy(GET_SELF->pn_field.identifier, $3.ptr, $3.len);
 		GET_SELF->pn_field.identifier[$3.len] = 0;
 		GET_SELF->pn_field.args = $4;
-		GET_SELF->pn_field.comment = $7;
+		GET_SELF->pn_field.comment = $6;
 
 		dp_check_Field(GET_SELF, &yylloc, &GET_SELF->pn_field);
 		dp_check_Field_add(GET_SELF, &yylloc, &GET_SELF->pn_field);
 	};
-
-FieldCondition:	
-	Condition
-	{
-		$$ = $1;
-	}	
-|
-	{
-		$$.oper = E_EO_NON;
-	};
-
-//这里要检查Value， 保证只能是整数, 还得有符号无符号匹配
+	
 Condition : 
 	tok_if 	'(' Value '&' Value	')'	
 	{
@@ -422,7 +343,12 @@ Condition :
 |	tok_case Value ':'
 	{
 		dp_reduce_Condition_tok_case(GET_SELF, &$$, &$2);
+	}
+|
+	{
+		$$.oper = E_EO_NON;
 	};
+
 
 
 
@@ -450,47 +376,47 @@ ContainerType:
 SimpleType:
 	tok_t_bool
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_char
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_double
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_int8
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_int16
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_int32
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_int64
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_uint8 
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_uint16 
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_uint32 
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_t_uint64
 	{
-		dp_reduce_SimpleType(GET_SELF, &$$, $1);
+		$$.st = $1;
 	}
 |	tok_identifier
    	{
@@ -553,6 +479,48 @@ ArgumentList:
 |	tok_identifier
 	{
 		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &$$, &$1);
+	};
+
+Value :
+	tok_uint64
+	{
+		dp_reduce_Value_tok_uint64(GET_SELF, &$$, $1);
+	}
+|	tok_hex_uint64
+	{
+		dp_reduce_Value_tok_hex_uint64(GET_SELF, &$$, $1);
+	}
+|	tok_int64
+	{
+		dp_reduce_Value_tok_int64(GET_SELF, &$$, $1);
+	}
+|	tok_hex_int64
+	{
+		dp_reduce_Value_tok_hex_int64(GET_SELF, &$$, $1);
+	}
+|	tok_bool
+	{
+		dp_reduce_Value_tok_bool(GET_SELF, &$$, $1);
+	}
+|	tok_double
+	{
+		dp_reduce_Value_tok_double(GET_SELF, &$$, $1);
+	}
+|	tok_string
+	{
+		dp_reduce_Value_tok_string(GET_SELF, &$$, $1);
+	}
+|	tok_char
+	{
+		dp_reduce_Value_tok_char(GET_SELF, &$$, $1);
+	}
+|	tok_identifier
+	{
+		dp_reduce_Value_tok_identifier(GET_SELF, &$$, $1);
+	}
+|	tok_count '(' tok_identifier ')'
+	{
+		dp_reduce_Value_tok_count(GET_SELF, &$$, &$3);
 	};
 
 UnixComment:
