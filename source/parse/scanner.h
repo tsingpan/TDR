@@ -2,9 +2,11 @@
 #define _H_SCANNER
 
 #include "platform/tlibc_platform.h"
-#include "error/error_msg_types.h"
+#include "language/language_types.h"
 #include "definition.h"
+#include "error.h"
 #include <stdarg.h>
+
 
 
 typedef struct YYLTYPE

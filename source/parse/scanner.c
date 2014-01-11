@@ -1,8 +1,7 @@
 #include "parse/scanner.h"
-#include "error/error_code_types.h"
-#include "error/error_msg_reader.h"
+#include "error.h"
 #include "protocol/tlibc_xml_reader.h"
-#include "error/error.h"
+#include "language/language.h"
 #include "globals.h"
 
 #include <stdio.h>
@@ -297,7 +296,7 @@ void scanner_stack_error_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERR
 	va_list ap;
 	const char *error_str = NULL;
 
-	error_str = error_search_msg(&g_error_msg_library, result);
+	error_str = error_search_msg(&g_language_string_library, result);
 	va_start(ap, result);
 	scanner_stack_errorap(self, yylloc, result, error_str, ap);
 	va_end(ap);
@@ -310,7 +309,7 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	scanner_stack_errorap(jp, yylloc, E_TD_SYNTAX_ERROR, s, ap);
+	scanner_stack_errorap(jp, yylloc, E_TD_ERROR, s, ap);
 	va_end(ap);
 }
 
@@ -438,7 +437,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{	
-					scanner_stack_error_halt(self, yylloc, E_TD_INTEGER_OVERFLOW);
+					scanner_stack_error_halt(self, yylloc, E_TD_ERROR);
 				}
 			}
 			break;
@@ -450,7 +449,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-				scanner_stack_error_halt(self, yylloc, E_TD_INTEGER_OVERFLOW);
+				scanner_stack_error_halt(self, yylloc, E_TD_ERROR);
 			}
 			break;
 		}
@@ -466,7 +465,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_stack_error_halt(self, yylloc, E_TD_INTEGER_OVERFLOW);
+					scanner_stack_error_halt(self, yylloc, E_TD_ERROR);
 				}
 			}
 			break;

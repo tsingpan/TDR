@@ -1,5 +1,5 @@
 #include "platform/tlibc_platform.h"
-#include "error/error_code_types.h"
+#include "error.h"
 #include "parse/scanner.h"
 
 

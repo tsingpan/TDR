@@ -1,5 +1,5 @@
 #include "parse/parser.h"
-#include "error/error_code_types.h"
+#include "error.h"
 
 #include "tdata_y.h"
 #include "tdata_l.h"
@@ -46,7 +46,7 @@ void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
 		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
 		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
 		{
-			scanner_stack_error_halt(&self->scanner_stack, NULL, E_TD_CAN_NOT_OPEN_FILE, file_name);
+			scanner_stack_error_halt(&self->scanner_stack, NULL, E_TD_ERROR, file_name);
 		}
 	}
 

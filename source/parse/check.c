@@ -14,7 +14,7 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, cons
 	//1, ÅÐ¶Ï·ûºÅÊÇ·ñÖØ¸´
 	if(symbols_search_string(&self->symbols, id, hpfalse) != NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_SYMBOL_REDEFINITION, id);
+		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_TD_ERROR);
 		goto done;
 	}
 

@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include "platform/tlibc_platform.h"
-#include "error/error_code_types.h"
+#include "error.h"
 
 #include "definition.h"
 typedef struct _GENERATOR GENERATOR;

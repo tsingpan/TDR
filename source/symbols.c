@@ -1,6 +1,6 @@
 #include "symbols.h"
 #include <string.h>
-#include "error/error_code_types.h"
+#include "error.h"
 
 
 void symbols_init(SYMBOLS *self)
