@@ -32,7 +32,7 @@ typedef union  _UN_VALUE
     tchar str[TLIBC_MAX_IDENTIFIER_LENGTH];
     tdouble d;
     tchar c;
-    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
+    tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];//const, enumdef
 }UN_VALUE;
 typedef struct  _ST_VALUE
 {
@@ -54,12 +54,8 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_CHAR = 9,
     E_ST_DOUBLE = 10,
 	E_ST_STRING = 11,
-	E_ST_REFER = 12,
+	E_ST_REFER = 12,//struct, enum, typedef
 }SN_SIMPLE_TYPE;
-typedef enum _SN_CONTAINER_TYPE
-{
-    E_CT_VECTOR = 0,
-}SN_CONTAINER_TYPE;
 typedef enum _SN_TYPE
 {
     E_SNT_SIMPLE = 0,
@@ -74,15 +70,25 @@ typedef struct _ST_SIMPLE_TYPE
 	tchar st_refer[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_SIMPLE_TYPE;
 
+typedef enum _SN_CONTAINER_TYPE
+{
+	E_CT_VECTOR = 0,
+}SN_CONTAINER_TYPE;
+typedef struct _ST_CONTAINER_TYPE
+{
+	SN_CONTAINER_TYPE ct;
+
+	ST_SIMPLE_TYPE vector_type;
+	tchar vector_length[TLIBC_MAX_IDENTIFIER_LENGTH];
+}ST_CONTAINER_TYPE;
+
 typedef struct  _ST_TYPE
 {
     SN_TYPE type;
     
 	ST_SIMPLE_TYPE st;
 
-	SN_CONTAINER_TYPE ct;
-	ST_SIMPLE_TYPE vector_type;
-	tchar vector_length[TLIBC_MAX_IDENTIFIER_LENGTH];
+	ST_CONTAINER_TYPE ct;	
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
@@ -111,7 +117,7 @@ typedef enum _ST_EXPRESSION_OPER
 typedef struct  _ST_CONDITION
 {
 	ST_EXPRESSION_OPER oper;
-	ST_VALUE op0;    
+	ST_VALUE op0;
 	ST_VALUE op1;
 }ST_CONDITION;
 typedef struct  _ST_FIELD

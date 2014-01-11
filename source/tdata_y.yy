@@ -6,6 +6,9 @@
 #define YYERROR_VERBOSE
 #define GET_SELF TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack)
 #define GET_DEFINITION GET_SELF->pn_definition
+#define GET_UNION_FIELD_LIST GET_DEFINITION.definition.de_union.union_field_list
+#define GET_FIELD_LIST GET_DEFINITION.definition.de_struct.field_list
+
 #define YYLEX_PARAM ss
 %}
 %locations
@@ -98,6 +101,8 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 
 
 %type<sn_enum_def> EnumDef
+%type<sn_union_field> UnionField
+%type<sn_field> Field
 
 %type<sn_parameter> Parameter
 %type<sn_parameters> Parameters ParameterList
@@ -237,14 +242,8 @@ Union :
 		GET_DEFINITION.definition.de_union.parameters = $4;
 		
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
-		
-		GET_SELF->pn_field_list.field_list_num = 0;
 	}
-	'{' UnionFieldList
-	{
-		GET_DEFINITION.definition.de_union.union_field_list = GET_SELF->pn_union_field_list;
-	}
-	'}'
+	'{' UnionFieldList '}'
 	{
 		symbols_domain_end(&GET_SELF->symbols);
 	}
@@ -258,7 +257,6 @@ Struct :
 	tok_struct tok_identifier
 	{
 		symbols_domain_begin(&GET_SELF->symbols, &$2);
-		GET_SELF->pn_field_list.field_list_num = 0;
 	}
 	'{' FieldList '}' ';'
 	{
@@ -266,7 +264,6 @@ Struct :
 
 		memcpy(GET_DEFINITION.definition.de_struct.name, $2.ptr, $2.len);
 		GET_DEFINITION.definition.de_struct.name[$2.len] = 0;
-		GET_DEFINITION.definition.de_struct.field_list = GET_SELF->pn_field_list;
 
 		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
 	};
@@ -276,52 +273,52 @@ Struct :
 UnionFieldList: 
 	UnionFieldList UnionField
 	{
-		GET_SELF->pn_union_field_list.union_field_list[GET_SELF->pn_union_field_list.union_field_list_num] = GET_SELF->pn_union_field;
-		++(GET_SELF->pn_union_field_list.union_field_list_num);
+		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num] = $2;
+		++(GET_UNION_FIELD_LIST.union_field_list_num);
 	}
 |	
 	UnionField
 	{
-		GET_SELF->pn_union_field_list.union_field_list_num = 0;
-		GET_SELF->pn_union_field_list.union_field_list[GET_SELF->pn_union_field_list.union_field_list_num] = GET_SELF->pn_union_field;
-		++(GET_SELF->pn_union_field_list.union_field_list_num);
+		GET_UNION_FIELD_LIST.union_field_list_num = 0;
+		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num] = $1;
+		++(GET_UNION_FIELD_LIST.union_field_list_num);
 	};
 	
 UnionField : 
 	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
-		dp_reduce_UnionField(GET_SELF, &GET_SELF->pn_union_field, &$1, &$3, &$4, &$6);
+		dp_reduce_UnionField(GET_SELF, &$$, &$1, &$3, &$4, &$6);
 	};
 
 
 FieldList: 
 	FieldList Field
 	{
-		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
-		++(GET_SELF->pn_field_list.field_list_num);
+		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num] = $2;
+		++(GET_FIELD_LIST.field_list_num);
 	}
 |	
 	Field
 	{
-		GET_SELF->pn_field_list.field_list_num = 0;
-		GET_SELF->pn_field_list.field_list[GET_SELF->pn_field_list.field_list_num] = GET_SELF->pn_field;
-		++(GET_SELF->pn_field_list.field_list_num);
+		GET_FIELD_LIST.field_list_num = 0;
+		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num] = $1;
+		++(GET_FIELD_LIST.field_list_num);
 	};
 
 //只允许类型为union的成员， 传递一个类型为枚举的实际参数， 并且枚举类型要和形式参数匹配
 Field : 
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
-		GET_SELF->pn_field.condition = $1;
-		GET_SELF->pn_field.type = $2;
+		$$.condition = $1;
+		$$.type = $2;
 		
-		memcpy(GET_SELF->pn_field.identifier, $3.ptr, $3.len);
-		GET_SELF->pn_field.identifier[$3.len] = 0;
-		GET_SELF->pn_field.args = $4;
-		GET_SELF->pn_field.comment = $6;
+		memcpy($$.identifier, $3.ptr, $3.len);
+		$$.identifier[$3.len] = 0;
+		$$.args = $4;
+		$$.comment = $6;
 
-		dp_check_Field(GET_SELF, &yylloc, &GET_SELF->pn_field);
-		symbols_add_Field(&GET_SELF->symbols, &GET_SELF->pn_field);
+		dp_check_Field(GET_SELF, &yylloc, &$$);
+		symbols_add_Field(&GET_SELF->symbols, &$$);
 	};
 	
 Condition : 

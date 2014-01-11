@@ -119,7 +119,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 	}	
 	else if(pn_field->type.type == E_SNT_CONTAINER)
 	{
-		switch(pn_field->type.ct)
+		switch(pn_field->type.ct.ct)
 		{
 		case E_CT_VECTOR:
 			/*

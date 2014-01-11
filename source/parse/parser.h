@@ -53,6 +53,10 @@ typedef union _PARSER_VALUE
 	ST_Parameters sn_parameters;
 
 	ST_CONDITION sn_condition;
+
+	ST_UNION_FIELD sn_union_field;
+
+	ST_FIELD sn_field;
 }PARSER_VALUE;
 
 #define TD_MAX_GENERATOR 16
@@ -69,12 +73,6 @@ struct _PARSER
 	SYMBOLS symbols;
 
 	ST_DEFINITION pn_definition;
-
-	ST_FIELD_LIST pn_field_list;
-	ST_FIELD pn_field;
-
-	ST_UNION_FIELD_LIST pn_union_field_list;
-	ST_UNION_FIELD pn_union_field;
 };
 
 void parser_init(PARSER *self);

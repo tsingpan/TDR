@@ -95,16 +95,16 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
 		{
 			//为vector对象自动生成一个计数器对象, 所以一个vector类型的对象需要占用两个符号。
-			if(field_list->field_list[i].type.ct == E_CT_VECTOR)
+			if(field_list->field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				generator_print(&self->super, "\ttuint16 %s_num;\n", field_list->field_list[i].identifier);
 				generator_print(&self->super, "\t");
-				generator_print_simple_type(&self->super, &field_list->field_list[i].type.vector_type);
+				generator_print_simple_type(&self->super, &field_list->field_list[i].type.ct.vector_type);
 				generator_print(&self->super, " %s", field_list->field_list[i].identifier);				
-				generator_print(&self->super, "[%s]", field_list->field_list[i].type.vector_length);
-				if(field_list->field_list[i].type.vector_type.st == E_ST_STRING)
+				generator_print(&self->super, "[%s]", field_list->field_list[i].type.ct.vector_length);
+				if(field_list->field_list[i].type.ct.vector_type.st == E_ST_STRING)
 				{
-					generator_print(&self->super, "[%s]", field_list->field_list[i].type.vector_type.string_length);
+					generator_print(&self->super, "[%s]", field_list->field_list[i].type.ct.vector_type.string_length);
 				}
 			}
 		}
