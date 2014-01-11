@@ -26,7 +26,7 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 	strncpy(self->file_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
 	if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, NULL, E_TD_ERROR);
+		scanner_stack_error_halt(&self->scanner_stack, NULL, E_LS_UNKNOW);
 	}
 
 	ret = tdataparse(&self->scanner_stack);
@@ -46,7 +46,7 @@ void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
 		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
 		if(scanner_stack_push_file(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
 		{
-			scanner_stack_error_halt(&self->scanner_stack, NULL, E_TD_ERROR, file_name);
+			scanner_stack_error_halt(&self->scanner_stack, NULL, E_LS_UNKNOW, file_name);
 		}
 	}
 

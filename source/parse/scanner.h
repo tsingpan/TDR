@@ -78,9 +78,7 @@ SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);
 tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state);
 tint32 scanner_stack_pop(SCANNER_STACK *self);
 tuint32 scanner_stack_get_num(SCANNER_STACK *self);
-void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, const char *s, va_list ap);
-void scanner_stack_error_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, TD_ERROR_CODE result, ...);
-
+void scanner_stack_error_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
 void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 void ddekit_reserved_keyword(SCANNER_STACK *jp, const char* keyword);
 

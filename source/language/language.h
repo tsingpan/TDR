@@ -7,8 +7,8 @@
 #include "language/language_types.h"
 
 
-const char* error_search_msg(const ST_TD_LANGUAGE_STRING_LIBRARY *self, TD_ERROR_CODE sid);
+const char* language_string_library_search(const ST_TD_LANGUAGE_STRING_LIBRARY *self, EN_TD_LANGUAGE_STRING sid);
 
-TD_ERROR_CODE error_init(ST_TD_LANGUAGE_STRING_LIBRARY *self);
+TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self);
 
 #endif//_H_LANGUAGE_H

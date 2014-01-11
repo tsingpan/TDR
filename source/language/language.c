@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const char* error_search_msg(const ST_TD_LANGUAGE_STRING_LIBRARY *self, TD_ERROR_CODE sid)
+const char* language_string_library_search(const ST_TD_LANGUAGE_STRING_LIBRARY *self, EN_TD_LANGUAGE_STRING sid)
 {
 	tuint32 l, r, m;
 
@@ -59,7 +59,7 @@ static void sort_library(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	}
 }
 
-TD_ERROR_CODE error_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
+TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
 	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
 	TLIBC_XML_READER xml_reader;

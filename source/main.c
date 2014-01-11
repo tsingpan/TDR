@@ -38,7 +38,7 @@ int main(tint32 argc, char **argv)
 	GENERATOR *generator_list[TD_MAX_GENERATOR];
 	tuint32 generator_num = 0;
 
-	error_init(&g_language_string_library);
+	language_string_library_init(&g_language_string_library);
 
 	for (i = 1; i < argc; ++i)
 	{
