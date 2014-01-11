@@ -15,17 +15,14 @@
 
 %code requires
 {
+#include "parse/parser.h"
 
 #include "parse/scanner.h"
-#include "parse/check.h"
-#include "parse/parser.h"
-#include "parse/reduce.h"
 #define YYSTYPE PARSER_VALUE
 
-#include <string.h>
-
-int tdatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss);
-void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
+#include "parse/check.h"
+#include "parse/reduce.h"
+#include "symbols.h"
 }
 
 %define api.pure
@@ -130,7 +127,7 @@ Document :
 DefinitionList :
 	DefinitionList Definition
 	{
-		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
+		parser_on_definition(GET_SELF, &GET_DEFINITION);
 	}
 |	{
 	};

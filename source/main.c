@@ -28,17 +28,17 @@ void help()
 	fprintf(stderr, "  -t dir					Set the target directory\n");
 }
 
-PARSER parser;
+#define TD_MAX_GENERATOR 16
 
-TLIBC_TYPES_GENERATOR tlibc_types_generator;
 
 int main(tint32 argc, char **argv)
 {
 	tint32 i;
+	TLIBC_TYPES_GENERATOR tlibc_types_generator;
+	GENERATOR *generator_list[TD_MAX_GENERATOR];
+	tuint32 generator_num = 0;
 
-	error_init();
-
-	parser_init(&parser);
+	error_init(&g_error_msg_library);
 
 	for (i = 1; i < argc; ++i)
 	{
@@ -60,19 +60,17 @@ int main(tint32 argc, char **argv)
 			goto ERROR_RET;
 		}
 		else if (strcmp(arg, "-s") == 0)
-		{
-			const char *source_dir = "./";
-			source_dir = argv[++i];
-			if (source_dir == NULL)
+		{			
+			g_source_dir = argv[++i];
+			if (g_source_dir == NULL)
 			{
 				fprintf(stderr, "Missing source directory specification\n");
 				usage();
 				goto ERROR_RET;
 			}
-			scanner_stack_set_root_dir(&parser.scanner_stack, source_dir);
 		}
 		else if (strcmp(arg, "-t") == 0)
-		{			
+		{
 			g_target_dir = argv[++i];
 			if (g_target_dir == NULL)
 			{
@@ -87,7 +85,7 @@ int main(tint32 argc, char **argv)
 			if(strcmp(arg, "tlibc") == 0)
 			{
 				tlibc_types_generator_init(&tlibc_types_generator);
-				parser_add_generator(&parser, &tlibc_types_generator.super);
+				generator_list[generator_num++] = &tlibc_types_generator.super;
 			}
 		}		
 		else
@@ -98,7 +96,7 @@ int main(tint32 argc, char **argv)
 	
 	for(; i < argc; ++i)
 	{
-		if(parser_parse(&parser, argv[i]) != E_TD_NOERROR)
+		if(parser_parse(&g_parser, argv[i], generator_list, generator_num) != E_TD_NOERROR)
 		{
 			goto ERROR_RET;
 		}

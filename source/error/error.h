@@ -5,8 +5,8 @@
 #include "error/error_msg_types.h"
 
 
-const char* error_search_msg(TD_ERROR_CODE sid);
+const char* error_search_msg(const TD_ERROR_MSG_LIBRARY *self, TD_ERROR_CODE sid);
 
-TD_ERROR_CODE error_init();
+TD_ERROR_CODE error_init(TD_ERROR_MSG_LIBRARY *self);
 
 #endif//_H_ERROR
