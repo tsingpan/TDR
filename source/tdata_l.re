@@ -17,15 +17,15 @@ static void ddekit_reserved_keyword(const char* keyword)
 }
 
 
-tint32 tdata_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval)
+tint32 tdata_lex_scan(SCANNER_STACK *self, YYLTYPE *yylloc, YYSTYPE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
 	{
 		return 0;
 	}
-	yylloc->first_line = self->yylineno;
-	yylloc->first_column = self->yycolumn;
+	yylloc->first_line = scanner_stack_get_scanner(self)->yylineno;
+	yylloc->first_column = scanner_stack_get_scanner(self)->yycolumn;
 	yytext = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;
@@ -211,6 +211,6 @@ anychar			([^])
 <INITIAL>"case"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"true"               { ddekit_reserved_keyword(yytext); }
 <INITIAL>"false"              { ddekit_reserved_keyword(yytext); }
-<*>{anychar}					{ goto restart;					 }	
+<*>{anychar}				  { goto restart;					 }	
 */	
 }

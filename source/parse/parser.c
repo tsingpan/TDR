@@ -66,7 +66,7 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 
 tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE *yylloc)
 {
-	SCANNER *self = scanner_stack_get_scanner(&dp->scanner_stack);
+	SCANNER_STACK *self = &dp->scanner_stack;
 
 	switch(*token)
 	{
@@ -300,7 +300,7 @@ tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE 
 	return E_TD_NOERROR;
 }
 
-extern tint32 tdata_lex_scan(SCANNER *self, YYLTYPE *yylloc, YYSTYPE * yylval);
+extern tint32 tdata_lex_scan(SCANNER_STACK *self, YYLTYPE *yylloc, YYSTYPE * yylval);
 int tdatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 {
 	PARSER *jp = TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack);
@@ -310,7 +310,7 @@ int tdatalex(YYSTYPE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
 	{
 		SCANNER *scanner = scanner_stack_get_scanner(ss);
 		yylloc_param->file_name = scanner->file_name;
-		ret = tdata_lex_scan(scanner, yylloc_param, yylval_param);
+		ret = tdata_lex_scan(ss, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
 		if(ret <= 0)

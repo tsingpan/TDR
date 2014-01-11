@@ -18,18 +18,18 @@ typedef struct YYLTYPE
 #define YYLTYPE_IS_DECLARED
 #define YYCTYPE   char
 #define YYFILL(n) 
-#define YYCURSOR  self->yy_cursor
-#define YYLIMIT   self->yy_limit
-#define YYMARKER self->yy_marker
-#define YYGETCONDITION()  self->yy_state
-#define YYSETCONDITION(s) self->yy_state = s
+#define YYCURSOR  scanner_stack_get_scanner(self)->yy_cursor
+#define YYLIMIT   scanner_stack_get_scanner(self)->yy_limit
+#define YYMARKER scanner_stack_get_scanner(self)->yy_marker
+#define YYGETCONDITION()  scanner_stack_get_scanner(self)->yy_state
+#define YYSETCONDITION(s) scanner_stack_get_scanner(self)->yy_state = s
 
 #define STATE(name)  yyc##name
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
-#define yytext self->yy_text
-#define yyleng self->yy_leng
+#define yytext scanner_stack_get_scanner(self)->yy_text
+#define yyleng scanner_stack_get_scanner(self)->yy_leng
 
 #define MAX_FILE_NAME_LENGTH 128
 typedef struct _SCANNER SCANNER;
@@ -66,9 +66,9 @@ typedef struct _SCANNER_STACK
 	YYCTYPE buff[MAX_LEX_BUFF_SIZE];			//对于需要频繁解析的脚本， 固定大小的缓存要比malloc效率更好。	
 };
 
-void scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name);
-void scanner_fini(SCANNER *self);
-void scanner_process(SCANNER *sp);
+void scanner_init(SCANNER_STACK *self, char *yy_start, char *yy_limit, int state, const char *file_name);
+void scanner_fini(SCANNER_STACK *self);
+void scanner_process(SCANNER_STACK *sp);
 
 void scanner_stack_init(SCANNER_STACK *self);
 SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self);

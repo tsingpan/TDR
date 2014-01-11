@@ -8,8 +8,9 @@
 #include <string.h>
 #include <stdarg.h>
 
-void scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, const char *file_name)
+void scanner_init(SCANNER_STACK *_self, char *yy_start, char *yy_limit, int state, const char *file_name)
 {
+	SCANNER *self = scanner_stack_get_scanner(_self);
 	if(file_name)
 	{
 		strncpy(self->file_name, file_name, MAX_FILE_NAME_LENGTH);
@@ -29,14 +30,16 @@ void scanner_init(SCANNER *self, char *yy_start, char *yy_limit, int state, cons
 	self->yycolumn = 1;
 }
 
-void scanner_fini(SCANNER *self)
+void scanner_fini(SCANNER_STACK *_self)
 {
+	SCANNER *self = scanner_stack_get_scanner(_self);
 	self->yy_last = NULL;
 }
 
-void scanner_process(SCANNER *sp)
+void scanner_process(SCANNER_STACK *_sp)
 {
 	const char *i;
+	SCANNER *sp = scanner_stack_get_scanner(_sp);
 	for(i = sp->yy_last; i < sp->yy_cursor;++i)
 	{
 		if(*i == '\n')
@@ -229,8 +232,9 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 	fclose(fin);
 
 	//之前已经检查过self->stack_num是否出界了
-	scanner_init(&self->stack[self->stack_num], yy_start, self->buff_curr, state, file_name);
 	++(self->stack_num);
+	scanner_init(self, yy_start, self->buff_curr, state, file_name);
+	
 
 	return E_TD_NOERROR;
 F_ERROR_RET:
@@ -245,8 +249,9 @@ tint32 scanner_stack_push(SCANNER_STACK *self, char *yy_start, char *yy_limit, i
 		goto ERROR_RET;
 	}
 
-	scanner_init(&self->stack[self->stack_num], yy_start, yy_limit, state, NULL);
 	++(self->stack_num);
+	scanner_init(self, yy_start, yy_limit, state, NULL);
+	
 
 	return E_TD_NOERROR;
 ERROR_RET:
@@ -263,7 +268,7 @@ tint32 scanner_stack_pop(SCANNER_STACK *self)
 		goto ERROR_RET;
 	}
 
-	scanner_fini(scanner);
+	scanner_fini(self);
 	--(self->stack_num);
 	return E_TD_NOERROR;
 ERROR_RET:
