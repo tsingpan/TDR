@@ -6,22 +6,22 @@
 
 
 #define TD_MAX_COMMENT_LENGTH 1024
-
 typedef struct  _ST_UNIX_COMMENT
 {
     tchar text[TD_MAX_COMMENT_LENGTH];
 }ST_UNIX_COMMENT;
+
+
 typedef enum _SN_VALUE_TYPE
 {
     E_SNVT_IDENTIFIER = 0,
     E_SNVT_CHAR = 1,
     E_SNVT_DOUBLE = 2,
     E_SNVT_STRING = 3,
-    E_SNVT_BOOL = 4,
-    E_SNVT_INT64 = 5,
-    E_SNVT_UINT64 = 6,
-    E_SNVT_HEX_INT64 = 7,
-    E_SNVT_HEX_UINT64 = 8,
+    E_SNVT_INT64 = 4,
+    E_SNVT_UINT64 = 5,
+    E_SNVT_HEX_INT64 = 6,
+    E_SNVT_HEX_UINT64 = 7,
 }SN_VALUE_TYPE;
 typedef union  _UN_VALUE
 {
@@ -30,7 +30,6 @@ typedef union  _UN_VALUE
     tuint64 ui64;
     tuint64 hex_ui64;
     tchar str[TLIBC_MAX_IDENTIFIER_LENGTH];
-    tbool b;
     tdouble d;
     tchar c;
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
@@ -40,6 +39,7 @@ typedef struct  _ST_VALUE
     SN_VALUE_TYPE type;
     UN_VALUE val;
 }ST_VALUE;
+
 typedef enum _SN_SIMPLE_TYPE
 {
     E_ST_INT8 = 0,

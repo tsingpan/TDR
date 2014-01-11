@@ -124,12 +124,6 @@ void dp_reduce_Value_tok_double(PARSER *self, ST_VALUE* current, const double d)
 	current->val.d = d;
 }
 
-void dp_reduce_Value_tok_bool(PARSER *self, ST_VALUE* current, const tbool b)
-{
-	current->type = E_SNVT_BOOL;
-	current->val.b = b;
-}
-
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const tstring str)
 {
 	current->type = E_SNVT_STRING;

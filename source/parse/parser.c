@@ -170,18 +170,6 @@ tint32 get_token_yylval(PARSER *dp, int *token, YYSTYPE * yylval, const YYLTYPE 
 			
 			break;
 		}
-	case tok_bool:
-		{
-			if(yytext[0] == 't')
-			{
-				yylval->sn_bool = hptrue;
-			}
-			else
-			{
-				yylval->sn_bool = hpfalse;
-			}
-			break;
-		}
 	case tok_int:
 		{
 			errno = 0;

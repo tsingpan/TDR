@@ -164,15 +164,6 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 		return generator_print(self, "\'%c\'", val->val.c);
 	case E_SNVT_DOUBLE:
 		return generator_print(self, "%d", val->val.d);
-	case E_SNVT_BOOL:
-		if(val->val.b)
-		{
-			return generator_print(self, "hptrue");
-		}
-		else
-		{
-			return generator_print(self, "hpfalse");
-		}
 	case E_SNVT_INT64:
 		return generator_print(self, "%lld", val->val.i64);
 	case E_SNVT_UINT64:

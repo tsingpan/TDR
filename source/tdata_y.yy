@@ -83,7 +83,6 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...);
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_unix_comment> UnixComment UnixCommentOrNot
 
-%type<sn_bool> tok_bool
 %type<sn_simple_type> SimpleType
 %type<sn_type> Type ContainerType
 %type<sn_value> Value
@@ -500,10 +499,6 @@ Value :
 |	tok_hex_int64
 	{
 		dp_reduce_Value_tok_hex_int64(GET_SELF, &$$, $1);
-	}
-|	tok_bool
-	{
-		dp_reduce_Value_tok_bool(GET_SELF, &$$, $1);
 	}
 |	tok_double
 	{

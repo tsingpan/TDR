@@ -82,7 +82,6 @@ anychar			([^])
 
 
 
-<INITIAL>"true"|"false"			{return tok_bool;																}
 <INITIAL>{literal_begin}		{return tok_string;																}
 <INITIAL>{char_begin}			{return tok_char;																}
 <INITIAL>{doubleconstant}|{DNUM}{return tok_double;																}
@@ -210,6 +209,8 @@ anychar			([^])
 <INITIAL>"typename"			  { ddekit_reserved_keyword(yytext); }
 <INITIAL>"switch"			  { ddekit_reserved_keyword(yytext); }
 <INITIAL>"case"               { ddekit_reserved_keyword(yytext); }
+<INITIAL>"true"               { ddekit_reserved_keyword(yytext); }
+<INITIAL>"false"              { ddekit_reserved_keyword(yytext); }
 <*>{anychar}					{ goto restart;					 }	
 */	
 }

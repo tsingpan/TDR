@@ -36,8 +36,6 @@ void dp_reduce_Value_tok_hex_uint64(PARSER *self, ST_VALUE* current, const tuint
 
 void dp_reduce_Value_tok_double(PARSER *self, ST_VALUE* current, const double d);
 
-void dp_reduce_Value_tok_bool(PARSER *self, ST_VALUE* current, const tbool b);
-
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const tstring str);
 
 
