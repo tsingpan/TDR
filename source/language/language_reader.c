@@ -15,6 +15,18 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
         *data = E_LS_UNKNOW;
         goto done;
     }
+	else if(strcmp(name, "E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD") == 0)
+	{
+		*data = E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_SYNTAX_ERROR") == 0)
+	{
+		*data = E_LS_SYNTAX_ERROR;
+		goto done;
+	}
+	
+	
 ERROR_RET:
     return E_TLIBC_ERROR;
 done:

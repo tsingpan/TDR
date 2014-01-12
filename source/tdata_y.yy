@@ -35,6 +35,7 @@
 %token tok_struct
 %token tok_union 
 %token tok_if 
+%token tok_reserved_keyword
 
 %token tok_int
 %token tok_hex
@@ -115,14 +116,7 @@
 
 %%
 
-Document :
-	{
-		parser_on_document_begin(GET_SELF);
-	}
-	DefinitionList
-	{
-		parser_on_document_end(GET_SELF);		
-	};
+Document : DefinitionList;
 
 DefinitionList :
 	DefinitionList Definition

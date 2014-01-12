@@ -1,9 +1,17 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>1</language_string_list_num>
+	<language_string_list_num>3</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
 			<language_string>未知错误</language_string>
 		</[0]>
+		<[1]>
+			<language_string_number>E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD</language_string_number>
+			<language_string>不能使用保留字[%s]</language_string>
+		</[1]>
+		<[2]>
+			<language_string_number>E_LS_SYNTAX_ERROR</language_string_number>
+			<language_string>语法分析时发生错误[%s]</language_string>
+		</[2]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

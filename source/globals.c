@@ -6,6 +6,4 @@ const char *g_target_dir = "./";
 
 const char *g_source_dir = "./";
 
-PARSER g_parser;
-
-ST_TD_LANGUAGE_STRING_LIBRARY g_language_string_library;
+const ST_TD_LANGUAGE_STRING_LIBRARY *g_language_string_library;

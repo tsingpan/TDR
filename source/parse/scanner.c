@@ -10,65 +10,6 @@
 #include "tdata_y.h"
 #include <errno.h>
 
-void scanner_init(SCANNER_STACK *_self, char *yy_start, char *yy_limit, int state, const char *file_name)
-{
-	SCANNER *self = scanner_stack_get_scanner(_self);
-	if(file_name)
-	{
-		strncpy(self->file_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
-	}
-	else
-	{
-		self->file_name[0] = 0;
-	}	
-
-	self->yy_start = yy_start;
-	self->yy_limit = yy_limit;
-	self->yy_state = state;
-	self->yy_marker = self->yy_start;
-	self->yy_last = self->yy_start;
-	self->yy_cursor = self->yy_start;	
-	self->yylineno = 1;
-	self->yycolumn = 1;
-}
-
-void scanner_fini(SCANNER_STACK *_self)
-{
-	SCANNER *self = scanner_stack_get_scanner(_self);
-	self->yy_last = NULL;
-}
-
-void scanner_process(SCANNER_STACK *_sp)
-{
-	const char *i;
-	SCANNER *sp = scanner_stack_get_scanner(_sp);
-	for(i = sp->yy_last; i < sp->yy_cursor;++i)
-	{
-		if(*i == '\n')
-		{
-			++(sp->yylineno);
-			sp->yycolumn = 1;
-		}		
-		else if(*i == '\r')
-		{
-			sp->yycolumn = 1;			
-		}
-		else
-		{
-			++(sp->yycolumn);
-		}
-	}
-	sp->yy_last = sp->yy_cursor;
-}
-
-SCANNER *scanner_stack_get_scanner(SCANNER_STACK *self)
-{
-	if(self->stack_num <= 0)
-	{
-		return NULL;
-	}
-	return &self->stack[self->stack_num - 1];
-}
 
 static tint32 path_repair(char* path, tuint32 *len)
 {
@@ -186,7 +127,43 @@ static tint32 path_repair(char* path, tuint32 *len)
 	return E_TD_NOERROR;
 }
 
-tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int state)
+
+
+
+void scanner_process(SCANNER_STACK *_sp)
+{
+	const char *i;
+	SCANNER *sp = scanner_get(_sp);
+	for(i = sp->yy_last; i < sp->yy_cursor;++i)
+	{
+		if(*i == '\n')
+		{
+			++(sp->yylineno);
+			sp->yycolumn = 1;
+		}		
+		else if(*i == '\r')
+		{
+			sp->yycolumn = 1;			
+		}
+		else
+		{
+			++(sp->yycolumn);
+		}
+	}
+	sp->yy_last = sp->yy_cursor;
+}
+
+SCANNER *scanner_get(SCANNER_STACK *self)
+{
+	if(self->stack_num <= 0)
+	{
+		return NULL;
+	}
+	return &self->stack[self->stack_num - 1];
+}
+
+
+tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
@@ -194,6 +171,7 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 	tuint32 i = 0;
 	tuint32 len = 0;
 	char realPath[TLIBC_MAX_FILE_PATH_LENGTH];
+	SCANNER *scanner = NULL;
 
 	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
 	{
@@ -234,9 +212,19 @@ tint32 scanner_stack_push_file(SCANNER_STACK *self, const char *file_name, int s
 	fclose(fin);
 
 	//之前已经检查过self->stack_num是否出界了
-	++(self->stack_num);
-	scanner_init(self, yy_start, self->buff_curr, state, file_name);
 	
+	scanner = &self->stack[self->stack_num];
+	strncpy(scanner->file_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
+	scanner->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	scanner->yy_start = yy_start;
+	scanner->yy_limit = self->buff_curr;
+	scanner->yy_state = state;
+	scanner->yy_marker = scanner->yy_start;
+	scanner->yy_last = scanner->yy_start;
+	scanner->yy_cursor = scanner->yy_start;	
+	scanner->yylineno = 1;
+	scanner->yycolumn = 1;
+	++(self->stack_num);
 
 	return E_TD_NOERROR;
 F_ERROR_RET:
@@ -245,36 +233,27 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-tint32 scanner_stack_pop(SCANNER_STACK *self)
+tint32 scanner_pop(SCANNER_STACK *self)
 {
-	SCANNER *scanner = scanner_stack_get_scanner(self);
-
-	if(scanner == NULL)
-	{
-		goto ERROR_RET;
-	}
-
-	scanner_fini(self);
 	--(self->stack_num);
 	return E_TD_NOERROR;
 ERROR_RET:
 	return E_TD_ERROR;
 }
 
-void scanner_stack_init(SCANNER_STACK *self)
+void scanner_init(SCANNER_STACK *self)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 }
 
-tuint32 scanner_stack_get_num(SCANNER_STACK *self)
+tuint32 scanner_get_stack_deep(SCANNER_STACK *self)
 {
 	return self->stack_num;
 }
 
-
-static void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, const char *s, va_list ap) 
+static void scanner_stack_errorap_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, const char *s, va_list ap) 
 {
 	if((yylloc) && (yylloc->file_name[0]))
 	{
@@ -287,41 +266,39 @@ static void scanner_stack_errorap(SCANNER_STACK *self, const YYLTYPE *yylloc, EN
 	fprintf(stderr, "error %d: ", result);
 	vfprintf(stderr, s, ap);
 	fprintf(stderr, "\n");
-}
-
-
-
-void scanner_stack_error_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
-{
-	va_list ap;
-	const char *error_str = NULL;
-
-	error_str = language_string_library_search(&g_language_string_library, result);
-	va_start(ap, result);
-	scanner_stack_errorap(self, yylloc, result, error_str, ap);
-	va_end(ap);
 
 	exit(1);
 }
 
+
+
+void scanner_error(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
+{
+	const char *error_str = language_string_library_search(g_language_string_library, result);
+	va_list ap;
+
+	va_start(ap, result);
+	scanner_stack_errorap_halt(self, yylloc, result, error_str, ap);
+	va_end(ap);
+}
+
+#define MAX_SCANNER_ERROR_MSG_LENGTH 256
 void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
 {
+	const char *error_str = language_string_library_search(g_language_string_library, E_LS_SYNTAX_ERROR);
+	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
+	
 	va_list ap;
-
 	va_start(ap, s);
-	scanner_stack_errorap(jp, yylloc, E_LS_UNKNOW, s, ap);
+	vsnprintf(bison_error_msg, MAX_SCANNER_ERROR_MSG_LENGTH, s, ap);
+	scanner_error(jp, yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
 	va_end(ap);
 }
 
 
-void ddekit_reserved_keyword(SCANNER_STACK *jp, const char* keyword)
-{
-	printf("error\n");
-	exit(1);
-	//yyerror(&yylloc, ddekit_parameter, "Cannot use reserved language keyword: \"%s\"\n", keyword);
-}
 
-tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, const YYLTYPE *yylloc)
+
+static tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	switch(*token)
 	{
@@ -329,7 +306,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 		{
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+				scanner_error(self, yylloc, E_LS_UNKNOW);
 				break;
 			}
 			if(*YYCURSOR == '\\')
@@ -380,7 +357,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			}
 			else
 			{
-				scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+				scanner_error(self, yylloc, E_LS_UNKNOW);
 			}
 			break;
 		}
@@ -389,7 +366,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			tuint32 len = 0;
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+				scanner_error(self, yylloc, E_LS_UNKNOW);
 				break;
 			}
 			yylval->sn_string = YYCURSOR;
@@ -416,7 +393,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			}
 			if(YYCURSOR >= YYLIMIT)
 			{
-				scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+				scanner_error(self, yylloc, E_LS_UNKNOW);
 			}
 			else
 			{				
@@ -424,7 +401,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			}
 
 			break;
-		}
+		}		
 	case tok_int:
 		{
 			errno = 0;
@@ -437,7 +414,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{	
-					scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+					scanner_error(self, yylloc, E_LS_UNKNOW);
 				}
 			}
 			break;
@@ -449,7 +426,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-				scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+				scanner_error(self, yylloc, E_LS_UNKNOW);
 			}
 			break;
 		}
@@ -465,7 +442,7 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_stack_error_halt(self, yylloc, E_LS_UNKNOW);
+					scanner_error(self, yylloc, E_LS_UNKNOW);
 				}
 			}
 			break;
@@ -550,6 +527,11 @@ tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, 
 			yylval->sn_st = E_ST_STRING;
 			break;
 		}
+	case tok_reserved_keyword:
+		{
+			yytext[yyleng] = 0;
+			scanner_error(self, yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
+		}
 	}
 
 	return E_TD_NOERROR;
@@ -562,18 +544,18 @@ int tdatalex(PARSER_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK
 
 	for(;;)
 	{
-		SCANNER *scanner = scanner_stack_get_scanner(ss);
+		SCANNER *scanner = scanner_get(ss);
 		yylloc_param->file_name = scanner->file_name;
-		ret = tdata_lex_scan(ss, yylloc_param, yylval_param);
+		ret = scanner_scan(ss, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
 		if(ret <= 0)
 		{
-			if(scanner_stack_get_num(ss) <= 1)
+			if(ss->stack_num <= 1)
 			{
 				break;
 			}
-			scanner_stack_pop(ss);
+			scanner_pop(ss);
 		}
 		else
 		{

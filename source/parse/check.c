@@ -14,7 +14,7 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, cons
 	//1, ÅÐ¶Ï·ûºÅÊÇ·ñÖØ¸´
 	if(symbols_search_string(&self->symbols, id, hpfalse) != NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 
@@ -22,7 +22,7 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, cons
 	real_type = symbols_get_real_type(&self->symbols, type);
 	if(real_type == NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 
@@ -37,7 +37,7 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_
 	const ST_SIMPLE_TYPE *type = symbols_get_real_type(&self->symbols, &sn_typedef->type);
 	if(type == NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 	
@@ -50,7 +50,7 @@ void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tbytes *identif
 	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, identifier, hpfalse);
 	if(symbol != NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 
@@ -70,7 +70,7 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 	const ST_SIMPLE_TYPE *pn_type = symbols_get_real_type(&self->symbols, type);
 	if(pn_type == NULL)
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 
@@ -79,13 +79,13 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 		const SYMBOL *symbols = symbols_search_string(&self->symbols, pn_type->st_refer, hptrue);
 		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
 		{
-			scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+			scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 			goto done;
 		}
 	}
 	else if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_BOOL))
 	{
-		scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 		goto done;
 	}
 done:
@@ -102,18 +102,18 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 			const SYMBOL *symbol = symbols_search_string(&self->symbols, pn_field->type.st.st_refer, hptrue);
 			if(symbol == NULL)
 			{
-				scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+				scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 				goto done;
 			}
 			if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
 			{
-				scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+				scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 				goto done;
 			}
 		}
 		else if(pn_field->args.arg_list_num != 0)
 		{			
-			scanner_stack_error_halt(&self->scanner_stack, yylloc, E_LS_UNKNOW);
+			scanner_error(&self->scanner_stack, yylloc, E_LS_UNKNOW);
 			goto done;
 		}
 	}	
