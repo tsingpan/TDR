@@ -6,8 +6,8 @@
 
 typedef enum _SYMBOL_TYPE
 {
-	EN_HST_VALUE = 0,
-	EN_HST_TYPE = 1,
+	EN_HST_VALUE = 0,		//const and enumdef
+	EN_HST_TYPEDEF = 1,
 	EN_HST_PARAMETER = 2,
 	EN_HST_FIELD = 3,
 	EN_HST_ENUM = 4,
@@ -17,8 +17,9 @@ typedef enum _SYMBOL_TYPE
 
 typedef union _SYMBOL_BODY
 {
+	ST_TYPEDEF type;
 	ST_VALUE val;
-	ST_SIMPLE_TYPE type;
+
 	ST_Parameter para;
 	ST_FIELD field;
 	tuint32 enum_def_list_num;
@@ -31,10 +32,14 @@ typedef struct _SYMBOL
 	SYMBOL_BODY body;
 }SYMBOL;
 
+#define MAX_SYMBOL_LIST_NUM 65536
 typedef struct _PARSER_SYMBOLS
 {
 	Trie *symbols;
 	char domain[TLIBC_MAX_IDENTIFIER_LENGTH];
+
+	tuint32 symbol_list_num;
+	SYMBOL symbol_list[MAX_SYMBOL_LIST_NUM];
 }SYMBOLS;
 
 
@@ -47,7 +52,7 @@ void symbols_fini(SYMBOLS *self);
 const SYMBOL* symbols_search(SYMBOLS *self, const char* name, int back_searching);
 
 //保存符号到当前域
-tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol);
+void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol);
 
 //域开始
 void symbols_domain_begin(SYMBOLS *self, const tchar *tok_identifier);
@@ -59,9 +64,12 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 
 const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value);
 
+void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
+
 void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
 
-void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
+
+
 
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum);
 

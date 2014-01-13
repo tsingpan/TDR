@@ -60,7 +60,6 @@ anychar			([^])
 <INITIAL>"uint16"				{return tok_t_uint16;															}
 <INITIAL>"uint32"				{return tok_t_uint32;															}
 <INITIAL>"uint64"				{return tok_t_uint64;															}
-<INITIAL>"bool"					{return tok_t_bool;																}
 <INITIAL>"double"				{return tok_t_double;															}
 <INITIAL>"char"					{return tok_t_char;																}
 <INITIAL>"vector"				{return tok_t_vector;															}
@@ -194,6 +193,7 @@ anychar			([^])
 <INITIAL>"case"               { return tok_reserved_keyword; }
 <INITIAL>"true"               { return tok_reserved_keyword; }
 <INITIAL>"false"              { return tok_reserved_keyword; }
+<INITIAL>"bool"              { return tok_reserved_keyword; }
 
 <INITIAL>{identifier}    	  {return tok_identifier;															}
 

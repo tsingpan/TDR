@@ -1,6 +1,7 @@
 #include "symbols.h"
 #include <string.h>
 #include "error.h"
+#include "parse/scanner.h"
 
 
 void symbols_init(SYMBOLS *self)
@@ -16,6 +17,8 @@ void symbols_init(SYMBOLS *self)
 	alpha_map_add_range(alpha_map, '_', '_');
 	self->symbols = trie_new(alpha_map);
 	alpha_map_free(alpha_map);
+
+	self->symbol_list_num = 0;
 }
 
 void symbols_fini(SYMBOLS *self)
@@ -23,7 +26,19 @@ void symbols_fini(SYMBOLS *self)
 	trie_free(self->symbols);
 }
 
-tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
+static SYMBOL *symbols_alloc(SYMBOLS *self)
+{
+	SYMBOL *ret = NULL;
+	if(self->symbol_list_num >= MAX_SYMBOL_LIST_NUM)
+	{
+		scanner_error(NULL, NULL, E_LS_UNKNOW);
+	}
+	ret = &self->symbol_list[self->symbol_list_num];
+	++(self->symbol_list_num);
+	return ret;
+}
+
+void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
 {
 	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
 
@@ -38,12 +53,10 @@ tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
 		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 	}
 
-	//printf("save %s : %x\n", global_name, symbol);
 	if(!trie_store_if_absent(self->symbols, global_name, symbol))
 	{
-		return E_TD_ERROR;
+		scanner_error(NULL, NULL, E_LS_UNKNOW);
 	}
-	return E_TD_NOERROR;
 }
 
 void symbols_domain_begin(SYMBOLS *self, const tchar *tok_identifier)
@@ -96,21 +109,9 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 	if(sn_type->st == E_ST_REFER)
 	{
 		const SYMBOL *ptr = symbols_search(self, sn_type->st_refer, hpfalse);
-		if(ptr == NULL)
-		{
-			goto ERROR_RET;
-		}
-		if(ptr->type != EN_HST_TYPE)
-		{
-			goto ERROR_RET;
-		}
-		return symbols_get_real_type(self, &ptr->body.type);
+		return symbols_get_real_type(self, &ptr->body.type.type);
 	}
-
 	return sn_type;
-
-ERROR_RET:
-	return NULL;
 }
 
 const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
@@ -118,57 +119,33 @@ const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
 		const SYMBOL *ptr = symbols_search(self, sn_value->val.identifier, hpfalse);
-		if(ptr == NULL)
-		{
-			goto ERROR_RET;
-		}
-
-		if(ptr->type != EN_HST_VALUE)
-		{
-			goto ERROR_RET;			
-		}
 		return symbols_get_real_value(self, &ptr->body.val);
 	}
-
 	return sn_value;
-ERROR_RET:
-	return NULL;
 }
 
 
-void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
-{
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-	const ST_VALUE *val = symbols_get_real_value(self, &pn_const->val);
-
-	if(val == NULL)
-	{
-		goto done;
-	}
-
-	ptr->type = EN_HST_VALUE;
-	ptr->body.val = *val;
-
-	if(symbols_save(self, pn_const->identifier, ptr) != E_TD_NOERROR)
-	{
-		goto done;
-	}
-done:
-	return;
-}
 
 void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef)
 {
-	SYMBOL *symbol = (SYMBOL*)malloc(sizeof(SYMBOL));
-	symbol->type = EN_HST_TYPE;
-	symbol->body.type = pn_typedef->type;
-	if(symbols_save(self, pn_typedef->name, symbol) != E_TD_NOERROR)
-	{
-		goto done;
-	}
-done:
-	return;
+	SYMBOL *symbol = symbols_alloc(self);
+
+	symbol->type = EN_HST_TYPEDEF;
+	symbol->body.type = *pn_typedef;
+	symbols_save(self, pn_typedef->name, symbol);
 }
+
+void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
+{
+	SYMBOL *symbol = symbols_alloc(self);
+
+	symbol->type = EN_HST_VALUE;
+	symbol->body.val = pn_const->val;
+
+	symbols_save(self, pn_const->identifier, symbol);
+}
+
+
 
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 {
@@ -177,13 +154,7 @@ void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 	ptr->type = EN_HST_ENUM;
 	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;
 
-	if(symbols_save(self, pn_enum->name, ptr) != E_TD_NOERROR)
-	{
-		goto done;
-	}
-
-done:
-	return;
+	symbols_save(self, pn_enum->name, ptr);
 }
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
@@ -199,10 +170,7 @@ void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
 	ptr->type = EN_HST_VALUE;
 	ptr->body.val = *val;
 
-	if(symbols_save(self, pn_enum_def->identifier, ptr) != E_TD_NOERROR)
-	{
-		goto done;
-	}
+	symbols_save(self, pn_enum_def->identifier, ptr);
 done:
 	return;
 

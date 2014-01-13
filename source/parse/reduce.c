@@ -1,28 +1,10 @@
 #include "reduce.h"
 #include <string.h>
 
-void dp_reduce_Definition_Import(PARSER *self, ST_DEFINITION *pn_current, const ST_Import* pn_import)
-{
-	pn_current->type = E_DT_IMPORT;
-	pn_current->definition.de_import = *pn_import;
-}
-
-void dp_reduce_Definition_Const(PARSER *self, ST_DEFINITION *pn_current, const ST_Const* pn_const)
-{
-	pn_current->type = E_DT_CONST;
-	pn_current->definition.de_const = *pn_const;
-
-}
-
-void dp_reduce_Definition_Typedef(PARSER *self, ST_DEFINITION *pn_current, const ST_TYPEDEF* pn_typedef)
-{
-	pn_current->type = E_DT_TYPEDEF;
-	pn_current->definition.de_typedef = *pn_typedef;
-}
-
 void dp_reduce_Import(PARSER *self, ST_Import* current, const char* str)
 {
-	snprintf(current->package_name, sizeof(current->package_name), str);
+	strncpy(current->package_name, str, MAX_PACKAGE_NAME_LENGTH);
+	current->package_name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
 }
 
 void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier)

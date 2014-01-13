@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>9</language_string_list_num>
+	<language_string_list_num>16</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -37,5 +37,33 @@
 			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
 			<language_string>标识符长度不可以超过%u</language_string>
 		</[8]>
+		<[9]>
+			<language_string_number>E_LS_PACKAGE_NAME_TOO_LONG</language_string_number>
+			<language_string>包名长度不可以超过%u</language_string>
+		</[9]>
+		<[10]>
+			<language_string_number>E_LS_CAN_NOT_FIND_IDENTIFIER</language_string_number>
+			<language_string>不能找到标识符[%s]</language_string>
+		</[10]>
+		<[11]>
+			<language_string_number>E_LS_NOT_TYPE</language_string_number>
+			<language_string>[%s]不是类型</language_string>
+		</[11]>
+		<[12]>
+			<language_string_number>E_LS_IDENTIFIER_REDEFINITION</language_string_number>
+			<language_string>[%s]符号重定义</language_string>
+		</[12]>
+		<[13]>
+			<language_string_number>E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE</language_string_number>
+			<language_string>定义常量时不可指定string类型的长度</language_string>
+		</[13]>
+		<[14]>
+			<language_string_number>E_LS_CONSTANT_TYPES_DO_NOT_MATCH</language_string_number>
+			<language_string>常量类型不匹配</language_string>
+		</[14]>
+		<[15]>
+			<language_string_number>E_LS_CONSTANT_OVER_THE_RANGE</language_string_number>
+			<language_string>常量大小超过类型范围</language_string>
+		</[15]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

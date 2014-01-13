@@ -251,9 +251,6 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 	case E_ST_CHAR:
 		generator_print(self, "tchar");
 		return E_TD_NOERROR;
-	case E_ST_BOOL:
-		generator_print(self, "int");
-		return E_TD_NOERROR;
 	case E_ST_DOUBLE:
 		generator_print(self, "tdouble");
 		return E_TD_NOERROR;

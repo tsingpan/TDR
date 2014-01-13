@@ -2,44 +2,170 @@
 #include "symbols.h"
 #include <string.h>
 #include "tdata/tdata_types.h"
-void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *id, const ST_VALUE *val)
+
+void dp_check_Import(PARSER *self, const YYLTYPE *yylloc, const char* str)
 {
-	const ST_SIMPLE_TYPE *real_type = NULL;
-
-
-	//1, 判断符号是否重复
-	if(symbols_search(&self->symbols, id, hpfalse) != NULL)
+	if(strlen(str) >= MAX_PACKAGE_NAME_LENGTH)
 	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
+		scanner_error(&self->scanner, yylloc, E_LS_PACKAGE_NAME_TOO_LONG, MAX_PACKAGE_NAME_LENGTH);
 	}
-
-	//2, 判断类型
-	real_type = symbols_get_real_type(&self->symbols, type);
-	if(real_type == NULL)
-	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
-	}
-
-	//3, 判断值是否会溢出
-	//todo
-done:
-	return;
 }
 
-void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, const ST_TYPEDEF *sn_typedef)
-{	
-	const ST_SIMPLE_TYPE *type = symbols_get_real_type(&self->symbols, &sn_typedef->type);
-	if(type == NULL)
+void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* type, const tchar *tok_identifier)
+{
+	if(type->st == E_ST_REFER)
 	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
+		const SYMBOL *symbol = symbols_search(&self->symbols, type->st_refer, hpfalse);
+		if(symbol == NULL)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_CAN_NOT_FIND_IDENTIFIER, type->st_refer);
+		}
+
+		if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) 
+			&& (symbol->type != EN_HST_STRUCT) && (symbol->type != EN_HST_UNION))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_NOT_TYPE, type->st_refer);
+		}
 	}
 	
-done:
-	return;
 }
+
+void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const tchar *id, const ST_VALUE *val)
+{
+	const ST_SIMPLE_TYPE *real_type = NULL;
+	const ST_VALUE *real_val = NULL;
+
+	if(symbols_search(&self->symbols, id, hpfalse) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, id);
+	}
+
+	
+	real_type = symbols_get_real_type(&self->symbols, type);
+	real_val = symbols_get_real_value(&self->symbols, val);
+	switch(real_type->st)
+	{
+	case E_ST_INT8:
+	case E_ST_INT16:
+	case E_ST_INT32:
+	case E_ST_INT64:
+		{
+			if((real_val->type != E_SNVT_INT64) && (real_val->type != E_SNVT_HEX_INT64))
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+			}
+			switch(real_type->st)
+			{
+			case E_ST_INT8:
+				if((tint8)real_val->val.i64 != real_val->val.i64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_INT16:
+				if((tint16)real_val->val.i64 != real_val->val.i64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_INT32:
+				if((tint32)real_val->val.i64 != real_val->val.i64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_INT64:
+				if((tint64)real_val->val.i64 != real_val->val.i64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			}
+			break;
+		}
+	case E_ST_UINT8:
+	case E_ST_UINT16:
+	case E_ST_UINT32:
+	case E_ST_UINT64:
+		{
+			tuint64 ui64 = 0;
+			if((real_val->type == E_SNVT_INT64) || (real_val->type == E_SNVT_HEX_INT64))
+			{
+				if(real_val->val.i64 < 0)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				ui64 = real_val->val.i64;
+			}
+			else if((real_val->type == E_SNVT_UINT64) || (real_val->type == E_SNVT_HEX_UINT64))
+			{
+				ui64 = real_val->val.ui64;
+			}
+			else
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+			}
+
+			switch(real_type->st)
+			{
+			case E_ST_UINT8:
+				if((tuint8)ui64 != ui64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_UINT16:
+				if((tuint16)ui64 != ui64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_UINT32:
+				if((tuint32)ui64 != ui64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			case E_ST_UINT64:
+				if((tuint64)ui64 != ui64)
+				{
+					scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+				}
+				break;
+			}
+			break;
+		}
+	case E_ST_CHAR:
+		if(real_val->type != E_SNVT_CHAR)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+		}
+		break;
+	case E_ST_DOUBLE:
+		if(real_val->type != E_SNVT_DOUBLE)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+		}
+		break;
+	case E_ST_STRING:
+		{
+			if(real_val->type != E_SNVT_STRING)
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+			}
+
+			if(real_type->string_length[0] != 0)
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+			}
+			break;
+		}
+	default:
+		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+	}
+}
+
+
 
 void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_VALUE *st_value)
 {
@@ -79,7 +205,7 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 			goto done;
 		}
 	}
-	else if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_BOOL))
+	else if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_UINT64))
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
 		goto done;
@@ -101,7 +227,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
 				goto done;
 			}
-			if((symbol->type != EN_HST_TYPE) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
+			if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
 			{
 				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
 				goto done;

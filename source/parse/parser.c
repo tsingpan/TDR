@@ -74,6 +74,15 @@ done:
 //do
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
 {
+	if(scanner_size(&self->scanner) == 1)
+	{
+		tuint32 i;
+		for(i = 0; i < self->generator_num; ++i)
+		{
+			generator_on_definition(self->generator_list[i], &self->pn_definition);
+		}
+	}
+
 	if(pn_definition->type == E_DT_IMPORT)
 	{
 		char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
@@ -92,15 +101,6 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITI
 			default:
 				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
 			}
-		}
-	}
-
-	if(scanner_size(&self->scanner) == 1)
-	{
-		tuint32 i;
-		for(i = 0; i < self->generator_num; ++i)
-		{
-			generator_on_definition(self->generator_list[i], &self->pn_definition);
 		}
 	}
 }

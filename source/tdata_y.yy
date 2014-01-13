@@ -40,7 +40,6 @@
 %token tok_hex_int64
 %token tok_hex_uint64
 %token tok_double
-%token tok_bool
 %token tok_string
 %token tok_char
 
@@ -61,7 +60,6 @@
 %token tok_t_uint16
 %token tok_t_uint32
 %token tok_t_uint64
-%token tok_t_bool
 %token tok_t_char
 %token tok_t_double
 %token tok_t_string
@@ -88,7 +86,7 @@
 %type<sn_string> tok_string
 %type<sn_typedef> Typedef
 
-%type<sn_st> tok_t_char tok_t_bool tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64 tok_t_string
+%type<sn_st> tok_t_char tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64 tok_t_string
 %type<sn_ct> tok_t_vector
 
 %type<sn_arguments> Arguments ArgumentList
@@ -125,15 +123,18 @@ DefinitionList :
 Definition :
 	Import
 	{
-		dp_reduce_Definition_Import(GET_SELF, &GET_DEFINITION, &$1);
+		GET_DEFINITION.type = E_DT_IMPORT;
+		GET_DEFINITION.definition.de_import = $1;
 	}
 |	Const
 	{
-		dp_reduce_Definition_Const(GET_SELF, &GET_DEFINITION, &$1);
+		GET_DEFINITION.type = E_DT_CONST;
+		GET_DEFINITION.definition.de_const = $1;
 	}
 |	Typedef
 	{
-		dp_reduce_Definition_Typedef(GET_SELF, &GET_DEFINITION, &$1);
+		GET_DEFINITION.type = E_DT_TYPEDEF;
+		GET_DEFINITION.definition.de_typedef = $1;
 	}
 |	Struct
 	{
@@ -156,13 +157,15 @@ Definition :
 Import :
 	tok_import tok_string
 	{
+		dp_check_Import(GET_SELF, &yylloc, $2);
+
 		dp_reduce_Import(GET_SELF, &$$, $2);
 	};
 
 Typedef :
 	tok_typedef SimpleType tok_identifier ';'
 	{
-		dp_check_Typedef(GET_SELF, &yylloc, &$$);
+		dp_check_Typedef(GET_SELF, &yylloc, &$2, $3);
 
 		dp_reduce_Typedef(GET_SELF, &$$, &$2, $3);
 
@@ -172,12 +175,15 @@ Typedef :
 Const :
 	tok_const SimpleType tok_identifier '=' Value ';'
 	{
-		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, $3, &$5);
+		dp_check_Const(GET_SELF, &yylloc, &$2, $3, &$5);
 
 		dp_reduce_Const(GET_SELF, &$$, &$2, $3, &$5);
 		
 		symbols_add_Const(&GET_SELF->symbols, &$$);
-	}
+	};
+
+
+
 
 Enum :
 	tok_enum tok_identifier	'{' EnumDefList '}'	';'
@@ -199,7 +205,7 @@ EnumDefList :
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $1;
 		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
-	}
+	};
 	
 EnumDef : 
 	tok_identifier '=' Value ',' UnixCommentOrNot
@@ -359,11 +365,7 @@ ContainerType:
 	};
 	
 SimpleType:
-	tok_t_bool
-	{
-		$$.st = $1;
-	}
-|	tok_t_char
+	tok_t_char
 	{
 		$$.st = $1;
 	}

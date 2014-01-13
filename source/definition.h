@@ -26,9 +26,7 @@ typedef enum _SN_VALUE_TYPE
 typedef union  _UN_VALUE
 {
     tint64 i64;
-    tint64 hex_i64;
     tuint64 ui64;
-    tuint64 hex_ui64;
     tchar str[TLIBC_MAX_IDENTIFIER_LENGTH];
     tdouble d;
     tchar c;
@@ -49,12 +47,11 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_UINT8 = 4,
     E_ST_UINT16 = 5,
     E_ST_UINT32 = 6,
-    E_ST_UINT64 = 7,
-    E_ST_BOOL = 8,
-    E_ST_CHAR = 9,
-    E_ST_DOUBLE = 10,
-	E_ST_STRING = 11,
-	E_ST_REFER = 12,//struct, enum, typedef
+    E_ST_UINT64 = 7,    
+    E_ST_CHAR = 8,
+    E_ST_DOUBLE = 9,
+	E_ST_STRING = 10,
+	E_ST_REFER = 11,//struct, enum, typedef
 }SN_SIMPLE_TYPE;
 typedef enum _SN_TYPE
 {

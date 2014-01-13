@@ -487,11 +487,6 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 			scanner_error(self, yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
 			break;
 		}
-	case tok_t_bool:
-		{
-			yylval->sn_st = E_ST_BOOL;
-			break;
-		}
 	case tok_t_char:
 		{
 			yylval->sn_st = E_ST_CHAR;
