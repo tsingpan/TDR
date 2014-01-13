@@ -182,29 +182,28 @@ Const :
 		symbols_add_Const(&GET_SELF->symbols, &$$);
 	};
 
-
-
-
 Enum :
 	tok_enum tok_identifier	'{' EnumDefList '}'	';'
 	{
-		strncpy(GET_DEFINITION.definition.de_enum.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
-		GET_DEFINITION.definition.de_enum.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		dp_check_Enum(GET_SELF, &yylloc, $2);
+
+		dp_reduce_Enum(GET_SELF, &GET_DEFINITION.definition.de_enum, $2);		
+
 		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
 	};
-    
+
 EnumDefList :
 	EnumDefList EnumDef
 	{
-		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
-		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
+		dp_check_EnumDefList(GET_SELF, &yylloc, GET_DEFINITION.definition.de_enum.enum_def_list_num);
+
+		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num++] = $2;
 	}
 |	
 	EnumDef
 	{
-		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
-		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $1;
-		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
+		GET_DEFINITION.definition.de_enum.enum_def_list[0] = $1;
+		GET_DEFINITION.definition.de_enum.enum_def_list_num = 1;
 	};
 	
 EnumDef : 
@@ -212,14 +211,12 @@ EnumDef :
 	{
 		dp_check_EnumDef(GET_SELF, &yylloc, $1, &$3);
 
-		strncpy($$.identifier, $1, TLIBC_MAX_IDENTIFIER_LENGTH);
-		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-		$$.val = $3;
-		$$.comment = $5;
+		dp_reduce_EnumDef(GET_SELF, &$$, $1, &$3, &$5);
 
 		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};
-    
+
+
 //只允许有一个类型为枚举， 名字叫selector的形式参数
 Union :
 	tok_union tok_identifier

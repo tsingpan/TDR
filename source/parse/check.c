@@ -165,20 +165,31 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *t
 	}
 }
 
+void dp_check_Enum(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier)
+{
+	if(symbols_search(&self->symbols, identifier, hpfalse) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
+	}
+}
 
+void dp_check_EnumDefList(PARSER *self, const YYLTYPE *yylloc, tuint32 enum_def_list_num)
+{
+	if(enum_def_list_num >= MAX_ENUM_DEF_LIST_NUM)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_TOO_MANY_MEMBERS, MAX_ENUM_DEF_LIST_NUM);
+	}
+}
 
 void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_VALUE *st_value)
 {
-	const SYMBOL *symbol = symbols_search(&self->symbols, identifier, hpfalse);
-	if(symbol != NULL)
-	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
-	}
+	ST_SIMPLE_TYPE type;
+	type.st = E_ST_INT32;
 
-done:
-	return;
+	dp_check_Const(self, yylloc, &type, identifier, st_value);
 }
+
+
 
 void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
 {

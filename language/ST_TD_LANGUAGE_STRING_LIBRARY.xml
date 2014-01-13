@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>16</language_string_list_num>
+	<language_string_list_num>17</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -65,5 +65,9 @@
 			<language_string_number>E_LS_CONSTANT_OVER_THE_RANGE</language_string_number>
 			<language_string>常量大小超过类型范围</language_string>
 		</[15]>
+		<[16]>
+			<language_string_number>E_LS_TOO_MANY_MEMBERS</language_string_number>
+			<language_string>类型成员数量不可以超过[%u]</language_string>
+		</[16]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

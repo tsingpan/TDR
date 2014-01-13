@@ -68,12 +68,11 @@ void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
 
 void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
 
-
-
-
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum);
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def);
+
+
 
 void symbols_add_Parameter(SYMBOLS *self, const ST_Parameter *pn_parameter);
 

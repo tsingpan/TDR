@@ -11,6 +11,11 @@ void dp_reduce_Import(PARSER *self, ST_Import* current, const char* str);
 
 void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tchar *tok_identifier);
 
+void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val);
+
+void dp_reduce_Enum(PARSER *self, ST_ENUM *current, const tchar *identifier);
+
+void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment);
 
 
 void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier);
@@ -37,8 +42,6 @@ void dp_reduce_Value_tok_double(PARSER *self, ST_VALUE* current, const double d)
 
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const char* str);
 
-
-void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val);
 
 void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const tchar *identifier);
 

@@ -145,36 +145,26 @@ void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
 	symbols_save(self, pn_const->identifier, symbol);
 }
 
-
-
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 {
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	SYMBOL *symbol = symbols_alloc(self);
 
-	ptr->type = EN_HST_ENUM;
-	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;
+	symbol->type = EN_HST_ENUM;
+	symbol->body.enum_def_list_num = pn_enum->enum_def_list_num;
 
-	symbols_save(self, pn_enum->name, ptr);
+	symbols_save(self, pn_enum->name, symbol);
 }
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
 {
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-	const ST_VALUE *val = symbols_get_real_value(self, &pn_enum_def->val);
-
-	if(val == NULL)
-	{
-		goto done;
-	}
-
-	ptr->type = EN_HST_VALUE;
-	ptr->body.val = *val;
-
-	symbols_save(self, pn_enum_def->identifier, ptr);
-done:
-	return;
-
+	ST_Const c;
+	memcpy(c.identifier , pn_enum_def->identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	c.type.st = E_ST_INT32;
+	c.val = pn_enum_def->val;
+	symbols_add_Const(self, &c);
 }
+
+
 
 void symbols_add_Parameter(SYMBOLS *self, const ST_Parameter *pn_parameter)
 {

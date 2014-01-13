@@ -90,6 +90,11 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_CONSTANT_OVER_THE_RANGE;
 		goto done;
 	}
+	else if(strcmp(name, "E_LS_TOO_MANY_MEMBERS") == 0)
+	{
+		*data = E_LS_TOO_MANY_MEMBERS;
+		goto done;
+	}
 	
 	
 ERROR_RET:

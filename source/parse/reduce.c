@@ -7,6 +7,36 @@ void dp_reduce_Import(PARSER *self, ST_Import* current, const char* str)
 	current->package_name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
 }
 
+void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tchar *tok_identifier)
+{
+	current->type = *type;
+	strncpy(current->name, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+}
+
+void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val)
+{
+	current->type = *type;
+
+	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;	
+	current->val = *val;
+}
+
+void dp_reduce_Enum(PARSER *self, ST_ENUM *current, const tchar *identifier)
+{
+	strncpy(current->name, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+}
+
+void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
+{
+	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	current->val = *st_value;
+	current->comment = *comment;
+}
+
 void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier)
 {
 	current->type = E_SNT_CONTAINER;
@@ -103,15 +133,6 @@ void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const char* str
 	strncpy(current->val.str, str, TLIBC_MAX_IDENTIFIER_LENGTH);
 }
 
-void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val)
-{
-	current->type = *type;
-
-	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;	
-	current->val = *val;
-}
-
 void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tchar *identifier)
 {
 	*current = *argument_list;
@@ -127,13 +148,6 @@ void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, 
 	strncpy(current->arg_list[current->arg_list_num], identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
 	current->arg_list[current->arg_list_num][TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 	++(current->arg_list_num);
-}
-
-void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tchar *tok_identifier)
-{
-	current->type = *type;
-	strncpy(current->name, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 }
 
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *identifier)
