@@ -161,7 +161,7 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *t
 			break;
 		}
 	default:
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+		scanner_error(&self->scanner, yylloc, E_LS_CONST_TYPE_ERROR);
 	}
 }
 
@@ -189,13 +189,51 @@ void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifi
 	dp_check_Const(self, yylloc, &type, identifier, st_value);
 }
 
-
-
-void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
+void dp_check_Union_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier)
 {
-	tuint32 i, j;
-done:
-	return;
+	if(symbols_search(&self->symbols, identifier, hpfalse) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
+	}
+}
+
+void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_Parameters *parameters)
+{
+	const ST_SIMPLE_TYPE *type = NULL;
+
+	if(parameters->par_list_num != 1)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_UNION_PARAMETERS_ERROR);
+	}
+
+	if(strcmp(parameters->par_list[0].identifier, "selector") != 0)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_UNION_PARAMETERS_ERROR);
+	}
+
+	//type = symbols_get_real_type(&self->symbols, &parameters->par_list[0].type);
+
+}
+
+void dp_check_UnionFieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 union_field_list_num)
+{
+	if(union_field_list_num >= MAX_UNION_FIELD_LIST_NUM)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_TOO_MANY_MEMBERS, MAX_UNION_FIELD_LIST_NUM);
+	}
+}
+
+void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier)
+{
+
+}
+
+void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_num)
+{
+	if(field_list_num >= MAX_FIELD_LIST_NUM)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_TOO_MANY_MEMBERS, MAX_FIELD_LIST_NUM);
+	}
 }
 
 static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type)
@@ -228,137 +266,5 @@ done:
 
 void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
-	if(pn_field->type.type == E_SNT_SIMPLE)
-	{
-		if(pn_field->type.st.st == E_ST_REFER)
-		{
-			const SYMBOL *symbol = symbols_search(&self->symbols, pn_field->type.st.st_refer, hptrue);
-			if(symbol == NULL)
-			{
-				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-				goto done;
-			}
-			if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) && (symbol->type != EN_HST_UNION) && (symbol->type != EN_HST_STRUCT))
-			{
-				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-				goto done;
-			}
-		}
-		else if(pn_field->args.arg_list_num != 0)
-		{			
-			scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-			goto done;
-		}
-	}	
-	else if(pn_field->type.type == E_SNT_CONTAINER)
-	{
-		switch(pn_field->type.ct.ct)
-		{
-		case E_CT_VECTOR:
-			/*
-			if(pn_field->args.arg_list_num < 3)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
 
-			if(pn_field->args.arg_list[0].type == E_SNT_REFER)
-			{
-				const SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[0].ot);
-				if(symbol == NULL)
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-				if(symbol->type == EN_HST_TYPE)
-				{
-					const ST_TYPE *type = get_type(self, &symbol->body.type);
-					if(type == NULL)
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-					if(type->type == E_SNT_SIMPLE)
-					{
-						if(pn_field->args.arg_list_num != 3)
-						{
-							scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-							goto done;
-						}
-					}
-					else if(type->type == E_SNT_REFER)
-					{
-						dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
-					}
-				}
-				else if(symbol->type == EN_HST_ENUM)
-				{
-					if(pn_field->args.arg_list_num != 3)
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-				}
-				else if(symbol->type == EN_HST_STRUCT)
-				{
-					dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
-				}
-				else if(symbol->type == EN_HST_UNION)
-				{
-					dp_check_field_vector_args(self, yylloc, &pn_field->args, 3);
-				}
-			}
-			else if(pn_field->args.arg_list[0].type == E_SNT_SIMPLE)
-			{
-				if(pn_field->args.arg_list_num != 3)
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-			}
-
-
-			if(pn_field->args.arg_list[1].type == E_SNT_REFER)
-			{
-				const SYMBOLS *symbol = dp_find_symbol_by_string(self, pn_field->args.arg_list[1].ot);
-				if(symbol == NULL)
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-				if(symbol->type == EN_HST_VALUE)
-				{
-					if((symbol->body.val.type >= E_SNVT_INT64) && (symbol->body.val.type <= E_SNVT_HEX_UINT64))
-					{
-
-					}
-					else
-					{
-						scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-						goto done;
-					}
-				}
-				else
-				{
-					scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-					goto done;
-				}
-			}
-			else
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}
-
-			if(pn_field->args.arg_list[2].type != E_SNT_REFER)
-			{
-				scanner_stack_error(&self->scanner_stack, yylloc, E_TD_ERROR);
-				goto done;
-			}*/
-			break;
-		}
-	}
-
-done:
-	return;
 }

@@ -36,7 +36,6 @@ typedef struct _SYMBOL
 typedef struct _PARSER_SYMBOLS
 {
 	Trie *symbols;
-	char domain[TLIBC_MAX_IDENTIFIER_LENGTH];
 
 	tuint32 symbol_list_num;
 	SYMBOL symbol_list[MAX_SYMBOL_LIST_NUM];
@@ -48,17 +47,10 @@ void symbols_init(SYMBOLS *self);
 
 void symbols_fini(SYMBOLS *self);
 
-//back_searching为true时， 首先在当前域下搜索符号， 如果找不到那么到上一层进行搜索
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, int back_searching);
+const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
 
-//保存符号到当前域
-void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol);
+void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol, const char* preffix);
 
-//域开始
-void symbols_domain_begin(SYMBOLS *self, const tchar *tok_identifier);
-
-//域结束
-void symbols_domain_end(SYMBOLS *self);
 
 const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
 

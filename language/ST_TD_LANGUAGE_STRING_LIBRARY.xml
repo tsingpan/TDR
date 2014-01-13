@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>17</language_string_list_num>
+	<language_string_list_num>19</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -69,5 +69,13 @@
 			<language_string_number>E_LS_TOO_MANY_MEMBERS</language_string_number>
 			<language_string>类型成员数量不可以超过[%u]</language_string>
 		</[16]>
+		<[17]>
+			<language_string_number>E_LS_UNION_PARAMETERS_ERROR</language_string_number>
+			<language_string>union的参数只能是一个名为selector的枚举类型变量</language_string>
+		</[17]>
+		<[18]>
+			<language_string_number>E_LS_CONST_TYPE_ERROR</language_string_number>
+			<language_string>常量类型错误</language_string>
+		</[18]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

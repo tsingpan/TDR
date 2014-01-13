@@ -217,89 +217,72 @@ EnumDef :
 	};
 
 
-//只允许有一个类型为枚举， 名字叫selector的形式参数
+	
 Union :
 	tok_union tok_identifier
 	{
-		strncpy(GET_DEFINITION.definition.de_union.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
-		GET_DEFINITION.definition.de_union.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-		
-		
-		symbols_domain_begin(&GET_SELF->symbols, $2);
+		dp_check_Union_tok_identifier(GET_SELF, &yylloc, $2);
 	}
 	Parameters
 	{
-		GET_DEFINITION.definition.de_union.parameters = $4;
-		
-		dp_check_Union_Parameters(GET_SELF, &yylloc, &GET_DEFINITION.definition.de_union);
+		dp_check_Union_Parameters(GET_SELF, &yylloc, &$4);
 	}
-	'{' UnionFieldList '}'
+	'{' UnionFieldList '}' ';'
 	{
-		symbols_domain_end(&GET_SELF->symbols);
-	}
-	';'
-	{
+		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
+
 		symbols_add_Union(&GET_SELF->symbols, &GET_DEFINITION.definition.de_union);
 	};
-	
-	
-Struct : 
-	tok_struct tok_identifier
-	{
-		symbols_domain_begin(&GET_SELF->symbols, $2);
-	}
-	'{' FieldList '}' ';'
-	{
-		symbols_domain_end(&GET_SELF->symbols);
-
-		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
-		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-
-		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
-	};
-	
-
-
-
-
-
-
-
-
 	
 UnionFieldList: 
 	UnionFieldList UnionField
 	{
-		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num] = $2;
-		++(GET_UNION_FIELD_LIST.union_field_list_num);
+		dp_check_UnionFieldList(GET_SELF, &yylloc, GET_UNION_FIELD_LIST.union_field_list_num);
+
+		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num++] = $2;
 	}
 |	
 	UnionField
 	{
-		GET_UNION_FIELD_LIST.union_field_list_num = 0;
-		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num] = $1;
-		++(GET_UNION_FIELD_LIST.union_field_list_num);
+		GET_UNION_FIELD_LIST.union_field_list[0] = $1;
+		GET_UNION_FIELD_LIST.union_field_list_num = 1;
 	};
 	
 UnionField : 
 	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
+		dp_check_UnionField(GET_SELF, &yylloc, $1, &$3, $4);
+
 		dp_reduce_UnionField(GET_SELF, &$$, $1, &$3, $4, &$6);
 	};
 
 
+
+	
+Struct : 
+	tok_struct tok_identifier
+	{
+	}
+	'{' FieldList '}' ';'
+	{
+		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
+		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+
+		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
+	};
+
 FieldList: 
 	FieldList Field
 	{
-		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num] = $2;
-		++(GET_FIELD_LIST.field_list_num);
+		dp_check_FieldList(GET_SELF, &yylloc, GET_FIELD_LIST.field_list_num);
+
+		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num++] = $2;
 	}
 |	
 	Field
 	{
-		GET_FIELD_LIST.field_list_num = 0;
-		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num] = $1;
-		++(GET_FIELD_LIST.field_list_num);
+		GET_FIELD_LIST.field_list[0] = $1;
+		GET_FIELD_LIST.field_list_num = 1;
 	};
 
 //只允许类型为union的成员， 传递一个类型为枚举的实际参数， 并且枚举类型要和形式参数匹配

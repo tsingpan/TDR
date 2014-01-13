@@ -7,7 +7,6 @@
 void symbols_init(SYMBOLS *self)
 {
 	AlphaMap *alpha_map = NULL;
-	self->domain[0] = 0;
 
 	alpha_map = alpha_map_new();
 
@@ -38,13 +37,13 @@ static SYMBOL *symbols_alloc(SYMBOLS *self)
 	return ret;
 }
 
-void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
+void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol, const char *preffix)
 {
 	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
 
-	if(self->domain[0])
+	if(preffix)
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", self->domain, name);
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", preffix, name);
 		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 	}
 	else
@@ -59,26 +58,14 @@ void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
 	}
 }
 
-void symbols_domain_begin(SYMBOLS *self, const tchar *tok_identifier)
-{
-	strncpy(self->domain, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	self->domain[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-}
-
-void symbols_domain_end(SYMBOLS *self)
-{
-	self->domain[0] = 0;
-}
-
-
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, int back_searching)
+const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
 {
 	const SYMBOL *symbol;
 	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
 
-	if(self->domain[0])
+	if(preffix)
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", self->domain, name);
+		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", preffix, name);
 		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 	}
 	else
@@ -89,14 +76,7 @@ const SYMBOL* symbols_search(SYMBOLS *self, const char* name, int back_searching
 	
 	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
 	{
-		if(!back_searching)
-		{
-			goto ERROR_RET;	
-		}
-		if(!trie_retrieve(self->symbols, name, (void**)&symbol))
-		{
-			goto ERROR_RET;
-		}
+		goto ERROR_RET;
 	}
 
 	return symbol;
@@ -109,7 +89,14 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 	if(sn_type->st == E_ST_REFER)
 	{
 		const SYMBOL *ptr = symbols_search(self, sn_type->st_refer, hpfalse);
-		return symbols_get_real_type(self, &ptr->body.type.type);
+		if(ptr->type == EN_HST_TYPEDEF)
+		{
+			return symbols_get_real_type(self, &ptr->body.type.type);
+		}
+		else
+		{
+			return sn_type;
+		}
 	}
 	return sn_type;
 }
@@ -119,7 +106,14 @@ const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
 		const SYMBOL *ptr = symbols_search(self, sn_value->val.identifier, hpfalse);
-		return symbols_get_real_value(self, &ptr->body.val);
+		if(ptr->type == EN_HST_VALUE)
+		{
+			return symbols_get_real_value(self, &ptr->body.val);
+		}
+		else
+		{
+			return sn_value;
+		}
 	}
 	return sn_value;
 }
@@ -132,7 +126,7 @@ void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef)
 
 	symbol->type = EN_HST_TYPEDEF;
 	symbol->body.type = *pn_typedef;
-	symbols_save(self, pn_typedef->name, symbol);
+	symbols_save(self, pn_typedef->name, symbol, NULL);
 }
 
 void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
@@ -142,7 +136,7 @@ void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_const->val;
 
-	symbols_save(self, pn_const->identifier, symbol);
+	symbols_save(self, pn_const->identifier, symbol, NULL);
 }
 
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
@@ -152,7 +146,7 @@ void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 	symbol->type = EN_HST_ENUM;
 	symbol->body.enum_def_list_num = pn_enum->enum_def_list_num;
 
-	symbols_save(self, pn_enum->name, symbol);
+	symbols_save(self, pn_enum->name, symbol, NULL);
 }
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
@@ -173,7 +167,7 @@ void symbols_add_Parameter(SYMBOLS *self, const ST_Parameter *pn_parameter)
 	ptr->type = EN_HST_PARAMETER;
 	ptr->body.para = *pn_parameter;
 
-	symbols_save(self, pn_parameter->identifier, ptr);
+	//symbols_save(self, pn_parameter->identifier, ptr, NULL);
 }
 
 void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
@@ -183,7 +177,7 @@ void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
 	ptr->type = EN_HST_FIELD;
 	ptr->body.field = *pn_field;
 
-	symbols_save(self, pn_field->identifier, ptr);
+	//symbols_save(self, pn_field->identifier, ptr, NULL);
 }
 
 void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
@@ -193,7 +187,7 @@ void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
 	ptr->type = EN_HST_STRUCT;
 	ptr->body.field_list_num = de_struct->field_list.field_list_num;
 
-	symbols_save(self, de_struct->name, ptr);
+	symbols_save(self, de_struct->name, ptr, NULL);
 }
 
 void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
@@ -203,5 +197,5 @@ void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
 	ptr->type = EN_HST_UNION;
 	ptr->body.field_list_num = de_union->union_field_list.union_field_list_num;
 
-	symbols_save(self, de_union->name, ptr);
+	symbols_save(self, de_union->name, ptr, NULL);
 }

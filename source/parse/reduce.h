@@ -50,6 +50,8 @@ void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMEN
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *identifier);
 
 
+void dp_reduce_Union(PARSER *self, ST_UNION *current, const tchar *identifier, const ST_Parameters *parameters);
+
 void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier, const ST_UNIX_COMMENT *comment);
 
 #endif //_H_REDUCE

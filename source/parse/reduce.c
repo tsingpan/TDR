@@ -169,6 +169,14 @@ void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *ide
 	}
 }
 
+void dp_reduce_Union(PARSER *self, ST_UNION *current, const tchar *identifier, const ST_Parameters *parameters)
+{
+	strncpy(current->name, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+
+	current->parameters = *parameters;
+}
+
 void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->key, key, TLIBC_MAX_IDENTIFIER_LENGTH);
