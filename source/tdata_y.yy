@@ -222,13 +222,18 @@ Union :
 	tok_union tok_identifier
 	{
 		dp_check_Union_tok_identifier(GET_SELF, &yylloc, $2);
+		symbols_set_prefix(&GET_SELF->symbols, $2);
 	}
 	Parameters
 	{
 		dp_check_Union_Parameters(GET_SELF, &yylloc, &$4);
+
+		symbols_add_Parameters(&GET_SELF->symbols, &$4, $2);
 	}
 	'{' UnionFieldList '}' ';'
 	{
+		dp_check_Union(GET_SELF, &yylloc, $2, &$4, &GET_DEFINITION.definition.de_union.union_field_list);
+
 		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
 
 		symbols_add_Union(&GET_SELF->symbols, &GET_DEFINITION.definition.de_union);
@@ -254,7 +259,44 @@ UnionField :
 		dp_check_UnionField(GET_SELF, &yylloc, $1, &$3, $4);
 
 		dp_reduce_UnionField(GET_SELF, &$$, $1, &$3, $4, &$6);
+
+		symbols_add_UnionField(&GET_SELF->symbols, &$$);
 	};
+
+	Parameters :
+	'(' ParameterList ')'
+	{
+		$$ = $2;
+	}
+|
+	{
+		$$.par_list_num = 0;
+	};
+	
+ParameterList:
+	ParameterList ',' Parameter 
+	{
+		dp_check_ParameterList(GET_SELF, &yylloc, $1.par_list_num);
+		$$ = $1;
+		$$.par_list[$$.par_list_num++] = $3;
+	}
+|	
+	Parameter
+	{
+		$$.par_list[0] = $1;
+		$$.par_list_num = 1;
+	};
+
+Parameter:
+	SimpleType tok_identifier
+	{
+		$$.type = $1;
+		strncpy($$.identifier, $2, TLIBC_MAX_IDENTIFIER_LENGTH - 1);
+		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	};
+
+
+
 
 
 
@@ -399,46 +441,9 @@ SimpleType:
 	};
 
 
-Parameters :
-	'(' ParameterList ')'
-	{
-		$$ = $2;
-	}
-|
-	{
-		$$.par_list_num = 0;
-	};
-	
-ParameterList:
-	ParameterList ',' Parameter 
-	{
-		$$ = $1;
-		$$.par_list[$$.par_list_num] = $3;
-		++$$.par_list_num;
-	}
-|	
-	Parameter
-	{
-		$$.par_list_num = 0;
-		$$.par_list[$$.par_list_num] = $1;
-		++$$.par_list_num;
-	};
-	
-	
-Parameter:
-	SimpleType tok_identifier
-	{
-		$$.type = $1;
-		strncpy($$.identifier, $2, TLIBC_MAX_IDENTIFIER_LENGTH - 1);
-		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-		
-		symbols_add_Parameter(&GET_SELF->symbols, &$$);
-	};
-
 Arguments:
 	'(' ArgumentList ')'
 	{
-		//参数只能传递本对象中的简单类型
 		$$ = $2;
 	}
 |
@@ -449,6 +454,8 @@ Arguments:
 ArgumentList:
 	ArgumentList ',' tok_identifier
 	{
+		dp_check_ArgumentList(GET_SELF, &yylloc, $1.arg_list_num);
+
 		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, $3);
 	}
 |	tok_identifier

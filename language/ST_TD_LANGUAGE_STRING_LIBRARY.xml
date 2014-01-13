@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>19</language_string_list_num>
+	<language_string_list_num>27</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -77,5 +77,37 @@
 			<language_string_number>E_LS_CONST_TYPE_ERROR</language_string_number>
 			<language_string>常量类型错误</language_string>
 		</[18]>
+		<[19]>
+			<language_string_number>E_LS_ENUM_HAVE_EQUAL_ELEMENTS</language_string_number>
+			<language_string>含有重复元素的枚举类型， 不可以作为union的参数类型</language_string>
+		</[19]>
+		<[20]>
+			<language_string_number>E_LS_TOO_MANY_PARAMETERS</language_string_number>
+			<language_string>形式参数不可以超过[%u]个</language_string>
+		</[20]>
+		<[21]>
+			<language_string_number>E_LS_TOO_MANY_ARGUMENTS</language_string_number>
+			<language_string>实际参数不可以超过[%u]个</language_string>
+		</[21]>
+		<[22]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_DEFINED</language_string_number>
+			<language_string>符号未定义[%s]</language_string>
+		</[22]>
+		<[23]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_CONSTANCE</language_string_number>
+			<language_string>符号[%s]不是常量</language_string>
+		</[23]>
+		<[24]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_INT32</language_string_number>
+			<language_string>符号[%s]不是有符号32位整数</language_string>
+		</[24]>
+		<[25]>
+			<language_string_number>E_LS_PARAMETER_TYPE_MISMATCH</language_string_number>
+			<language_string>参数类型不匹配</language_string>
+		</[25]>
+		<[26]>
+			<language_string_number>E_LS_STRING_LENGTH_MUST_BE_DEFINED</language_string_number>
+			<language_string>必须指定string的长度</language_string>
+		</[26]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

@@ -92,13 +92,13 @@ typedef struct  _ST_Parameter
     ST_SIMPLE_TYPE type;
     tchar identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_Parameter;
-#define MAX_PARAMETER_NUM 16
+#define MAX_PARAMETER_NUM 1
 typedef struct  _ST_Parameters
 {
 	tuint32 par_list_num;
     ST_Parameter par_list[MAX_PARAMETER_NUM];
 }ST_Parameters;
-#define MAX_ARGUMENT_NUM 16
+#define MAX_ARGUMENT_NUM 1
 typedef struct  _ST_ARGUMENTS
 {
 	tuint32 arg_list_num;

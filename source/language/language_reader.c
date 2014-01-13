@@ -105,8 +105,47 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_CONST_TYPE_ERROR;
 		goto done;
 	}
-	
-	
+	else if(strcmp(name, "E_LS_ENUM_HAVE_EQUAL_ELEMENTS") == 0)
+	{
+		*data = E_LS_ENUM_HAVE_EQUAL_ELEMENTS;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_TOO_MANY_PARAMETERS") == 0)
+	{
+		*data = E_LS_TOO_MANY_PARAMETERS;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_TOO_MANY_ARGUMENTS") == 0)
+	{
+		*data = E_LS_TOO_MANY_ARGUMENTS;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_DEFINED") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_DEFINED;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_CONSTANCE") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_INT32") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_INT32;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
+	{
+		*data = E_LS_PARAMETER_TYPE_MISMATCH;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_STRING_LENGTH_MUST_BE_DEFINED") == 0)
+	{
+		*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
+		goto done;
+	}
+		
 	
 	
 ERROR_RET:

@@ -24,6 +24,13 @@ void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_Par
 
 void dp_check_UnionFieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 union_field_list_num);
 
+void dp_check_ParameterList(PARSER *self, const YYLTYPE *yylloc, tuint32 par_list_num);
+
+void dp_check_ArgumentList(PARSER *self, const YYLTYPE *yylloc, tuint32 arg_list_num);
+
+
+void dp_check_Union(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_Parameters *parameters, const ST_UNION_FIELD_LIST* union_field_list);
+
 void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier);
 
 void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_num);
