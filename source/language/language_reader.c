@@ -25,7 +25,31 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_SYNTAX_ERROR;
 		goto done;
 	}
-	
+	else if(strcmp(name, "E_LS_CANNOT_OPEN_FILE") == 0)
+	{
+		*data = E_LS_CANNOT_OPEN_FILE;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_OUT_OF_MEMORY") == 0)
+	{
+		*data = E_LS_OUT_OF_MEMORY;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_CHARACTER_CONSTANT_FORMAT_ERROR") == 0)
+	{
+		*data = E_LS_CHARACTER_CONSTANT_FORMAT_ERROR;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_STRING_CONSTANT_FORMAT_ERROR") == 0)
+	{
+		*data = E_LS_STRING_CONSTANT_FORMAT_ERROR;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_NUMBER_ERROR_RANGE") == 0)
+	{
+		*data = E_LS_NUMBER_ERROR_RANGE;
+		goto done;
+	}
 	
 ERROR_RET:
     return E_TLIBC_ERROR;

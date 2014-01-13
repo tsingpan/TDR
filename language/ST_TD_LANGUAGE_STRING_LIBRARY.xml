@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>3</language_string_list_num>
+	<language_string_list_num>8</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -13,5 +13,25 @@
 			<language_string_number>E_LS_SYNTAX_ERROR</language_string_number>
 			<language_string>语法分析时发生错误[%s]</language_string>
 		</[2]>
+		<[3]>
+			<language_string_number>E_LS_CANNOT_OPEN_FILE</language_string_number>
+			<language_string>无法打开文件[%s]</language_string>
+		</[3]>
+		<[4]>
+			<language_string_number>E_LS_OUT_OF_MEMORY</language_string_number>
+			<language_string>试图打开文件[%s]发生内存分配错误</language_string>
+		</[4]>
+		<[5]>
+			<language_string_number>E_LS_CHARACTER_CONSTANT_FORMAT_ERROR</language_string_number>
+			<language_string>字符型常量格式错误</language_string>
+		</[5]>
+		<[6]>
+			<language_string_number>E_LS_STRING_CONSTANT_FORMAT_ERROR</language_string_number>
+			<language_string>字符串型常量格式错误</language_string>
+		</[6]>
+		<[6]>
+			<language_string_number>E_LS_NUMBER_ERROR_RANGE</language_string_number>
+			<language_string>数字常量超出范围</language_string>
+		</[6]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

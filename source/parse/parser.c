@@ -42,18 +42,29 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 	self->generator_num = generator_list_num;
 
 	symbols_init(&self->symbols);
-	scanner_init(&self->scanner_stack);
+	scanner_init(&self->scanner);
 
-	if(scanner_push(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
+	ret = scanner_push(&self->scanner, file_name, yycINITIAL);
+
+	if(ret != E_TD_NOERROR)
 	{
-		scanner_error(&self->scanner_stack, NULL, E_LS_UNKNOW);
+		switch(ret)
+		{
+		case E_TD_SCANNER_CAN_NOT_OPEN_FILE:
+			scanner_error(&self->scanner, NULL, E_LS_CANNOT_OPEN_FILE, file_name);
+		case E_TD_SCANNER_OUT_OF_MEMORY:
+			scanner_error(&self->scanner, NULL, E_LS_OUT_OF_MEMORY, file_name);			
+		default:
+			scanner_error(&self->scanner, NULL, E_LS_UNKNOW);
+		}
+		
 	}
 	on_document_begin(self, file_name);
 
 	//这玩意自动生成的
-	ret = tdataparse(&self->scanner_stack);
+	ret = tdataparse(&self->scanner);
 	on_document_end(self, file_name);
-	scanner_pop(&self->scanner_stack);
+	scanner_pop(&self->scanner);
 done:
 	symbols_fini(&self->symbols);
 	return E_TD_NOERROR;
@@ -61,19 +72,30 @@ done:
 
 
 //do
-void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
 {
 	if(pn_definition->type == E_DT_IMPORT)
 	{
 		char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
+		tint32 ret;
 		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
-		if(scanner_push(&self->scanner_stack, file_name, yycINITIAL) != E_TD_NOERROR)
+		file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+		ret = scanner_push(&self->scanner, file_name, yycINITIAL);
+		if(ret != E_TD_NOERROR)
 		{
-			scanner_error(&self->scanner_stack, NULL, E_LS_UNKNOW, file_name);
+			switch(ret)
+			{
+			case E_TD_SCANNER_CAN_NOT_OPEN_FILE:
+				scanner_error(&self->scanner, yylloc, E_LS_CANNOT_OPEN_FILE, file_name);
+			case E_TD_SCANNER_OUT_OF_MEMORY:
+				scanner_error(&self->scanner, yylloc, E_LS_OUT_OF_MEMORY, file_name);			
+			default:
+				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+			}
 		}
 	}
 
-	if(scanner_get_stack_deep(&self->scanner_stack) == 1)
+	if(scanner_size(&self->scanner) == 1)
 	{
 		tuint32 i;
 		for(i = 0; i < self->generator_num; ++i)

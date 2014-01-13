@@ -130,10 +130,10 @@ static tint32 path_repair(char* path, tuint32 *len)
 
 
 
-void scanner_process(SCANNER_STACK *_sp)
+void scanner_locate(SCANNER *self)
 {
 	const char *i;
-	SCANNER *sp = scanner_get(_sp);
+	SCANNER_CONTEXT *sp = scanner_top(self);
 	for(i = sp->yy_last; i < sp->yy_cursor;++i)
 	{
 		if(*i == '\n')
@@ -153,17 +153,16 @@ void scanner_process(SCANNER_STACK *_sp)
 	sp->yy_last = sp->yy_cursor;
 }
 
-SCANNER *scanner_get(SCANNER_STACK *self)
+SCANNER_CONTEXT *scanner_top(SCANNER *self)
 {
-	if(self->stack_num <= 0)
+	if((self->stack_num <= 0) || (self->stack_num > MAX_SCANNER_STACK_SIZE))
 	{
 		return NULL;
 	}
 	return &self->stack[self->stack_num - 1];
 }
 
-
-tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
+tint32 scanner_push(SCANNER *self, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
@@ -171,18 +170,20 @@ tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 	tuint32 i = 0;
 	tuint32 len = 0;
 	char realPath[TLIBC_MAX_FILE_PATH_LENGTH];
-	SCANNER *scanner = NULL;
+	SCANNER_CONTEXT *scanner = NULL;
+	TD_ERROR_CODE ret = E_TD_NOERROR;
 
-	if(self->stack_num >= MAX_SCANNER_STACK_DEEP)
+	if(self->stack_num >= MAX_SCANNER_STACK_SIZE)
 	{
+		ret = E_TD_SCANNER_STACK_SIZE_PROBLEM;
 		goto ERROR_RET;
 	}
 
-	//不允许递归include
 	for(i = 0; i < self->stack_num; ++i)
 	{
 		if(strcmp(self->stack[i].file_name, file_name) == 0)
 		{
+			ret = E_TD_SCANNER_READLY_IN_STACK;
 			goto ERROR_RET;
 		}
 	}
@@ -191,11 +192,13 @@ tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 	len = TLIBC_MAX_FILE_PATH_LENGTH;
 	if(path_repair(realPath, &len) != E_TD_NOERROR)
 	{
-		goto ERROR_RET;		
+		ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
+		goto ERROR_RET;
 	}
 	fin = fopen(realPath, "r");
 	if(fin == NULL)
 	{
+		ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
 		goto ERROR_RET;
 	}
 
@@ -203,7 +206,7 @@ tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 	{
 		if(self->buff_curr == self->buff_limit)
 		{
-			//缓存大小不足， 解析失败
+			ret = E_TD_SCANNER_OUT_OF_MEMORY;
 			goto F_ERROR_RET;
 		}
 		*self->buff_curr = c;
@@ -211,8 +214,6 @@ tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 	}
 	fclose(fin);
 
-	//之前已经检查过self->stack_num是否出界了
-	
 	scanner = &self->stack[self->stack_num];
 	strncpy(scanner->file_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
 	scanner->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
@@ -230,178 +231,187 @@ tint32 scanner_push(SCANNER_STACK *self, const char *file_name, int state)
 F_ERROR_RET:
 	fclose(fin);
 ERROR_RET:
-	return E_TD_ERROR;
+	return ret;
 }
 
-tint32 scanner_pop(SCANNER_STACK *self)
+void scanner_pop(SCANNER *self)
 {
 	--(self->stack_num);
-	return E_TD_NOERROR;
-ERROR_RET:
-	return E_TD_ERROR;
 }
 
-void scanner_init(SCANNER_STACK *self)
+void scanner_init(SCANNER *self)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 }
 
-tuint32 scanner_get_stack_deep(SCANNER_STACK *self)
+tuint32 scanner_size(SCANNER *self)
 {
 	return self->stack_num;
 }
 
-static void scanner_stack_errorap_halt(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, const char *s, va_list ap) 
+void scanner_error(SCANNER *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
 {
+	const char *error_str = language_string_library_search(g_language_string_library, result);
+	va_list ap;
+	va_start(ap, result);
 	if((yylloc) && (yylloc->file_name[0]))
 	{
 		fprintf(stderr, "%s", yylloc->file_name);
 	}
 	if(yylloc)
 	{
-		fprintf(stderr, "(%d): ", yylloc->first_line);
+		fprintf(stderr, "(%d): ", yylloc->last_line);
 	}
 	fprintf(stderr, "error %d: ", result);
-	vfprintf(stderr, s, ap);
+	vfprintf(stderr, error_str, ap);
 	fprintf(stderr, "\n");
+	va_end(ap);
 
 	exit(1);
 }
 
-
-
-void scanner_error(SCANNER_STACK *self, const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
-{
-	const char *error_str = language_string_library_search(g_language_string_library, result);
-	va_list ap;
-
-	va_start(ap, result);
-	scanner_stack_errorap_halt(self, yylloc, result, error_str, ap);
-	va_end(ap);
-}
-
 #define MAX_SCANNER_ERROR_MSG_LENGTH 256
-void tdataerror(const YYLTYPE *yylloc, SCANNER_STACK *jp, const char *s, ...)
+void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...)
 {
-	const char *error_str = language_string_library_search(g_language_string_library, E_LS_SYNTAX_ERROR);
 	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
 	
 	va_list ap;
 	va_start(ap, s);
 	vsnprintf(bison_error_msg, MAX_SCANNER_ERROR_MSG_LENGTH, s, ap);
-	scanner_error(jp, yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
-	va_end(ap);
+	scanner_error(self, yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
 }
 
+static int read_char(char c)
+{
+	switch(c)
+	{
+	case 'b':
+		return '\b';
+	case 'f':
+		return '\f';
+	case 'n':
+		return '\n';
+	case 'r':
+		return '\r';
+	case 't':
+		return '\t';
+	case '\'':
+		return '\'';
+	case '\"':
+		return '\"';
+	case '\\':
+		return '\\';
+	default:
+		return -1;
+	}
+}
 
+static void get_yylval_tok_char(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+{
+	*token = tok_char;
+	if(YYCURSOR >= YYLIMIT)
+	{
+		goto ERROR_RET;
+	}
+	if(*YYCURSOR == '\\')
+	{
+		int c;
+		++YYCURSOR;
+		if(YYCURSOR >= YYLIMIT)
+		{
+			goto ERROR_RET;
+		}
+		c = read_char(*YYCURSOR);
+		if(c == -1)
+		{
+			goto ERROR_RET;
+		}
+		yylval->sn_char = (char)c;
+		++YYCURSOR;
+	}
+	else
+	{
+		yylval->sn_char = *YYCURSOR;
+		++YYCURSOR;
+	}
 
+	if(YYCURSOR >= YYLIMIT)
+	{
+		goto ERROR_RET;
+	}
+	if(*YYCURSOR != '\'')
+	{
+		goto ERROR_RET;
+	}
+	++YYCURSOR;
+	return;
+ERROR_RET:
+	scanner_error(self, yylloc, E_LS_CHARACTER_CONSTANT_FORMAT_ERROR);
+}
 
-static tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * yylval, const YYLTYPE *yylloc)
+static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+{
+	tuint32 len = 0;
+	
+	*token = tok_string;
+
+	yylval->sn_string = YYCURSOR;
+	while(YYCURSOR < YYLIMIT)
+	{
+		if(YYCURSOR >= YYLIMIT)
+		{
+			goto ERROR_RET;
+		}
+		if(*YYCURSOR == '\\')
+		{
+			int c;
+			++YYCURSOR;
+			if(YYCURSOR >= YYLIMIT)
+			{
+				goto ERROR_RET;
+			}
+			c = read_char(*YYCURSOR);
+			if(c == -1)
+			{
+				goto ERROR_RET;
+			}
+			yylval->sn_string[len++] = (char)c;
+			++YYCURSOR;
+		}
+		else if(*YYCURSOR == '\"')
+		{
+			yylval->sn_string[len] = 0;
+			++YYCURSOR;
+			goto done;
+		}
+		else
+		{
+			yylval->sn_string[len++] = *YYCURSOR;
+			++YYCURSOR;
+		}
+	}
+ERROR_RET:
+	scanner_error(self, yylloc, E_LS_STRING_CONSTANT_FORMAT_ERROR);
+done:
+	yyleng = YYCURSOR - yytext;
+}
+
+static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	switch(*token)
 	{
 	case tok_char:
 		{
-			if(YYCURSOR >= YYLIMIT)
-			{
-				scanner_error(self, yylloc, E_LS_UNKNOW);
-				break;
-			}
-			if(*YYCURSOR == '\\')
-			{
-				++YYCURSOR;
-				switch(*YYCURSOR)
-				{
-				case 'b':
-					yylval->sn_char = '\b';
-					break;
-				case 'f':
-					yylval->sn_char = '\f';
-					break;
-				case 'n':
-					yylval->sn_char = '\n';
-					break;
-				case 'r':
-					yylval->sn_char = '\r';
-					break;
-				case 't':
-					yylval->sn_char = '\t';
-					break;
-				case '\'':
-					yylval->sn_char = '\'';
-					break;
-				case '\"':
-					yylval->sn_char = '\"';
-					break;
-				case '\\':
-					yylval->sn_char = '\\';
-					break;
-				case '/':
-					yylval->sn_char = '/';
-					break;
-				default:
-					break;
-				}
-				++YYCURSOR;
-			}
-			else
-			{
-				yylval->sn_char = *YYCURSOR;
-				++YYCURSOR;
-			}
-			if(*YYCURSOR == '\'')
-			{
-				++YYCURSOR;				
-			}
-			else
-			{
-				scanner_error(self, yylloc, E_LS_UNKNOW);
-			}
+			get_yylval_tok_char(self, token, yylval, yylloc);
 			break;
 		}
 	case tok_string:
 		{
-			tuint32 len = 0;
-			if(YYCURSOR >= YYLIMIT)
-			{
-				scanner_error(self, yylloc, E_LS_UNKNOW);
-				break;
-			}
-			yylval->sn_string = YYCURSOR;
-			while(YYCURSOR < YYLIMIT)
-			{
-				if(*YYCURSOR == '\\')
-				{
-					++YYCURSOR;
-
-					++YYCURSOR;
-					yylval->sn_string[len++] = *YYCURSOR;
-				}
-				else if(*YYCURSOR == '\"')
-				{
-					++YYCURSOR;
-					yylval->sn_string[len] = 0;
-					break;
-				}
-				else
-				{
-					yylval->sn_string[len++] = *YYCURSOR;
-					++YYCURSOR;
-				}
-			}
-			if(YYCURSOR >= YYLIMIT)
-			{
-				scanner_error(self, yylloc, E_LS_UNKNOW);
-			}
-			else
-			{				
-				yyleng = YYCURSOR - yytext;
-			}
-
+			get_yylval_tok_string(self, token, yylval, yylloc);
 			break;
-		}		
+		}
 	case tok_int:
 		{
 			errno = 0;
@@ -413,20 +423,9 @@ static tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * y
 				*token = tok_uint64;
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
-				{	
-					scanner_error(self, yylloc, E_LS_UNKNOW);
+				{
+					scanner_error(self, yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
-			}
-			break;
-		}
-	case tok_double:
-		{
-			errno = 0;
-			*token = tok_double;
-			yylval->sn_d = strtod(yytext, NULL);
-			if (errno == ERANGE)
-			{
-				scanner_error(self, yylloc, E_LS_UNKNOW);
 			}
 			break;
 		}
@@ -442,22 +441,33 @@ static tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * y
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_error(self, yylloc, E_LS_UNKNOW);
+					scanner_error(self, yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
+			}
+			break;
+		}
+	case tok_double:
+		{
+			errno = 0;
+			*token = tok_double;
+			yylval->sn_d = strtod(yytext, NULL);
+			if (errno == ERANGE)
+			{
+				scanner_error(self, yylloc, E_LS_NUMBER_ERROR_RANGE);
 			}
 			break;
 		}
 	case tok_unixcomment:
 		{
-			tuint32 len = yyleng;
+			tuint32 i;
 			yylval->sn_tok_unixcomment = yytext + 1;
-			while(len - 1 > 0)
+			for(i = yyleng - 1; i > 0; --i)
 			{
-				if((yytext[len - 1] == '\n') || (yytext[len - 1] == '\r'))
+				if((yytext[i] == '\n') || (yytext[i] == '\r'))
 				{
-					yytext[len - 1] = 0;
+					yytext[i] = 0;
+					break;
 				}
-				--len;
 			}
 			break;
 		}
@@ -538,35 +548,35 @@ static tint32 get_token_yylval(SCANNER_STACK *self, int *token, PARSER_VALUE * y
 }
 
 
-int tdatalex(PARSER_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER_STACK *ss)
+int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER *self)
 {
 	int ret = 0;
 
 	for(;;)
 	{
-		SCANNER *scanner = scanner_get(ss);
+		SCANNER_CONTEXT *scanner = scanner_top(self);
 		yylloc_param->file_name = scanner->file_name;
-		ret = scanner_scan(ss, yylloc_param, yylval_param);
+		ret = scanner_scan(self, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
-		if(ret <= 0)
+		if(ret == 0)
 		{
-			if(ss->stack_num <= 1)
+			if(self->stack_num == 1)
 			{
-				break;
+				goto done;
 			}
-			scanner_pop(ss);
+			scanner_pop(self);
 		}
 		else
 		{
-			if(get_token_yylval(ss, &ret, yylval_param, yylloc_param) != E_TD_NOERROR)
+			if(get_yylval(self, &ret, yylval_param, yylloc_param) != E_TD_NOERROR)
 			{
 				ret = -1;
-				break;
+				goto done;
 			}			
 			break;
 		}		
 	}
-
+done:
 	return ret;
 }

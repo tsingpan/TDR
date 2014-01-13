@@ -120,24 +120,13 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-TD_ERROR_CODE generator_print(GENERATOR *self, const char* fmt, ...)
+void generator_print(GENERATOR *self, const char* fmt, ...)
 {
 	va_list ap;
-
-	if(self->fout == NULL)
-	{
-		goto ERROR_RET;
-	}
 
 	va_start(ap, fmt);
 	vfprintf(self->fout, fmt, ap);
 	va_end(ap);
-
-	
-
-	return E_TD_NOERROR;
-ERROR_RET:
-	return E_TD_ERROR;
 }
 
 TD_ERROR_CODE generator_close(GENERATOR *self)
@@ -153,27 +142,80 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
+static void write_char(GENERATOR *self, char c)
+{
+	switch(c)
+	{
+	case '\b':
+		generator_print(self, "\\b");
+		break;
+	case '\f':
+		generator_print(self, "\\f");
+		break;
+	case '\n':
+		generator_print(self, "\\n");
+		break;
+	case '\r':
+		generator_print(self, "\\r");
+		break;
+	case '\t':
+		generator_print(self, "\\t");
+		break;
+	case '\'':
+		generator_print(self, "\\'");
+		break;
+	case '\"':
+		generator_print(self, "\\\"");
+		break;
+	case '\\':
+		generator_print(self, "\\\\");
+		break;
+	default:
+		generator_print(self, "%c", c);
+	}
+}
+
 TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 {
 	switch (val->type)
 	{
 	case E_SNVT_IDENTIFIER:
-		return generator_print(self, "%s", val->val.identifier);
+		generator_print(self, "%s", val->val.identifier);
+		return E_TD_NOERROR;
 	case E_SNVT_CHAR:
-		//ת�壿
-		return generator_print(self, "\'%c\'", val->val.c);
+		generator_print(self, "\'");
+		write_char(self, val->val.c);
+		generator_print(self, "\'");
+		return E_TD_NOERROR;
+	case E_SNVT_STRING:
+		{
+			tuint32 i;
+			tuint32 len = strlen(val->val.str);
+			generator_print(self, "\"");
+			for(i = 0;i < len; ++i)
+			{
+				write_char(self, val->val.str[i]);
+			}
+			generator_print(self, "\"");
+			return E_TD_NOERROR;
+		}
 	case E_SNVT_DOUBLE:
-		return generator_print(self, "%d", val->val.d);
+		generator_print(self, "%lf", val->val.d);
+		return E_TD_NOERROR;
 	case E_SNVT_INT64:
-		return generator_print(self, "%lld", val->val.i64);
+		generator_print(self, "%lld", val->val.i64);
+		return E_TD_NOERROR;
 	case E_SNVT_UINT64:
-		return generator_print(self, "%llu", val->val.ui64);
+		generator_print(self, "%llu", val->val.ui64);
+		return E_TD_NOERROR;
 	case E_SNVT_HEX_INT64:
-		return generator_print(self, "%llx", val->val.i64);
+		generator_print(self, "%llx", val->val.i64);
+		return E_TD_NOERROR;
 	case E_SNVT_HEX_UINT64:
-		return generator_print(self, "%llx", val->val.ui64);
+		generator_print(self, "%llx", val->val.ui64);
+		return E_TD_NOERROR;
 	default:
-		return E_TD_ERROR;
+		return E_TD_ERROR;		
 	}
 }
 
@@ -182,31 +224,42 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 	switch(simple_type->st)
 	{
 	case E_ST_INT8:
-		return generator_print(self, "tint8");
+		generator_print(self, "tint8");
+		return E_TD_NOERROR;
 	case E_ST_INT16:
-		return generator_print(self, "tint16");
+		generator_print(self, "tint16");
+		return E_TD_NOERROR;
 	case E_ST_INT32:
-		return generator_print(self, "tint32");
+		generator_print(self, "tint32");
+		return E_TD_NOERROR;
 	case E_ST_INT64:
-		return generator_print(self, "tint64");
-
+		generator_print(self, "tint64");
+		return E_TD_NOERROR;
 	case E_ST_UINT8:
-		return generator_print(self, "tuint8");
+		generator_print(self, "tuint8");
+		return E_TD_NOERROR;
 	case E_ST_UINT16:
-		return generator_print(self, "tuint16");
+		generator_print(self, "tuint16");
+		return E_TD_NOERROR;
 	case E_ST_UINT32:
-		return generator_print(self, "tuint32");
+		generator_print(self, "tuint32");
+		return E_TD_NOERROR;
 	case E_ST_UINT64:
-		return generator_print(self, "tuint64");
+		generator_print(self, "tuint64");
+		return E_TD_NOERROR;
 	case E_ST_STRING:
 	case E_ST_CHAR:
-		return generator_print(self, "tchar");
+		generator_print(self, "tchar");
+		return E_TD_NOERROR;
 	case E_ST_BOOL:
-		return generator_print(self, "tbool");
+		generator_print(self, "tbool");
+		return E_TD_NOERROR;
 	case E_ST_DOUBLE:
-		return generator_print(self, "tdouble");
+		generator_print(self, "tdouble");
+		return E_TD_NOERROR;
 	case E_ST_REFER:
-		return generator_print(self, simple_type->st_refer);
+		generator_print(self, simple_type->st_refer);
+		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;
 	}

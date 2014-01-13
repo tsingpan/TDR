@@ -1,35 +1,31 @@
+%define api.pure
+%parse-param { SCANNER *self }
+%pure_parser
 %{
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
 
 
 #define YYERROR_VERBOSE
-#define GET_SELF TLIBC_CONTAINER_OF(ss, PARSER, scanner_stack)
+#define YYLEX_PARAM self
+
+
+#define GET_SELF TLIBC_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
 #define GET_DEFINITION GET_SELF->pn_definition
 #define GET_UNION_FIELD_LIST GET_DEFINITION.definition.de_union.union_field_list
 #define GET_FIELD_LIST GET_DEFINITION.definition.de_struct.field_list
-
-#define YYLEX_PARAM ss
 %}
 %locations
 
 %code requires
 {
 #include "parse/parser.h"
-
 #include "parse/scanner.h"
-#define YYSTYPE PARSER_VALUE
 
 #include "parse/check.h"
 #include "parse/reduce.h"
 #include "symbols.h"
 }
-
-%define api.pure
-%parse-param { SCANNER_STACK *ss }
-%pure_parser
-
-
 
 %token tok_import 
 %token tok_struct
@@ -121,7 +117,7 @@ Document : DefinitionList;
 DefinitionList :
 	DefinitionList Definition
 	{
-		parser_on_definition(GET_SELF, &GET_DEFINITION);
+		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
 	}
 |	{
 	};

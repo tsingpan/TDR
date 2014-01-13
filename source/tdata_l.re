@@ -7,15 +7,15 @@
 
 
 		
-tint32 scanner_scan(SCANNER_STACK *self, YYLTYPE *yylloc, PARSER_VALUE * yylval)
+tint32 scanner_scan(SCANNER *self, YYLTYPE *yylloc, SCANNER_TOKEN_VALUE * yylval)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)
 	{
 		return 0;
 	}
-	yylloc->first_line = scanner_get(self)->yylineno;
-	yylloc->first_column = scanner_get(self)->yycolumn;
+	yylloc->first_line = scanner_top(self)->yylineno;
+	yylloc->first_column = scanner_top(self)->yycolumn;
 	yytext = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;
@@ -37,7 +37,7 @@ symbol			([<>{}\(\);,=:&!])
 anychar			([^])
 
 
-<!*> := yyleng = YYCURSOR - yytext; scanner_process(self);
+<!*> := yyleng = YYCURSOR - yytext; scanner_locate(self);
 
 <*>{comment}			{	goto restart;																}
 <*>{sillycomm}			{	goto restart;																}

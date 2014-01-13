@@ -22,7 +22,7 @@ void generator_init(GENERATOR *self);
 
 TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix);
 
-TD_ERROR_CODE generator_print(GENERATOR *self, const char* fmt, ...);
+void generator_print(GENERATOR *self, const char* fmt, ...);
 
 TD_ERROR_CODE generator_close(GENERATOR *self);
 

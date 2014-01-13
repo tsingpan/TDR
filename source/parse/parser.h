@@ -13,7 +13,7 @@
 typedef struct _PARSER PARSER;
 struct _PARSER 
 {
-	SCANNER_STACK scanner_stack;
+	SCANNER scanner;
 
 	GENERATOR **generator_list;
 	tuint32 generator_num;
@@ -25,6 +25,6 @@ struct _PARSER
 
 tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, tuint32 generator_list_num);
 
-void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition);
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
 
 #endif//_H_PARSER
