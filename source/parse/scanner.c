@@ -473,8 +473,18 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 		}
 	case tok_identifier:
 		{
-			yylval->sn_tok_identifier.ptr = yytext;
-			yylval->sn_tok_identifier.len = yyleng;
+			if(yyleng >= TLIBC_MAX_IDENTIFIER_LENGTH)
+			{
+				scanner_error(self, yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TLIBC_MAX_IDENTIFIER_LENGTH);
+			}
+			memcpy(yylval->sn_tok_identifier, yytext, yyleng);
+			yylval->sn_tok_identifier[yyleng] = 0;
+			break;
+		}
+	case tok_reserved_keyword:
+		{
+			yytext[yyleng] = 0;
+			scanner_error(self, yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
 			break;
 		}
 	case tok_t_bool:
@@ -536,11 +546,6 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 		{
 			yylval->sn_st = E_ST_STRING;
 			break;
-		}
-	case tok_reserved_keyword:
-		{
-			yytext[yyleng] = 0;
-			scanner_error(self, yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
 		}
 	}
 

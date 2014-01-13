@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>8</language_string_list_num>
+	<language_string_list_num>9</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -29,9 +29,13 @@
 			<language_string_number>E_LS_STRING_CONSTANT_FORMAT_ERROR</language_string_number>
 			<language_string>字符串型常量格式错误</language_string>
 		</[6]>
-		<[6]>
+		<[7]>
 			<language_string_number>E_LS_NUMBER_ERROR_RANGE</language_string_number>
 			<language_string>数字常量超出范围</language_string>
-		</[6]>
+		</[7]>
+		<[8]>
+			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
+			<language_string>标识符长度不可以超过%u</language_string>
+		</[8]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

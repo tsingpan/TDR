@@ -50,6 +50,11 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_NUMBER_ERROR_RANGE;
 		goto done;
 	}
+	else if(strcmp(name, "E_LS_IDENTIFIER_LENGTH_ERROR") == 0)
+	{
+		*data = E_LS_IDENTIFIER_LENGTH_ERROR;
+		goto done;
+	}
 	
 ERROR_RET:
     return E_TLIBC_ERROR;

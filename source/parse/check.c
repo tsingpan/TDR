@@ -2,17 +2,13 @@
 #include "symbols.h"
 #include <string.h>
 #include "tdata/tdata_types.h"
-void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_SIMPLE_TYPE *type, const tbytes *identifier, const ST_VALUE *val)
+void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *id, const ST_VALUE *val)
 {
 	const ST_SIMPLE_TYPE *real_type = NULL;
-	char id[TLIBC_MAX_IDENTIFIER_LENGTH];
-
-	memcpy(id, identifier->ptr, identifier->len);
-	id[identifier->len] = 0;
 
 
 	//1, ÅÐ¶Ï·ûºÅÊÇ·ñÖØ¸´
-	if(symbols_search_string(&self->symbols, id, hpfalse) != NULL)
+	if(symbols_search(&self->symbols, id, hpfalse) != NULL)
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
 		goto done;
@@ -45,9 +41,9 @@ done:
 	return;
 }
 
-void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tbytes *identifier, const ST_VALUE *st_value)
+void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_VALUE *st_value)
 {
-	const SYMBOL *symbol = symbols_search_identifier(&self->symbols, identifier, hpfalse);
+	const SYMBOL *symbol = symbols_search(&self->symbols, identifier, hpfalse);
 	if(symbol != NULL)
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
@@ -76,7 +72,7 @@ static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, 
 
 	if(pn_type->st == E_ST_REFER)
 	{
-		const SYMBOL *symbols = symbols_search_string(&self->symbols, pn_type->st_refer, hptrue);
+		const SYMBOL *symbols = symbols_search(&self->symbols, pn_type->st_refer, hptrue);
 		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
 		{
 			scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
@@ -99,7 +95,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fiel
 	{
 		if(pn_field->type.st.st == E_ST_REFER)
 		{
-			const SYMBOL *symbol = symbols_search_string(&self->symbols, pn_field->type.st.st_refer, hptrue);
+			const SYMBOL *symbol = symbols_search(&self->symbols, pn_field->type.st.st_refer, hptrue);
 			if(symbol == NULL)
 			{
 				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);

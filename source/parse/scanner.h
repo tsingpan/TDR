@@ -2,6 +2,7 @@
 #define _H_SCANNER
 
 #include "platform/tlibc_platform.h"
+#include "tdata/tdata_types.h"
 #include "language/language_types.h"
 #include "definition.h"
 #include "error.h"
@@ -22,17 +23,16 @@ typedef union _SCANNER_TOKEN_VALUE
 	ST_TYPE sn_type;
 	ST_SIMPLE_TYPE sn_simple_type;
 	ST_VALUE sn_value;	
-	tbytes sn_tok_identifier;
+	char sn_tok_identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
 	ST_Const sn_const;
 	tdouble pn_tok_double;
 	const char* sn_tok_unixcomment;
-	tbool sn_bool;
 	tuint64 sn_uint64;
 	tint64 sn_int64;
 	tdouble sn_d;
 	tuint64 sn_hex_uint64;
 	tint64 sn_hex_int64;
-	tstring sn_string;
+	tchar* sn_string;
 	tchar sn_char;
 	SN_SIMPLE_TYPE sn_st;
 	ST_ARGUMENTS sn_arguments;

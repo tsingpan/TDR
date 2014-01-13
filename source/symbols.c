@@ -23,15 +23,6 @@ void symbols_fini(SYMBOLS *self)
 	trie_free(self->symbols);
 }
 
-const SYMBOL* symbols_search_identifier(SYMBOLS *self, const tbytes* tok_identifier, tbool back_searching)
-{
-	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	memcpy(name, tok_identifier->ptr, tok_identifier->len);
-	name[tok_identifier->len] = 0;
-	
-	return symbols_search_string(self, name, back_searching);
-}
-
 tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
 {
 	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
@@ -55,10 +46,10 @@ tint32 symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol)
 	return E_TD_NOERROR;
 }
 
-void symbols_domain_begin(SYMBOLS *self, const tbytes *tok_identifier)
+void symbols_domain_begin(SYMBOLS *self, const tchar *tok_identifier)
 {
-	memcpy(self->domain, tok_identifier->ptr, tok_identifier->len);
-	self->domain[tok_identifier->len] = 0;
+	strncpy(self->domain, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	self->domain[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 }
 
 void symbols_domain_end(SYMBOLS *self)
@@ -67,7 +58,7 @@ void symbols_domain_end(SYMBOLS *self)
 }
 
 
-const SYMBOL* symbols_search_string(SYMBOLS *self, const char* name, tbool back_searching)
+const SYMBOL* symbols_search(SYMBOLS *self, const char* name, int back_searching)
 {
 	const SYMBOL *symbol;
 	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
@@ -104,7 +95,7 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 {
 	if(sn_type->st == E_ST_REFER)
 	{
-		const SYMBOL *ptr = symbols_search_string(self, sn_type->st_refer, hpfalse);
+		const SYMBOL *ptr = symbols_search(self, sn_type->st_refer, hpfalse);
 		if(ptr == NULL)
 		{
 			goto ERROR_RET;
@@ -115,12 +106,9 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 		}
 		return symbols_get_real_type(self, &ptr->body.type);
 	}
-	else
-	{
-		return sn_type;
-	}
 
 	return sn_type;
+
 ERROR_RET:
 	return NULL;
 }
@@ -129,7 +117,7 @@ const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		const SYMBOL *ptr = symbols_search_string(self, sn_value->val.identifier, hpfalse);
+		const SYMBOL *ptr = symbols_search(self, sn_value->val.identifier, hpfalse);
 		if(ptr == NULL)
 		{
 			goto ERROR_RET;
@@ -185,7 +173,6 @@ done:
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 {
 	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
-	tuint32 i;
 
 	ptr->type = EN_HST_ENUM;
 	ptr->body.enum_def_list_num = pn_enum->enum_def_list_num;

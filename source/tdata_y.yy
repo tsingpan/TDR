@@ -4,7 +4,7 @@
 %{
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
-
+#include <string.h>
 
 #define YYERROR_VERBOSE
 #define YYLEX_PARAM self
@@ -164,7 +164,7 @@ Typedef :
 	{
 		dp_check_Typedef(GET_SELF, &yylloc, &$$);
 
-		dp_reduce_Typedef(GET_SELF, &$$, &$2, &$3);
+		dp_reduce_Typedef(GET_SELF, &$$, &$2, $3);
 
 		symbols_add_Typedef(&GET_SELF->symbols, &$$);
 	};
@@ -172,9 +172,9 @@ Typedef :
 Const :
 	tok_const SimpleType tok_identifier '=' Value ';'
 	{
-		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, &$3, &$5);
+		dp_check_Const(GET_SELF, &yylloc, &$$, &$2, $3, &$5);
 
-		dp_reduce_Const(GET_SELF, &$$, &$2, &$3, &$5);
+		dp_reduce_Const(GET_SELF, &$$, &$2, $3, &$5);
 		
 		symbols_add_Const(&GET_SELF->symbols, &$$);
 	}
@@ -182,8 +182,8 @@ Const :
 Enum :
 	tok_enum tok_identifier	'{' EnumDefList '}'	';'
 	{
-		memcpy(GET_DEFINITION.definition.de_enum.name, $2.ptr, $2.len);
-		GET_DEFINITION.definition.de_enum.name[$2.len] = 0;
+		strncpy(GET_DEFINITION.definition.de_enum.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
+		GET_DEFINITION.definition.de_enum.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
 	};
     
@@ -204,10 +204,10 @@ EnumDefList :
 EnumDef : 
 	tok_identifier '=' Value ',' UnixCommentOrNot
 	{
-		dp_check_EnumDef(GET_SELF, &yylloc, &$1, &$3);
+		dp_check_EnumDef(GET_SELF, &yylloc, $1, &$3);
 
-		memcpy($$.identifier, $1.ptr, $1.len);
-		$$.identifier[$1.len] = 0;
+		strncpy($$.identifier, $1, TLIBC_MAX_IDENTIFIER_LENGTH);
+		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 		$$.val = $3;
 		$$.comment = $5;
 
@@ -218,11 +218,11 @@ EnumDef :
 Union :
 	tok_union tok_identifier
 	{
-		memcpy(GET_DEFINITION.definition.de_union.name, $2.ptr, $2.len);
-		GET_DEFINITION.definition.de_union.name[$2.len] = 0;
+		strncpy(GET_DEFINITION.definition.de_union.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
+		GET_DEFINITION.definition.de_union.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 		
 		
-		symbols_domain_begin(&GET_SELF->symbols, &$2);
+		symbols_domain_begin(&GET_SELF->symbols, $2);
 	}
 	Parameters
 	{
@@ -243,14 +243,14 @@ Union :
 Struct : 
 	tok_struct tok_identifier
 	{
-		symbols_domain_begin(&GET_SELF->symbols, &$2);
+		symbols_domain_begin(&GET_SELF->symbols, $2);
 	}
 	'{' FieldList '}' ';'
 	{
 		symbols_domain_end(&GET_SELF->symbols);
 
-		memcpy(GET_DEFINITION.definition.de_struct.name, $2.ptr, $2.len);
-		GET_DEFINITION.definition.de_struct.name[$2.len] = 0;
+		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TLIBC_MAX_IDENTIFIER_LENGTH);
+		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 
 		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
 	};
@@ -281,7 +281,7 @@ UnionFieldList:
 UnionField : 
 	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
-		dp_reduce_UnionField(GET_SELF, &$$, &$1, &$3, &$4, &$6);
+		dp_reduce_UnionField(GET_SELF, &$$, $1, &$3, $4, &$6);
 	};
 
 
@@ -306,8 +306,8 @@ Field :
 		$$.condition = $1;
 		$$.type = $2;
 		
-		memcpy($$.identifier, $3.ptr, $3.len);
-		$$.identifier[$3.len] = 0;
+		strncpy($$.identifier, $3, TLIBC_MAX_IDENTIFIER_LENGTH);
+		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 		$$.args = $4;
 		$$.comment = $6;
 
@@ -355,7 +355,7 @@ Type :
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
 	{
-		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, &$5);
+		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, $5);
 	};
 	
 SimpleType:
@@ -405,11 +405,11 @@ SimpleType:
 	}
 |	tok_identifier
    	{
-		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, &$1);
+		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, $1);
 	}
 |	tok_t_string '<' tok_identifier '>'
 	{
-		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, &$3);
+		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, $3);
 	}
 |	tok_t_string
 	{
@@ -447,8 +447,8 @@ Parameter:
 	SimpleType tok_identifier
 	{
 		$$.type = $1;
-		memcpy($$.identifier, $2.ptr, $2.len);
-		$$.identifier[$2.len] = 0;
+		strncpy($$.identifier, $2, TLIBC_MAX_IDENTIFIER_LENGTH - 1);
+		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
 		
 		symbols_add_Parameter(&GET_SELF->symbols, &$$);
 	};
@@ -467,11 +467,11 @@ Arguments:
 ArgumentList:
 	ArgumentList ',' tok_identifier
 	{
-		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, &$3);
+		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, $3);
 	}
 |	tok_identifier
 	{
-		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &$$, &$1);
+		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &$$, $1);
 	};
 
 Value :
@@ -509,7 +509,7 @@ Value :
 	}
 |	tok_count '(' tok_identifier ')'
 	{
-		dp_reduce_Value_tok_count(GET_SELF, &$$, &$3);
+		dp_reduce_Value_tok_count(GET_SELF, &$$, $3);
 	};
 
 UnixComment:
