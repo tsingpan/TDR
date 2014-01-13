@@ -183,7 +183,11 @@ Const :
 	};
 
 Enum :
-	tok_enum tok_identifier	'{' EnumDefList '}'	';'
+	tok_enum tok_identifier	
+	{
+		GET_SELF->symbols.enum_name = $2;
+	}
+	'{' EnumDefList '}'	';'
 	{
 		dp_check_Enum(GET_SELF, &yylloc, $2);
 
@@ -222,7 +226,7 @@ Union :
 	tok_union tok_identifier
 	{
 		dp_check_Union_tok_identifier(GET_SELF, &yylloc, $2);
-		symbols_set_prefix(&GET_SELF->symbols, $2);
+		GET_SELF->symbols.union_name = $2;
 	}
 	Parameters
 	{

@@ -74,7 +74,7 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 		root_dir[strlen(root_dir)] = TLIBC_FILE_SEPARATOR;
 	}
 	self->language_string_list_num = 0;
-	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
+	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 	fin_xml = fopen(language_path, "r");
 	if(fin_xml == NULL)
 	{

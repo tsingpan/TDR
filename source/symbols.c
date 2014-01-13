@@ -25,11 +25,6 @@ void symbols_fini(SYMBOLS *self)
 	trie_free(self->symbols);
 }
 
-void symbols_set_prefix(SYMBOLS *self, const char *prefix)
-{
-	self->prefix = prefix;
-}
-
 static SYMBOL *symbols_alloc(SYMBOLS *self)
 {
 	SYMBOL *ret = NULL;
@@ -77,7 +72,7 @@ const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffi
 	{
 		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s", name);
 		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-	}
+	}	
 	
 	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
 	{
@@ -181,11 +176,13 @@ done:
 
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
 {
-	ST_Const c;
-	memcpy(c.identifier , pn_enum_def->identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	c.type.st = E_ST_INT32;
-	c.val = pn_enum_def->val;
-	symbols_add_Const(self, &c);
+	SYMBOL *symbol = symbols_alloc(self);
+
+	symbol->type = EN_HST_VALUE;
+	symbol->body.val = pn_enum_def->val;
+	
+	symbols_save(self, pn_enum_def->identifier, symbol, NULL);	
+	symbols_save(self, pn_enum_def->identifier, symbol, self->enum_name);
 }
 
 void symbols_add_Parameters(SYMBOLS *self, const ST_Parameters *parameters, const char *identifier)
@@ -196,6 +193,8 @@ void symbols_add_Parameters(SYMBOLS *self, const ST_Parameters *parameters, cons
 	symbol->body.para = parameters->par_list[0];
 
 	symbols_save(self, parameters->par_list[0].identifier, symbol, identifier);
+
+	self->para = &parameters->par_list[0];
 }
 
 void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)
@@ -204,7 +203,7 @@ void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)
 
 	symbol->type = EN_HST_UNION_FIELD;
 
-	symbols_save(self, pn_union_field->name, symbol, self->prefix);
+	symbols_save(self, pn_union_field->name, symbol, self->union_name);
 
 }
 

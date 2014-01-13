@@ -31,13 +31,13 @@ void help()
 #define TD_MAX_GENERATOR 16
 
 static PARSER parser;
+static ST_TD_LANGUAGE_STRING_LIBRARY language_string_library;
+static TLIBC_TYPES_GENERATOR tlibc_types_generator;
+static GENERATOR *generator_list[TD_MAX_GENERATOR];
+static tuint32 generator_num = 0;
 int main(tint32 argc, char **argv)
 {
 	tint32 i;
-	TLIBC_TYPES_GENERATOR tlibc_types_generator;
-	GENERATOR *generator_list[TD_MAX_GENERATOR];
-	tuint32 generator_num = 0;
-	ST_TD_LANGUAGE_STRING_LIBRARY language_string_library;
 
 	language_string_library_init(&language_string_library);
 	g_language_string_library = &language_string_library;

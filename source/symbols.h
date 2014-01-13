@@ -45,7 +45,9 @@ typedef struct _PARSER_SYMBOLS
 {
 	Trie *symbols;
 
-	const char *prefix;
+	const char *enum_name;
+	const char *union_name;
+	const ST_Parameter *para;
 
 	tuint32 symbol_list_num;
 	SYMBOL symbol_list[MAX_SYMBOL_LIST_NUM];
@@ -56,8 +58,6 @@ typedef struct _PARSER_SYMBOLS
 void symbols_init(SYMBOLS *self);
 
 void symbols_fini(SYMBOLS *self);
-
-void symbols_set_prefix(SYMBOLS *self, const char *prefix);
 
 const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
 
