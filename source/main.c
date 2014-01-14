@@ -5,8 +5,8 @@
 
 
 #include "generate/tlibc_types.h"
-#include "generate/tlibc_writer.h"
-#include "generate/tlibc_writer_header.h"
+#include "generate/tlibc_reader.h"
+#include "generate/tlibc_reader_header.h"
 
 
 #include <string.h>
@@ -40,8 +40,8 @@ void help()
 static PARSER parser;
 static ST_TD_LANGUAGE_STRING_LIBRARY language_string_library;
 static TLIBC_TYPES_GENERATOR tlibc_types_generator;
-static TLIBC_WRITER_GENERATOR tlibc_writer_generator;
-static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
+static TLIBC_READER_GENERATOR tlibc_reader_generator;
+static TLIBC_READER_HEADER_GENERATOR tlibc_reader_header_generator;
 
 static GENERATOR *generator_list[TD_MAX_GENERATOR];
 static tuint32 generator_num = 0;
@@ -99,24 +99,24 @@ int main(tint32 argc, char **argv)
 				tlibc_types_generator_init(&tlibc_types_generator);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 
-				tlibc_writer_generator_init(&tlibc_writer_generator);
-				generator_list[generator_num++] = &tlibc_writer_generator.super;
+				tlibc_writer_generator_init(&tlibc_reader_generator);
+				generator_list[generator_num++] = &tlibc_reader_generator.super;
 
-				tlibc_writer_header_generator_init(&tlibc_writer_header_generator);
-				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
+				tlibc_reader_header_generator_init(&tlibc_reader_header_generator);
+				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
 			else if(strcmp(arg, "tlibc_types") == 0)
 			{
 				tlibc_types_generator_init(&tlibc_types_generator);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 			}
-			else if(strcmp(arg, "tlibc_writer") == 0)
+			else if(strcmp(arg, "tlibc_reader") == 0)
 			{
-				tlibc_writer_generator_init(&tlibc_writer_generator);
-				generator_list[generator_num++] = &tlibc_writer_generator.super;
+				tlibc_writer_generator_init(&tlibc_reader_generator);
+				generator_list[generator_num++] = &tlibc_reader_generator.super;
 
-				tlibc_writer_header_generator_init(&tlibc_writer_header_generator);
-				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
+				tlibc_reader_header_generator_init(&tlibc_reader_header_generator);
+				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
 		}		
 		else
