@@ -204,7 +204,9 @@ ERROR_RET:
 TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING_LIBRARY *data)
 {
 	if(read_struct_begin(self, "ST_TD_LANGUAGE_STRING_LIBRARY") != E_TLIBC_NOERROR) goto ERROR_RET;
-	if(read_counter(self, "language_string_list_num", &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;	
+	if(read_field_begin(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
+	if(read_tuint16(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;	
+	if(read_field_end(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(read_field_begin(self, "language_string_list") != E_TLIBC_NOERROR) goto ERROR_RET;
 	{
 		tuint32 i;
