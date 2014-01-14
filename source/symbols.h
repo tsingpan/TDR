@@ -59,6 +59,7 @@ typedef struct _PARSER_SYMBOLS
 
 	const char *enum_name;
 	const char *union_name;
+	const char *struct_name;
 	const ST_Parameter *para;
 
 	tuint32 symbol_list_num;

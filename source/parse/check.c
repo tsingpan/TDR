@@ -3,6 +3,8 @@
 #include <string.h>
 #include "tdata/tdata_types.h"
 
+#include <assert.h>
+
 void dp_check_Import(PARSER *self, const YYLTYPE *yylloc, const char* str)
 {
 	if(strlen(str) >= MAX_PACKAGE_NAME_LENGTH)
@@ -27,7 +29,11 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* type,
 			scanner_error(&self->scanner, yylloc, E_LS_NOT_TYPE, type->st_refer);
 		}
 	}
-	
+
+	if(symbols_search(&self->symbols, tok_identifier, NULL) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, tok_identifier);
+	}	
 }
 
 void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const tchar *id, const ST_VALUE *val)
@@ -35,11 +41,10 @@ void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *t
 	const ST_SIMPLE_TYPE *real_type = NULL;
 	const ST_VALUE *real_val = NULL;
 
-	if(symbols_search(&self->symbols, id, hpfalse) != NULL)
+	if(symbols_search(&self->symbols, id, NULL) != NULL)
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, id);
 	}
-
 	
 	real_type = symbols_get_real_type(&self->symbols, type);
 	real_val = symbols_get_real_value(&self->symbols, val);
@@ -194,18 +199,96 @@ void dp_check_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, const ST_SIMP
 	if(simple_type->st == E_ST_REFER)
 	{
 		const SYMBOL *symbol = symbols_search(&self->symbols, simple_type->st_refer, NULL);
+		if(symbol == NULL)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, simple_type->st_refer);
+		}
+
+		if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) 
+			&& (symbol->type != EN_HST_STRUCT) && (symbol->type != EN_HST_UNION))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_TYPE, simple_type->st_refer);
+		}
 	}
 }
 
 void dp_check_Type_ContainerType(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *container_type)
 {
+	const SYMBOL *symbol_length = NULL;
+	const ST_VALUE* length_val = NULL;
 
+	assert(container_type->type == E_SNT_CONTAINER);
+	assert(container_type->ct.ct == E_CT_VECTOR);
+
+	if(container_type->ct.vector_type.st == E_ST_REFER)
+	{
+		const SYMBOL *symbol = symbols_search(&self->symbols, container_type->ct.vector_type.st_refer, NULL);
+		
+		if(symbol == NULL)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, container_type->ct.vector_type.st_refer);
+		}
+
+		if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) 
+			&& (symbol->type != EN_HST_STRUCT) && (symbol->type != EN_HST_UNION))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_TYPE, container_type->ct.vector_type.st_refer);
+		}
+	}
+	else if(container_type->ct.vector_type.st == E_ST_STRING)
+	{		
+		if(container_type->ct.vector_type.string_length[0] == 0)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_STRING_LENGTH_MUST_BE_DEFINED);
+		}
+
+		symbol_length = symbols_search(&self->symbols, container_type->ct.vector_type.string_length, NULL);		
+		if(symbol_length == NULL)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, container_type->ct.vector_type.string_length);
+		}
+		if(symbol_length->type != EN_HST_VALUE)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_CONSTANCE, container_type->ct.vector_type.string_length);
+		}
+		length_val = symbols_get_real_value(&self->symbols, &symbol_length->body.val);
+		
+		if((length_val->type != E_SNVT_INT64) && (length_val->type != E_SNVT_HEX_INT64)
+			&&(length_val->type != E_SNVT_UINT64) && (length_val->type != E_SNVT_HEX_UINT64))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_INTEGER, container_type->ct.vector_type.string_length);
+		}
+	}
+
+	symbol_length = symbols_search(&self->symbols, container_type->ct.vector_length, NULL);
+	if(symbol_length == NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, container_type->ct.vector_length);
+	}
+	if(symbol_length->type != EN_HST_VALUE)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_CONSTANCE, container_type->ct.vector_length);
+	}
+	length_val = symbols_get_real_value(&self->symbols, &symbol_length->body.val);
+	if((length_val->type != E_SNVT_INT64) && (length_val->type != E_SNVT_HEX_INT64)
+		&&(length_val->type != E_SNVT_UINT64) && (length_val->type != E_SNVT_HEX_UINT64))
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_INTEGER, container_type->ct.vector_length);
+	}
 }
 
-
-void dp_check_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier)
+void dp_check_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *sn_identifier)
 {
+	const SYMBOL * symbol = symbols_search(&self->symbols, sn_identifier, NULL);
+	if(symbol == NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, sn_identifier);
+	}
 
+	if(symbol->type != EN_HST_VALUE)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_CONSTANCE, sn_identifier);
+	}
 }
 
 void dp_check_ParameterList(PARSER *self, const YYLTYPE *yylloc, tuint32 par_list_num)
@@ -224,9 +307,17 @@ void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifi
 	dp_check_Const(self, yylloc, &type, identifier, st_value);
 }
 
+void dp_check_Struct_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier)
+{
+	if(symbols_search(&self->symbols, identifier, NULL) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
+	}
+}
+
 void dp_check_Union_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier)
 {
-	if(symbols_search(&self->symbols, identifier, hpfalse) != NULL)
+	if(symbols_search(&self->symbols, identifier, NULL) != NULL)
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
 	}
@@ -281,35 +372,14 @@ void dp_check_UnionFieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 union_
 	}
 }
 
-void dp_check_Union(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_Parameters *parameters, const ST_UNION_FIELD_LIST *union_field_list)
-{
-}
-
 void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier)
 {
 	const ST_SIMPLE_TYPE *real_para_type = NULL;
 	const ST_SIMPLE_TYPE *real_type = NULL;
-	const ST_VALUE* real_val = NULL;
+	const SYMBOL *par_type_symbol;
 	
 	real_type = symbols_get_real_type(&self->symbols, simple_type);
-	if(real_type == NULL)
-	{
-		if(simple_type->st == E_ST_REFER)
-		{
-			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, simple_type->st_refer);
-		}
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-	}
-
-	if(real_type->st == E_ST_REFER)
-	{
-		const SYMBOL *type_symbol = symbols_search(&self->symbols, real_type->st_refer, NULL);
-		if(type_symbol == NULL)
-		{
-			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, real_type->st_refer);
-		}
-	}
-	else if(real_type->st == E_ST_STRING)
+	if(real_type->st == E_ST_STRING)
 	{
 		if(real_type->string_length[0] == 0)
 		{
@@ -323,9 +393,20 @@ void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, 
 	}
 
 	real_para_type = symbols_get_real_type(&self->symbols, &self->symbols.para->type);
-	if(symbols_search(&self->symbols, key, real_para_type->st_refer) == NULL)
+	if(real_para_type->st != E_ST_REFER)
 	{
-		scanner_error(&self->scanner, yylloc, E_LS_PARAMETER_TYPE_MISMATCH);
+		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+	}
+	par_type_symbol = symbols_search(&self->symbols, real_para_type->st_refer, NULL);
+	if(par_type_symbol->type != EN_HST_ENUM)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+	}
+
+	
+	if(symbols_search(&self->symbols, key, par_type_symbol->body.symbol_enum.name) == NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_ENUMDEF, key, par_type_symbol->body.symbol_enum.name);
 	}
 }
 
@@ -337,36 +418,87 @@ void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_
 	}
 }
 
-static void dp_check_expression_value_type(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type)
+void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *condition, const ST_TYPE *type
+					, const tchar *identifier, const ST_ARGUMENTS *args)
 {
-	/*
-	const ST_SIMPLE_TYPE *pn_type = symbols_get_real_type(&self->symbols, type);
-	if(pn_type == NULL)
+	if(condition->oper != E_EO_NON)
 	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
-	}
-
-	if(pn_type->st == E_ST_REFER)
-	{
-		const SYMBOL *symbols = symbols_search(&self->symbols, pn_type->st_refer, hptrue);
-		if((symbols == NULL) || (symbols->type != EN_HST_ENUM))
+		const ST_VALUE* op1;
+		const ST_SIMPLE_TYPE *simple_type = NULL;
+		const SYMBOL* symbol = symbols_search(&self->symbols, condition->op0, self->symbols.struct_name);
+		if(symbol == NULL)
 		{
-			scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-			goto done;
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, condition->op0);
+		}
+
+		assert(symbol->type == EN_HST_FIELD);
+		assert(symbol->body.field.type.type == E_SNT_SIMPLE);
+		simple_type = symbols_get_real_type(&self->symbols, &symbol->body.field.type.st);
+		assert(simple_type != NULL);
+		if(simple_type->st == E_ST_REFER)
+		{
+			const SYMBOL* enum_symbol = symbols_search(&self->symbols, simple_type->st_refer, NULL);
+			assert(enum_symbol != NULL);
+			if(enum_symbol->type != EN_HST_ENUM)
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_OP0_MUST_BE_INTEGER);
+			}
+		}
+		else
+		{
+			if((symbol->body.field.type.st.st != E_ST_INT8)	&&(symbol->body.field.type.st.st != E_ST_INT16)
+				&&(symbol->body.field.type.st.st != E_ST_INT32)	&&(symbol->body.field.type.st.st != E_ST_INT64)
+				&&(symbol->body.field.type.st.st != E_ST_UINT8)	&&(symbol->body.field.type.st.st != E_ST_UINT16)
+				&&(symbol->body.field.type.st.st != E_ST_UINT32)&&(symbol->body.field.type.st.st != E_ST_UINT64))
+			{
+				scanner_error(&self->scanner, yylloc, E_LS_OP0_MUST_BE_INTEGER, self->symbols.struct_name);
+			}
+		}
+
+		op1 = symbols_get_real_value(&self->symbols, &condition->op1);
+		assert(op1 != NULL);
+
+		if((op1->type != E_SNVT_INT64)&&(op1->type != E_SNVT_HEX_INT64)
+			&&(op1->type != E_SNVT_UINT64)&&(op1->type != E_SNVT_HEX_UINT64))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_OP1_MUST_BE_INTEGER_CONSTANCE);
 		}
 	}
-	else if((pn_type->st < E_ST_INT8) || (pn_type->st > E_ST_UINT64))
+
+	//todo缺少对于vector中string类型的判断
+
+	if((type->type == E_SNT_SIMPLE) && (type->st.st == E_ST_STRING))
 	{
-		scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
-		goto done;
+		const SYMBOL* symbol_length;
+		const ST_VALUE* length_val;
+
+		if(type->st.string_length[0] == 0)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_STRING_LENGTH_MUST_BE_DEFINED);
+		}
+
+		symbol_length = symbols_search(&self->symbols, type->st.string_length, NULL);		
+		if(symbol_length == NULL)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, type->st.string_length);
+		}
+		if(symbol_length->type != EN_HST_VALUE)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_CONSTANCE, type->st.string_length);
+		}
+		length_val = symbols_get_real_value(&self->symbols, &symbol_length->body.val);
+
+		if((length_val->type != E_SNVT_INT64) && (length_val->type != E_SNVT_HEX_INT64)
+			&&(length_val->type != E_SNVT_UINT64) && (length_val->type != E_SNVT_HEX_UINT64))
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_INTEGER, type->st.string_length);
+		}
 	}
-done:*/
-	return;
-}
 
+	if(symbols_search(&self->symbols, identifier, self->symbols.struct_name) != NULL)
+	{
+		scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
+	}
 
-void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
-{
-
+	//todo对args的错误检查！
 }

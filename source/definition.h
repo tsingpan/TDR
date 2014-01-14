@@ -114,7 +114,7 @@ typedef enum _ST_EXPRESSION_OPER
 typedef struct  _ST_CONDITION
 {
 	ST_EXPRESSION_OPER oper;
-	ST_VALUE op0;
+	tchar op0[TLIBC_MAX_IDENTIFIER_LENGTH];
 	ST_VALUE op1;
 }ST_CONDITION;
 typedef struct  _ST_FIELD

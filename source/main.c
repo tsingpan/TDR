@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include "parse/parser.h"
-#include "generate/tlibc_types.h"
 #include "language/language.h"
+#include "version.h"
+
+
+#include "generate/tlibc_types.h"
+#include "generate/tlibc_writer.h"
+#include "generate/tlibc_writer_header.h"
+
+
 #include <string.h>
 #include "globals.h"
 
-#include "version.h"
+
 
 void version()
 {
@@ -33,6 +40,9 @@ void help()
 static PARSER parser;
 static ST_TD_LANGUAGE_STRING_LIBRARY language_string_library;
 static TLIBC_TYPES_GENERATOR tlibc_types_generator;
+static TLIBC_WRITER_GENERATOR tlibc_writer_generator;
+static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
+
 static GENERATOR *generator_list[TD_MAX_GENERATOR];
 static tuint32 generator_num = 0;
 int main(tint32 argc, char **argv)
@@ -88,6 +98,25 @@ int main(tint32 argc, char **argv)
 			{
 				tlibc_types_generator_init(&tlibc_types_generator);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
+
+				tlibc_writer_generator_init(&tlibc_writer_generator);
+				generator_list[generator_num++] = &tlibc_writer_generator.super;
+
+				tlibc_writer_header_generator_init(&tlibc_writer_header_generator);
+				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
+			}
+			else if(strcmp(arg, "tlibc_types") == 0)
+			{
+				tlibc_types_generator_init(&tlibc_types_generator);
+				generator_list[generator_num++] = &tlibc_types_generator.super;
+			}
+			else if(strcmp(arg, "tlibc_writer") == 0)
+			{
+				tlibc_writer_generator_init(&tlibc_writer_generator);
+				generator_list[generator_num++] = &tlibc_writer_generator.super;
+
+				tlibc_writer_header_generator_init(&tlibc_writer_header_generator);
+				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
 			}
 		}		
 		else

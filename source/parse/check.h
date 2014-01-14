@@ -18,6 +18,8 @@ void dp_check_EnumDefList(PARSER *self, const YYLTYPE *yylloc, tuint32 enum_def_
 
 void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_VALUE *st_value);
 
+void dp_check_Struct_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier);
+
 void dp_check_Union_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier);
 
 void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_Parameters *parameters);
@@ -32,13 +34,15 @@ void dp_check_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, const ST_SIMP
 
 void dp_check_Type_ContainerType(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *container_type);
 
-
-void dp_check_Union(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_Parameters *parameters, const ST_UNION_FIELD_LIST* union_field_list);
+void dp_check_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *sn_identifier);
 
 void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier);
 
 void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_num);
 
-void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
+void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *condition, const ST_TYPE *type
+					 , const tchar *identifier, const ST_ARGUMENTS *args);
+
+//todo改为功能类型的判断效果更好！
 
 #endif //_H_CHECK

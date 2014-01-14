@@ -1,5 +1,5 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>27</language_string_list_num>
+	<language_string_list_num>31</language_string_list_num>
 	<language_string_list>
 		<[0]>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
@@ -98,16 +98,32 @@
 			<language_string>符号[%s]不是常量</language_string>
 		</[23]>
 		<[24]>
-			<language_string_number>E_LS_IDENTIFIER_NOT_INT32</language_string_number>
-			<language_string>符号[%s]不是有符号32位整数</language_string>
-		</[24]>
-		<[25]>
 			<language_string_number>E_LS_PARAMETER_TYPE_MISMATCH</language_string_number>
 			<language_string>参数类型不匹配</language_string>
-		</[25]>
-		<[26]>
+		</[24]>
+		<[25]>
 			<language_string_number>E_LS_STRING_LENGTH_MUST_BE_DEFINED</language_string_number>
 			<language_string>必须指定string的长度</language_string>
+		</[25]>
+		<[26]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_TYPE</language_string_number>
+			<language_string>符号[%s]不是类型</language_string>
 		</[26]>
+		<[27]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_ENUMDEF</language_string_number>
+			<language_string>符号[%s]不属于枚举类型[%s]</language_string>
+		</[27]>
+		<[28]>
+			<language_string_number>E_LS_OP0_MUST_BE_INTEGER</language_string_number>
+			<language_string>第一个操作数必须为struct[%s]的整形成员</language_string>
+		</[28]>
+		<[29]>
+			<language_string_number>E_LS_OP1_MUST_BE_INTEGER_CONSTANCE</language_string_number>
+			<language_string>第二个操作数必须为整型常量</language_string>
+		</[29]>
+		<[30]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_INTEGER</language_string_number>
+			<language_string>标识符[%s]不是整数</language_string>
+		</[30]>
 	<language_string_list>
 </ST_TD_LANGUAGE_STRING_LIBRARY>

@@ -130,9 +130,9 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
 		goto done;
 	}
-	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_INT32") == 0)
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
 	{
-		*data = E_LS_IDENTIFIER_NOT_INT32;
+		*data = E_LS_IDENTIFIER_NOT_TYPE;
 		goto done;
 	}
 	else if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
@@ -145,7 +145,27 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN
 		*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
 		goto done;
 	}
-		
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_ENUMDEF") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_ENUMDEF;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_OP0_MUST_BE_INTEGER") == 0)
+	{
+		*data = E_LS_OP0_MUST_BE_INTEGER;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_OP1_MUST_BE_INTEGER_CONSTANCE") == 0)
+	{
+		*data = E_LS_OP1_MUST_BE_INTEGER_CONSTANCE;
+		goto done;
+	}
+	else if(strcmp(name, "E_LS_IDENTIFIER_NOT_INTEGER") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_INTEGER;
+		goto done;
+	}
+	
 	
 	
 ERROR_RET:

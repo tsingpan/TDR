@@ -210,7 +210,7 @@ void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
 	symbol->type = EN_HST_FIELD;
 	symbol->body.field = *pn_field;
 
-	//symbols_save(self, pn_field->identifier, ptr, NULL);
+	symbols_save(self, pn_field->identifier, symbol, self->struct_name);
 }
 
 void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)

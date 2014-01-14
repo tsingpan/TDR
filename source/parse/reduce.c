@@ -187,3 +187,14 @@ void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tchar *ke
 
 	current->comment = *comment;
 }
+
+void dp_reduce_Field(PARSER *self, ST_FIELD *current, const ST_CONDITION *condition, const ST_TYPE *type
+					 , const tchar *identifier, const ST_ARGUMENTS *args, const ST_UNIX_COMMENT *comment)
+{
+	current->condition = *condition;
+	current->type = *type;
+	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
+	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	current->args = *args;
+	current->comment = *comment;
+}

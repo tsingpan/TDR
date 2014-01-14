@@ -42,16 +42,17 @@ void dp_reduce_Value_tok_double(PARSER *self, ST_VALUE* current, const double d)
 
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const char* str);
 
-
 void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const tchar *identifier);
 
 void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tchar *identifier);
 
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *identifier);
 
-
 void dp_reduce_Union(PARSER *self, ST_UNION *current, const tchar *identifier, const ST_Parameters *parameters);
 
 void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier, const ST_UNIX_COMMENT *comment);
+
+void dp_reduce_Field(PARSER *self, ST_FIELD *current, const ST_CONDITION *condition, const ST_TYPE *type
+					 , const tchar *identifier, const ST_ARGUMENTS *args, const ST_UNIX_COMMENT *comment);
 
 #endif //_H_REDUCE

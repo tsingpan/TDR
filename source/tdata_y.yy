@@ -220,8 +220,6 @@ EnumDef :
 		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};
 
-
-	
 Union :
 	tok_union tok_identifier
 	{
@@ -236,8 +234,6 @@ Union :
 	}
 	'{' UnionFieldList '}' ';'
 	{
-		dp_check_Union(GET_SELF, &yylloc, $2, &$4, &GET_DEFINITION.definition.de_union.union_field_list);
-
 		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
 
 		symbols_add_Union(&GET_SELF->symbols, &GET_DEFINITION.definition.de_union);
@@ -308,6 +304,8 @@ Parameter:
 Struct : 
 	tok_struct tok_identifier
 	{
+		dp_check_Struct_tok_identifier(GET_SELF, &yylloc, $2);
+		GET_SELF->symbols.struct_name = $2;
 	}
 	'{' FieldList '}' ';'
 	{
@@ -331,38 +329,38 @@ FieldList:
 		GET_FIELD_LIST.field_list_num = 1;
 	};
 
-//只允许类型为union的成员， 传递一个类型为枚举的实际参数， 并且枚举类型要和形式参数匹配
 Field : 
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
-		$$.condition = $1;
-		$$.type = $2;
-		
-		strncpy($$.identifier, $3, TLIBC_MAX_IDENTIFIER_LENGTH);
-		$$.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-		$$.args = $4;
-		$$.comment = $6;
+		dp_check_Field(GET_SELF, &yylloc, &$1, &$2, $3, &$4);
 
-		dp_check_Field(GET_SELF, &yylloc, &$$);
+		dp_reduce_Field(GET_SELF, &$$, &$1, &$2, $3, &$4, &$6);		
+		
 		symbols_add_Field(&GET_SELF->symbols, &$$);
 	};
 	
 Condition : 
-	tok_if 	'(' Value '&' Value	')'	
+	tok_if 	'(' tok_identifier '&' Value	')'	
 	{
-		$$.op0 = $3;
+		strncpy($$.op0, $3, TLIBC_MAX_IDENTIFIER_LENGTH);
+		$$.op0[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+
 		$$.oper = E_EO_AND;
 		$$.op1 = $5;
 	}
-|	tok_if 	'(' Value tok_equal Value	')'	
+|	tok_if 	'(' tok_identifier tok_equal Value	')'	
 	{
-		$$.op0 = $3;
+		strncpy($$.op0, $3, TLIBC_MAX_IDENTIFIER_LENGTH);
+		$$.op0[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+
 		$$.oper = E_EO_EQUAL;
 		$$.op1 = $5;
 	}
-|	tok_if '(' Value tok_unequal Value ')'
+|	tok_if '(' tok_identifier tok_unequal Value ')'
 	{
-		$$.op0 = $3;
+		strncpy($$.op0, $3, TLIBC_MAX_IDENTIFIER_LENGTH);
+		$$.op0[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+
 		$$.oper = E_EO_UNEQUAL;
 		$$.op1 = $5;
 	}
@@ -502,6 +500,8 @@ Value :
 	}
 |	tok_identifier
 	{
+		dp_check_Value_tok_identifier(GET_SELF, &yylloc, $1);
+
 		dp_reduce_Value_tok_identifier(GET_SELF, &$$, $1);
 	}
 |	tok_count '(' tok_identifier ')'
