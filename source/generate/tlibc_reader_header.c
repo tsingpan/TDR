@@ -29,6 +29,9 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_print(super, "#define _H_%s\n", super->document_name);
 	generator_print(super, "\n");
 	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include \"protocol/tlibc_abstract_reader.h\"\n");
+	generator_print(super, "#include \"lib/tlibc_error_code.h\"\n");
+	generator_print(super, "#include \"tdata/tdata_types.h\"\n");
 	
 	//包含types的头文件
 	strncpy(types_header, file_name, MAX_PACKAGE_NAME_LENGTH);

@@ -416,6 +416,7 @@ void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_
 	{
 		scanner_error(&self->scanner, yylloc, E_LS_TOO_MANY_MEMBERS, MAX_FIELD_LIST_NUM);
 	}
+
 }
 
 void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *condition, const ST_TYPE *type
@@ -464,9 +465,15 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *con
 			scanner_error(&self->scanner, yylloc, E_LS_OP1_MUST_BE_INTEGER_CONSTANCE);
 		}
 	}
-
+	if(type->type == E_SNT_CONTAINER)
+	{
+		assert(type->ct.ct == E_CT_VECTOR);
+		if(strlen(identifier) + 4 >= TLIBC_MAX_IDENTIFIER_LENGTH)
+		{
+			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TLIBC_MAX_IDENTIFIER_LENGTH - 4);
+		}
+	}
 	//todo缺少对于vector中string类型的判断
-
 	if((type->type == E_SNT_SIMPLE) && (type->st.st == E_ST_STRING))
 	{
 		const SYMBOL* symbol_length;

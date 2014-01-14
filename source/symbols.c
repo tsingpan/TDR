@@ -6,6 +6,8 @@
 #include "platform/tlibc_platform.h"
 #include "lib/tlibc_hash.h"
 
+#include <assert.h>
+
 void symbols_init(SYMBOLS *self)
 {
 	tlibc_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
@@ -205,11 +207,36 @@ void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)
 
 void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
 {
-	SYMBOL *symbol = symbols_alloc(self);
+	SYMBOL *symbol = NULL;
 
+	//如果是数据， 那么构造出一个计数器变量
+	if(pn_field->type.type == E_SNT_CONTAINER)
+	{
+		ST_FIELD list_num;
+		assert(pn_field->type.ct.ct == E_CT_VECTOR);
+		list_num.condition.oper = E_EO_NON;
+
+		list_num.type.type = E_SNT_SIMPLE;
+		list_num.type.st.st = E_ST_UINT16;
+
+		//这里的标识符长度已经检查过了， 不会出界
+		snprintf(list_num.identifier, TLIBC_MAX_IDENTIFIER_LENGTH, "%s_num", pn_field->identifier);
+		list_num.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		
+
+		list_num.args.arg_list_num = 0;
+		list_num.comment.text[0] = 0;
+
+
+		symbol = symbols_alloc(self);
+		symbol->type = EN_HST_FIELD;
+		symbol->body.field = list_num;
+		symbols_save(self, list_num.identifier, symbol, self->struct_name);
+	}
+
+	symbol = symbols_alloc(self);
 	symbol->type = EN_HST_FIELD;
 	symbol->body.field = *pn_field;
-
 	symbols_save(self, pn_field->identifier, symbol, self->struct_name);
 }
 
