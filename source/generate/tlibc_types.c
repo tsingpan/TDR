@@ -1,6 +1,7 @@
 #include "generate/tlibc_types.h"
 #include "generator.h"
 #include "version.h"
+#include "symbols.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -228,9 +229,9 @@ static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *defini
 	}
 }
 
-void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self)
+void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const SYMBOLS *symbols)
 {
-	generator_init(&self->super);
+	generator_init(&self->super, symbols);
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;

@@ -72,12 +72,12 @@ void symbols_init(SYMBOLS *self);
 
 void symbols_clear(SYMBOLS *self);
 
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
+const SYMBOL* symbols_search(const SYMBOLS *self, const char* name, const char* preffix);
 
 void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char* preffix);
 
 
-const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
+const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
 
 const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value);
 

@@ -5,11 +5,13 @@
 
 #include "platform/tlibc_platform.h"
 #include "error.h"
+#include "symbols.h"
 
 #include "definition.h"
 typedef struct _GENERATOR GENERATOR;
 struct _GENERATOR
 {
+	const SYMBOLS *symbols;
 	FILE* fout;
 	char document_name[TLIBC_MAX_FILE_PATH_LENGTH];
 
@@ -18,7 +20,7 @@ struct _GENERATOR
 	TD_ERROR_CODE (*on_definition)(GENERATOR *self, const ST_DEFINITION *definition);
 };
 
-void generator_init(GENERATOR *self);
+void generator_init(GENERATOR *self, const SYMBOLS *symbols);
 
 TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix);
 

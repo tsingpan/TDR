@@ -2,6 +2,7 @@
 #define _H_TLIBC_TYPES
 
 #include "platform/tlibc_platform.h"
+#include "symbols.h"
 
 #include "generator.h"
 
@@ -13,6 +14,6 @@ struct _TLIBC_TYPES_GENERATOR
 
 #define TLIBC_TYPES_SUFFIX "_types.h"
 
-void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self);
+void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const SYMBOLS *symbols);
 
 #endif//_H_TLIBC_TYPES

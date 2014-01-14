@@ -7,8 +7,9 @@
 #include <direct.h>
 #include <stdarg.h>
 
-void generator_init(GENERATOR *self)
+void generator_init(GENERATOR *self, const SYMBOLS *symbols)
 {
+	self->symbols = symbols;
 	self->fout = NULL;
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
@@ -248,6 +249,8 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 		generator_print(self, "tuint64");
 		return E_TD_NOERROR;
 	case E_ST_STRING:
+		generator_print(self, "tstring");
+		return E_TD_NOERROR;
 	case E_ST_CHAR:
 		generator_print(self, "tchar");
 		return E_TD_NOERROR;

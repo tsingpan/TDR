@@ -52,6 +52,7 @@ int main(tint32 argc, char **argv)
 	language_string_library_init(&language_string_library);
 	g_language_string_library = &language_string_library;
 
+	parser_init(&parser);
 	for (i = 1; i < argc; ++i)
 	{
 		char* arg;
@@ -96,26 +97,26 @@ int main(tint32 argc, char **argv)
 			arg = argv[++i];
 			if(strcmp(arg, "tlibc") == 0)
 			{
-				tlibc_types_generator_init(&tlibc_types_generator);
+				tlibc_types_generator_init(&tlibc_types_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 
-				tlibc_writer_generator_init(&tlibc_reader_generator);
+				tlibc_writer_generator_init(&tlibc_reader_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_generator.super;
 
-				tlibc_reader_header_generator_init(&tlibc_reader_header_generator);
+				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
 			else if(strcmp(arg, "tlibc_types") == 0)
 			{
-				tlibc_types_generator_init(&tlibc_types_generator);
+				tlibc_types_generator_init(&tlibc_types_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 			}
 			else if(strcmp(arg, "tlibc_reader") == 0)
 			{
-				tlibc_writer_generator_init(&tlibc_reader_generator);
+				tlibc_writer_generator_init(&tlibc_reader_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_generator.super;
 
-				tlibc_reader_header_generator_init(&tlibc_reader_header_generator);
+				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
 		}		
@@ -125,7 +126,7 @@ int main(tint32 argc, char **argv)
 		}
 	}
 
-	parser_init(&parser);
+	
 
 	for(; i < argc; ++i)
 	{

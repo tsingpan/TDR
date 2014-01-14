@@ -194,7 +194,7 @@ TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, ST_TD_L
 	if(read_EN_TD_LANGUAGE_STRING(self, &data->language_string_number) != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(read_field_end(self, "language_string_number") != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(read_field_begin(self, "language_string") != E_TLIBC_NOERROR) goto ERROR_RET;
-	if(read_string(self, data->language_string, TD_MAX_LANGUAGE_STRING_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
+	if(read_tstring(self, data->language_string, TD_MAX_LANGUAGE_STRING_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(read_field_end(self, "language_string") != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(read_struct_end(self, "ST_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
 	return E_TLIBC_NOERROR;

@@ -1,6 +1,6 @@
 #include "generate/tlibc_reader_header.h"
 #include "generate/tlibc_types.h"
-
+#include "symbols.h"
 #include "generator.h"
 #include "version.h"
 
@@ -92,15 +92,6 @@ static TD_ERROR_CODE _on_union(TLIBC_READER_HEADER_GENERATOR *self, const ST_UNI
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_comment(TLIBC_READER_HEADER_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
-{
-	if(de_unix_comment->text[0])
-	{
-		generator_print(&self->super, "//%s\n", de_unix_comment->text);
-	}
-	return E_TD_NOERROR;
-}
-
 static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *definition)
 {
 	TLIBC_READER_HEADER_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_READER_HEADER_GENERATOR, super);
@@ -119,15 +110,15 @@ static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *defini
 		case E_DT_TYPEDEF:
 			return E_TD_NOERROR;
 		case E_DT_UNIX_COMMENT:
-			return _on_comment(self, &definition->definition.de_unix_comment);
+			return E_TD_NOERROR;
 		default:
 			return E_TD_ERROR;
 	}
 }
 
-void tlibc_reader_header_generator_init(TLIBC_READER_HEADER_GENERATOR *self)
+void tlibc_reader_header_generator_init(TLIBC_READER_HEADER_GENERATOR *self, const SYMBOLS *symbols)
 {
-	generator_init(&self->super);
+	generator_init(&self->super, symbols);
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;

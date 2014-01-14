@@ -46,11 +46,11 @@ void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char *p
 	tlibc_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
 }
 
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
+const SYMBOL* symbols_search(const SYMBOLS *self, const char* name, const char* preffix)
 {
 	SYMBOL *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
-	tlibc_hash_head_t *ele;
+	const tlibc_hash_head_t *ele;
 	tuint32 key_len;
 
 	if(preffix)
@@ -76,7 +76,7 @@ ERROR_RET:
 	return NULL;
 }
 
-const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type)
+const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type)
 {
 	if(sn_type->st == E_ST_REFER)
 	{
