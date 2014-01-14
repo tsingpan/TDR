@@ -2,7 +2,10 @@
 #define _H_SYMBOLS
 
 #include "definition.h"
-#include "datrie/trie.h"
+
+#include "platform/tlibc_platform.h"
+
+#include "lib/tlibc_hash.h"
 
 typedef enum _SYMBOL_TYPE
 {
@@ -34,16 +37,25 @@ typedef union _SYMBOL_BODY
 	tuint32 field_list_num;
 }SYMBOL_BODY;
 
+#define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_IDENTIFIER_LENGTH * 2
 typedef struct _SYMBOL
 {
+	tlibc_hash_head_t hash_head;
+	char key[MAX_SYMBOL_KEY_LENGTH];
+	tuint32 key_len;
+
+
 	SYMBOL_TYPE type;
 	SYMBOL_BODY body;
 }SYMBOL;
 
 #define MAX_SYMBOL_LIST_NUM 65536
+#define MAX_SYMBOL_BUCKETS 65536
 typedef struct _PARSER_SYMBOLS
 {
-	Trie *symbols;
+	tlibc_hash_bucket_t symbol_buckets[MAX_SYMBOL_BUCKETS];
+	tlibc_hash_t symbols;
+	
 
 	const char *enum_name;
 	const char *union_name;
@@ -57,11 +69,11 @@ typedef struct _PARSER_SYMBOLS
 
 void symbols_init(SYMBOLS *self);
 
-void symbols_fini(SYMBOLS *self);
+void symbols_clear(SYMBOLS *self);
 
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
+SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
 
-void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol, const char* preffix);
+void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char* preffix);
 
 
 const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);

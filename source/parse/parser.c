@@ -12,6 +12,10 @@
 #include <stdarg.h>
 #include "parse/scanner.h"
 
+void parser_init(PARSER *self)
+{
+	symbols_init(&self->symbols);
+}
 
 static void on_document_begin(PARSER *self, const char *file_name)
 {
@@ -36,12 +40,11 @@ static void on_document_end(PARSER *self, const char *file_name)
 tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, tuint32 generator_list_num)
 {
 	tint32 ret;	
-	tuint32 i;
 
 	self->generator_list = generator_list;
 	self->generator_num = generator_list_num;
 
-	symbols_init(&self->symbols);
+	symbols_clear(&self->symbols);
 	scanner_init(&self->scanner);
 
 	ret = scanner_push(&self->scanner, file_name, yycINITIAL);
@@ -65,8 +68,7 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 	ret = tdataparse(&self->scanner);
 	on_document_end(self, file_name);
 	scanner_pop(&self->scanner);
-done:
-	symbols_fini(&self->symbols);
+
 	return E_TD_NOERROR;
 }
 

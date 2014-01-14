@@ -2,27 +2,20 @@
 #include <string.h>
 #include "error.h"
 #include "parse/scanner.h"
-
+#include <stdio.h>
+#include "platform/tlibc_platform.h"
+#include "lib/tlibc_hash.h"
 
 void symbols_init(SYMBOLS *self)
 {
-	AlphaMap *alpha_map = NULL;
-
-	alpha_map = alpha_map_new();
-
-	alpha_map_add_range(alpha_map, 'a', 'z');
-	alpha_map_add_range(alpha_map, 'A', 'Z');
-	alpha_map_add_range(alpha_map, '0', '9');
-	alpha_map_add_range(alpha_map, '_', '_');
-	self->symbols = trie_new(alpha_map);
-	alpha_map_free(alpha_map);
-
+	tlibc_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
 	self->symbol_list_num = 0;
 }
 
-void symbols_fini(SYMBOLS *self)
+void symbols_clear(SYMBOLS *self)
 {
-	trie_free(self->symbols);
+	tlibc_hash_clear(&self->symbols);
+	self->symbol_list_num = 0;
 }
 
 static SYMBOL *symbols_alloc(SYMBOLS *self)
@@ -37,47 +30,46 @@ static SYMBOL *symbols_alloc(SYMBOLS *self)
 	return ret;
 }
 
-void symbols_save(SYMBOLS *self, const char *name, const SYMBOL *symbol, const char *preffix)
+void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char *preffix)
 {
-	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
-
 	if(preffix)
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", preffix, name);
-		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		snprintf(symbol->key, MAX_SYMBOL_KEY_LENGTH, "%s:%s", preffix, name);
 	}
 	else
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s", name);
-		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		snprintf(symbol->key, MAX_SYMBOL_KEY_LENGTH, "%s", name);
 	}
+	symbol->key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
+	symbol->key_len = strlen(symbol->key);
 
-	if(!trie_store_if_absent(self->symbols, global_name, symbol))
-	{
-		scanner_error(NULL, NULL, E_LS_UNKNOW);
-	}
+	tlibc_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
 }
 
-const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
+SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
 {
-	const SYMBOL *symbol;
-	char global_name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	SYMBOL *symbol;
+	char key[MAX_SYMBOL_KEY_LENGTH];
+	tlibc_hash_head_t *ele;
+	tuint32 key_len;
 
 	if(preffix)
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s:%s", preffix, name);
-		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		snprintf(key, MAX_SYMBOL_KEY_LENGTH, "%s:%s", preffix, name);
 	}
 	else
 	{
-		snprintf(global_name, TLIBC_MAX_IDENTIFIER_LENGTH, "%s", name);
-		global_name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-	}	
-	
-	if(!trie_retrieve(self->symbols, global_name, (void**)&symbol))
+		snprintf(key, MAX_SYMBOL_KEY_LENGTH, "%s", name);
+	}
+
+	key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
+	key_len = strlen(key);
+	ele = tlibc_hash_find(&self->symbols, key, key_len);
+	if(ele == NULL)
 	{
 		goto ERROR_RET;
 	}
+	symbol = TLIBC_CONTAINER_OF(ele, SYMBOL, hash_head);
 
 	return symbol;
 ERROR_RET:
