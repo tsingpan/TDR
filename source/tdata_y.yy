@@ -377,16 +377,20 @@ Condition :
 Type :
 	SimpleType
 	{
+		dp_check_Type_SimpleType(GET_SELF, &yylloc, &$1);
+
 		dp_reduce_Type_SimpleType(GET_SELF, &$$, &$1);
 	}
 |	ContainerType
 	{
+		dp_check_Type_ContainerType(GET_SELF, &yylloc, &$1);
+
 		$$ = $1;
 	}	
 
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
-	{
+	{		
 		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, $5);
 	};
 	

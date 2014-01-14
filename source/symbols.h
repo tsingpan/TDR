@@ -71,7 +71,7 @@ void symbols_init(SYMBOLS *self);
 
 void symbols_clear(SYMBOLS *self);
 
-SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
+const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix);
 
 void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char* preffix);
 

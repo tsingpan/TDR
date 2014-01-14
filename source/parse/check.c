@@ -15,7 +15,7 @@ void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* type,
 {
 	if(type->st == E_ST_REFER)
 	{
-		const SYMBOL *symbol = symbols_search(&self->symbols, type->st_refer, hpfalse);
+		const SYMBOL *symbol = symbols_search(&self->symbols, type->st_refer, NULL);
 		if(symbol == NULL)
 		{
 			scanner_error(&self->scanner, yylloc, E_LS_CAN_NOT_FIND_IDENTIFIER, type->st_refer);
@@ -189,6 +189,25 @@ void dp_check_ArgumentList(PARSER *self, const YYLTYPE *yylloc, tuint32 arg_list
 	}
 }
 
+void dp_check_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+{
+	if(simple_type->st == E_ST_REFER)
+	{
+		const SYMBOL *symbol = symbols_search(&self->symbols, simple_type->st_refer, NULL);
+	}
+}
+
+void dp_check_Type_ContainerType(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *container_type)
+{
+
+}
+
+
+void dp_check_ContainerType_tok_t_vector(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier)
+{
+
+}
+
 void dp_check_ParameterList(PARSER *self, const YYLTYPE *yylloc, tuint32 par_list_num)
 {
 	if(par_list_num >= MAX_PARAMETER_NUM)
@@ -284,7 +303,7 @@ void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, 
 
 	if(real_type->st == E_ST_REFER)
 	{
-		const SYMBOL *type_symbol = symbols_search(&self->symbols, real_type->st_refer, hpfalse);
+		const SYMBOL *type_symbol = symbols_search(&self->symbols, real_type->st_refer, NULL);
 		if(type_symbol == NULL)
 		{
 			scanner_error(&self->scanner, yylloc, E_LS_IDENTIFIER_NOT_DEFINED, real_type->st_refer);

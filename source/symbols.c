@@ -46,7 +46,7 @@ void symbols_save(SYMBOLS *self, const char *name, SYMBOL *symbol, const char *p
 	tlibc_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
 }
 
-SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
+const SYMBOL* symbols_search(SYMBOLS *self, const char* name, const char* preffix)
 {
 	SYMBOL *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
@@ -80,7 +80,7 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(SYMBOLS *self, const ST_SIMPLE_TYPE*
 {
 	if(sn_type->st == E_ST_REFER)
 	{
-		const SYMBOL *ptr = symbols_search(self, sn_type->st_refer, hpfalse);
+		const SYMBOL *ptr = symbols_search(self, sn_type->st_refer, NULL);
 		if(ptr == NULL)
 		{
 			return NULL;
@@ -101,7 +101,7 @@ const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		const SYMBOL *ptr = symbols_search(self, sn_value->val.identifier, hpfalse);
+		const SYMBOL *ptr = symbols_search(self, sn_value->val.identifier, NULL);
 		if(ptr == NULL)
 		{
 			return NULL;

@@ -67,8 +67,6 @@ void dp_reduce_SimpleType_tok_identifier(PARSER *self, ST_SIMPLE_TYPE* current, 
 	current->st = E_ST_REFER;
 	strncpy(current->st_refer, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
 	current->st_refer[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-done:
-	return;
 }
 
 void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
@@ -152,7 +150,7 @@ void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, 
 
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *identifier)
 {
-	const SYMBOL *symbols = symbols_search(&self->symbols, identifier, hpfalse);
+	const SYMBOL *symbols = symbols_search(&self->symbols, identifier, NULL);
 
 	current->type = E_SNVT_UINT64;
 	switch(symbols->type)
