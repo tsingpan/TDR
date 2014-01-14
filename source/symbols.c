@@ -169,12 +169,16 @@ done:
 void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
 {
 	SYMBOL *symbol = symbols_alloc(self);
+	SYMBOL *enum_symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_enum_def->val;
+
+	*enum_symbol = *symbol;
 	
-	symbols_save(self, pn_enum_def->identifier, symbol, NULL);	
-	symbols_save(self, pn_enum_def->identifier, symbol, self->enum_name);
+	symbols_save(self, pn_enum_def->identifier, symbol, NULL);
+
+	symbols_save(self, pn_enum_def->identifier, enum_symbol, self->enum_name);
 }
 
 void symbols_add_Parameters(SYMBOLS *self, const ST_Parameters *parameters, const char *identifier)
@@ -201,30 +205,30 @@ void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)
 
 void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
 {
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	SYMBOL *symbol = symbols_alloc(self);
 
-	ptr->type = EN_HST_FIELD;
-	ptr->body.field = *pn_field;
+	symbol->type = EN_HST_FIELD;
+	symbol->body.field = *pn_field;
 
 	//symbols_save(self, pn_field->identifier, ptr, NULL);
 }
 
 void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
 {
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	SYMBOL *symbol = symbols_alloc(self);
 
-	ptr->type = EN_HST_STRUCT;
-	ptr->body.field_list_num = de_struct->field_list.field_list_num;
+	symbol->type = EN_HST_STRUCT;
+	symbol->body.field_list_num = de_struct->field_list.field_list_num;
 
-	symbols_save(self, de_struct->name, ptr, NULL);
+	symbols_save(self, de_struct->name, symbol, NULL);
 }
 
 void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
 {
-	SYMBOL *ptr = (SYMBOL*)malloc(sizeof(SYMBOL));
+	SYMBOL *symbol = symbols_alloc(self);
 
-	ptr->type = EN_HST_UNION;
-	ptr->body.field_list_num = de_union->union_field_list.union_field_list_num;
+	symbol->type = EN_HST_UNION;
+	symbol->body.field_list_num = de_union->union_field_list.union_field_list_num;
 
-	symbols_save(self, de_union->name, ptr, NULL);
+	symbols_save(self, de_union->name, symbol, NULL);
 }

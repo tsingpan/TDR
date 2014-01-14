@@ -44,8 +44,8 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 	self->generator_list = generator_list;
 	self->generator_num = generator_list_num;
 
-	symbols_clear(&self->symbols);
 	scanner_init(&self->scanner);
+	
 
 	ret = scanner_push(&self->scanner, file_name, yycINITIAL);
 
@@ -68,7 +68,7 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 	ret = tdataparse(&self->scanner);
 	on_document_end(self, file_name);
 	scanner_pop(&self->scanner);
-
+	symbols_clear(&self->symbols);
 	return E_TD_NOERROR;
 }
 
