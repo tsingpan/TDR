@@ -11,7 +11,7 @@ struct _TLIBC_READER_HEADER_GENERATOR
 	GENERATOR super;
 };
 
-#define TLIBC_READER_HEADER_SUFFIX "_writer.h"
+#define TLIBC_READER_HEADER_SUFFIX "_reader.h"
 
 void tlibc_reader_header_generator_init(TLIBC_READER_HEADER_GENERATOR *self, const SYMBOLS *symbols);
 

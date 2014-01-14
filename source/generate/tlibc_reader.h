@@ -11,7 +11,7 @@ struct _TLIBC_READER_GENERATOR
 	GENERATOR super;
 };
 
-#define TLIBC_READER_SUFFIX "_writer.c"
+#define TLIBC_READER_SUFFIX "_reader.c"
 
 void tlibc_writer_generator_init(TLIBC_READER_GENERATOR *self, const SYMBOLS *symbols);
 

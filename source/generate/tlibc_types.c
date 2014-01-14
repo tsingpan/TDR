@@ -100,7 +100,14 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 			{
 				generator_print(&self->super, "\ttuint16 %s_num;\n", field_list->field_list[i].identifier);
 				generator_print(&self->super, "\t");
-				generator_print_simple_type(&self->super, &field_list->field_list[i].type.ct.vector_type);
+				if(field_list->field_list[i].type.ct.vector_type.st == E_ST_STRING)
+				{
+					generator_print(&self->super, "tchar");
+				}
+				else
+				{
+					generator_print_simple_type(&self->super, &field_list->field_list[i].type.ct.vector_type);
+				}
 				generator_print(&self->super, " %s", field_list->field_list[i].identifier);				
 				generator_print(&self->super, "[%s]", field_list->field_list[i].type.ct.vector_length);
 				if(field_list->field_list[i].type.ct.vector_type.st == E_ST_STRING)
@@ -113,10 +120,7 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 		{
 			if(field_list->field_list[i].type.st.st == E_ST_STRING)
 			{
-				generator_print(&self->super, "\t");
-				generator_print_simple_type(&self->super, &field_list->field_list[i].type.st);
-				generator_print(&self->super, " %s", field_list->field_list[i].identifier);
-				generator_print(&self->super, "[%s]", field_list->field_list[i].type.st.string_length);
+				generator_print(&self->super, "\ttchar %s[%s]", field_list->field_list[i].identifier, field_list->field_list[i].type.st.string_length);
 			}
 			else
 			{
@@ -155,13 +159,17 @@ static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_
 	tuint32 i;
 	for(i = 0; i < union_field_list->union_field_list_num; ++i)
 	{
-		generator_print(&self->super, "\t");
-		generator_print_simple_type(&self->super, &union_field_list->union_field_list[i].simple_type);
-		generator_print(&self->super, " %s", union_field_list->union_field_list[i].name);
 		if(union_field_list->union_field_list[i].simple_type.st == E_ST_STRING)
 		{
-			generator_print(&self->super, "[%s]", union_field_list->union_field_list[i].simple_type.string_length);
+			generator_print(&self->super, "\ttchar %s[%s]", union_field_list->union_field_list[i].name, union_field_list->union_field_list[i].simple_type.string_length);
 		}
+		else
+		{
+			generator_print(&self->super, "\t");
+			generator_print_simple_type(&self->super, &union_field_list->union_field_list[i].simple_type);
+			generator_print(&self->super, " %s", union_field_list->union_field_list[i].name);
+		}
+		
 		generator_print(&self->super, ";");
 		if(union_field_list->union_field_list[i].comment.text[0])
 		{
