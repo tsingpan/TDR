@@ -5,6 +5,11 @@
 			<language_string_number>E_LS_UNKNOW</language_string_number>
 			<language_string>未知错误</language_string>
 		</[0]>
+		<[22]>
+			<language_string_number>E_LS_IDENTIFIER_NOT_DEFINED</language_string_number>
+			<language_string>符号未定义[%s::%s]</language_string>
+		</[22]>
+
 		<[1]>
 			<language_string_number>E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD</language_string_number>
 			<language_string>不能使用保留字[%s]</language_string>
@@ -89,10 +94,6 @@
 			<language_string_number>E_LS_TOO_MANY_ARGUMENTS</language_string_number>
 			<language_string>实际参数不可以超过[%u]个</language_string>
 		</[21]>
-		<[22]>
-			<language_string_number>E_LS_IDENTIFIER_NOT_DEFINED</language_string_number>
-			<language_string>符号未定义[%s]</language_string>
-		</[22]>
 		<[23]>
 			<language_string_number>E_LS_IDENTIFIER_NOT_CONSTANCE</language_string_number>
 			<language_string>符号[%s]不是常量</language_string>

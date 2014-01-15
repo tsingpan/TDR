@@ -435,6 +435,8 @@ SimpleType:
 	}
 |	tok_identifier
    	{
+		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $1);
+
 		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, $1);
 	}
 |	tok_t_string '<' tok_identifier '>'

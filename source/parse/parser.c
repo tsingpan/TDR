@@ -54,11 +54,11 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 		switch(ret)
 		{
 		case E_TD_SCANNER_CAN_NOT_OPEN_FILE:
-			scanner_error(&self->scanner, NULL, E_LS_CANNOT_OPEN_FILE, file_name);
+			scanner_error(NULL, E_LS_CANNOT_OPEN_FILE, file_name);
 		case E_TD_SCANNER_OUT_OF_MEMORY:
-			scanner_error(&self->scanner, NULL, E_LS_OUT_OF_MEMORY, file_name);			
+			scanner_error(NULL, E_LS_OUT_OF_MEMORY, file_name);			
 		default:
-			scanner_error(&self->scanner, NULL, E_LS_UNKNOW);
+			scanner_error(NULL, E_LS_UNKNOW);
 		}
 		
 	}
@@ -97,11 +97,11 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITI
 			switch(ret)
 			{
 			case E_TD_SCANNER_CAN_NOT_OPEN_FILE:
-				scanner_error(&self->scanner, yylloc, E_LS_CANNOT_OPEN_FILE, file_name);
+				scanner_error(yylloc, E_LS_CANNOT_OPEN_FILE, file_name);
 			case E_TD_SCANNER_OUT_OF_MEMORY:
-				scanner_error(&self->scanner, yylloc, E_LS_OUT_OF_MEMORY, file_name);			
+				scanner_error(yylloc, E_LS_OUT_OF_MEMORY, file_name);			
 			default:
-				scanner_error(&self->scanner, yylloc, E_LS_UNKNOW);
+				scanner_error(yylloc, E_LS_UNKNOW);
 			}
 		}
 	}

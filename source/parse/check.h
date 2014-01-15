@@ -45,4 +45,7 @@ void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *con
 
 //todo改为功能类型的判断效果更好！
 
+//检查符号定义
+void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
 #endif //_H_CHECK

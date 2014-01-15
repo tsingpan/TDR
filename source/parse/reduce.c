@@ -150,7 +150,7 @@ void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, 
 
 void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *identifier)
 {
-	const SYMBOL *symbols = symbols_search(&self->symbols, identifier, NULL);
+	const SYMBOL *symbols = symbols_search(&self->symbols, "", identifier);
 
 	current->type = E_SNVT_UINT64;
 	switch(symbols->type)
