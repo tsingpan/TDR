@@ -239,11 +239,7 @@ Union :
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $2);
 		GET_SELF->symbols.union_name = $2;
 	}
-	Parameters
-	{
-		symbols_add_Parameters(&GET_SELF->symbols, &$4, $2);
-	}
-	'{' UnionFieldList '}' ';'
+	Parameters '{' UnionFieldList '}' ';'
 	{
 		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
 
@@ -581,6 +577,10 @@ Value :
 	}
 |	tok_count '(' tok_identifier ')'
 	{
+		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $3);
+
+		check_identifier_is_type(&GET_SELF->symbols, &yylloc, "", $3);
+
 		dp_reduce_Value_tok_count(GET_SELF, &$$, $3);
 	};
 

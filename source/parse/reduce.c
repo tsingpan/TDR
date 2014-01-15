@@ -159,10 +159,13 @@ void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *ide
 		current->val.ui64 = symbols->body.symbol_enum.enum_def_list_num;
 		break;
 	case EN_HST_STRUCT:
-		current->val.ui64 = symbols->body.symbol_enum.enum_def_list_num;
+		current->val.ui64 = symbols->body.struct_field_list_num;
 		break;
 	case EN_HST_UNION:
-		current->val.ui64 = symbols->body.symbol_enum.enum_def_list_num;
+		current->val.ui64 = symbols->body.union_symbol.union_field_list_num;
+		break;
+	default:
+		current->val.ui64 = 0;
 		break;
 	}
 }

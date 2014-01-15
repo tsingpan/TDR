@@ -158,27 +158,13 @@ void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 	SYMBOL *enum_symbol = symbols_alloc(self);
-
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_enum_def->val;
 
-	*enum_symbol = *symbol;
-	
+
+	*enum_symbol = *symbol;	
 	symbols_save(self, "", pn_enum_def->identifier, symbol);
-
 	symbols_save(self, self->enum_name, pn_enum_def->identifier, enum_symbol);
-}
-
-void symbols_add_Parameters(SYMBOLS *self, const ST_Parameters *parameters, const char *identifier)
-{
-	SYMBOL *symbol = symbols_alloc(self);
-
-	symbol->type = EN_HST_PARAMETER;
-	symbol->body.para = parameters->par_list[0];
-
-	symbols_save(self, identifier, parameters->par_list[0].identifier, symbol);
-
-	self->para = &parameters->par_list[0];
 }
 
 void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)

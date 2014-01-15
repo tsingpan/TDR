@@ -11,12 +11,11 @@ typedef enum _SYMBOL_TYPE
 {
 	EN_HST_VALUE = 0,		//const and enumdef
 	EN_HST_TYPEDEF = 1,
-	EN_HST_PARAMETER = 2,
-	EN_HST_FIELD = 3,
-	EN_HST_UNION_FIELD = 4,
-	EN_HST_ENUM = 5,
-	EN_HST_STRUCT = 6,
-	EN_HST_UNION = 7,
+	EN_HST_FIELD = 2,
+	EN_HST_UNION_FIELD = 3,
+	EN_HST_ENUM = 4,
+	EN_HST_STRUCT = 5,
+	EN_HST_UNION = 6,
 }SYMBOL_TYPE;
 
 typedef struct _ST_SYMBOL_ENUM
@@ -41,7 +40,6 @@ typedef union _SYMBOL_BODY
 	ST_FIELD field;
 	ST_SYMBOL_ENUM symbol_enum;
 
-	ST_Parameter para;		
 	tuint32 struct_field_list_num;
 }SYMBOL_BODY;
 
@@ -84,21 +82,16 @@ const SYMBOL* symbols_search(const SYMBOLS *self, const char* preffix, const cha
 
 void symbols_save(SYMBOLS *self, const char* preffix, const char *name, SYMBOL *symbol);
 
-
+//过滤typedef
 const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
 
+//过滤常量赋值
 const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_value);
+
 
 void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
 
-void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
-
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum);
-
-void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def);
-
-void symbols_add_Parameters(SYMBOLS *self, const ST_Parameters *parameters, const char *identifier);
-
 
 void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field);
 
@@ -107,5 +100,10 @@ void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field);
 void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct);
 
 void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union);
+
+void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def);
+
+void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
+
 
 #endif //_H_SYMBOLS
