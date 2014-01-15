@@ -28,28 +28,23 @@ void init()
 	g_definition.definition.de_const.val.val.i64 = 123321;
 }
 
+TLIBC_XML_READER xml_reader;
 void test_xml()
 {
-	TLIBC_XML_WRITER xml_writer;
-	TLIBC_XML_READER xml_reader;
-	FILE *fout = NULL;
-	FILE *fin = NULL;
+	TLIBC_XML_WRITER xml_writer;	
 	int ret;
 
 	init();
 
 
-	fout = fopen("t.xml", "wb");
-	xml_writer_init(&xml_writer, fout);
+	xml_writer_init(&xml_writer, "t.xml");
 	ret = write_ST_DEFINITION(&xml_writer.super, &g_definition);
-	fclose(fout);
+	xml_writer_fini(&xml_writer);
 
 	memset(&g_definition, 0, sizeof(ST_DEFINITION));
 
-	fin = fopen("t.xml", "rb");
-	xml_reader_init(&xml_reader, fin);
+	xml_reader_init(&xml_reader, "t.xml");
 	ret = read_ST_DEFINITION(&xml_reader.super, &g_definition);
-	fclose(fin);
 }
 
 void test_compact()
