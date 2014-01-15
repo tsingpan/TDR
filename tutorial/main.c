@@ -5,6 +5,8 @@
 #include "protocol/tlibc_xml_writer.h"
 
 #include "definition/definition_types.h"
+#include "definition/definition_writer.h"
+#include "definition/definition_reader.h"
 
 
 #include <string.h>
@@ -32,17 +34,21 @@ void test_xml()
 	TLIBC_XML_READER xml_reader;
 	FILE *fout = NULL;
 	FILE *fin = NULL;
+	int ret;
 
 	init();
 
 
 	fout = fopen("t.xml", "wb");
 	xml_writer_init(&xml_writer, fout);
+	ret = write_ST_DEFINITION(&xml_writer.super, &g_definition);
 	fclose(fout);
 
+	memset(&g_definition, 0, sizeof(ST_DEFINITION));
 
 	fin = fopen("t.xml", "rb");
 	xml_reader_init(&xml_reader, fin);
+	ret = read_ST_DEFINITION(&xml_reader.super, &g_definition);
 	fclose(fin);
 }
 

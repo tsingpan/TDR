@@ -15,10 +15,14 @@ INCLUDE_DIRECTORIES(
 	${GEN_PATH}/
 	)
 
-set(TDATA_OUTPUTS ${GEN_PATH}/common/common_types.h ${GEN_PATH}/common/common_reader.c ${GEN_PATH}/common/common_reader.h)
+set(TDATA_OUTPUTS 
+	${GEN_PATH}/common/common_types.h ${GEN_PATH}/common/common_reader.c ${GEN_PATH}/common/common_reader.h 
+	${GEN_PATH}/common/common_writer.c ${GEN_PATH}/common/common_writer.h
+	${GEN_PATH}/definition/definition_types.h ${GEN_PATH}/definition/definition_reader.c ${GEN_PATH}/definition/definition_reader.h 
+	${GEN_PATH}/definition/definition_writer.c ${GEN_PATH}/definition/definition_writer.h
+	)
 
 add_custom_command(OUTPUT ${TDATA_OUTPUTS}
-        COMMAND cmake -E make_directory ${GEN_PATH}
 	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc common/common.td definition/definition.td
 )
 

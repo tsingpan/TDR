@@ -61,26 +61,24 @@ static void _on_enum_name(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 	tuint32 i;
 
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "static TLIBC_ERROR_CODE read_%s_name(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
+	generator_print(&self->super, "static TLIBC_ERROR_CODE write_%s_name(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];\n");
-	generator_print(&self->super, "\tif(read_enum_name(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-
+	generator_print(&self->super, "\tswitch(*data)\n");
+	generator_print(&self->super, "\t{\n");
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{
-		generator_print(&self->super, "\tif(strcmp(name, \"%s\") == 0)\n", de_enum->enum_def_list[i].identifier);
-		generator_print(&self->super, "\t{\n");
-		generator_print(&self->super, "\t\t*data = %s;\n", de_enum->enum_def_list[i].identifier);
-		generator_print(&self->super, "\t\tgoto done;\n");
-		generator_print(&self->super, "\t}\n");
+		generator_print(&self->super, "\tcase %s:\n", de_enum->enum_def_list[i].identifier);
+		generator_print(&self->super, "\t\tif(write_enum_name(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->enum_def_list[i].identifier);
+		generator_print(&self->super, "\t\tbreak;\n");
 	}
+	generator_print(&self->super, "\t}\n");
 
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\n");
+	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
 	generator_print(&self->super, "ERROR_RET:\n");
 	generator_print(&self->super, "\treturn E_TLIBC_ERROR;\n");
-	generator_print(&self->super, "done:\n");
-	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
+	
 
 	generator_print(&self->super, "}\n");
 }
@@ -88,24 +86,24 @@ static void _on_enum_name(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 static void _on_enum_number(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "static TLIBC_ERROR_CODE read_%s_number(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
+	generator_print(&self->super, "static TLIBC_ERROR_CODE write_%s_number(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\treturn read_enum_number(self, (tint32*)data);\n");
+	generator_print(&self->super, "\treturn write_enum_number(self, (tint32*)data);\n");
 	generator_print(&self->super, "}\n");
 }
 
 static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 {	
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "TLIBC_ERROR_CODE read_%s(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
+	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\tif(read_%s_name(self, data) == E_TLIBC_NOERROR) goto done;\n", de_enum->name);
-	generator_print(&self->super, "\tif(read_%s_number(self, data) == E_TLIBC_NOERROR) goto done;\n", de_enum->name);
+	generator_print(&self->super, "\tif(write_%s_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
+	generator_print(&self->super, "\tif(write_%s_number(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\n");
+	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
+	generator_print(&self->super, "ERROR_RET:\n");
 	generator_print(&self->super, "\treturn E_TLIBC_ERROR;\n");	
-	generator_print(&self->super, "done:\n");
-	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");	
 	generator_print(&self->super, "}\n");
 
 
@@ -117,10 +115,10 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 	tuint32 i;
 	generator_print(&self->super, "\n");
 
-	generator_print(&self->super, "TLIBC_ERROR_CODE read_%s(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_struct->name, de_struct->name);
+	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_struct->name, de_struct->name);
 
 	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\tif(read_struct_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->name);
+	generator_print(&self->super, "\tif(write_struct_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->name);
 	for(i = 0; i < de_struct->field_list.field_list_num; ++i)
 	{
 		generator_print(&self->super, "\n");
@@ -156,26 +154,26 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
-				generator_print(&self->super, "\t\tif(read_field_begin(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\tif(read_tuint16(self, &data->%s_num) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\tif(read_field_end(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_tuint16(self, &data->%s_num) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_field_end(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 
 
-				generator_print(&self->super, "\t\tif(read_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\t{\n");
 				generator_print(&self->super, "\t\t\ttuint32 i;\n");
-				generator_print(&self->super, "\t\t\tif(read_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\tif(write_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				generator_print(&self->super, "\t\t\tfor(i = 0; i < %s; ++i)\n", de_struct->field_list.field_list[i].type.ct.vector_length);
 				generator_print(&self->super, "\t\t\t{\n");
 				generator_print(&self->super, "\t\t\t\tif(i == data->%s_num) break;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\t\t\tif(read_vector_item_begin(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\t\tif(write_vector_item_begin(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				if(vector_type->st == E_ST_STRING)
 				{
-					generator_print(&self->super, "\t\tif(read_tstring(self, data->%s, %s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
+					generator_print(&self->super, "\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				}
 				else
 				{
-					generator_print(&self->super, "\t\t\t\tif(read_");
+					generator_print(&self->super, "\t\t\t\tif(write_");
 					generator_print_simple_type(&self->super, vector_type);
 					generator_print(&self->super, "(self, &data->%s[i]", de_struct->field_list.field_list[i].identifier);
 					if(de_struct->field_list.field_list[i].args.arg_list_num > 0)
@@ -184,23 +182,23 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 					}
 					generator_print(&self->super, ") != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				}
-				generator_print(&self->super, "\t\t\t\tif(read_vector_item_end(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\t\tif(write_vector_item_end(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				generator_print(&self->super, "\t\t\t}\n");
-				generator_print(&self->super, "\t\t\tif(read_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\tif(write_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				generator_print(&self->super, "\t\t}\n");
-				generator_print(&self->super, "\t\tif(read_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 			}
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
-			generator_print(&self->super, "\t\tif(read_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+			generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 			if(de_struct->field_list.field_list[i].type.st.st == E_ST_STRING)
 			{
-				generator_print(&self->super, "\t\tif(read_tstring(self, data->%s, %s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier, de_struct->field_list.field_list[i].type.st.string_length);
+				generator_print(&self->super, "\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 			}
 			else
 			{
-				generator_print(&self->super, "\t\tif(read_");
+				generator_print(&self->super, "\t\tif(write_");
 				generator_print_simple_type(&self->super, &de_struct->field_list.field_list[i].type.st);
 				generator_print(&self->super, "(self, &data->%s", de_struct->field_list.field_list[i].identifier);
 				if(de_struct->field_list.field_list[i].args.arg_list_num > 0)
@@ -209,13 +207,13 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 				}
 				generator_print(&self->super, ") != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 			}
-			generator_print(&self->super, "\t\tif(read_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+			generator_print(&self->super, "\t\tif(write_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 		}
 
 		generator_print(&self->super, "\t}\n");
 	}
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "\tif(read_struct_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->name);
+	generator_print(&self->super, "\tif(write_struct_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->name);
 
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
@@ -232,7 +230,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 
 	generator_print(&self->super, "\n");
 
-	generator_print(&self->super, "TLIBC_ERROR_CODE read_%s(TLIBC_ABSTRACT_READER *self, %s *data, %s selector)\n", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
+	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data, %s selector)\n", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
 	generator_print(&self->super, "{\n");
 	generator_print(&self->super, "\tswitch(selector)\n");
 	generator_print(&self->super, "\t{\n");
@@ -241,11 +239,11 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 		generator_print(&self->super, "\tcase %s:\n", de_union->union_field_list.union_field_list[i].key);
 		if(de_union->union_field_list.union_field_list[i].simple_type.st == E_ST_STRING)
 		{
-			generator_print(&self->super, "\t\tif(read_tstring(self, data->%s, %s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name, de_union->union_field_list.union_field_list[i].simple_type.string_length);
+			generator_print(&self->super, "\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
 		}
 		else
 		{
-			generator_print(&self->super, "\t\tif(read_");
+			generator_print(&self->super, "\t\tif(write_");
 			generator_print_simple_type(&self->super, &de_union->union_field_list.union_field_list[i].simple_type);
 			generator_print(&self->super, "(self, &data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
 		}
