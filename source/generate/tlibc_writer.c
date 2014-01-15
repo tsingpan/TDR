@@ -154,26 +154,26 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
+				generator_print(&self->super, "\t\ttuint32 i;\n");
+				generator_print(&self->super, "\t\tif(write_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+
 				generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\tif(write_tuint16(self, &data->%s_num) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\tif(write_field_end(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 
 
-				generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);				
+				generator_print(&self->super, "\t\tfor(i = 0; i < %s; ++i)\n", de_struct->field_list.field_list[i].type.ct.vector_length);
 				generator_print(&self->super, "\t\t{\n");
-				generator_print(&self->super, "\t\t\ttuint32 i;\n");
-				generator_print(&self->super, "\t\t\tif(write_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-				generator_print(&self->super, "\t\t\tfor(i = 0; i < %s; ++i)\n", de_struct->field_list.field_list[i].type.ct.vector_length);
-				generator_print(&self->super, "\t\t\t{\n");
-				generator_print(&self->super, "\t\t\t\tif(i == data->%s_num) break;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\t\t\tif(write_vector_item_begin(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\tif(i == data->%s_num) break;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\t\tif(write_vector_item_begin(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				if(vector_type->st == E_ST_STRING)
 				{
-					generator_print(&self->super, "\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+					generator_print(&self->super, "\t\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				}
 				else
 				{
-					generator_print(&self->super, "\t\t\t\tif(write_");
+					generator_print(&self->super, "\t\t\tif(write_");
 					generator_print_simple_type(&self->super, vector_type);
 					generator_print(&self->super, "(self, &data->%s[i]", de_struct->field_list.field_list[i].identifier);
 					if(de_struct->field_list.field_list[i].args.arg_list_num > 0)
@@ -182,11 +182,11 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 					}
 					generator_print(&self->super, ") != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				}
-				generator_print(&self->super, "\t\t\t\tif(write_vector_item_end(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-				generator_print(&self->super, "\t\t\t}\n");
-				generator_print(&self->super, "\t\t\tif(write_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-				generator_print(&self->super, "\t\t}\n");
+				generator_print(&self->super, "\t\t\tif(write_vector_item_end(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t}\n");				
 				generator_print(&self->super, "\t\tif(write_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+
+				generator_print(&self->super, "\t\tif(write_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 			}
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)

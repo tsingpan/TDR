@@ -63,7 +63,6 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
 	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
 	TLIBC_XML_READER xml_reader;
-	FILE* fin_xml;
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
 	char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
@@ -75,22 +74,15 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	}
 	self->language_string_list_num = 0;
 	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
-	fin_xml = fopen(language_path, "r");
-	if(fin_xml == NULL)
+
+	xml_reader_init(&xml_reader, language_path);
+	if(read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
 	{
 		ret = E_TD_ERROR;
 		goto done;
 	}
-
-	xml_reader_init(&xml_reader, fin_xml);
-	if(read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
-	{
-		ret = E_TD_ERROR;
-		goto f_done;
-	}	
 	sort_library(self);
-f_done:
-	fclose(fin_xml);
+
 done:
 	return ret;
 }
