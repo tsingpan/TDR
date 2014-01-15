@@ -77,16 +77,9 @@ void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_T
 
 void dp_reduce_Value_tok_identifier(PARSER *self, ST_VALUE* current, const tchar *sn_identifier)
 {
-	tuint32 data;
-	tuint32 i;
-
 	current->type = E_SNVT_IDENTIFIER;
 	strncpy(current->val.identifier, sn_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
 	current->val.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
-
-	
-done:
-	return;
 }
 
 void dp_reduce_Value_tok_char(PARSER *self, ST_VALUE* current, const tchar pn_char)

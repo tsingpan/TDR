@@ -43,7 +43,7 @@ void symbols_save(SYMBOLS *self, const char *preffix, const char *name, SYMBOL *
 
 const SYMBOL* symbols_search(const SYMBOLS *self, const char* preffix, const char* name)
 {
-	SYMBOL *symbol;
+	const SYMBOL *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
 	const tlibc_hash_head_t *ele;
 	tuint32 key_len;
@@ -52,12 +52,12 @@ const SYMBOL* symbols_search(const SYMBOLS *self, const char* preffix, const cha
 
 	key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
 	key_len = strlen(key);
-	ele = tlibc_hash_find(&self->symbols, key, key_len);
+	ele = tlibc_hash_find_const(&self->symbols, key, key_len);
 	if(ele == NULL)
 	{
 		goto ERROR_RET;
 	}
-	symbol = TLIBC_CONTAINER_OF(ele, SYMBOL, hash_head);
+	symbol = TLIBC_CONTAINER_OF(ele, const SYMBOL, hash_head);
 
 	return symbol;
 ERROR_RET:
