@@ -85,7 +85,7 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE
 	return sn_type;
 }
 
-const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value)
+const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
@@ -231,7 +231,7 @@ void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
 	SYMBOL *symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_STRUCT;
-	symbol->body.field_list_num = de_struct->field_list.field_list_num;
+	symbol->body.struct_field_list_num = de_struct->field_list.field_list_num;
 
 	symbols_save(self, "", de_struct->name, symbol);
 }
@@ -241,7 +241,8 @@ void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
 	SYMBOL *symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_UNION;
-	symbol->body.field_list_num = de_union->union_field_list.union_field_list_num;
+	symbol->body.union_symbol.para = de_union->parameters;
+	symbol->body.union_symbol.union_field_list_num = de_union->union_field_list.union_field_list_num;
 
 	symbols_save(self, "", de_union->name, symbol);
 }

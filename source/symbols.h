@@ -26,15 +26,23 @@ typedef struct _ST_SYMBOL_ENUM
 	tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
 }ST_SYMBOL_ENUM;
 
+typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
+struct _ST_UNION_SYMBOL
+{
+	ST_Parameters para;
+	tuint32 union_field_list_num;
+};
+
 typedef union _SYMBOL_BODY
 {
 	ST_TYPEDEF type;
 	ST_VALUE val;
-
-	ST_Parameter para;
+	ST_UNION_SYMBOL union_symbol;
 	ST_FIELD field;
 	ST_SYMBOL_ENUM symbol_enum;
-	tuint32 field_list_num;
+
+	ST_Parameter para;		
+	tuint32 struct_field_list_num;
 }SYMBOL_BODY;
 
 #define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_IDENTIFIER_LENGTH * 2
@@ -79,7 +87,7 @@ void symbols_save(SYMBOLS *self, const char* preffix, const char *name, SYMBOL *
 
 const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
 
-const ST_VALUE* symbols_get_real_value(SYMBOLS *self, const ST_VALUE* sn_value);
+const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_value);
 
 void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
 

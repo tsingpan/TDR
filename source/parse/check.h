@@ -6,46 +6,48 @@
 
 #include "parse/parser.h"
 
-void dp_check_Import(PARSER *self, const YYLTYPE *yylloc, const char* str);
 
-void dp_check_Typedef(PARSER *self, const YYLTYPE *yylloc, ST_SIMPLE_TYPE* type, const tchar *tok_identifier);
-
-void dp_check_Const(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const tchar *id, const ST_VALUE *val);
-
-void dp_check_Enum(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier);
-
-void dp_check_EnumDefList(PARSER *self, const YYLTYPE *yylloc, tuint32 enum_def_list_num);
-
-void dp_check_EnumDef(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier, const ST_VALUE *st_value);
-
-void dp_check_Struct_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier);
-
-void dp_check_Union_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *identifier);
-
-void dp_check_Union_Parameters(PARSER *self, const YYLTYPE *yylloc, const ST_Parameters *parameters);
-
-void dp_check_UnionFieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 union_field_list_num);
-
-void dp_check_ParameterList(PARSER *self, const YYLTYPE *yylloc, tuint32 par_list_num);
-
-void dp_check_ArgumentList(PARSER *self, const YYLTYPE *yylloc, tuint32 arg_list_num);
-
-void dp_check_Type_SimpleType(PARSER *self, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
-
-void dp_check_Type_ContainerType(PARSER *self, const YYLTYPE *yylloc, const ST_TYPE *container_type);
-
-void dp_check_Value_tok_identifier(PARSER *self, const YYLTYPE *yylloc, const tchar *sn_identifier);
-
-void dp_check_UnionField(PARSER *self, const YYLTYPE *yylloc, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier);
-
-void dp_check_FieldList(PARSER *self, const YYLTYPE *yylloc, tuint32 field_list_num);
-
-void dp_check_Field(PARSER *self, const YYLTYPE *yylloc, const ST_CONDITION *condition, const ST_TYPE *type
-					 , const tchar *identifier, const ST_ARGUMENTS *args);
-
-//todo改为功能类型的判断效果更好！
 
 //检查符号定义
 void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查符号未定义
+void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查符号是否指向一个类型enum, struct, union
+void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查符号是否指向一个值value, enumdef
+void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查符号是否指向一个正整数常量
+void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查string长度定义
+void check_string_length_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type);
+
+//检查类型是整数
+void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
+
+//检查值是整数
+void check_integer_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_VALUE *value);
+
+//检查符号指向一个整数类型的struct成员
+void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+
+//检查实际参数和形式参数是否匹配
+void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments);
+
+//检查字符串长度是否超过限制
+void check_strlen_too_long(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit);
+
+//检查类型和值是否匹配
+void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val);
+
+//检查不包含重复值的枚举类型
+void check_simpletype_is_enum_with_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
+
+//检查字符串是否相等
+void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *src, const tchar* dst);
 
 #endif //_H_CHECK

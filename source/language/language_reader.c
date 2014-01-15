@@ -134,14 +134,14 @@ static TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *s
 		*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
 		goto done;
 	}
-	if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
+	if(strcmp(name, "E_LS_ARGUMENT_TYPE_MISMATCH") == 0)
 	{
-		*data = E_LS_PARAMETER_TYPE_MISMATCH;
+		*data = E_LS_ARGUMENT_TYPE_MISMATCH;
 		goto done;
 	}
-	if(strcmp(name, "E_LS_STRING_LENGTH_MUST_BE_DEFINED") == 0)
+	if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
 	{
-		*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
+		*data = E_LS_STRING_LENGTH_NOT_DEFINED;
 		goto done;
 	}
 	if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
@@ -159,16 +159,22 @@ static TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *s
 		*data = E_LS_OP0_MUST_BE_INTEGER;
 		goto done;
 	}
-	if(strcmp(name, "E_LS_OP1_MUST_BE_INTEGER_CONSTANCE") == 0)
+	if(strcmp(name, "E_LS_NOT_INTEGER_VALUE") == 0)
 	{
-		*data = E_LS_OP1_MUST_BE_INTEGER_CONSTANCE;
+		*data = E_LS_NOT_INTEGER_VALUE;
 		goto done;
 	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_INTEGER") == 0)
+	if(strcmp(name, "E_LS_NOT_INTEGER_TYPE") == 0)
 	{
-		*data = E_LS_IDENTIFIER_NOT_INTEGER;
+		*data = E_LS_NOT_INTEGER_TYPE;
 		goto done;
 	}
+	if(strcmp(name, "E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER") == 0)
+	{
+		*data = E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER;
+		goto done;
+	}
+	
 
 
 ERROR_RET:
