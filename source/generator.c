@@ -210,10 +210,10 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 		generator_print(self, "%llu", val->val.ui64);
 		return E_TD_NOERROR;
 	case E_SNVT_HEX_INT64:
-		generator_print(self, "%llx", val->val.i64);
+		generator_print(self, "0x%llx", val->val.i64);
 		return E_TD_NOERROR;
 	case E_SNVT_HEX_UINT64:
-		generator_print(self, "%llx", val->val.ui64);
+		generator_print(self, "0x%llx", val->val.ui64);
 		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;		

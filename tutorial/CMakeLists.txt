@@ -1,22 +1,26 @@
-PROJECT(data_conversion)
+PROJECT(Example)
 cmake_minimum_required(VERSION 2.8)
 
 FILE(GLOB_RECURSE FILE_LIST *.h *.c)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{HOTPOT_DIR}/cmake/Modules/)
-find_package(HotPot)
+SET(CMAKE_MODULE_PATH "$ENV{TLIBC_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
+SET(CMAKE_MODULE_PATH "$ENV{TDATA_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
 
-set(GEN_PATH ${data_conversion_BINARY_DIR}/gen)
+find_package(TData REQUIRED)
+find_package(TLibC REQUIRED)
+
+set(GEN_PATH ${Example_BINARY_DIR}/gen)
 INCLUDE_DIRECTORIES(
-	${HOTPOT_INCLUDE_DIR}/
+	${TLIBC_INCLUDE_DIR}
 	${GEN_PATH}/
 	)
 
-set(DDC_OUTPUTS ${GEN_PATH}/proto_types.h ${GEN_PATH}/proto_reader.c ${GEN_PATH}/proto_reader.h ${GEN_PATH}/proto_writer.c ${GEN_PATH}/proto_writer.h)
-add_custom_command(OUTPUT ${DDC_OUTPUTS}
+set(TDATA_OUTPUTS ${GEN_PATH}/common/common_types.h ${GEN_PATH}/common/common_reader.c ${GEN_PATH}/common/common_reader.h)
+
+add_custom_command(OUTPUT ${TDATA_OUTPUTS}
         COMMAND cmake -E make_directory ${GEN_PATH}
-	COMMAND ${HOTDATA_EXECUTABLE} -s ${data_conversion_SOURCE_DIR} -t ${GEN_PATH} -python c_types -python c_reader_header -python c_reader -python c_writer_header -python c_writer proto.hd
+	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc common/common.td definition/definition.td
 )
 
-ADD_EXECUTABLE(data_conversion ${FILE_LIST} ${DDC_OUTPUTS})
-TARGET_LINK_LIBRARIES(data_conversion ${HOTSCRIPT_LIBRARIES} ${HOTPROTOCOL_LIBRARIES})
+ADD_EXECUTABLE(Example ${FILE_LIST} ${TDATA_OUTPUTS})
+TARGET_LINK_LIBRARIES(Example ${TLIBC_LIBRARIES})

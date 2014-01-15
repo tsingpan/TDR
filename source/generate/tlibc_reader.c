@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
 static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 {
 	char header[MAX_PACKAGE_NAME_LENGTH];	
@@ -31,6 +29,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_print(super, "#include \"%s\"\n", header);
 
 	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include <string.h>\n");
 
 	generator_print(super, "\n");
 	generator_print(super, "\n");

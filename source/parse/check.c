@@ -43,6 +43,16 @@ void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, co
 	}
 }
 
+void check_identifier_is_not_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+{
+	const SYMBOL * symbol = symbols_search(symbols, prefix, identifier);
+
+	if((symbol) && (symbol->type == EN_HST_VALUE))
+	{
+		scanner_error(yylloc, E_LS_IDENTIFIER_REDEFINITION, identifier);
+	}
+}
+
 void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
 {
 	const ST_VALUE *val = NULL;

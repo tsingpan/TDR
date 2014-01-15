@@ -266,6 +266,8 @@ UnionFieldList:
 UnionField : 
 	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
+		check_identifier_is_not_value(&GET_SELF->symbols, &yylloc, "", $4);
+
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.union_name, $1);
 
 		check_string_length_defined(&GET_SELF->symbols, &yylloc, &$3);
@@ -356,6 +358,9 @@ Field :
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+
+		check_identifier_is_not_value(&GET_SELF->symbols, &yylloc, "", $3);
+		
 
 		if(($2.type == E_SNT_CONTAINER) && ($2.ct.ct == E_CT_VECTOR))
 		{

@@ -269,7 +269,7 @@ void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...)
 	fprintf(stderr, "\n");
 	va_end(ap);
 
-	exit(1);
+	exit(result);
 }
 
 #define MAX_SCANNER_ERROR_MSG_LENGTH 256
