@@ -1,135 +1,134 @@
 <ST_TD_LANGUAGE_STRING_LIBRARY>
-	<language_string_list_num>32</language_string_list_num>
-	<language_string_list>
-		<[0]>
+	<vector>
+		<language_string_list>
 			<language_string_number>E_LS_UNKNOW</language_string_number>
 			<language_string>未知错误</language_string>
-		</[0]>
-		<[22]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_DEFINED</language_string_number>
 			<language_string>符号未定义[%s::%s]</language_string>
-		</[22]>
-		<[26]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_TYPE</language_string_number>
 			<language_string>符号[%s::%s]不是类型</language_string>
-		</[26]>
-		<[26]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER</language_string_number>
 			<language_string>符号[%s::%s]不是正整数</language_string>
-		</[26]>
-		<[25]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_STRING_LENGTH_NOT_DEFINED</language_string_number>
 			<language_string>string长度未定义</language_string>
-		</[25]>
-		<[30]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_NOT_INTEGER_TYPE</language_string_number>
 			<language_string>不是整数类型</language_string>
-		</[30]>
-		<[29]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_NOT_INTEGER_VALUE</language_string_number>
 			<language_string>值不是整数</language_string>
-		</[29]>
-		<[8]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
 			<language_string>字符串[%s%s]长度超过%u</language_string>
-		</[8]>
-		<[12]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_REDEFINITION</language_string_number>
 			<language_string>[%s]符号重定义</language_string>
-		</[12]>
-		<[24]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_ARGUMENT_TYPE_MISMATCH</language_string_number>
 			<language_string>参数类型不匹配</language_string>
-		</[24]>
+		</language_string_list>
 
 
-		<[1]>
+		<language_string_list>
 			<language_string_number>E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD</language_string_number>
 			<language_string>不能使用保留字[%s]</language_string>
-		</[1]>
-		<[2]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_SYNTAX_ERROR</language_string_number>
 			<language_string>语法分析时发生错误[%s]</language_string>
-		</[2]>
-		<[3]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CANNOT_OPEN_FILE</language_string_number>
 			<language_string>无法打开文件[%s]</language_string>
-		</[3]>
-		<[4]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_OUT_OF_MEMORY</language_string_number>
 			<language_string>试图打开文件[%s]发生内存分配错误</language_string>
-		</[4]>
-		<[5]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CHARACTER_CONSTANT_FORMAT_ERROR</language_string_number>
 			<language_string>字符型常量格式错误</language_string>
-		</[5]>
-		<[6]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_STRING_CONSTANT_FORMAT_ERROR</language_string_number>
 			<language_string>字符串型常量格式错误</language_string>
-		</[6]>
-		<[7]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_NUMBER_ERROR_RANGE</language_string_number>
 			<language_string>数字常量超出范围</language_string>
-		</[7]>
-		<[9]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_PACKAGE_NAME_TOO_LONG</language_string_number>
 			<language_string>包名长度不可以超过%u</language_string>
-		</[9]>
-		<[10]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CAN_NOT_FIND_IDENTIFIER</language_string_number>
 			<language_string>不能找到标识符[%s]</language_string>
-		</[10]>
-		<[11]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_NOT_TYPE</language_string_number>
 			<language_string>[%s]不是类型</language_string>
-		</[11]>
-		<[13]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE</language_string_number>
 			<language_string>定义常量时不可指定string类型的长度</language_string>
-		</[13]>
-		<[14]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CONSTANT_TYPES_DO_NOT_MATCH</language_string_number>
 			<language_string>常量类型不匹配</language_string>
-		</[14]>
-		<[15]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CONSTANT_OVER_THE_RANGE</language_string_number>
 			<language_string>常量大小超过类型范围</language_string>
-		</[15]>
-		<[16]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_TOO_MANY_MEMBERS</language_string_number>
 			<language_string>类型成员数量不可以超过[%u]</language_string>
-		</[16]>
-		<[17]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_UNION_PARAMETERS_ERROR</language_string_number>
 			<language_string>union的参数只能是一个名为selector的枚举类型变量</language_string>
-		</[17]>
-		<[18]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_CONST_TYPE_ERROR</language_string_number>
 			<language_string>常量类型错误</language_string>
-		</[18]>
-		<[19]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_ENUM_HAVE_EQUAL_ELEMENTS</language_string_number>
 			<language_string>含有重复元素的枚举类型， 不可以作为union的参数类型</language_string>
-		</[19]>
-		<[20]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_TOO_MANY_PARAMETERS</language_string_number>
 			<language_string>形式参数不可以超过[%u]个</language_string>
-		</[20]>
-		<[21]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_TOO_MANY_ARGUMENTS</language_string_number>
 			<language_string>实际参数不可以超过[%u]个</language_string>
-		</[21]>
-		<[23]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_CONSTANCE</language_string_number>
 			<language_string>符号[%s]不是常量</language_string>
-		</[23]>
-		<[27]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_ENUMDEF</language_string_number>
 			<language_string>符号[%s]不属于枚举类型[%s]</language_string>
-		</[27]>
-		<[28]>
+		</language_string_list>
+		<language_string_list>
 			<language_string_number>E_LS_OP0_MUST_BE_INTEGER</language_string_number>
 			<language_string>第一个操作数必须为struct[%s]的整形成员</language_string>
-		</[28]>
-	<language_string_list>
+		</language_string_list>
+	</vector>
 </ST_TD_LANGUAGE_STRING_LIBRARY>
