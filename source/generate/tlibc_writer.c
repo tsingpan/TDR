@@ -215,6 +215,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
 		generator_print(&self->super, "\tcase %s:\n", de_union->union_field_list.union_field_list[i].key);
+		generator_print(&self->super, "\t\tif(write_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
 		if(de_union->union_field_list.union_field_list[i].simple_type.st == E_ST_STRING)
 		{
 			generator_print(&self->super, "\t\tif(write_tstring(self, data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
@@ -225,7 +226,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 			generator_print_simple_type(&self->super, &de_union->union_field_list.union_field_list[i].simple_type);
 			generator_print(&self->super, "(self, &data->%s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
 		}
-
+		generator_print(&self->super, "\t\tif(write_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->union_field_list.union_field_list[i].name);
 		generator_print(&self->super, "\t\tbreak;\n");		
 	}
 	generator_print(&self->super, "\tdefault:\n");
