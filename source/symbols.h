@@ -5,7 +5,7 @@
 
 #include "platform/tlibc_platform.h"
 
-#include "lib/tlibc_hash.h"
+#include "core/tlibc_hash.h"
 
 typedef enum _SYMBOL_TYPE
 {

@@ -30,7 +30,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_print(super, "\n");
 	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
 	generator_print(super, "#include \"protocol/tlibc_abstract_writer.h\"\n");
-	generator_print(super, "#include \"lib/tlibc_error_code.h\"\n");
+	generator_print(super, "#include \"core/tlibc_error_code.h\"\n");
 	generator_print(super, "#include \"tdata/tdata_types.h\"\n");
 	
 	//包含types的头文件
@@ -73,7 +73,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_ENUM
 {
 	generator_print(&self->super, "\n");
 
-	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data);\n", de_enum->name, de_enum->name);
+	generator_print(&self->super, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data);\n", de_enum->name, de_enum->name);
 
 	return E_TD_NOERROR;
 }
@@ -82,7 +82,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_ST
 {
 	generator_print(&self->super, "\n");
 
-	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data);\n", de_struct->name, de_struct->name);
+	generator_print(&self->super, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data);\n", de_struct->name, de_struct->name);
 
 	return E_TD_NOERROR;
 }
@@ -91,7 +91,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_UNI
 {
 	generator_print(&self->super, "\n");
 
-	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data, %s selector);\n", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
+	generator_print(&self->super, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data, %s selector);\n", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
 	return E_TD_NOERROR;
 }
 

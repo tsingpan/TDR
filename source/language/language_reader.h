@@ -10,7 +10,7 @@
 
 #include "platform/tlibc_platform.h"
 #include "protocol/tlibc_abstract_reader.h"
-#include "lib/tlibc_error_code.h"
+#include "core/tlibc_error_code.h"
 #include "tdata/tdata_types.h"
 #include "language_types.h"
 

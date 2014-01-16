@@ -49,28 +49,28 @@ void test_xml()
 	TLIBC_XML_WRITER xml_writer;	
 	int ret;
 
-	xml_writer_init(&xml_writer, "t.xml");
-	ret = write_ST_DEFINITION(&xml_writer.super, &g_definition);
-	xml_writer_fini(&xml_writer);
+	tlibc_xml_writer_init(&xml_writer, "t.xml");
+	ret = tlibc_write_ST_DEFINITION(&xml_writer.super, &g_definition);
+	tlibc_xml_writer_fini(&xml_writer);
 
 	memset(&g_definition, 0, sizeof(ST_DEFINITION));
 
-	xml_reader_init(&xml_reader, "t.xml");
-	ret = read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
 }
 void test_xml2()
 {
 	TLIBC_XML_WRITER xml_writer;
 	int ret;
 
-	xml_writer_init(&xml_writer, "test_xml2.xml");
-	ret = write_ST_Parameters(&xml_writer.super, &g_parameters);
-	xml_writer_fini(&xml_writer);
+	tlibc_xml_writer_init(&xml_writer, "test_xml2.xml");
+	ret = tlibc_write_ST_Parameters(&xml_writer.super, &g_parameters);
+	tlibc_xml_writer_fini(&xml_writer);
 
 	memset(&g_parameters, 0, sizeof(ST_Parameters));
 
-	xml_reader_init(&xml_reader, "test_xml2.xml");
-	ret = read_ST_Parameters(&xml_reader.super, &g_parameters);
+	tlibc_xml_reader_init(&xml_reader, "test_xml2.xml");
+	ret = tlibc_read_ST_Parameters(&xml_reader.super, &g_parameters);
 }
 
 void test_compact()
@@ -84,16 +84,16 @@ void test_compact()
 	
 	memset(&g_definition, 0, sizeof(g_definition));
 
-	xml_reader_init(&xml_reader, "t.xml");
-	ret = read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
 	
 
 	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
-	write_ST_DEFINITION(&compact_writer.super, &g_definition);
+	tlibc_write_ST_DEFINITION(&compact_writer.super, &g_definition);
 
 	memset(&g_definition, 0, sizeof(g_definition));
 	tlibc_compact_reader_init(&compact_reader, buff, MAX_BUFF_SIZE);
-	read_ST_DEFINITION(&compact_reader.super, &g_definition);
+	tlibc_read_ST_DEFINITION(&compact_reader.super, &g_definition);
 }
 
 int main()

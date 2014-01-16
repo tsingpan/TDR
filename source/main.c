@@ -53,7 +53,11 @@ int main(tint32 argc, char **argv)
 {
 	tint32 i;
 
-	language_string_library_init(&language_string_library);
+	if(language_string_library_init(&language_string_library) != E_TD_NOERROR)
+	{
+		fprintf(stderr, "Can not load language!\n");
+		goto ERROR_RET;
+	}
 	g_language_string_library = &language_string_library;
 
 	parser_init(&parser);

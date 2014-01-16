@@ -2,7 +2,7 @@
 #include "error.h"
 #include "protocol/tlibc_xml_reader.h"
 #include "language/language_reader.h"
-#include "lib/tlibc_error_code.h"
+#include "core/tlibc_error_code.h"
 #include "globals.h"
 
 #include <stdio.h>
@@ -60,10 +60,11 @@ static void sort_library(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	}
 }
 
+static TLIBC_XML_READER xml_reader;
 TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
 	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
-	TLIBC_XML_READER xml_reader;
+	
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
 	char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
@@ -76,12 +77,18 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	self->language_string_list_num = 0;
 	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 
-	xml_reader_init(&xml_reader, language_path);
+	if(tlibc_xml_reader_init(&xml_reader, language_path) != E_TLIBC_NOERROR)
+	{		
+		ret = E_TD_ERROR;
+		goto done;
+	}
+	
 	if(read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
 	{
 		ret = E_TD_ERROR;
 		goto done;
 	}
+	
 	sort_library(self);
 
 done:

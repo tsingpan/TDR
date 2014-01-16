@@ -62,7 +62,6 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 
 	self->generator_list = generator_list;
 	self->generator_num = generator_list_num;
-
 	scanner_init(&self->scanner);
 	
 	parser_push(self, g_source_dir, file_name);

@@ -4,7 +4,7 @@
 #include "parse/scanner.h"
 #include <stdio.h>
 #include "platform/tlibc_platform.h"
-#include "lib/tlibc_hash.h"
+#include "core/tlibc_hash.h"
 
 #include <assert.h>
 
