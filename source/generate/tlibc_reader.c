@@ -84,22 +84,13 @@ static void _on_enum_name(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
 	generator_print(&self->super, "}\n");
 }
 
-static void _on_enum_number(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
-{
-	generator_print(&self->super, "\n");
-	generator_print(&self->super, "static TLIBC_ERROR_CODE read_%s_number(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
-	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\treturn read_enum_number(self, (tint32*)data);\n");
-	generator_print(&self->super, "}\n");
-}
-
 static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
 {	
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "TLIBC_ERROR_CODE read_%s(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
 	generator_print(&self->super, "\tif(read_enum_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
-	generator_print(&self->super, "\tif(read_%s_number(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
+	generator_print(&self->super, "\tif(read_tint32(self, (tint32*)data) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 	generator_print(&self->super, "\tif(read_%s_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);	
 	generator_print(&self->super, "\tif(read_enum_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
 	generator_print(&self->super, "\n");
@@ -278,7 +269,6 @@ static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *defini
 			return E_TD_NOERROR;
 		case E_DT_ENUM:
 			_on_enum_name(self, &definition->definition.de_enum);
-			_on_enum_number(self, &definition->definition.de_enum);
 			return _on_enum(self, &definition->definition.de_enum);
 		case E_DT_STRUCT:
 			return _on_struct(self, &definition->definition.de_struct);

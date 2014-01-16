@@ -203,15 +203,10 @@ done:
 	return E_TLIBC_NOERROR;
 }
 
-static TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_number(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
-{
-	return read_enum_number(self, (tint32*)data);
-}
-
 TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
 {
 	if(read_EN_TD_LANGUAGE_STRING_name(self, data) == E_TLIBC_NOERROR) goto done;
-	if(read_EN_TD_LANGUAGE_STRING_number(self, data) == E_TLIBC_NOERROR) goto done;
+	if(read_tint32(self, (tint32*)data) == E_TLIBC_NOERROR) goto done;
 
 
 	return E_TLIBC_ERROR;
