@@ -370,26 +370,34 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 	}
 }
 
-void check_simpletype_is_enum_with_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
 {
 	const SYMBOL* enum_symbol;
 	simple_type = symbols_get_real_type(symbols, simple_type);
 	assert(simple_type != NULL);
 	if(simple_type->st != E_ST_REFER)
 	{
-		scanner_error(yylloc, E_LS_UNION_PARAMETERS_ERROR);
+		scanner_error(yylloc, E_LS_NOT_ENUM_TYPE);
 	}
 
 	enum_symbol = symbols_search(symbols, "", simple_type->st_refer);
 
 	if(enum_symbol->type != EN_HST_ENUM)
 	{
-		scanner_error(yylloc, E_LS_UNION_PARAMETERS_ERROR);
+		scanner_error(yylloc, E_LS_NOT_ENUM_TYPE);
 	}
+}
 
-	if(!enum_symbol->body.symbol_enum.unique)
+void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index)
+{
+	tuint32 i;
+
+	for(i = 0;i < pn_enum->enum_def_list_num; ++i)
 	{
-		scanner_error(yylloc, E_LS_ENUM_HAVE_EQUAL_ELEMENTS);
+		if(pn_enum->enum_def_list[i].val.val.i64 == pn_enum->enum_def_list[index].val.val.i64)
+		{
+			scanner_error(yylloc, E_LS_ENUM_HAVE_EQUAL_ELEMENTS, pn_enum->enum_def_list[i].identifier, pn_enum->enum_def_list[index].identifier);
+		}
 	}
 }
 
@@ -397,6 +405,6 @@ void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar 
 {
 	if(strcmp(src, dst) != 0)
 	{
-		scanner_error(yylloc, E_LS_UNION_PARAMETERS_ERROR);
+		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_STRING, src, dst);
 	}
 }

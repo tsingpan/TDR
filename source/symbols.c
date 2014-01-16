@@ -129,8 +129,6 @@ void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
 
 void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 {
-	tuint32 i, j;
-
 	SYMBOL *symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_ENUM;
@@ -138,19 +136,7 @@ void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 	symbol->body.symbol_enum.name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	symbol->body.symbol_enum.enum_def_list_num = pn_enum->enum_def_list_num;
-	symbol->body.symbol_enum.unique = hptrue;
-	for(i = 0;i < pn_enum->enum_def_list_num; ++i)
-	{
-		for(j = i + 1; j < pn_enum->enum_def_list_num; ++j)
-		{
-			if(pn_enum->enum_def_list[i].val.val.i64 == pn_enum->enum_def_list[j].val.val.i64)
-			{
-				symbol->body.symbol_enum.unique = hpfalse;
-				goto done;
-			}
-		}
-	}
-done:
+
 	symbols_save(self, "", pn_enum->name, symbol);
 }
 

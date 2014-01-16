@@ -54,6 +54,11 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_IDENTIFIER_LENGTH_ERROR;
 			goto done;
 		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_STRING") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_STRING;
+			goto done;
+		}
 		if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
 		{
 			*data = E_LS_STRING_LENGTH_NOT_DEFINED;
@@ -114,11 +119,6 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_TOO_MANY_MEMBERS;
 			goto done;
 		}
-		if(strcmp(name, "E_LS_UNION_PARAMETERS_ERROR") == 0)
-		{
-			*data = E_LS_UNION_PARAMETERS_ERROR;
-			goto done;
-		}
 		if(strcmp(name, "E_LS_CONST_TYPE_ERROR") == 0)
 		{
 			*data = E_LS_CONST_TYPE_ERROR;
@@ -152,6 +152,11 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 		if(strcmp(name, "E_LS_ARGUMENT_TYPE_MISMATCH") == 0)
 		{
 			*data = E_LS_ARGUMENT_TYPE_MISMATCH;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_NOT_ENUM_TYPE") == 0)
+		{
+			*data = E_LS_NOT_ENUM_TYPE;
 			goto done;
 		}
 

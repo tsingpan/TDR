@@ -21,7 +21,6 @@ typedef enum _SYMBOL_TYPE
 typedef struct _ST_SYMBOL_ENUM
 {
 	tuint32 enum_def_list_num;
-	int unique;
 	tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 }ST_SYMBOL_ENUM;
 

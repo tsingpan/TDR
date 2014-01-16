@@ -194,7 +194,7 @@ Enum :
 	{
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $2);
 
-		dp_reduce_Enum(GET_SELF, &GET_DEFINITION.definition.de_enum, $2);		
+		dp_reduce_Enum(GET_SELF, &GET_DEFINITION.definition.de_enum, $2);
 
 		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
 	};
@@ -207,7 +207,9 @@ EnumDefList :
 			scanner_error(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_ENUM_DEF_LIST_NUM);
 		}
 		
-		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num++] = $2;
+		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
+		check_enumdef_is_unique(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_enum, GET_DEFINITION.definition.de_enum.enum_def_list_num);
+		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
 	}
 |	
 	EnumDef
@@ -224,8 +226,7 @@ EnumDef :
 
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $1);
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.enum_name, $1);
-
-		
+				
 		check_value_type(&GET_SELF->symbols, &yylloc, &enum_type, &$3);
 
 		dp_reduce_EnumDef(GET_SELF, &$$, $1, &$3, &$5);
@@ -309,7 +310,7 @@ Parameter:
 	{
 		check_str_equal(&GET_SELF->symbols, &yylloc, $2, "selector");
 
-		check_simpletype_is_enum_with_unique(&GET_SELF->symbols, &yylloc, &$1);
+		check_simpletype_is_enum(&GET_SELF->symbols, &yylloc, &$1);
 
 		$$.type = $1;
 		strncpy($$.identifier, $2, TDATA_MAX_LENGTH_OF_IDENTIFIER - 1);

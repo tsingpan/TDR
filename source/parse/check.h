@@ -48,7 +48,10 @@ void check_strlen_too_long(const SYMBOLS *symbols, const YYLTYPE *yylloc, const 
 void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val);
 
 //检查不包含重复值的枚举类型
-void check_simpletype_is_enum_with_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
+void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
+
+//检查枚举不包含重复元素
+void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index);
 
 //检查字符串是否相等
 void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *src, const tchar* dst);
