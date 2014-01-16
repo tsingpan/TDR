@@ -11,207 +11,204 @@
 
 
 
-static TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
-{
-	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	if(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
-	if(strcmp(name, "E_LS_UNKNOW") == 0)
-	{
-		*data = E_LS_UNKNOW;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD") == 0)
-	{
-		*data = E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_SYNTAX_ERROR") == 0)
-	{
-		*data = E_LS_SYNTAX_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CANNOT_OPEN_FILE") == 0)
-	{
-		*data = E_LS_CANNOT_OPEN_FILE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_OUT_OF_MEMORY") == 0)
-	{
-		*data = E_LS_OUT_OF_MEMORY;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CHARACTER_CONSTANT_FORMAT_ERROR") == 0)
-	{
-		*data = E_LS_CHARACTER_CONSTANT_FORMAT_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_STRING_CONSTANT_FORMAT_ERROR") == 0)
-	{
-		*data = E_LS_STRING_CONSTANT_FORMAT_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_NUMBER_ERROR_RANGE") == 0)
-	{
-		*data = E_LS_NUMBER_ERROR_RANGE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_LENGTH_ERROR") == 0)
-	{
-		*data = E_LS_IDENTIFIER_LENGTH_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_PACKAGE_NAME_TOO_LONG") == 0)
-	{
-		*data = E_LS_PACKAGE_NAME_TOO_LONG;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CAN_NOT_FIND_IDENTIFIER") == 0)
-	{
-		*data = E_LS_CAN_NOT_FIND_IDENTIFIER;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_NOT_TYPE") == 0)
-	{
-		*data = E_LS_NOT_TYPE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_REDEFINITION") == 0)
-	{
-		*data = E_LS_IDENTIFIER_REDEFINITION;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE") == 0)
-	{
-		*data = E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CONSTANT_TYPES_DO_NOT_MATCH") == 0)
-	{
-		*data = E_LS_CONSTANT_TYPES_DO_NOT_MATCH;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CONSTANT_OVER_THE_RANGE") == 0)
-	{
-		*data = E_LS_CONSTANT_OVER_THE_RANGE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_TOO_MANY_MEMBERS") == 0)
-	{
-		*data = E_LS_TOO_MANY_MEMBERS;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_UNION_PARAMETERS_ERROR") == 0)
-	{
-		*data = E_LS_UNION_PARAMETERS_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_CONST_TYPE_ERROR") == 0)
-	{
-		*data = E_LS_CONST_TYPE_ERROR;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_ENUM_HAVE_EQUAL_ELEMENTS") == 0)
-	{
-		*data = E_LS_ENUM_HAVE_EQUAL_ELEMENTS;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_TOO_MANY_PARAMETERS") == 0)
-	{
-		*data = E_LS_TOO_MANY_PARAMETERS;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_TOO_MANY_ARGUMENTS") == 0)
-	{
-		*data = E_LS_TOO_MANY_ARGUMENTS;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_DEFINED") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_DEFINED;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_CONSTANCE") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
-	{
-		*data = E_LS_PARAMETER_TYPE_MISMATCH;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_STRING_LENGTH_MUST_BE_DEFINED") == 0)
-	{
-		*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_TYPE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_ENUMDEF") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_ENUMDEF;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_OP0_MUST_BE_INTEGER") == 0)
-	{
-		*data = E_LS_OP0_MUST_BE_INTEGER;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_OP1_MUST_BE_INTEGER_CONSTANCE") == 0)
-	{
-		*data = E_LS_OP1_MUST_BE_INTEGER_CONSTANCE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_INTEGER") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_INTEGER;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
-	{
-		*data = E_LS_STRING_LENGTH_NOT_DEFINED;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_NOT_INTEGER_VALUE") == 0)
-	{
-		*data = E_LS_NOT_INTEGER_VALUE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_NOT_INTEGER_TYPE") == 0)
-	{
-		*data = E_LS_NOT_INTEGER_TYPE;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER") == 0)
-	{
-		*data = E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER;
-		goto done;
-	}
-	if(strcmp(name, "E_LS_ARGUMENT_TYPE_MISMATCH") == 0)
-	{
-		*data = E_LS_ARGUMENT_TYPE_MISMATCH;
-		goto done;
-	}
-
-
-ERROR_RET:
-	return E_TLIBC_ERROR;
-done:
-	return E_TLIBC_NOERROR;
-}
-
 TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
 {
-	if(read_EN_TD_LANGUAGE_STRING_name(self, data) == E_TLIBC_NOERROR) goto done;
-	if(read_tint32(self, (tint32*)data) == E_TLIBC_NOERROR) goto done;
+	if(read_enum_begin(self, "EN_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
+
+	if(read_tint32(self, (tint32*)data) != E_TLIBC_NOERROR)
+	{
+		char name[TLIBC_MAX_IDENTIFIER_LENGTH];
+		if(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(strcmp(name, "E_LS_UNKNOW") == 0)
+		{
+			*data = E_LS_UNKNOW;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD") == 0)
+		{
+			*data = E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_SYNTAX_ERROR") == 0)
+		{
+			*data = E_LS_SYNTAX_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CANNOT_OPEN_FILE") == 0)
+		{
+			*data = E_LS_CANNOT_OPEN_FILE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_OUT_OF_MEMORY") == 0)
+		{
+			*data = E_LS_OUT_OF_MEMORY;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CHARACTER_CONSTANT_FORMAT_ERROR") == 0)
+		{
+			*data = E_LS_CHARACTER_CONSTANT_FORMAT_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_STRING_CONSTANT_FORMAT_ERROR") == 0)
+		{
+			*data = E_LS_STRING_CONSTANT_FORMAT_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_NUMBER_ERROR_RANGE") == 0)
+		{
+			*data = E_LS_NUMBER_ERROR_RANGE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_LENGTH_ERROR") == 0)
+		{
+			*data = E_LS_IDENTIFIER_LENGTH_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_PACKAGE_NAME_TOO_LONG") == 0)
+		{
+			*data = E_LS_PACKAGE_NAME_TOO_LONG;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CAN_NOT_FIND_IDENTIFIER") == 0)
+		{
+			*data = E_LS_CAN_NOT_FIND_IDENTIFIER;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_NOT_TYPE") == 0)
+		{
+			*data = E_LS_NOT_TYPE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_REDEFINITION") == 0)
+		{
+			*data = E_LS_IDENTIFIER_REDEFINITION;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE") == 0)
+		{
+			*data = E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CONSTANT_TYPES_DO_NOT_MATCH") == 0)
+		{
+			*data = E_LS_CONSTANT_TYPES_DO_NOT_MATCH;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CONSTANT_OVER_THE_RANGE") == 0)
+		{
+			*data = E_LS_CONSTANT_OVER_THE_RANGE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_TOO_MANY_MEMBERS") == 0)
+		{
+			*data = E_LS_TOO_MANY_MEMBERS;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_UNION_PARAMETERS_ERROR") == 0)
+		{
+			*data = E_LS_UNION_PARAMETERS_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_CONST_TYPE_ERROR") == 0)
+		{
+			*data = E_LS_CONST_TYPE_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_ENUM_HAVE_EQUAL_ELEMENTS") == 0)
+		{
+			*data = E_LS_ENUM_HAVE_EQUAL_ELEMENTS;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_TOO_MANY_PARAMETERS") == 0)
+		{
+			*data = E_LS_TOO_MANY_PARAMETERS;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_TOO_MANY_ARGUMENTS") == 0)
+		{
+			*data = E_LS_TOO_MANY_ARGUMENTS;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_DEFINED") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_DEFINED;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_CONSTANCE") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
+		{
+			*data = E_LS_PARAMETER_TYPE_MISMATCH;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_STRING_LENGTH_MUST_BE_DEFINED") == 0)
+		{
+			*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_TYPE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_ENUMDEF") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_ENUMDEF;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_OP0_MUST_BE_INTEGER") == 0)
+		{
+			*data = E_LS_OP0_MUST_BE_INTEGER;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_OP1_MUST_BE_INTEGER_CONSTANCE") == 0)
+		{
+			*data = E_LS_OP1_MUST_BE_INTEGER_CONSTANCE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_INTEGER") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_INTEGER;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
+		{
+			*data = E_LS_STRING_LENGTH_NOT_DEFINED;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_NOT_INTEGER_VALUE") == 0)
+		{
+			*data = E_LS_NOT_INTEGER_VALUE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_NOT_INTEGER_TYPE") == 0)
+		{
+			*data = E_LS_NOT_INTEGER_TYPE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_ARGUMENT_TYPE_MISMATCH") == 0)
+		{
+			*data = E_LS_ARGUMENT_TYPE_MISMATCH;
+			goto done;
+		}
+
+		goto ERROR_RET;
+	}
 
 
-	return E_TLIBC_ERROR;
 done:
+	if(read_enum_end(self, "EN_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
 	return E_TLIBC_NOERROR;
+ERROR_RET:
+	return E_TLIBC_ERROR;
 }
 
 TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING *data)
