@@ -14,7 +14,7 @@
 static TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING_name(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
 {
 	char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-	if(read_enum_name(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
+	if(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
 	if(strcmp(name, "E_LS_UNKNOW") == 0)
 	{
 		*data = E_LS_UNKNOW;

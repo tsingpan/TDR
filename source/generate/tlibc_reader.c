@@ -63,7 +63,7 @@ static void _on_enum_name(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
 	generator_print(&self->super, "static TLIBC_ERROR_CODE read_%s_name(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
 	generator_print(&self->super, "\tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];\n");
-	generator_print(&self->super, "\tif(read_enum_name(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+	generator_print(&self->super, "\tif(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{

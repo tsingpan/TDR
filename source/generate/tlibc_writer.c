@@ -68,7 +68,7 @@ static void _on_enum_name(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{
 		generator_print(&self->super, "\tcase %s:\n", de_enum->enum_def_list[i].identifier);
-		generator_print(&self->super, "\t\tif(write_enum_name(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->enum_def_list[i].identifier);
+		generator_print(&self->super, "\t\tif(write_tstring(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->enum_def_list[i].identifier);
 		generator_print(&self->super, "\t\tbreak;\n");
 	}
 	generator_print(&self->super, "\t}\n");
