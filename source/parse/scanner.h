@@ -99,7 +99,7 @@ void scanner_init(SCANNER *self);
 void scanner_locate(SCANNER *self);
 tint32 scanner_scan(SCANNER *self, YYLTYPE *yylloc, SCANNER_TOKEN_VALUE * yylval);
 SCANNER_CONTEXT *scanner_top(SCANNER *self);
-tint32 scanner_push(SCANNER *self, const char *file_name, int state);
+tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state);
 void scanner_pop(SCANNER *self);
 tuint32 scanner_size(SCANNER *self);
 

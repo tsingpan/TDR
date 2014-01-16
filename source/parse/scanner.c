@@ -162,7 +162,7 @@ SCANNER_CONTEXT *scanner_top(SCANNER *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-tint32 scanner_push(SCANNER *self, const char *file_name, int state)
+tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
@@ -188,7 +188,7 @@ tint32 scanner_push(SCANNER *self, const char *file_name, int state)
 		}
 	}
 
-	snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", g_source_dir, TLIBC_FILE_SEPARATOR, file_name);
+	snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", source_dir, TLIBC_FILE_SEPARATOR, file_name);
 	len = TLIBC_MAX_FILE_PATH_LENGTH;
 	if(path_repair(realPath, &len) != E_TD_NOERROR)
 	{

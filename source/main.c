@@ -144,6 +144,13 @@ int main(tint32 argc, char **argv)
 		}
 	}
 
+	if(generator_num == 0)
+	{
+		fprintf(stderr, "Missing -gen types\n");
+		help();
+		goto ERROR_RET;
+	}
+
 	for(; i < argc; ++i)
 	{
 		if(parser_parse(&parser, argv[i], generator_list, generator_num) != E_TD_NOERROR)

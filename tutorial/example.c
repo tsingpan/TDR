@@ -76,7 +76,6 @@ void test_xml2()
 void test_compact()
 {
 	char buff[MAX_BUFF_SIZE];
-	TLIBC_XML_WRITER xml_writer;
 
 	TLIBC_COMPACT_WRITER compact_writer;
 	TLIBC_COMPACT_READER compact_reader;

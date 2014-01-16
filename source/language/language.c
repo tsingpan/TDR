@@ -3,6 +3,7 @@
 #include "protocol/tlibc_xml_reader.h"
 #include "language/language_reader.h"
 #include "lib/tlibc_error_code.h"
+#include "globals.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -66,7 +67,7 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
 	char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
-	snprintf(root_dir, TLIBC_MAX_FILE_PATH_LENGTH, getenv("TDATA_HOME"));
+	snprintf(root_dir, TLIBC_MAX_FILE_PATH_LENGTH, getenv(TDATA_HOME));
 	if(root_dir[strlen(root_dir) - 1] != TLIBC_FILE_SEPARATOR)
 	{
 		root_dir[strlen(root_dir) + 1] = 0;

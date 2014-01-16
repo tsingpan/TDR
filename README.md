@@ -4,8 +4,8 @@ TData
 
 - cmake 编译器的cmake脚本文件
 - source 编译器源代码
-- error 编译器错误提示
-- tdata 公共数据定义
+- language 编译器提示字符串
+- common 公共的定义
 - tutorial 使用范例
 
 问题和反馈
