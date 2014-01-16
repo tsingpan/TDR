@@ -83,7 +83,7 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 		goto done;
 	}
 	
-	if(read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
+	if(tlibc_read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
 	{
 		ret = E_TD_ERROR;
 		goto done;

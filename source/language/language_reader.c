@@ -5,13 +5,13 @@
  *  @generated
  */
 
-#include "language_reader.h"
+#include "language/language_reader.h"
 #include "platform/tlibc_platform.h"
 #include <string.h>
 
 
 
-TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
+TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_LANGUAGE_STRING *data)
 {
 	if(tlibc_read_enum_begin(self, "EN_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
 
@@ -19,7 +19,6 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_L
 	{
 		char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 		if(tlibc_read_tstring(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER) != E_TLIBC_NOERROR) goto ERROR_RET;
-		
 		if(strcmp(name, "E_LS_UNKNOW") == 0)
 		{
 			*data = E_LS_UNKNOW;
@@ -212,13 +211,14 @@ ERROR_RET:
 	return E_TLIBC_ERROR;
 }
 
-TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING *data)
+TLIBC_ERROR_CODE tlibc_read_ST_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING *data)
 {
 	if(tlibc_read_struct_begin(self, "ST_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
+
 	
 	{
 		if(tlibc_read_field_begin(self, "language_string_number") != E_TLIBC_NOERROR) goto ERROR_RET;
-		if(read_EN_TD_LANGUAGE_STRING(self, &data->language_string_number) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(tlibc_read_EN_TD_LANGUAGE_STRING(self, &data->language_string_number) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_end(self, "language_string_number") != E_TLIBC_NOERROR) goto ERROR_RET;
 	}
 
@@ -236,7 +236,7 @@ ERROR_RET:
 	return E_TLIBC_ERROR;
 }
 
-TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING_LIBRARY *data)
+TLIBC_ERROR_CODE tlibc_read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER *self, ST_TD_LANGUAGE_STRING_LIBRARY *data)
 {
 	if(tlibc_read_struct_begin(self, "ST_TD_LANGUAGE_STRING_LIBRARY") != E_TLIBC_NOERROR) goto ERROR_RET;
 
@@ -244,16 +244,14 @@ TLIBC_ERROR_CODE read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER *self,
 	{
 		tuint32 i;
 		if(tlibc_read_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;
-		
 		if(tlibc_read_field_begin(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_tuint16(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_end(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
-		
 		for(i = 0; i < TD_LANGUAGE_STRING_NUM; ++i)
 		{
 			if(i == data->language_string_list_num) break;
 			if(tlibc_read_field_begin(self, "language_string_list") != E_TLIBC_NOERROR) goto ERROR_RET;
-			if(read_ST_TD_LANGUAGE_STRING(self, &data->language_string_list[i]) != E_TLIBC_NOERROR) goto ERROR_RET;
+			if(tlibc_read_ST_TD_LANGUAGE_STRING(self, &data->language_string_list[i]) != E_TLIBC_NOERROR) goto ERROR_RET;
 			if(tlibc_read_field_end(self, "language_string_list") != E_TLIBC_NOERROR) goto ERROR_RET;
 		}
 		if(tlibc_read_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;

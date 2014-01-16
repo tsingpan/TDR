@@ -5,8 +5,8 @@
  *  @generated
  */
 
-#ifndef _H_LANGUAGE_TYPES_H
-#define _H_LANGUAGE_TYPES_H
+#ifndef _H_LANGUAGE_LANGUAGE_TYPES_H
+#define _H_LANGUAGE_LANGUAGE_TYPES_H
 
 #include "platform/tlibc_platform.h"
 
@@ -71,5 +71,5 @@ struct _ST_TD_LANGUAGE_STRING_LIBRARY
 	ST_TD_LANGUAGE_STRING language_string_list[TD_LANGUAGE_STRING_NUM];
 };
 
-#endif //_H_LANGUAGE_TYPES_H
+#endif //_H_LANGUAGE_LANGUAGE_TYPES_H
 
