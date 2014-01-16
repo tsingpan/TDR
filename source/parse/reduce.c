@@ -10,29 +10,29 @@ void dp_reduce_Import(PARSER *self, ST_Import* current, const char* str)
 void dp_reduce_Typedef(PARSER *self, ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tchar *tok_identifier)
 {
 	current->type = *type;
-	strncpy(current->name, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->name, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void dp_reduce_Const(PARSER *self, ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val)
 {
 	current->type = *type;
 
-	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;	
+	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;	
 	current->val = *val;
 }
 
 void dp_reduce_Enum(PARSER *self, ST_ENUM *current, const tchar *identifier)
 {
-	strncpy(current->name, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->name, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
 {
-	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->val = *st_value;
 	current->comment = *comment;
 }
@@ -43,8 +43,8 @@ void dp_reduce_ContainerType_tok_t_vector(PARSER *self, ST_TYPE *current, const 
 	current->ct.ct = E_CT_VECTOR;
 
 	current->ct.vector_type = *simple_type;
-	strncpy(current->ct.vector_length, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->ct.vector_length[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->ct.vector_length, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->ct.vector_length[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void dp_reduce_SimpleType_tok_t_string(PARSER *self, ST_SIMPLE_TYPE *current, const tchar *tok_identifier)
@@ -57,16 +57,16 @@ void dp_reduce_SimpleType_tok_t_string(PARSER *self, ST_SIMPLE_TYPE *current, co
 	}
 	else
 	{
-		strncpy(current->string_length, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-		current->string_length[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+		strncpy(current->string_length, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+		current->string_length[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	}
 }
 
 void dp_reduce_SimpleType_tok_identifier(PARSER *self, ST_SIMPLE_TYPE* current, const tchar *tok_identifier)
 {
 	current->st = E_ST_REFER;
-	strncpy(current->st_refer, tok_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->st_refer[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->st_refer, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->st_refer[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
@@ -78,8 +78,8 @@ void dp_reduce_Type_SimpleType(PARSER *self, ST_TYPE *current, const ST_SIMPLE_T
 void dp_reduce_Value_tok_identifier(PARSER *self, ST_VALUE* current, const tchar *sn_identifier)
 {
 	current->type = E_SNVT_IDENTIFIER;
-	strncpy(current->val.identifier, sn_identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->val.identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->val.identifier, sn_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->val.identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void dp_reduce_Value_tok_char(PARSER *self, ST_VALUE* current, const tchar pn_char)
@@ -121,23 +121,23 @@ void dp_reduce_Value_tok_double(PARSER *self, ST_VALUE* current, const double d)
 void dp_reduce_Value_tok_string(PARSER *self, ST_VALUE* current, const char* str)
 {
 	current->type = E_SNVT_STRING;
-	strncpy(current->val.str, str, TLIBC_MAX_IDENTIFIER_LENGTH);
+	strncpy(current->val.str, str, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 }
 
 void dp_reduce_ArgumentList_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tchar *identifier)
 {
 	*current = *argument_list;
 
-	strncpy(current->arg_list[current->arg_list_num], identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->arg_list[current->arg_list_num][TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->arg_list[current->arg_list_num], identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->arg_list[current->arg_list_num][TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	++(current->arg_list_num);
 }
 
 void dp_reduce_ArgumentList_tok_identifier(PARSER *self, ST_ARGUMENTS* current, const tchar *identifier)
 {
 	current->arg_list_num = 0;
-	strncpy(current->arg_list[current->arg_list_num], identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->arg_list[current->arg_list_num][TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->arg_list[current->arg_list_num], identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->arg_list[current->arg_list_num][TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	++(current->arg_list_num);
 }
 
@@ -165,21 +165,21 @@ void dp_reduce_Value_tok_count(PARSER *self, ST_VALUE *current, const tchar *ide
 
 void dp_reduce_Union(PARSER *self, ST_UNION *current, const tchar *identifier, const ST_Parameters *parameters)
 {
-	strncpy(current->name, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->name, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->parameters = *parameters;
 }
 
 void dp_reduce_UnionField(PARSER *self, ST_UNION_FIELD *current, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier, const ST_UNIX_COMMENT *comment)
 {
-	strncpy(current->key, key, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->key[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->key, key, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->key[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->simple_type = *simple_type;
 
-	strncpy(current->name, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->name[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->name, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->comment = *comment;
 }
@@ -189,8 +189,8 @@ void dp_reduce_Field(PARSER *self, ST_FIELD *current, const ST_CONDITION *condit
 {
 	current->condition = *condition;
 	current->type = *type;
-	strncpy(current->identifier, identifier, TLIBC_MAX_IDENTIFIER_LENGTH);
-	current->identifier[TLIBC_MAX_IDENTIFIER_LENGTH - 1] = 0;
+	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->args = *args;
 	current->comment = *comment;
 }

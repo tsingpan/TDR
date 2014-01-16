@@ -22,7 +22,7 @@ typedef struct _ST_SYMBOL_ENUM
 {
 	tuint32 enum_def_list_num;
 	int unique;
-	tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];
+	tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 }ST_SYMBOL_ENUM;
 
 typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
@@ -43,7 +43,7 @@ typedef union _SYMBOL_BODY
 	tuint32 struct_field_list_num;
 }SYMBOL_BODY;
 
-#define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_IDENTIFIER_LENGTH * 2
+#define MAX_SYMBOL_KEY_LENGTH TDATA_MAX_LENGTH_OF_IDENTIFIER * 2
 typedef struct _SYMBOL
 {
 	tlibc_hash_head_t hash_head;

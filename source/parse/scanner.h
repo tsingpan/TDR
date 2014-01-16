@@ -23,7 +23,7 @@ typedef union _SCANNER_TOKEN_VALUE
 	ST_TYPE sn_type;
 	ST_SIMPLE_TYPE sn_simple_type;
 	ST_VALUE sn_value;	
-	char sn_tok_identifier[TLIBC_MAX_IDENTIFIER_LENGTH];
+	char sn_tok_identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 	ST_Const sn_const;
 	tdouble pn_tok_double;
 	const char* sn_tok_unixcomment;

@@ -66,8 +66,8 @@ static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_en
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\tif(read_tint32(self, (tint32*)data) != E_TLIBC_NOERROR)\n");
 	generator_print(&self->super, "\t{\n");
-	generator_print(&self->super, "\t\tchar name[TLIBC_MAX_IDENTIFIER_LENGTH];\n");
-	generator_print(&self->super, "\t\tif(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+	generator_print(&self->super, "\t\tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];\n");
+	generator_print(&self->super, "\t\tif(read_tstring(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{

@@ -17,8 +17,8 @@ TLIBC_ERROR_CODE read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, EN_TD_L
 
 	if(read_tint32(self, (tint32*)data) != E_TLIBC_NOERROR)
 	{
-		char name[TLIBC_MAX_IDENTIFIER_LENGTH];
-		if(read_tstring(self, name, TLIBC_MAX_IDENTIFIER_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
+		char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+		if(read_tstring(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(strcmp(name, "E_LS_UNKNOW") == 0)
 		{
 			*data = E_LS_UNKNOW;
