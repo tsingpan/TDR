@@ -69,14 +69,14 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD;
 			goto done;
 		}
-		if(strcmp(name, "E_LS_SYNTAX_ERROR") == 0)
-		{
-			*data = E_LS_SYNTAX_ERROR;
-			goto done;
-		}
 		if(strcmp(name, "E_LS_CANNOT_OPEN_FILE") == 0)
 		{
 			*data = E_LS_CANNOT_OPEN_FILE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_SYNTAX_ERROR") == 0)
+		{
+			*data = E_LS_SYNTAX_ERROR;
 			goto done;
 		}
 		if(strcmp(name, "E_LS_OUT_OF_MEMORY") == 0)
@@ -114,11 +114,6 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_CONSTANT_OVER_THE_RANGE;
 			goto done;
 		}
-		if(strcmp(name, "E_LS_TOO_MANY_MEMBERS") == 0)
-		{
-			*data = E_LS_TOO_MANY_MEMBERS;
-			goto done;
-		}
 		if(strcmp(name, "E_LS_CONST_TYPE_ERROR") == 0)
 		{
 			*data = E_LS_CONST_TYPE_ERROR;
@@ -127,6 +122,11 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 		if(strcmp(name, "E_LS_ENUM_HAVE_EQUAL_ELEMENTS") == 0)
 		{
 			*data = E_LS_ENUM_HAVE_EQUAL_ELEMENTS;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_TOO_MANY_MEMBERS") == 0)
+		{
+			*data = E_LS_TOO_MANY_MEMBERS;
 			goto done;
 		}
 		if(strcmp(name, "E_LS_TOO_MANY_PARAMETERS") == 0)

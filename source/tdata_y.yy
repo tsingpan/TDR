@@ -229,7 +229,19 @@ EnumDef :
 				
 		check_value_type(&GET_SELF->symbols, &yylloc, &enum_type, &$3);
 
-		dp_reduce_EnumDef(GET_SELF, &$$, $1, &$3, &$5);
+		dp_reduce_EnumDef_Value(GET_SELF, &$$, $1, &$3, &$5);
+
+		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
+	}
+|	tok_identifier ',' UnixCommentOrNot
+	{
+		ST_SIMPLE_TYPE enum_type;
+		enum_type.st = E_ST_INT32;
+
+		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $1);
+		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.enum_name, $1);
+				
+		dp_reduce_EnumDef(GET_SELF, &$$, $1, GET_DEFINITION.definition.de_enum.enum_def_list_num, &$3);
 
 		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};

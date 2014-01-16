@@ -29,11 +29,20 @@ void dp_reduce_Enum(PARSER *self, ST_ENUM *current, const tchar *identifier)
 	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
+void dp_reduce_EnumDef_Value(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->val = *st_value;
+	current->comment = *comment;
+}
+
+void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, tuint32 index, const ST_UNIX_COMMENT *comment)
+{
+	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	current->val.type = E_SNVT_INT64;
+	current->val.val.i64 = index;
 	current->comment = *comment;
 }
 
