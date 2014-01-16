@@ -97,8 +97,10 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_en
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\tif(write_%s_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
+	generator_print(&self->super, "\tif(write_enum_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
 	generator_print(&self->super, "\tif(write_%s_number(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
+	generator_print(&self->super, "\tif(write_%s_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);	
+	generator_print(&self->super, "\tif(write_enum_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
@@ -230,6 +232,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 
 	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data, %s selector)\n", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
 	generator_print(&self->super, "{\n");
+	generator_print(&self->super, "\tif(write_union_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->name);
 	generator_print(&self->super, "\tswitch(selector)\n");
 	generator_print(&self->super, "\t{\n");
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
@@ -252,7 +255,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 	generator_print(&self->super, "\t\tgoto ERROR_RET;\n");		
 
 	generator_print(&self->super, "\t}\n");
-
+	generator_print(&self->super, "\tif(write_union_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->name);
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
 	generator_print(&self->super, "ERROR_RET:\n");
