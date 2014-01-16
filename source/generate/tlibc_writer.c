@@ -56,13 +56,15 @@ static TD_ERROR_CODE _on_import(TLIBC_WRITER_GENERATOR *self, const ST_Import *d
 	return E_TD_NOERROR;
 }
 
-static void _on_enum_name(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
+static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	tuint32 i;
-
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "static TLIBC_ERROR_CODE write_%s_name(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
+	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "{\n");
+	generator_print(&self->super, "\tif(write_enum_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
+	generator_print(&self->super, "\tif(write_tint32(self, (tint32*)data) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+
 	generator_print(&self->super, "\tswitch(*data)\n");
 	generator_print(&self->super, "\t{\n");
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
@@ -73,27 +75,11 @@ static void _on_enum_name(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
 	}
 	generator_print(&self->super, "\t}\n");
 
-	generator_print(&self->super, "\n");
-	generator_print(&self->super, "\n");
-	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
-	generator_print(&self->super, "ERROR_RET:\n");
-	generator_print(&self->super, "\treturn E_TLIBC_ERROR;\n");
-	
 
-	generator_print(&self->super, "}\n");
-}
-
-static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
-{	
-	generator_print(&self->super, "\n");
-	generator_print(&self->super, "TLIBC_ERROR_CODE write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)\n", de_enum->name, de_enum->name);
-	generator_print(&self->super, "{\n");
-	generator_print(&self->super, "\tif(write_enum_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
-	generator_print(&self->super, "\tif(write_tint32(self, (tint32*)data) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-	generator_print(&self->super, "\tif(write_%s_name(self, data) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);	
-	generator_print(&self->super, "\tif(write_enum_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\n");
+	generator_print(&self->super, "done:\n");
+	generator_print(&self->super, "\tif(write_enum_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_enum->name);		
 	generator_print(&self->super, "\treturn E_TLIBC_NOERROR;\n");
 	generator_print(&self->super, "ERROR_RET:\n");
 	generator_print(&self->super, "\treturn E_TLIBC_ERROR;\n");	
@@ -266,7 +252,6 @@ static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *defini
 		case E_DT_CONST:
 			return E_TD_NOERROR;
 		case E_DT_ENUM:
-			_on_enum_name(self, &definition->definition.de_enum);
 			return _on_enum(self, &definition->definition.de_enum);
 		case E_DT_STRUCT:
 			return _on_struct(self, &definition->definition.de_struct);
