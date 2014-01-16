@@ -4,6 +4,9 @@
 #include "protocol/tlibc_xml_reader.h"
 #include "protocol/tlibc_xml_writer.h"
 
+#include "protocol/tlibc_compact_reader.h"
+#include "protocol/tlibc_compact_writer.h"
+
 #include "definition/definition_types.h"
 #include "definition/definition_writer.h"
 #include "definition/definition_reader.h"
@@ -57,7 +60,7 @@ void test_xml()
 }
 void test_xml2()
 {
-	TLIBC_XML_WRITER xml_writer;	
+	TLIBC_XML_WRITER xml_writer;
 	int ret;
 
 	xml_writer_init(&xml_writer, "test_xml2.xml");
@@ -69,10 +72,29 @@ void test_xml2()
 	xml_reader_init(&xml_reader, "test_xml2.xml");
 	ret = read_ST_Parameters(&xml_reader.super, &g_parameters);
 }
+
 void test_compact()
 {
+	char buff[MAX_BUFF_SIZE];
+	TLIBC_XML_WRITER xml_writer;
+
+	TLIBC_COMPACT_WRITER compact_writer;
+	TLIBC_COMPACT_READER compact_reader;
+
+	int ret;
 	
+	memset(&g_definition, 0, sizeof(g_definition));
+
+	xml_reader_init(&xml_reader, "t.xml");
+	ret = read_ST_DEFINITION(&xml_reader.super, &g_definition);
 	
+
+	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
+	write_ST_DEFINITION(&compact_writer.super, &g_definition);
+
+	memset(&g_definition, 0, sizeof(g_definition));
+	tlibc_compact_reader_init(&compact_reader, buff, MAX_BUFF_SIZE);
+	read_ST_DEFINITION(&compact_reader.super, &g_definition);
 }
 
 int main()
