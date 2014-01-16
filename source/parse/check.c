@@ -17,7 +17,7 @@ void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc,
 {
 	if(symbols_search(symbols, prefix, identifier) != NULL)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_DEFINED, prefix, identifier);
+		scanner_error(yylloc, E_LS_IDENTIFIER_REDEFINITION, prefix, identifier);
 	}
 }
 
@@ -39,7 +39,7 @@ void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, co
 
 	if(symbol->type != EN_HST_VALUE)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_CONSTANCE, identifier);
+		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_VALUE, identifier);
 	}
 }
 

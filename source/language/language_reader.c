@@ -24,6 +24,41 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_UNKNOW;
 			goto done;
 		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_DEFINED") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_DEFINED;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_REDEFINITION") == 0)
+		{
+			*data = E_LS_IDENTIFIER_REDEFINITION;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_TYPE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_NOT_VALUE") == 0)
+		{
+			*data = E_LS_IDENTIFIER_NOT_VALUE;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_IDENTIFIER_LENGTH_ERROR") == 0)
+		{
+			*data = E_LS_IDENTIFIER_LENGTH_ERROR;
+			goto done;
+		}
+		if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
+		{
+			*data = E_LS_STRING_LENGTH_NOT_DEFINED;
+			goto done;
+		}
 		if(strcmp(name, "E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD") == 0)
 		{
 			*data = E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD;
@@ -57,31 +92,6 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 		if(strcmp(name, "E_LS_NUMBER_ERROR_RANGE") == 0)
 		{
 			*data = E_LS_NUMBER_ERROR_RANGE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_LENGTH_ERROR") == 0)
-		{
-			*data = E_LS_IDENTIFIER_LENGTH_ERROR;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_PACKAGE_NAME_TOO_LONG") == 0)
-		{
-			*data = E_LS_PACKAGE_NAME_TOO_LONG;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_CAN_NOT_FIND_IDENTIFIER") == 0)
-		{
-			*data = E_LS_CAN_NOT_FIND_IDENTIFIER;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_NOT_TYPE") == 0)
-		{
-			*data = E_LS_NOT_TYPE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_REDEFINITION") == 0)
-		{
-			*data = E_LS_IDENTIFIER_REDEFINITION;
 			goto done;
 		}
 		if(strcmp(name, "E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE") == 0)
@@ -129,56 +139,6 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 			*data = E_LS_TOO_MANY_ARGUMENTS;
 			goto done;
 		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_DEFINED") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_DEFINED;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_CONSTANCE") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_CONSTANCE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_PARAMETER_TYPE_MISMATCH") == 0)
-		{
-			*data = E_LS_PARAMETER_TYPE_MISMATCH;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_STRING_LENGTH_MUST_BE_DEFINED") == 0)
-		{
-			*data = E_LS_STRING_LENGTH_MUST_BE_DEFINED;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_TYPE") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_TYPE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_ENUMDEF") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_ENUMDEF;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_OP0_MUST_BE_INTEGER") == 0)
-		{
-			*data = E_LS_OP0_MUST_BE_INTEGER;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_OP1_MUST_BE_INTEGER_CONSTANCE") == 0)
-		{
-			*data = E_LS_OP1_MUST_BE_INTEGER_CONSTANCE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_INTEGER") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_INTEGER;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_STRING_LENGTH_NOT_DEFINED") == 0)
-		{
-			*data = E_LS_STRING_LENGTH_NOT_DEFINED;
-			goto done;
-		}
 		if(strcmp(name, "E_LS_NOT_INTEGER_VALUE") == 0)
 		{
 			*data = E_LS_NOT_INTEGER_VALUE;
@@ -187,11 +147,6 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 		if(strcmp(name, "E_LS_NOT_INTEGER_TYPE") == 0)
 		{
 			*data = E_LS_NOT_INTEGER_TYPE;
-			goto done;
-		}
-		if(strcmp(name, "E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER") == 0)
-		{
-			*data = E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER;
 			goto done;
 		}
 		if(strcmp(name, "E_LS_ARGUMENT_TYPE_MISMATCH") == 0)
