@@ -10,7 +10,7 @@
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_REDEFINITION</language_string_number>
-			<language_string>[%s]符号重定义</language_string>
+			<language_string>[%s::%s]符号重定义</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_NOT_TYPE</language_string_number>
@@ -22,7 +22,7 @@
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
-			<language_string>字符串[%s%s]长度超过%u</language_string>
+			<language_string>字符串长度超过%u</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_STRING_LENGTH_NOT_DEFINED</language_string_number>

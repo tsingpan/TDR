@@ -21,7 +21,7 @@ void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
 
 //检查符号不指向一个值value, enumdef
-void check_identifier_is_not_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
+void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
 
 //检查符号是否指向一个正整数常量
 void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
