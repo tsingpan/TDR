@@ -29,13 +29,10 @@ static tint32 path_repair(char* path, tuint32 *len)
 	file_path_len = (tuint32)strlen(path);
 
 	snprintf(file_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s", path);
-	if(TLIBC_FILE_SEPARATOR == '/')
+	if(path[0] == '/')
 	{
-		if(path[0] == '/')
-		{
-			p[0] = "/";
-			ptail = 1;
-		}
+		p[0] = "/";
+		ptail = 1;
 	}
 
 	for(i = 0; i < file_path_len; ++i)
