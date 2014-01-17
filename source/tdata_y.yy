@@ -3,9 +3,11 @@
 %pure_parser
 %{
 //bison生成的代码会有几个warning, 在这里屏蔽掉
+#ifdef _WIN32
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4702)
 #pragma warning (disable: 4127)
+#endif
 
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>

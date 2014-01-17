@@ -56,7 +56,7 @@ static void parser_push(PARSER *self, const char *source_dir, const char *file_n
 	}
 }
 
-
+int tdataparse (SCANNER *self);
 tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, tuint32 generator_list_num)
 {
 	tint32 ret;	

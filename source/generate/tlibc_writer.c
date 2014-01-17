@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 
 static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
@@ -123,6 +124,8 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 			case E_EO_UNEQUAL:
 				op = "!=";
 				break;
+			default:
+				assert(0);
 			}
 			generator_print(&self->super, "\tif(data->%s %s ", de_struct->field_list.field_list[i].condition.op0, op);
 			generator_print_value(&self->super, &de_struct->field_list.field_list[i].condition.op1);
