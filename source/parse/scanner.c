@@ -12,8 +12,8 @@
 
 static tint32 path_repair(char* path, tuint32 *len)
 {
-	char file_path[TLIBC_MAX_FILE_PATH_LENGTH];
-	char *p[TLIBC_MAX_FILE_PATH_LENGTH];
+	char file_path[TLIBC_MAX_PATH_LENGTH];
+	char *p[TLIBC_MAX_PATH_LENGTH];
 	tuint32 ptail = 0;
 	tint32 first = 1;
 	tuint32 i = 0;
@@ -27,7 +27,7 @@ static tint32 path_repair(char* path, tuint32 *len)
 	}
 	file_path_len = (tuint32)strlen(path);
 
-	snprintf(file_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s", path);
+	snprintf(file_path, TLIBC_MAX_PATH_LENGTH, "%s", path);
 	if(path[0] == '/')
 	{
 		p[0] = "/";
@@ -165,7 +165,7 @@ tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name
 	YYCTYPE* yy_start = self->buff_curr;
 	tuint32 i = 0;
 	tuint32 len = 0;
-	char realPath[TLIBC_MAX_FILE_PATH_LENGTH];
+	char realPath[TLIBC_MAX_PATH_LENGTH];
 	SCANNER_CONTEXT *scanner = NULL;
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
@@ -184,8 +184,8 @@ tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name
 		}
 	}
 
-	snprintf(realPath, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", source_dir, TLIBC_FILE_SEPARATOR, file_name);
-	len = TLIBC_MAX_FILE_PATH_LENGTH;
+	snprintf(realPath, TLIBC_MAX_PATH_LENGTH, "%s%c%s", source_dir, TLIBC_FILE_SEPARATOR, file_name);
+	len = TLIBC_MAX_PATH_LENGTH;
 	if(path_repair(realPath, &len) != E_TD_NOERROR)
 	{
 		ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
@@ -211,8 +211,8 @@ tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name
 	fclose(fin);
 
 	scanner = &self->stack[self->stack_num];
-	strncpy(scanner->file_name, file_name, TLIBC_MAX_FILE_PATH_LENGTH);
-	scanner->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	strncpy(scanner->file_name, file_name, TLIBC_MAX_PATH_LENGTH);
+	scanner->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	scanner->yy_start = yy_start;
 	scanner->yy_limit = self->buff_curr;
 	scanner->yy_state = state;
@@ -565,8 +565,8 @@ int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNE
 	for(;;)
 	{
 		SCANNER_CONTEXT *scanner = scanner_top(self);
-		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_FILE_PATH_LENGTH);
-		yylloc_param->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_PATH_LENGTH);
+		yylloc_param->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		ret = scanner_scan(self, yylloc_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;

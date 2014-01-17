@@ -13,7 +13,7 @@ struct _GENERATOR
 {
 	const SYMBOLS *symbols;
 	FILE* fout;
-	char document_name[TLIBC_MAX_FILE_PATH_LENGTH];
+	char document_name[TLIBC_MAX_PATH_LENGTH];
 
 	TD_ERROR_CODE (*on_document_begin)(GENERATOR *self, const char *file_name);
 	TD_ERROR_CODE (*on_document_end)(GENERATOR *self, const char *file_name);

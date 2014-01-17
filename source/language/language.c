@@ -64,19 +64,19 @@ static void sort_library(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 static TLIBC_XML_READER xml_reader;
 TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
-	char language_path[TLIBC_MAX_FILE_PATH_LENGTH];
+	char language_path[TLIBC_MAX_PATH_LENGTH];
 	
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
-	char root_dir[TLIBC_MAX_FILE_PATH_LENGTH];
-	snprintf(root_dir, TLIBC_MAX_FILE_PATH_LENGTH, getenv(TDATA_HOME));
+	char root_dir[TLIBC_MAX_PATH_LENGTH];
+	snprintf(root_dir, TLIBC_MAX_PATH_LENGTH, getenv(TDATA_HOME));
 	if(root_dir[strlen(root_dir) - 1] != TLIBC_FILE_SEPARATOR)
 	{
 		root_dir[strlen(root_dir) + 1] = 0;
 		root_dir[strlen(root_dir)] = TLIBC_FILE_SEPARATOR;
 	}
 	self->language_string_list_num = 0;
-	snprintf(language_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
+	snprintf(language_path, TLIBC_MAX_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 
 	if(tlibc_xml_reader_init(&xml_reader, language_path) != E_TLIBC_NOERROR)
 	{		

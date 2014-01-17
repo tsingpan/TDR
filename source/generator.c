@@ -52,26 +52,26 @@ ERROR_RET:
 }
 TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
 {
-	char primary[TLIBC_MAX_FILE_PATH_LENGTH];
-	char target_path[TLIBC_MAX_FILE_PATH_LENGTH];
+	char primary[TLIBC_MAX_PATH_LENGTH];
+	char target_path[TLIBC_MAX_PATH_LENGTH];
 	tuint32 path_length = 0;
 	tuint32 i, document_name_length;
 
 	//把扩展名替换为指定后缀
-	if(strlen(primary_file) + 1 >= TLIBC_MAX_FILE_PATH_LENGTH)
+	if(strlen(primary_file) + 1 >= TLIBC_MAX_PATH_LENGTH)
 	{
 		goto ERROR_RET;
 	}
-	strncpy(primary, primary_file, TLIBC_MAX_FILE_PATH_LENGTH);
-	generator_replace_extension(primary, TLIBC_MAX_FILE_PATH_LENGTH, suffix);
+	strncpy(primary, primary_file, TLIBC_MAX_PATH_LENGTH);
+	generator_replace_extension(primary, TLIBC_MAX_PATH_LENGTH, suffix);
 
 	//创建目录
-	if(strlen(g_target_dir) + strlen(primary) + 1 + 1 >= TLIBC_MAX_FILE_PATH_LENGTH)
+	if(strlen(g_target_dir) + strlen(primary) + 1 + 1 >= TLIBC_MAX_PATH_LENGTH)
 	{
 		goto ERROR_RET;
 	}
-	snprintf(target_path, TLIBC_MAX_FILE_PATH_LENGTH, "%s%c%s", g_target_dir, TLIBC_FILE_SEPARATOR, primary);
-	target_path[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_target_dir, TLIBC_FILE_SEPARATOR, primary);
+	target_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	path_length = strlen(target_path);
 	for(i = 0; i < path_length; ++i)
 	{
@@ -84,8 +84,8 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 	}
 
 	//计算文档名字
-	strncpy(self->document_name, primary, TLIBC_MAX_FILE_PATH_LENGTH);
-	self->document_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+	strncpy(self->document_name, primary, TLIBC_MAX_PATH_LENGTH);
+	self->document_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	document_name_length = strlen(self->document_name);
 	for(i = 0;i < document_name_length; ++i)
 	{

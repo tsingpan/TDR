@@ -10,7 +10,7 @@
 
 typedef struct _YYLTYPE
 {
-	char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
+	char file_name[TLIBC_MAX_PATH_LENGTH];
 	int first_line;
 	int first_column;
 	int last_line;
@@ -67,7 +67,7 @@ typedef union _SCANNER_TOKEN_VALUE
 typedef struct _SCANNER_CONTEXT SCANNER_CONTEXT;
 struct _SCANNER_CONTEXT
 {
-	char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
+	char file_name[TLIBC_MAX_PATH_LENGTH];
 	int yy_state;
 	YYCTYPE *yy_last;
 	YYCTYPE *yy_cursor;

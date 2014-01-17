@@ -92,9 +92,9 @@ void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
 
 	if(pn_definition->type == E_DT_IMPORT)
 	{
-		char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
-		snprintf(file_name, TLIBC_MAX_FILE_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
-		file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
+		char file_name[TLIBC_MAX_PATH_LENGTH];
+		snprintf(file_name, TLIBC_MAX_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
+		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		parser_push(self, g_source_dir, file_name);
 	}
 }
