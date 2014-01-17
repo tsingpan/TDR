@@ -240,8 +240,16 @@ EnumDef :
 
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $1);
 		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.enum_name, $1);
-				
-		dp_reduce_EnumDef(GET_SELF, &$$, $1, GET_DEFINITION.definition.de_enum.enum_def_list_num, &$3);
+		
+		if(GET_DEFINITION.definition.de_enum.enum_def_list_num == 0)
+		{
+			dp_reduce_EnumDef(GET_SELF, &$$, $1, NULL, &$3);
+		}
+		else
+		{
+			dp_reduce_EnumDef(GET_SELF, &$$, $1, 
+			&GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num - 1].val, &$3);
+		}
 
 		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
 	};

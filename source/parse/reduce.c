@@ -1,5 +1,6 @@
 #include "reduce.h"
 #include <string.h>
+#include <assert.h>
 
 void dp_reduce_Import(PARSER *self, ST_Import* current, const char* str)
 {
@@ -37,12 +38,22 @@ void dp_reduce_EnumDef_Value(PARSER *self, ST_ENUM_DEF *current, const tchar *id
 	current->comment = *comment;
 }
 
-void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, tuint32 index, const ST_UNIX_COMMENT *comment)
+void dp_reduce_EnumDef(PARSER *self, ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_last_value, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->val.type = E_SNVT_INT64;
-	current->val.val.i64 = index;
+	if(st_last_value != NULL)
+	{
+		assert((st_last_value->type == E_SNVT_INT64) || (st_last_value->type == E_SNVT_HEX_INT64));
+		current->val.val.i64 = st_last_value->val.i64 + 1;
+	}
+	else
+	{
+		current->val.type = E_SNVT_INT64;
+		current->val.val.i64 = 0;
+	}
+	
 	current->comment = *comment;
 }
 
