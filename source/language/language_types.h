@@ -8,7 +8,7 @@
 #ifndef _H_LANGUAGE_LANGUAGE_TYPES_H
 #define _H_LANGUAGE_LANGUAGE_TYPES_H
 
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 
 
 

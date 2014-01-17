@@ -1,8 +1,8 @@
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
+#include "tlibc/core/tlibc_error_code.h"
+#include "tlibc/protocol/tlibc_xml_reader.h"
 #include "error.h"
-#include "protocol/tlibc_xml_reader.h"
 #include "language/language_reader.h"
-#include "core/tlibc_error_code.h"
 #include "globals.h"
 
 #include <stdio.h>

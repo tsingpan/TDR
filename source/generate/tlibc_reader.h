@@ -1,7 +1,7 @@
 #ifndef _H_TLIBC_READER
 #define _H_TLIBC_READER
 
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 #include "symbols.h"
 #include "generator.h"
 

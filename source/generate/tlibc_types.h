@@ -1,7 +1,7 @@
 #ifndef _H_TLIBC_TYPES
 #define _H_TLIBC_TYPES
 
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 #include "symbols.h"
 
 #include "generator.h"

@@ -1,6 +1,6 @@
 #ifndef _H_LANGUAGE_H
 #define _H_LANGUAGE_H
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 
 #include "error.h"
 

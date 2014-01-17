@@ -1,6 +1,7 @@
 #include "parse/scanner.h"
+#include "tlibc/protocol/tlibc_xml_reader.h"
+
 #include "error.h"
-#include "protocol/tlibc_xml_reader.h"
 #include "language/language.h"
 #include "tdata_y.h"
 #include "globals.h"

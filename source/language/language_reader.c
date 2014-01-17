@@ -6,7 +6,7 @@
  */
 
 #include "language/language_reader.h"
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 #include <string.h>
 
 

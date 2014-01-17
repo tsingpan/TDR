@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 
-#include "protocol/tlibc_xml_reader.h"
-#include "protocol/tlibc_xml_writer.h"
+#include "tlibc/protocol/tlibc_xml_reader.h"
+#include "tlibc/protocol/tlibc_xml_writer.h"
 
-#include "protocol/tlibc_compact_reader.h"
-#include "protocol/tlibc_compact_writer.h"
+#include "tlibc/protocol/tlibc_compact_reader.h"
+#include "tlibc/protocol/tlibc_compact_writer.h"
 
 #include "definition/definition_types.h"
 #include "definition/definition_writer.h"

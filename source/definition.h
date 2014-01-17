@@ -1,8 +1,8 @@
 #ifndef _H_DEFINITION
 #define _H_DEFINITION
 
-#include "platform/tlibc_platform.h"
-#include "tdata/tdata_types.h"
+#include "tlibc/platform/tlibc_platform.h"
+#include "tlibc/tdata/tdata_types.h"
 
 
 #define TD_MAX_COMMENT_LENGTH 1024

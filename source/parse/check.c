@@ -1,7 +1,7 @@
 #include "parse/check.h"
 #include "symbols.h"
 #include <string.h>
-#include "tdata/tdata_types.h"
+#include "tlibc/tdata/tdata_types.h"
 
 #include <assert.h>
 

@@ -1,4 +1,4 @@
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 #include "parse/scanner.h"
 
 

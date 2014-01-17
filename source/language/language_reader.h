@@ -8,10 +8,10 @@
 #ifndef _H_LANGUAGE_LANGUAGE_READER_H
 #define _H_LANGUAGE_LANGUAGE_READER_H
 
-#include "platform/tlibc_platform.h"
-#include "protocol/tlibc_abstract_reader.h"
-#include "core/tlibc_error_code.h"
-#include "tdata/tdata_types.h"
+#include "tlibc/platform/tlibc_platform.h"
+#include "tlibc/protocol/tlibc_abstract_reader.h"
+#include "tlibc/core/tlibc_error_code.h"
+#include "tlibc/tdata/tdata_types.h"
 #include "language/language_types.h"
 
 

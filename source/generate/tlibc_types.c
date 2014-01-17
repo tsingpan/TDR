@@ -24,7 +24,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_print(super, "#ifndef _H_%s\n", super->document_name);
 	generator_print(super, "#define _H_%s\n", super->document_name);
 	generator_print(super, "\n");
-	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include \"tlibc/platform/tlibc_platform.h\"\n");
 	
 	generator_print(super, "\n");
 	generator_print(super, "\n");

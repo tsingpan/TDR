@@ -1,8 +1,8 @@
 #ifndef _H_SCANNER
 #define _H_SCANNER
 
-#include "platform/tlibc_platform.h"
-#include "tdata/tdata_types.h"
+#include "tlibc/platform/tlibc_platform.h"
+#include "tlibc/tdata/tdata_types.h"
 #include "language/language_types.h"
 #include "definition.h"
 #include "error.h"

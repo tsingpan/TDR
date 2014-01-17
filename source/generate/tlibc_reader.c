@@ -28,7 +28,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_replace_extension(header, MAX_PACKAGE_NAME_LENGTH, TLIBC_READER_HEADER_SUFFIX);
 	generator_print(super, "#include \"%s\"\n", header);
 
-	generator_print(super, "#include \"platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include \"tlibc/platform/tlibc_platform.h\"\n");
 	generator_print(super, "#include <string.h>\n");
 
 	generator_print(super, "\n");

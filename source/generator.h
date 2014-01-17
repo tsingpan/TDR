@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "platform/tlibc_platform.h"
+#include "tlibc/platform/tlibc_platform.h"
 #include "error.h"
 #include "symbols.h"
 
