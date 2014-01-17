@@ -6,9 +6,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-//ÆÁ±Î¹ã¸æ
-#pragma warning (disable: 4996)
-
 void generator_init(GENERATOR *self, const SYMBOLS *symbols)
 {
 	self->symbols = symbols;

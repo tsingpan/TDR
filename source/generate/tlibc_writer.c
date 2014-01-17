@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//ÆÁ±Î¹ã¸æ
-#pragma warning (disable: 4996)
 
 static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 {

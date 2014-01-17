@@ -8,9 +8,6 @@
 
 #include <assert.h>
 
-//ÆÁ±Î¹ã¸æ
-#pragma warning (disable: 4996)
-
 void symbols_init(SYMBOLS *self)
 {
 	tlibc_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
