@@ -33,7 +33,9 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 }
 
 static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
-{	
+{
+	TLIBC_UNUSED(file_name);
+
 	generator_print(super, "\n");
 	generator_print(super, "#endif //_H_%s\n", super->document_name);
 	generator_print(super, "\n");

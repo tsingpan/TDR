@@ -27,6 +27,6 @@ void parser_init(PARSER *self);
 
 tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, tuint32 generator_list_num);
 
-void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
+void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition);
 
 #endif//_H_PARSER

@@ -288,9 +288,10 @@ void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...
 #define MAX_SCANNER_ERROR_MSG_LENGTH 256
 void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...)
 {
-	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
-	
 	va_list ap;
+	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
+	TLIBC_UNUSED(self);
+	
 	va_start(ap, s);
 	vsnprintf(bison_error_msg, MAX_SCANNER_ERROR_MSG_LENGTH, s, ap);
 	scanner_error_halt(yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
@@ -570,7 +571,7 @@ int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNE
 		SCANNER_CONTEXT *scanner = scanner_top(self);
 		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_FILE_PATH_LENGTH);
 		yylloc_param->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
-		ret = scanner_scan(self, yylloc_param, yylval_param);
+		ret = scanner_scan(self, yylloc_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;
 		if(ret == 0)

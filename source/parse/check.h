@@ -27,7 +27,7 @@ void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE
 void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier);
 
 //检查string长度定义
-void check_string_length_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type);
+void check_string_length_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type);
 
 //检查类型是整数
 void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
@@ -42,7 +42,7 @@ void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols,
 void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments);
 
 //检查字符串长度是否超过限制
-void check_strlen_too_long(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit);
+void check_strlen_too_long(const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit);
 
 //检查类型和值是否匹配
 void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val);
@@ -51,9 +51,9 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
 
 //检查枚举不包含重复元素
-void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index);
+void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index);
 
 //检查字符串是否相等
-void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *src, const tchar* dst);
+void check_str_equal(const YYLTYPE *yylloc, const tchar *src, const tchar* dst);
 
 #endif //_H_CHECK

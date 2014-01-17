@@ -2,6 +2,10 @@
 %parse-param { SCANNER *self }
 %pure_parser
 %{
+//bison生成的代码会有两个warning, 在这里屏蔽掉
+#pragma warning (disable: 4244)
+#pragma warning (disable: 4702)
+
 //必须要包含这个玩意， 不然bison生成的文件编译不过
 #include <stdio.h>
 #include <string.h>
@@ -9,9 +13,11 @@
 #define YYERROR_VERBOSE
 #define YYLEX_PARAM self
 
+#define GET_PARSER TLIBC_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
+#define GET_SYMBOLS GET_PARSER->symbols
+#define GET_DEFINITION GET_PARSER->pn_definition
 
-#define GET_SELF TLIBC_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
-#define GET_DEFINITION GET_SELF->pn_definition
+
 #define GET_UNION_FIELD_LIST GET_DEFINITION.definition.de_union.union_field_list
 #define GET_FIELD_LIST GET_DEFINITION.definition.de_struct.field_list
 %}
@@ -115,7 +121,7 @@ Document : DefinitionList;
 DefinitionList :
 	DefinitionList Definition
 	{
-		parser_on_definition(GET_SELF, &yylloc, &GET_DEFINITION);
+		parser_on_definition(GET_PARSER, &GET_DEFINITION);
 	}
 |	{
 	};
@@ -157,46 +163,46 @@ Definition :
 Import :
 	tok_import tok_string
 	{
-		check_strlen_too_long(&GET_SELF->symbols, &yylloc, $2, "", MAX_PACKAGE_NAME_LENGTH);
+		check_strlen_too_long(&yylloc, $2, "", MAX_PACKAGE_NAME_LENGTH);
 		
 
-		dp_reduce_Import(GET_SELF, &$$, $2);
+		reduce_Import(&$$, $2);
 	};
 
 Typedef :
 	tok_typedef SimpleType tok_identifier ';'
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $3);
 
-		dp_reduce_Typedef(GET_SELF, &$$, &$2, $3);
+		reduce_Typedef(&$$, &$2, $3);
 
-		symbols_add_Typedef(&GET_SELF->symbols, &yylloc, &$$);
+		symbols_add_Typedef(&GET_SYMBOLS, &yylloc, &$$);
 	};
 
 Const :
 	tok_const SimpleType tok_identifier '=' Value ';'
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_value_type(&GET_SELF->symbols, &yylloc, &$2, &$5);
+		check_value_type(&GET_SYMBOLS, &yylloc, &$2, &$5);
 
 
-		dp_reduce_Const(GET_SELF, &$$, &$2, $3, &$5);		
-		symbols_add_Const(&GET_SELF->symbols, &yylloc, &$$);
+		reduce_Const(&$$, &$2, $3, &$5);		
+		symbols_add_Const(&GET_SYMBOLS, &yylloc, &$$);
 	};
 
 Enum :
 	tok_enum tok_identifier	
 	{
-		GET_SELF->symbols.enum_name = $2;
+		GET_SYMBOLS.enum_name = $2;
 	}
 	'{' EnumDefList '}'	';'
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $2);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 
-		dp_reduce_Enum(GET_SELF, &GET_DEFINITION.definition.de_enum, $2);
+		reduce_Enum(&GET_DEFINITION.definition.de_enum, $2);
 
-		symbols_add_Enum(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_enum);
+		symbols_add_Enum(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_enum);
 	};
 
 EnumDefList :
@@ -208,7 +214,7 @@ EnumDefList :
 		}
 		
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
-		check_enumdef_is_unique(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_enum, GET_DEFINITION.definition.de_enum.enum_def_list_num);
+		check_enumdef_is_unique(&yylloc, &GET_DEFINITION.definition.de_enum, GET_DEFINITION.definition.de_enum.enum_def_list_num);
 		++GET_DEFINITION.definition.de_enum.enum_def_list_num;
 	}
 |	
@@ -224,47 +230,47 @@ EnumDef :
 		ST_SIMPLE_TYPE enum_type;
 		enum_type.st = E_ST_INT32;
 
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $1);
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.enum_name, $1);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $1);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.enum_name, $1);
 				
-		check_value_type(&GET_SELF->symbols, &yylloc, &enum_type, &$3);
+		check_value_type(&GET_SYMBOLS, &yylloc, &enum_type, &$3);
 
-		dp_reduce_EnumDef_Value(GET_SELF, &$$, $1, &$3, &$5);
+		reduce_EnumDef_Value(&$$, $1, &$3, &$5);
 
-		symbols_add_EnumDef(&GET_SELF->symbols, &yylloc, &$$);
+		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &$$);
 	}
 |	tok_identifier ',' UnixCommentOrNot
 	{
 		ST_SIMPLE_TYPE enum_type;
 		enum_type.st = E_ST_INT32;
 
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $1);
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.enum_name, $1);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $1);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.enum_name, $1);
 		
 		if(GET_DEFINITION.definition.de_enum.enum_def_list_num == 0)
 		{
-			dp_reduce_EnumDef(GET_SELF, &$$, $1, NULL, &$3);
+			reduce_EnumDef(&$$, $1, NULL, &$3);
 		}
 		else
 		{
-			dp_reduce_EnumDef(GET_SELF, &$$, $1, 
+			reduce_EnumDef(&$$, $1, 
 			&GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num - 1].val, &$3);
 		}
 
-		symbols_add_EnumDef(&GET_SELF->symbols, &yylloc, &$$);
+		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &$$);
 	};
 
 Union :
 	tok_union tok_identifier
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $2);
-		GET_SELF->symbols.union_name = $2;
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
+		GET_SYMBOLS.union_name = $2;
 	}
 	Parameters '{' UnionFieldList '}' ';'
 	{
-		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
+		reduce_Union(&GET_DEFINITION.definition.de_union, $2, &$4);
 
-		symbols_add_Union(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_union);
+		symbols_add_Union(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_union);
 	};
 	
 UnionFieldList: 
@@ -287,15 +293,15 @@ UnionFieldList:
 UnionField : 
 	tok_identifier ':' SimpleType tok_identifier ';' UnixCommentOrNot
 	{
-		check_identifier_not_defined_as_value(&GET_SELF->symbols, &yylloc, "", $4);
+		check_identifier_not_defined_as_value(&GET_SYMBOLS, &yylloc, "", $4);
 
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.union_name, $1);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.union_name, $1);
 
-		check_string_length_defined(&GET_SELF->symbols, &yylloc, &$3);
+		check_string_length_defined(&yylloc, &$3);
 
-		dp_reduce_UnionField(GET_SELF, &$$, $1, &$3, $4, &$6);
+		reduce_UnionField(&$$, $1, &$3, $4, &$6);
 
-		symbols_add_UnionField(&GET_SELF->symbols, &yylloc, &$$);
+		symbols_add_UnionField(&GET_SYMBOLS, &yylloc, &$$);
 	};
 
 	Parameters :
@@ -328,9 +334,9 @@ ParameterList:
 Parameter:
 	SimpleType tok_identifier
 	{
-		check_str_equal(&GET_SELF->symbols, &yylloc, $2, "selector");
+		check_str_equal(&yylloc, $2, "selector");
 
-		check_simpletype_is_enum(&GET_SELF->symbols, &yylloc, &$1);
+		check_simpletype_is_enum(&GET_SYMBOLS, &yylloc, &$1);
 
 		$$.type = $1;
 		strncpy($$.identifier, $2, TDATA_MAX_LENGTH_OF_IDENTIFIER - 1);
@@ -346,16 +352,16 @@ Parameter:
 Struct : 
 	tok_struct tok_identifier
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, "", $2);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 
-		GET_SELF->symbols.struct_name = $2;
+		GET_SYMBOLS.struct_name = $2;
 	}
 	'{' FieldList '}' ';'
 	{
 		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 		GET_DEFINITION.definition.de_struct.name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
-		symbols_add_Struct(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_struct);
+		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
 	};
 
 FieldList: 
@@ -378,43 +384,43 @@ FieldList:
 Field : 
 	Condition Type tok_identifier Arguments	';' UnixCommentOrNot
 	{
-		check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_identifier_not_defined_as_value(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_not_defined_as_value(&GET_SYMBOLS, &yylloc, "", $3);
 		
 
 		if(($2.type == E_SNT_CONTAINER) && ($2.ct.ct == E_CT_VECTOR))
 		{
 			char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
-			check_strlen_too_long(&GET_SELF->symbols, &yylloc, $3, "_num", TDATA_MAX_LENGTH_OF_IDENTIFIER);
+			check_strlen_too_long(&yylloc, $3, "_num", TDATA_MAX_LENGTH_OF_IDENTIFIER);
 			snprintf(name, TDATA_MAX_LENGTH_OF_IDENTIFIER, "%s_num", $3);
 
-			check_identifier_not_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, name);
+			check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, name);
 
-			check_identifier_not_defined_as_value(&GET_SELF->symbols, &yylloc, "", name);
+			check_identifier_not_defined_as_value(&GET_SYMBOLS, &yylloc, "", name);
 		}
 		
 
 		if($2.type == E_SNT_SIMPLE)
 		{
-			check_string_length_defined(&GET_SELF->symbols, &yylloc, &$2.st);
+			check_string_length_defined(&yylloc, &$2.st);
 		}
 
-		check_arguments(&GET_SELF->symbols, &yylloc, &$2, &$4);
+		check_arguments(&GET_SYMBOLS, &yylloc, &$2, &$4);
 
-		dp_reduce_Field(GET_SELF, &$$, &$1, &$2, $3, &$4, &$6);		
+		reduce_Field(&$$, &$1, &$2, $3, &$4, &$6);		
 		
-		symbols_add_Field(&GET_SELF->symbols, &yylloc, &$$);
+		symbols_add_Field(&GET_SYMBOLS, &yylloc, &$$);
 	};
 	
 Condition : 
 	tok_if 	'(' tok_identifier '&' Value	')'	
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_identifier_refer_to_a_field_with_integer_type(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_refer_to_a_field_with_integer_type(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_integer_value(&GET_SELF->symbols, &yylloc, &$5);
+		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
 		strncpy($$.op0, $3, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 		$$.op0[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -424,11 +430,11 @@ Condition :
 	}
 |	tok_if 	'(' tok_identifier tok_equal Value	')'	
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_identifier_refer_to_a_field_with_integer_type(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_refer_to_a_field_with_integer_type(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_integer_value(&GET_SELF->symbols, &yylloc, &$5);
+		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
 
 		strncpy($$.op0, $3, TDATA_MAX_LENGTH_OF_IDENTIFIER);
@@ -439,11 +445,11 @@ Condition :
 	}
 |	tok_if '(' tok_identifier tok_unequal Value ')'
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_identifier_refer_to_a_field_with_integer_type(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $3);
+		check_identifier_refer_to_a_field_with_integer_type(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
 
-		check_integer_value(&GET_SELF->symbols, &yylloc, &$5);
+		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
 
 		strncpy($$.op0, $3, TDATA_MAX_LENGTH_OF_IDENTIFIER);
@@ -463,7 +469,7 @@ Condition :
 Type :
 	SimpleType
 	{
-		dp_reduce_Type_SimpleType(GET_SELF, &$$, &$1);
+		reduce_Type_SimpleType(&$$, &$1);
 	}
 |	ContainerType
 	{
@@ -473,13 +479,13 @@ Type :
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
 	{		
-		check_identifier_is_value(&GET_SELF->symbols, &yylloc, "", $5);
+		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $5);
 
-		check_identifier_is_positive_integer(&GET_SELF->symbols, &yylloc, "", $5);
+		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", $5);
 
-		check_string_length_defined(&GET_SELF->symbols, &yylloc, &$3);
+		check_string_length_defined(&yylloc, &$3);
 
-		dp_reduce_ContainerType_tok_t_vector(GET_SELF, &$$, &$3, $5);
+		reduce_ContainerType_tok_t_vector(&$$, &$3, $5);
 	};
 	
 SimpleType:
@@ -525,25 +531,25 @@ SimpleType:
 	}
 |	tok_identifier
    	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $1);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $1);
 
-		check_identifier_is_type(&GET_SELF->symbols, &yylloc, "", $1);
+		check_identifier_is_type(&GET_SYMBOLS, &yylloc, "", $1);
 
-		dp_reduce_SimpleType_tok_identifier(GET_SELF, &$$, $1);
+		reduce_SimpleType_tok_identifier(&$$, $1);
 	}
 |	tok_t_string '<' tok_identifier '>'
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_identifier_is_value(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_identifier_is_positive_integer(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", $3);
 
-		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, $3);
+		reduce_SimpleType_tok_t_string(&$$, $3);
 	}
 |	tok_t_string
 	{
-		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, NULL);
+		reduce_SimpleType_tok_t_string(&$$, NULL);
 	};
 
 
@@ -565,59 +571,59 @@ ArgumentList:
 			scanner_error_halt(&yylloc, E_LS_TOO_MANY_ARGUMENTS, MAX_ARGUMENT_NUM);
 		}
 
-		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, $3);
+		reduce_ArgumentList_ArgumentList_tok_identifier(&$$, &$1, $3);
 	}
 |	tok_identifier
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, GET_SELF->symbols.struct_name, $1);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $1);
 
-		dp_reduce_ArgumentList_tok_identifier(GET_SELF, &$$, $1);
+		reduce_ArgumentList_tok_identifier(&$$, $1);
 	};
 
 Value :
 	tok_uint64
 	{
-		dp_reduce_Value_tok_uint64(GET_SELF, &$$, $1);
+		reduce_Value_tok_uint64(&$$, $1);
 	}
 |	tok_hex_uint64
 	{
-		dp_reduce_Value_tok_hex_uint64(GET_SELF, &$$, $1);
+		reduce_Value_tok_hex_uint64(&$$, $1);
 	}
 |	tok_int64
 	{
-		dp_reduce_Value_tok_int64(GET_SELF, &$$, $1);
+		reduce_Value_tok_int64(&$$, $1);
 	}
 |	tok_hex_int64
 	{
-		dp_reduce_Value_tok_hex_int64(GET_SELF, &$$, $1);
+		reduce_Value_tok_hex_int64(&$$, $1);
 	}
 |	tok_double
 	{
-		dp_reduce_Value_tok_double(GET_SELF, &$$, $1);
+		reduce_Value_tok_double(&$$, $1);
 	}
 |	tok_string
 	{
-		dp_reduce_Value_tok_string(GET_SELF, &$$, $1);
+		reduce_Value_tok_string(&$$, $1);
 	}
 |	tok_char
 	{
-		dp_reduce_Value_tok_char(GET_SELF, &$$, $1);
+		reduce_Value_tok_char(&$$, $1);
 	}
 |	tok_identifier
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $1);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $1);
 
-		check_identifier_is_value(&GET_SELF->symbols, &yylloc, "", $1);
+		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $1);
 
-		dp_reduce_Value_tok_identifier(GET_SELF, &$$, $1);
+		reduce_Value_tok_identifier(&$$, $1);
 	}
 |	tok_count '(' tok_identifier ')'
 	{
-		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_identifier_is_type(&GET_SELF->symbols, &yylloc, "", $3);
+		check_identifier_is_type(&GET_SYMBOLS, &yylloc, "", $3);
 
-		dp_reduce_Value_tok_count(GET_SELF, &$$, $3);
+		reduce_Value_tok_count(&GET_SYMBOLS, &$$, $3);
 	};
 
 UnixComment:

@@ -83,7 +83,7 @@ void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE 
 	}
 }
 
-void check_string_length_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type)
+void check_string_length_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type)
 {
 	if(symbol_type->st != E_ST_STRING)
 	{
@@ -233,7 +233,7 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 }
 
 //检查字符串长度是否超过限制
-void check_strlen_too_long(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit)
+void check_strlen_too_long(const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit)
 {
 	if(strlen(str) + strlen(suffix) + 1 > limit)
 	{
@@ -388,7 +388,7 @@ void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index)
+void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index)
 {
 	tuint32 i;
 
@@ -401,7 +401,7 @@ void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, cons
 	}
 }
 
-void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *src, const tchar* dst)
+void check_str_equal(const YYLTYPE *yylloc, const tchar *src, const tchar* dst)
 {
 	if(strcmp(src, dst) != 0)
 	{

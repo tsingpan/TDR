@@ -78,7 +78,7 @@ tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_l
 
 
 //do
-void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
+void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
