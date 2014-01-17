@@ -13,6 +13,9 @@
 #include <stdarg.h>
 #include "parse/scanner.h"
 
+//ÆÁ±Î¹ã¸æ
+#pragma warning (disable: 4996)
+
 void parser_init(PARSER *self)
 {
 	symbols_init(&self->symbols);

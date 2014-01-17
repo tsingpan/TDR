@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 
+//ÆÁ±Î¹ã¸æ
+#pragma warning (disable: 4996)
+
 const char* language_string_library_search(const ST_TD_LANGUAGE_STRING_LIBRARY *self, EN_TD_LANGUAGE_STRING sid)
 {
 	tuint32 l, r, m;

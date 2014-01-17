@@ -84,7 +84,7 @@ struct _SCANNER_CONTEXT
 #define MAX_LEX_BUFF_SIZE 10000000
 #define MAX_SCANNER_STACK_SIZE 1024
 typedef struct _SCANNER SCANNER;
-typedef struct _SCANNER
+struct _SCANNER
 {
 	tuint32 stack_num;
 	SCANNER_CONTEXT stack[MAX_SCANNER_STACK_SIZE];

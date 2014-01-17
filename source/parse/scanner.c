@@ -9,7 +9,8 @@
 #include <string.h>
 #include <stdarg.h>
 
-
+//ÆÁ±Î¹ã¸æ
+#pragma warning (disable: 4996)
 
 static tint32 path_repair(char* path, tuint32 *len)
 {

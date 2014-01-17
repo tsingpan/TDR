@@ -2,6 +2,9 @@
 #include <string.h>
 #include <assert.h>
 
+//ÆÁ±Î¹ã¸æ
+#pragma warning (disable: 4996)
+
 void reduce_Import(ST_Import* current, const char* str)
 {
 	strncpy(current->package_name, str, MAX_PACKAGE_NAME_LENGTH);

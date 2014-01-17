@@ -4,8 +4,10 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <direct.h>
 #include <stdarg.h>
+
+//ÆÁ±Î¹ã¸æ
+#pragma warning (disable: 4996)
 
 void generator_init(GENERATOR *self, const SYMBOLS *symbols)
 {
@@ -79,7 +81,7 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 		if(target_path[i] == TLIBC_FILE_SEPARATOR)
 		{
 			target_path[i] = 0;
-			mkdir(target_path);
+			tlibc_mkdir(target_path, 0755);
 			target_path[i] = TLIBC_FILE_SEPARATOR;
 		}
 	}
