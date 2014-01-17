@@ -4,6 +4,7 @@
 #include "definition.h"
 
 #include "platform/tlibc_platform.h"
+#include "parse/scanner.h"
 
 #include "core/tlibc_hash.h"
 
@@ -49,6 +50,7 @@ typedef struct _SYMBOL
 	char key[MAX_SYMBOL_KEY_LENGTH];
 	tuint32 key_len;
 
+	YYLTYPE yylloc;
 
 	SYMBOL_TYPE type;
 	SYMBOL_BODY body;
@@ -88,21 +90,21 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE
 const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_value);
 
 
-void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef);
+void symbols_add_Typedef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef);
 
-void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum);
+void symbols_add_Enum(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum);
 
-void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field);
+void symbols_add_UnionField(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field);
 
-void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field);
+void symbols_add_Field(SYMBOLS *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
 
-void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct);
+void symbols_add_Struct(SYMBOLS *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct);
 
-void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union);
+void symbols_add_Union(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
-void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def);
+void symbols_add_EnumDef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def);
 
-void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const);
+void symbols_add_Const(SYMBOLS *self, const YYLTYPE *yylloc, const ST_Const *pn_const);
 
 
 #endif //_H_SYMBOLS

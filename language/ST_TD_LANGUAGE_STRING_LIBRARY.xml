@@ -13,20 +13,20 @@
 			<language_string>[%s::%s]符号重定义</language_string>
 		</language_string_list>
 		<language_string_list>
-			<language_string_number>E_LS_IDENTIFIER_NOT_TYPE</language_string_number>
-			<language_string>符号[%s::%s]不是类型</language_string>
+			<language_string_number>E_LS_IDENTIFIER_NOT_INTEGER</language_string_number>
+			<language_string>符号[%s::%s]不是合法整数</language_string>
 		</language_string_list>
 		<language_string_list>
-			<language_string_number>E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER</language_string_number>
-			<language_string>符号[%s::%s]不是正整数</language_string>
-		</language_string_list>
-		<language_string_list>
-			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
-			<language_string>字符串长度超过%u</language_string>
+			<language_string_number>E_LS_IDENTIFIER_NOT_STRING</language_string_number>
+			<language_string>标识符[%s]不是[%s]</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_STRING_LENGTH_NOT_DEFINED</language_string_number>
 			<language_string>string长度未定义</language_string>
+		</language_string_list>
+		<language_string_list>
+			<language_string_number>E_LS_IDENTIFIER_LENGTH_ERROR</language_string_number>
+			<language_string>符号长度超过%u</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_NOT_INTEGER_TYPE</language_string_number>
@@ -34,7 +34,7 @@
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_NOT_INTEGER_VALUE</language_string_number>
-			<language_string>值不是整数</language_string>
+			<language_string>值不是合法整数</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_ARGUMENT_TYPE_MISMATCH</language_string_number>
@@ -77,24 +77,16 @@
 			<language_string>常量类型不匹配</language_string>
 		</language_string_list>
 		<language_string_list>
-			<language_string_number>E_LS_CONSTANT_OVER_THE_RANGE</language_string_number>
-			<language_string>常量大小超过类型范围</language_string>
-		</language_string_list>
-		<language_string_list>
-			<language_string_number>E_LS_TOO_MANY_MEMBERS</language_string_number>
-			<language_string>类型成员数量不可以超过[%u]</language_string>
-		</language_string_list>
-		<language_string_list>
-			<language_string_number>E_LS_IDENTIFIER_NOT_STRING</language_string_number>
-			<language_string>标识符[%s]不是[%s]</language_string>
-		</language_string_list>
-		<language_string_list>
 			<language_string_number>E_LS_CONST_TYPE_ERROR</language_string_number>
 			<language_string>常量类型错误</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_ENUM_HAVE_EQUAL_ELEMENTS</language_string_number>
 			<language_string>枚举类型含有重复元素[%s]和[%s]</language_string>
+		</language_string_list>
+		<language_string_list>
+			<language_string_number>E_LS_TOO_MANY_MEMBERS</language_string_number>
+			<language_string>类型成员数量不可以超过[%u]</language_string>
 		</language_string_list>
 		<language_string_list>
 			<language_string_number>E_LS_TOO_MANY_PARAMETERS</language_string_number>

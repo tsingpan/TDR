@@ -170,7 +170,7 @@ Typedef :
 
 		dp_reduce_Typedef(GET_SELF, &$$, &$2, $3);
 
-		symbols_add_Typedef(&GET_SELF->symbols, &$$);
+		symbols_add_Typedef(&GET_SELF->symbols, &yylloc, &$$);
 	};
 
 Const :
@@ -182,7 +182,7 @@ Const :
 
 
 		dp_reduce_Const(GET_SELF, &$$, &$2, $3, &$5);		
-		symbols_add_Const(&GET_SELF->symbols, &$$);
+		symbols_add_Const(&GET_SELF->symbols, &yylloc, &$$);
 	};
 
 Enum :
@@ -196,7 +196,7 @@ Enum :
 
 		dp_reduce_Enum(GET_SELF, &GET_DEFINITION.definition.de_enum, $2);
 
-		symbols_add_Enum(&GET_SELF->symbols, &GET_DEFINITION.definition.de_enum);
+		symbols_add_Enum(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_enum);
 	};
 
 EnumDefList :
@@ -204,7 +204,7 @@ EnumDefList :
 	{
 		if(GET_DEFINITION.definition.de_enum.enum_def_list_num >= MAX_ENUM_DEF_LIST_NUM)
 		{
-			scanner_error(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_ENUM_DEF_LIST_NUM);
+			scanner_error_halt(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_ENUM_DEF_LIST_NUM);
 		}
 		
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num] = $2;
@@ -231,7 +231,7 @@ EnumDef :
 
 		dp_reduce_EnumDef_Value(GET_SELF, &$$, $1, &$3, &$5);
 
-		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
+		symbols_add_EnumDef(&GET_SELF->symbols, &yylloc, &$$);
 	}
 |	tok_identifier ',' UnixCommentOrNot
 	{
@@ -251,7 +251,7 @@ EnumDef :
 			&GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num - 1].val, &$3);
 		}
 
-		symbols_add_EnumDef(&GET_SELF->symbols, &$$);
+		symbols_add_EnumDef(&GET_SELF->symbols, &yylloc, &$$);
 	};
 
 Union :
@@ -264,7 +264,7 @@ Union :
 	{
 		dp_reduce_Union(GET_SELF, &GET_DEFINITION.definition.de_union, $2, &$4);
 
-		symbols_add_Union(&GET_SELF->symbols, &GET_DEFINITION.definition.de_union);
+		symbols_add_Union(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_union);
 	};
 	
 UnionFieldList: 
@@ -272,7 +272,7 @@ UnionFieldList:
 	{
 		if(GET_UNION_FIELD_LIST.union_field_list_num >= MAX_UNION_FIELD_LIST_NUM)
 		{
-			scanner_error(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_UNION_FIELD_LIST_NUM);
+			scanner_error_halt(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_UNION_FIELD_LIST_NUM);
 		}
 
 		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num++] = $2;
@@ -295,7 +295,7 @@ UnionField :
 
 		dp_reduce_UnionField(GET_SELF, &$$, $1, &$3, $4, &$6);
 
-		symbols_add_UnionField(&GET_SELF->symbols, &$$);
+		symbols_add_UnionField(&GET_SELF->symbols, &yylloc, &$$);
 	};
 
 	Parameters :
@@ -313,7 +313,7 @@ ParameterList:
 	{
 		if($1.par_list_num >= MAX_PARAMETER_NUM)
 		{
-			scanner_error(&yylloc, E_LS_TOO_MANY_PARAMETERS, MAX_PARAMETER_NUM);
+			scanner_error_halt(&yylloc, E_LS_TOO_MANY_PARAMETERS, MAX_PARAMETER_NUM);
 		}
 		$$ = $1;
 		$$.par_list[$$.par_list_num++] = $3;
@@ -355,7 +355,7 @@ Struct :
 		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 		GET_DEFINITION.definition.de_struct.name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
-		symbols_add_Struct(&GET_SELF->symbols, &GET_DEFINITION.definition.de_struct);
+		symbols_add_Struct(&GET_SELF->symbols, &yylloc, &GET_DEFINITION.definition.de_struct);
 	};
 
 FieldList: 
@@ -363,7 +363,7 @@ FieldList:
 	{
 		if(GET_FIELD_LIST.field_list_num >= MAX_FIELD_LIST_NUM)
 		{
-			scanner_error(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_FIELD_LIST_NUM);
+			scanner_error_halt(&yylloc, E_LS_TOO_MANY_MEMBERS, MAX_FIELD_LIST_NUM);
 		}
 
 		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num++] = $2;
@@ -404,7 +404,7 @@ Field :
 
 		dp_reduce_Field(GET_SELF, &$$, &$1, &$2, $3, &$4, &$6);		
 		
-		symbols_add_Field(&GET_SELF->symbols, &$$);
+		symbols_add_Field(&GET_SELF->symbols, &yylloc, &$$);
 	};
 	
 Condition : 
@@ -472,7 +472,9 @@ Type :
 
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
-	{
+	{		
+		check_identifier_is_value(&GET_SELF->symbols, &yylloc, "", $5);
+
 		check_identifier_is_positive_integer(&GET_SELF->symbols, &yylloc, "", $5);
 
 		check_string_length_defined(&GET_SELF->symbols, &yylloc, &$3);
@@ -533,6 +535,8 @@ SimpleType:
 	{
 		check_identifier_defined(&GET_SELF->symbols, &yylloc, "", $3);
 
+		check_identifier_is_value(&GET_SELF->symbols, &yylloc, "", $3);
+
 		check_identifier_is_positive_integer(&GET_SELF->symbols, &yylloc, "", $3);
 
 		dp_reduce_SimpleType_tok_t_string(GET_SELF, &$$, $3);
@@ -558,7 +562,7 @@ ArgumentList:
 	{
 		if($1.arg_list_num >= MAX_ARGUMENT_NUM)
 		{
-			scanner_error(&yylloc, E_LS_TOO_MANY_ARGUMENTS, MAX_ARGUMENT_NUM);
+			scanner_error_halt(&yylloc, E_LS_TOO_MANY_ARGUMENTS, MAX_ARGUMENT_NUM);
 		}
 
 		dp_reduce_ArgumentList_ArgumentList_tok_identifier(GET_SELF, &$$, &$1, $3);

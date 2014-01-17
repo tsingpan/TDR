@@ -25,7 +25,7 @@ static SYMBOL *symbols_alloc(SYMBOLS *self)
 	SYMBOL *ret = NULL;
 	if(self->symbol_list_num >= MAX_SYMBOL_LIST_NUM)
 	{
-		scanner_error(NULL, E_LS_UNKNOW);
+		scanner_error_halt(NULL, E_LS_UNKNOW);
 	}
 	ret = &self->symbol_list[self->symbol_list_num];
 	++(self->symbol_list_num);
@@ -108,28 +108,32 @@ const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_v
 
 
 
-void symbols_add_Typedef(SYMBOLS *self, const ST_TYPEDEF *pn_typedef)
+void symbols_add_Typedef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 
+	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_TYPEDEF;
 	symbol->body.type = *pn_typedef;
 	symbols_save(self, "", pn_typedef->name, symbol);
 }
 
-void symbols_add_Const(SYMBOLS *self, const ST_Const *pn_const)
+void symbols_add_Const(SYMBOLS *self, const YYLTYPE *yylloc, const ST_Const *pn_const)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 
+	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_const->val;
 
 	symbols_save(self, "", pn_const->identifier, symbol);
 }
 
-void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
+void symbols_add_Enum(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum)
 {
 	SYMBOL *symbol = symbols_alloc(self);
+
+	symbol->yylloc = *yylloc;
 
 	symbol->type = EN_HST_ENUM;
 	strncpy(symbol->body.symbol_enum.name, pn_enum->name, TDATA_MAX_LENGTH_OF_IDENTIFIER);
@@ -140,30 +144,32 @@ void symbols_add_Enum(SYMBOLS *self, const ST_ENUM *pn_enum)
 	symbols_save(self, "", pn_enum->name, symbol);
 }
 
-void symbols_add_EnumDef(SYMBOLS *self, const ST_ENUM_DEF *pn_enum_def)
+void symbols_add_EnumDef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 	SYMBOL *enum_symbol = symbols_alloc(self);
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_enum_def->val;
 
+	symbol->yylloc = *yylloc;
 
 	*enum_symbol = *symbol;	
 	symbols_save(self, "", pn_enum_def->identifier, symbol);
 	symbols_save(self, self->enum_name, pn_enum_def->identifier, enum_symbol);
 }
 
-void symbols_add_UnionField(SYMBOLS *self, const ST_UNION_FIELD *pn_union_field)
+void symbols_add_UnionField(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_UNION_FIELD;
 
+	symbol->yylloc = *yylloc;
 	symbols_save(self, self->union_name, pn_union_field->name, symbol);
 
 }
 
-void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
+void symbols_add_Field(SYMBOLS *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
 	SYMBOL *symbol = NULL;
 
@@ -187,31 +193,35 @@ void symbols_add_Field(SYMBOLS *self, const ST_FIELD *pn_field)
 
 
 		symbol = symbols_alloc(self);
+		symbol->yylloc = *yylloc;
 		symbol->type = EN_HST_FIELD;
 		symbol->body.field = list_num;
 		symbols_save(self, self->struct_name, list_num.identifier, symbol);
 	}
 
 	symbol = symbols_alloc(self);
+	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_FIELD;
 	symbol->body.field = *pn_field;
 	symbols_save(self, self->struct_name, pn_field->identifier, symbol);
 }
 
-void symbols_add_Struct(SYMBOLS *self, const ST_STRUCT *de_struct)
+void symbols_add_Struct(SYMBOLS *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 
+	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_STRUCT;
 	symbol->body.struct_field_list_num = de_struct->field_list.field_list_num;
 
 	symbols_save(self, "", de_struct->name, symbol);
 }
 
-void symbols_add_Union(SYMBOLS *self, const ST_UNION *de_union)
+void symbols_add_Union(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
 {
 	SYMBOL *symbol = symbols_alloc(self);
 
+	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_UNION;
 	symbol->body.union_symbol.para = de_union->parameters;
 	symbol->body.union_symbol.union_field_list_num = de_union->union_field_list.union_field_list_num;

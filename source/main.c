@@ -15,7 +15,6 @@
 #include "globals.h"
 
 
-
 void version()
 {
 	printf("TData version %s\n", TDATA_VERSION);

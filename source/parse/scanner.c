@@ -250,12 +250,9 @@ tuint32 scanner_size(SCANNER *self)
 {
 	return self->stack_num;
 }
-
-void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
+static void scanner_error_ap(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, va_list ap)
 {
-	const char *error_str = language_string_library_search(g_language_string_library, result);
-	va_list ap;
-	va_start(ap, result);
+	const char *error_str = language_string_library_search(g_language_string_library, result);	
 	if((yylloc) && (yylloc->file_name[0]))
 	{
 		fprintf(stderr, "%s", yylloc->file_name);
@@ -267,6 +264,22 @@ void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...)
 	fprintf(stderr, "error %d: ", result);
 	vfprintf(stderr, error_str, ap);
 	fprintf(stderr, "\n");
+}
+
+void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...)
+{
+	va_list ap;
+	va_start(ap, result);
+	scanner_error_ap(yylloc, result, ap);
+	va_end(ap);
+}
+
+
+void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
+{
+	va_list ap;
+	va_start(ap, result);
+	scanner_error_ap(yylloc, result, ap);
 	va_end(ap);
 
 	exit(result);
@@ -280,7 +293,7 @@ void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...)
 	va_list ap;
 	va_start(ap, s);
 	vsnprintf(bison_error_msg, MAX_SCANNER_ERROR_MSG_LENGTH, s, ap);
-	scanner_error(yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
+	scanner_error_halt(yylloc, E_LS_SYNTAX_ERROR, bison_error_msg);
 }
 
 static int read_char(char c)
@@ -348,7 +361,7 @@ static void get_yylval_tok_char(SCANNER *self, int *token, SCANNER_TOKEN_VALUE *
 	++YYCURSOR;
 	return;
 ERROR_RET:
-	scanner_error(yylloc, E_LS_CHARACTER_CONSTANT_FORMAT_ERROR);
+	scanner_error_halt(yylloc, E_LS_CHARACTER_CONSTANT_FORMAT_ERROR);
 }
 
 static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
@@ -393,7 +406,7 @@ static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE
 		}
 	}
 ERROR_RET:
-	scanner_error(yylloc, E_LS_STRING_CONSTANT_FORMAT_ERROR);
+	scanner_error_halt(yylloc, E_LS_STRING_CONSTANT_FORMAT_ERROR);
 done:
 	yyleng = YYCURSOR - yytext;
 }
@@ -424,7 +437,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 				yylval->sn_uint64 = strtoull(yytext, NULL, 10);				
 				if(errno == ERANGE)
 				{
-					scanner_error(yylloc, E_LS_NUMBER_ERROR_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 			}
 			break;
@@ -441,7 +454,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 				yylval->sn_hex_uint64 = strtoull(yytext + 2, NULL, 16);				
 				if(errno == ERANGE)
 				{
-					scanner_error(yylloc, E_LS_NUMBER_ERROR_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 			}
 			break;
@@ -453,7 +466,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 			yylval->sn_d = strtod(yytext, NULL);
 			if (errno == ERANGE)
 			{
-				scanner_error(yylloc, E_LS_NUMBER_ERROR_RANGE);
+				scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 			}
 			break;
 		}
@@ -475,7 +488,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 		{
 			if(yyleng >= TDATA_MAX_LENGTH_OF_IDENTIFIER)
 			{
-				scanner_error(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+				scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 			}
 			memcpy(yylval->sn_tok_identifier, yytext, yyleng);
 			yylval->sn_tok_identifier[yyleng] = 0;
@@ -484,7 +497,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 	case tok_reserved_keyword:
 		{
 			yytext[yyleng] = 0;
-			scanner_error(yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
+			scanner_error_halt(yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
 			break;
 		}
 	case tok_t_char:
@@ -555,7 +568,8 @@ int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNE
 	for(;;)
 	{
 		SCANNER_CONTEXT *scanner = scanner_top(self);
-		yylloc_param->file_name = scanner->file_name;
+		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_FILE_PATH_LENGTH);
+		yylloc_param->file_name[TLIBC_MAX_FILE_PATH_LENGTH - 1] = 0;
 		ret = scanner_scan(self, yylloc_param, yylval_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;

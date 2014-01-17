@@ -10,7 +10,7 @@
 
 typedef struct _YYLTYPE
 {
-	const char *file_name;
+	char file_name[TLIBC_MAX_FILE_PATH_LENGTH];
 	int first_line;
 	int first_column;
 	int last_line;
@@ -107,8 +107,10 @@ int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNE
 
 
 
-//此函数会调用exit
+//此函数不会调用exit
 void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
+//此函数会调用exit
+void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
 //此函数会调用exit
 void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...);
 

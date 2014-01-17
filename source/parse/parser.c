@@ -46,11 +46,11 @@ static void parser_push(PARSER *self, const char *source_dir, const char *file_n
 		switch(ret)
 		{
 		case E_TD_SCANNER_CAN_NOT_OPEN_FILE:
-			scanner_error(NULL, E_LS_CANNOT_OPEN_FILE, file_name);
+			scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, file_name);
 		case E_TD_SCANNER_OUT_OF_MEMORY:
-			scanner_error(NULL, E_LS_OUT_OF_MEMORY, file_name);			
+			scanner_error_halt(NULL, E_LS_OUT_OF_MEMORY, file_name);			
 		default:
-			scanner_error(NULL, E_LS_UNKNOW);
+			scanner_error_halt(NULL, E_LS_UNKNOW);
 		}		
 	}
 }

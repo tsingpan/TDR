@@ -9,15 +9,17 @@ void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 {
 	if(symbols_search(symbols, prefix, identifier) == NULL)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_DEFINED, prefix, identifier);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_DEFINED, prefix, identifier);
 	}
 }
 
 void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
 {
-	if(symbols_search(symbols, prefix, identifier) != NULL)
+	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
+	if(symbol != NULL)
 	{
 		scanner_error(yylloc, E_LS_IDENTIFIER_REDEFINITION, prefix, identifier);
+		scanner_error_halt(&symbol->yylloc, E_LS_IDENTIFIER_REDEFINITION, prefix, identifier);
 	}
 }
 
@@ -29,7 +31,7 @@ void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) 
 		&& (symbol->type != EN_HST_STRUCT) && (symbol->type != EN_HST_UNION))
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_TYPE, prefix, identifier);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_STRING, prefix, identifier, "enum struct union");
 	}
 }
 
@@ -39,7 +41,7 @@ void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, co
 
 	if(symbol->type != EN_HST_VALUE)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_VALUE, identifier);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_STRING, prefix, identifier, "char double string integer");
 	}
 }
 
@@ -50,6 +52,7 @@ void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE
 	if((symbol) && (symbol->type == EN_HST_VALUE))
 	{
 		scanner_error(yylloc, E_LS_IDENTIFIER_REDEFINITION, "", identifier);
+		scanner_error_halt(&symbol->yylloc, E_LS_IDENTIFIER_REDEFINITION, "", identifier);
 	}
 }
 
@@ -59,10 +62,7 @@ void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE 
 	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbols != NULL);
 
-	if(symbol->type != EN_HST_VALUE)
-	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER, prefix, identifier);
-	}
+	assert(symbol->type == EN_HST_VALUE);
 
 	val = symbols_get_real_value(symbols, &symbol->body.val);
 	assert(val != NULL);
@@ -73,13 +73,13 @@ void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE 
 	case E_SNVT_HEX_INT64:
 		if(val->val.i64 < 0)
 		{
-			scanner_error(yylloc, E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER, prefix, identifier);
+			scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_INTEGER, prefix, identifier);
 		}
 	case E_SNVT_UINT64:
 	case E_SNVT_HEX_UINT64:
 		break;
 	default:
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_POSITIVE_INTEGER, prefix, identifier);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_STRING, prefix, identifier, "integer");
 	}
 }
 
@@ -92,7 +92,7 @@ void check_string_length_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, 
 
 	if(symbol_type->string_length[0] == 0)
 	{
-		scanner_error(yylloc, E_LS_STRING_LENGTH_NOT_DEFINED);
+		scanner_error_halt(yylloc, E_LS_STRING_LENGTH_NOT_DEFINED);
 	}
 done:
 	return;
@@ -121,12 +121,12 @@ void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_
 			assert(enum_type != NULL);
 			if(enum_type->type != EN_HST_ENUM)
 			{
-				scanner_error(yylloc, E_LS_NOT_INTEGER_TYPE);
+				scanner_error_halt(yylloc, E_LS_NOT_INTEGER_TYPE);
 			}
 			break;
 		}
 	default:
-		scanner_error(yylloc, E_LS_NOT_INTEGER_TYPE);
+		scanner_error_halt(yylloc, E_LS_NOT_INTEGER_TYPE);
 	}
 }
 
@@ -144,7 +144,7 @@ void check_integer_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST
 	case E_SNVT_HEX_UINT64:
 		break;
 	default:
-		scanner_error(yylloc, E_LS_NOT_INTEGER_VALUE);
+		scanner_error_halt(yylloc, E_LS_NOT_INTEGER_VALUE);
 	}
 }
 
@@ -155,7 +155,7 @@ void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols,
 	assert(symbol->type == EN_HST_FIELD);
 	if(symbol->body.field.type.type != E_SNT_SIMPLE)
 	{
-		scanner_error(yylloc, E_LS_NOT_INTEGER_TYPE);
+		scanner_error_halt(yylloc, E_LS_NOT_INTEGER_TYPE);
 	}
 
 	check_integer_type(symbols, yylloc, &symbol->body.field.type.st);
@@ -191,7 +191,7 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 		assert(arg_field_symbol->type == EN_HST_FIELD);
 		if(arg_field_symbol->body.field.type.type != E_SNT_SIMPLE)
 		{
-			scanner_error(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
+			scanner_error_halt(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
 		}
 		arg_type = symbols_get_real_type(symbols, &arg_field_symbol->body.field.type.st);
 		assert(arg_type != NULL);
@@ -218,17 +218,17 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 	{
 		if((par_type->st != E_ST_REFER) || (arg_type->st != E_ST_REFER))
 		{
-			scanner_error(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
+			scanner_error_halt(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
 		}
 
 		if(strcmp(par_type->st_refer, arg_type->st_refer) != 0)
 		{
-			scanner_error(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
+			scanner_error_halt(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
 		}
 	}
 	else
 	{
-		scanner_error(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
+		scanner_error_halt(yylloc, E_LS_ARGUMENT_TYPE_MISMATCH);
 	}
 }
 
@@ -237,7 +237,7 @@ void check_strlen_too_long(const SYMBOLS *symbols, const YYLTYPE *yylloc, const 
 {
 	if(strlen(str) + strlen(suffix) + 1 > limit)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, limit);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, limit);
 	}
 }
 
@@ -257,32 +257,32 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 		{
 			if((real_val->type != E_SNVT_INT64) && (real_val->type != E_SNVT_HEX_INT64))
 			{
-				scanner_error(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 			}
 			switch(real_type->st)
 			{
 			case E_ST_INT8:
 				if((tint8)real_val->val.i64 != real_val->val.i64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_INT16:
 				if((tint16)real_val->val.i64 != real_val->val.i64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_INT32:
 				if((tint32)real_val->val.i64 != real_val->val.i64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_INT64:
 				if((tint64)real_val->val.i64 != real_val->val.i64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			}
@@ -298,7 +298,7 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 			{
 				if(real_val->val.i64 < 0)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				ui64 = real_val->val.i64;
 			}
@@ -308,7 +308,7 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 			}
 			else
 			{
-				scanner_error(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 			}
 
 			switch(real_type->st)
@@ -316,25 +316,25 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 			case E_ST_UINT8:
 				if((tuint8)ui64 != ui64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_UINT16:
 				if((tuint16)ui64 != ui64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_UINT32:
 				if((tuint32)ui64 != ui64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			case E_ST_UINT64:
 				if((tuint64)ui64 != ui64)
 				{
-					scanner_error(yylloc, E_LS_CONSTANT_OVER_THE_RANGE);
+					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
 				}
 				break;
 			}
@@ -343,30 +343,30 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 	case E_ST_CHAR:
 		if(real_val->type != E_SNVT_CHAR)
 		{
-			scanner_error(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
 		break;
 	case E_ST_DOUBLE:
 		if(real_val->type != E_SNVT_DOUBLE)
 		{
-			scanner_error(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
 		break;
 	case E_ST_STRING:
 		{
 			if(real_val->type != E_SNVT_STRING)
 			{
-				scanner_error(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 			}
 
 			if(real_type->string_length[0] != 0)
 			{
-				scanner_error(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+				scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
 			}
 			break;
 		}
 	default:
-		scanner_error(yylloc, E_LS_CONST_TYPE_ERROR);
+		scanner_error_halt(yylloc, E_LS_CONST_TYPE_ERROR);
 	}
 }
 
@@ -377,14 +377,14 @@ void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	assert(simple_type != NULL);
 	if(simple_type->st != E_ST_REFER)
 	{
-		scanner_error(yylloc, E_LS_NOT_ENUM_TYPE);
+		scanner_error_halt(yylloc, E_LS_NOT_ENUM_TYPE);
 	}
 
 	enum_symbol = symbols_search(symbols, "", simple_type->st_refer);
 
 	if(enum_symbol->type != EN_HST_ENUM)
 	{
-		scanner_error(yylloc, E_LS_NOT_ENUM_TYPE);
+		scanner_error_halt(yylloc, E_LS_NOT_ENUM_TYPE);
 	}
 }
 
@@ -396,7 +396,7 @@ void check_enumdef_is_unique(const SYMBOLS *symbols, const YYLTYPE *yylloc, cons
 	{
 		if(pn_enum->enum_def_list[i].val.val.i64 == pn_enum->enum_def_list[index].val.val.i64)
 		{
-			scanner_error(yylloc, E_LS_ENUM_HAVE_EQUAL_ELEMENTS, pn_enum->enum_def_list[i].identifier, pn_enum->enum_def_list[index].identifier);
+			scanner_error_halt(yylloc, E_LS_ENUM_HAVE_EQUAL_ELEMENTS, pn_enum->enum_def_list[i].identifier, pn_enum->enum_def_list[index].identifier);
 		}
 	}
 }
@@ -405,6 +405,6 @@ void check_str_equal(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar 
 {
 	if(strcmp(src, dst) != 0)
 	{
-		scanner_error(yylloc, E_LS_IDENTIFIER_NOT_STRING, src, dst);
+		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_STRING, src, dst);
 	}
 }
