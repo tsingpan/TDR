@@ -29,6 +29,9 @@ void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE 
 //检查string长度定义
 void check_string_length_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type);
 
+//检查string长度未定义
+void check_string_length_not_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type);
+
 //检查类型是整数
 void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
 

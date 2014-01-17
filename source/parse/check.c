@@ -98,6 +98,22 @@ done:
 	return;
 }
 
+//检查string长度未定义
+void check_string_length_not_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type)
+{
+	if(symbol_type->st != E_ST_STRING)
+	{
+		goto done;
+	}
+
+	if(symbol_type->string_length[0] != 0)
+	{
+		scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+	}
+done:
+	return;
+}
+
 //检查类型是否为整数
 void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
 {
@@ -241,132 +257,108 @@ void check_strlen_too_long(const YYLTYPE *yylloc, const tchar *str, const tchar 
 	}
 }
 
+#define CHECK_VALUE_TYPE(vt, v_min, v_max)\
+switch(vt)\
+{\
+case E_SNVT_INT64:\
+	if((i64 < v_min) || (i64 > v_max))\
+	{\
+		scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);\
+	}\
+	break;\
+case E_SNVT_UINT64:\
+	if((ui64 < v_min) || (ui64 > v_max))\
+	{\
+		scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);\
+	}\
+	break;\
+default:\
+	scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);\
+}
+
 void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val)
 {
-	const ST_SIMPLE_TYPE *real_type = NULL;
-	const ST_VALUE *real_val = NULL;
+	const ST_SIMPLE_TYPE *real_type_ptr = NULL;
+	const ST_VALUE *real_val_ptr = NULL;
+	SN_SIMPLE_TYPE st;
 
-	real_type = symbols_get_real_type(symbols, type);
-	real_val = symbols_get_real_value(symbols, val);
-	switch(real_type->st)
+	SN_VALUE_TYPE vt;
+	tint64 i64 = 0;
+	tuint64 ui64 = 0;
+
+	real_type_ptr = symbols_get_real_type(symbols, type);
+	st = real_type_ptr->st;
+
+
+	real_val_ptr = symbols_get_real_value(symbols, val);
+	vt = real_val_ptr->type;
+	switch(vt)
+	{
+	case E_SNVT_INT64:
+		i64 = real_val_ptr->val.i64;
+		break;
+	case E_SNVT_HEX_INT64:
+		i64 = real_val_ptr->val.i64;
+		vt = E_SNVT_INT64;
+		break;
+	case E_SNVT_UINT64:
+		ui64 = real_val_ptr->val.ui64;
+		break;
+	case E_SNVT_HEX_UINT64:
+		ui64 = real_val_ptr->val.ui64;
+		vt = E_SNVT_UINT64;
+		break;
+	default:
+		break;
+	}
+
+	switch(st)
 	{
 	case E_ST_INT8:
+		CHECK_VALUE_TYPE(vt, TLIBC_INT8_MIN, TLIBC_INT8_MAX);
+		break;
 	case E_ST_INT16:
+		CHECK_VALUE_TYPE(vt, TLIBC_INT16_MIN, TLIBC_INT16_MAX);
+		break;
 	case E_ST_INT32:
+		CHECK_VALUE_TYPE(vt, TLIBC_INT32_MIN, TLIBC_INT32_MAX);
+		break;
 	case E_ST_INT64:
-		{
-			if((real_val->type != E_SNVT_INT64) && (real_val->type != E_SNVT_HEX_INT64))
-			{
-				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
-			}
-			switch(real_type->st)
-			{
-			case E_ST_INT8:
-				if((tint8)real_val->val.i64 != real_val->val.i64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_INT16:
-				if((tint16)real_val->val.i64 != real_val->val.i64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_INT32:
-				if((tint32)real_val->val.i64 != real_val->val.i64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_INT64:
-				if((tint64)real_val->val.i64 != real_val->val.i64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			}
-			break;
-		}
+		CHECK_VALUE_TYPE(vt, TLIBC_INT64_MIN, TLIBC_INT64_MAX);
+		break;
 	case E_ST_UINT8:
+		CHECK_VALUE_TYPE(vt, 0, TLIBC_UINT8_MAX);
+		break;
 	case E_ST_UINT16:
+		CHECK_VALUE_TYPE(vt, 0, TLIBC_UINT16_MAX);
+		break;
 	case E_ST_UINT32:
+		CHECK_VALUE_TYPE(vt, 0, TLIBC_UINT32_MAX);
+		break;
 	case E_ST_UINT64:
-		{
-			tuint64 ui64 = 0;
-			if((real_val->type == E_SNVT_INT64) || (real_val->type == E_SNVT_HEX_INT64))
-			{
-				if(real_val->val.i64 < 0)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				ui64 = real_val->val.i64;
-			}
-			else if((real_val->type == E_SNVT_UINT64) || (real_val->type == E_SNVT_HEX_UINT64))
-			{
-				ui64 = real_val->val.ui64;
-			}
-			else
-			{
-				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
-			}
-
-			switch(real_type->st)
-			{
-			case E_ST_UINT8:
-				if((tuint8)ui64 != ui64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_UINT16:
-				if((tuint16)ui64 != ui64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_UINT32:
-				if((tuint32)ui64 != ui64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			case E_ST_UINT64:
-				if((tuint64)ui64 != ui64)
-				{
-					scanner_error_halt(yylloc, E_LS_NUMBER_ERROR_RANGE);
-				}
-				break;
-			}
-			break;
-		}
+		CHECK_VALUE_TYPE(vt, 0, TLIBC_UINT64_MAX);
+		break;
 	case E_ST_CHAR:
-		if(real_val->type != E_SNVT_CHAR)
+		if(vt != E_SNVT_CHAR)
 		{
 			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
 		break;
 	case E_ST_DOUBLE:
-		if(real_val->type != E_SNVT_DOUBLE)
+		if(vt != E_SNVT_DOUBLE)
 		{
 			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
 		break;
 	case E_ST_STRING:
+		if(vt != E_SNVT_STRING)
 		{
-			if(real_val->type != E_SNVT_STRING)
-			{
-				scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
-			}
-
-			if(real_type->string_length[0] != 0)
-			{
-				scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
-			}
-			break;
+			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
+		break;
 	default:
-		scanner_error_halt(yylloc, E_LS_CONST_TYPE_ERROR);
+		scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+		break;
 	}
 }
 
