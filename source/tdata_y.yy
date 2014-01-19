@@ -200,6 +200,7 @@ Enum :
 	tok_enum tok_identifier	
 	{
 		GET_SYMBOLS.enum_name = $2;
+		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
 	}
 	'{' EnumDefList '}'	';'
 	{
@@ -225,8 +226,7 @@ EnumDefList :
 |	
 	EnumDef
 	{
-		GET_DEFINITION.definition.de_enum.enum_def_list[0] = $1;
-		GET_DEFINITION.definition.de_enum.enum_def_list_num = 1;
+		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num++] = $1;
 	};
 	
 EnumDef : 
@@ -270,6 +270,7 @@ Union :
 	{
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 		GET_SYMBOLS.union_name = $2;
+		GET_UNION_FIELD_LIST.union_field_list_num = 0;
 	}
 	Parameters '{' UnionFieldList '}' ';'
 	{
@@ -291,8 +292,7 @@ UnionFieldList:
 |	
 	UnionField
 	{
-		GET_UNION_FIELD_LIST.union_field_list[0] = $1;
-		GET_UNION_FIELD_LIST.union_field_list_num = 1;
+		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num++] = $1;
 	};
 	
 UnionField : 
@@ -309,7 +309,7 @@ UnionField :
 		symbols_add_UnionField(&GET_SYMBOLS, &yylloc, &$$);
 	};
 
-	Parameters :
+Parameters :
 	'(' ParameterList ')'
 	{
 		$$ = $2;
@@ -360,6 +360,7 @@ Struct :
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 
 		GET_SYMBOLS.struct_name = $2;
+		GET_FIELD_LIST.field_list_num = 0;
 	}
 	'{' FieldList '}' ';'
 	{
@@ -382,8 +383,7 @@ FieldList:
 |	
 	Field
 	{
-		GET_FIELD_LIST.field_list[0] = $1;
-		GET_FIELD_LIST.field_list_num = 1;
+		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num++] = $1;
 	};
 
 Field : 
