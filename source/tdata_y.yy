@@ -483,7 +483,9 @@ Type :
 
 ContainerType:
 	tok_t_vector '<' SimpleType ',' tok_identifier '>'
-	{		
+	{
+		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $5);
+
 		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $5);
 
 		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", $5);
