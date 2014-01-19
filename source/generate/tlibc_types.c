@@ -59,17 +59,16 @@ static TD_ERROR_CODE _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de
 
 static TD_ERROR_CODE _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_const)
 {
-	generator_print(&self->super, "\n");
 	generator_print(&self->super, "#define %s ", de_const->identifier);
 	generator_print_value(&self->super, &de_const->val);
+	generator_print(&self->super, "\n");
 	generator_print(&self->super, "\n");
 	return E_TD_NOERROR;
 }
 
 static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enum)
 {
-	tuint32 i;
-	generator_print(&self->super, "\n");
+	tuint32 i;	
 	generator_print(&self->super, "typedef enum _%s %s;\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "enum _%s\n", de_enum->name);
 	generator_print(&self->super, "{\n");
@@ -85,6 +84,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 		generator_print(&self->super, "\n");
 	}
 	generator_print(&self->super, "};\n");
+	generator_print(&self->super, "\n");
 
 	return E_TD_NOERROR;
 }
@@ -143,13 +143,13 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 }
 
 static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
-{
-	generator_print(&self->super, "\n");
+{	
 	generator_print(&self->super, "typedef struct _%s %s;\n", de_struct->name, de_struct->name);
 	generator_print(&self->super, "struct _%s\n", de_struct->name);
 	generator_print(&self->super, "{\n");
 	_on_field_list(self, &de_struct->field_list);
 	generator_print(&self->super, "};\n");
+	generator_print(&self->super, "\n");
 
 	return E_TD_NOERROR;
 }
@@ -184,12 +184,12 @@ static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_
 
 static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
 {
-	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef union _%s %s;\n", de_union->name, de_union->name);
 	generator_print(&self->super, "union _%s\n", de_union->name);
 	generator_print(&self->super, "{\n");
 	_on_union_field_list(self, &de_union->union_field_list);
 	generator_print(&self->super, "};\n");
+	generator_print(&self->super, "\n");
 
 	return E_TD_NOERROR;
 }
@@ -197,11 +197,11 @@ static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_u
 //只能typedef除了string之外的SimpleType
 static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *de_typedef)
 {
-	generator_print(&self->super, "\n");
 	generator_print(&self->super, "typedef ");
 	generator_print_simple_type(&self->super, &de_typedef->type);
 	generator_print(&self->super, " %s", de_typedef->name);
 	generator_print(&self->super, ";\n");
+	generator_print(&self->super, "\n");
 	return E_TD_NOERROR;
 }
 
