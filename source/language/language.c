@@ -61,9 +61,9 @@ static void sort_library(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	}
 }
 
-static TLIBC_XML_READER xml_reader;
 TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
+	TLIBC_XML_READER xml_reader;
 	char language_path[TLIBC_MAX_PATH_LENGTH];
 	
 	TD_ERROR_CODE ret = E_TD_NOERROR;
@@ -87,11 +87,13 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	if(tlibc_read_ST_TD_LANGUAGE_STRING_LIBRARY(&xml_reader.super, self) != E_TLIBC_NOERROR)
 	{
 		ret = E_TD_ERROR;
-		goto done;
+		goto fini;
 	}
 	
 	sort_library(self);
 
+fini:
+	tlibc_xml_reader_fini(&xml_reader);
 done:
 	return ret;
 }
