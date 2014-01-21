@@ -128,7 +128,9 @@ int main(tint32 argc, char **argv)
 			{
 				tlibc_reader_generator_init(&tlibc_reader_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_generator.super;
-
+			}
+			else if(strcmp(arg, "tlibc_reader_header") == 0)
+			{
 				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
@@ -136,7 +138,9 @@ int main(tint32 argc, char **argv)
 			{
 				tlibc_writer_generator_init(&tlibc_writer_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_writer_generator.super;
-
+			}
+			else if(strcmp(arg, "tlibc_writer_header") == 0)
+			{
 				tlibc_writer_header_generator_init(&tlibc_writer_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
 			}
