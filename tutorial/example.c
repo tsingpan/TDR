@@ -7,6 +7,9 @@
 #include "tlibc/protocol/tlibc_compact_reader.h"
 #include "tlibc/protocol/tlibc_compact_writer.h"
 
+#include "tlibc/protocol/tlibc_binary_reader.h"
+#include "tlibc/protocol/tlibc_binary_writer.h"
+
 #include "definition/definition_types.h"
 #include "definition/definition_writer.h"
 #include "definition/definition_reader.h"
@@ -96,6 +99,29 @@ void test_compact()
 	tlibc_read_ST_DEFINITION(&compact_reader.super, &g_definition);
 }
 
+void test_binary()
+{
+	char buff[MAX_BUFF_SIZE];
+
+	TLIBC_BINARY_WRITER writer;
+	TLIBC_BINARY_READER reader;
+
+	int ret;
+
+	memset(&g_definition, 0, sizeof(g_definition));
+
+	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+
+
+	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
+	tlibc_write_ST_DEFINITION(&writer.super, &g_definition);
+
+	memset(&g_definition, 0, sizeof(g_definition));
+	tlibc_binary_reader_init(&reader, buff, MAX_BUFF_SIZE);
+	tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
+}
+
 int main()
 {
 	init();
@@ -105,6 +131,8 @@ int main()
 	test_xml2();
 
 	test_compact();
+
+	test_binary();
 
 	return 0;
 }
