@@ -240,7 +240,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 		generator_print(&self->super, "\t\tbreak;\n");		
 	}
 	generator_print(&self->super, "\tdefault:\n");
-	generator_print(&self->super, "\t\tgoto ERROR_RET;\n");		
+	generator_print(&self->super, "\t\tbreak;\n");		
 
 	generator_print(&self->super, "\t}\n");
 	generator_print(&self->super, "\tif(tlibc_write_union_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_union->name);
