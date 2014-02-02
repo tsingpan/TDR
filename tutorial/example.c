@@ -10,6 +10,8 @@
 #include "tlibc/protocol/tlibc_binary_reader.h"
 #include "tlibc/protocol/tlibc_binary_writer.h"
 
+#include "tlibc/protocol/tlibc_xlsx_reader.h"
+
 #include "definition/definition_types.h"
 #include "definition/definition_writer.h"
 #include "definition/definition_reader.h"
@@ -122,6 +124,22 @@ void test_binary()
 	tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
 }
 
+void test_xlsx()
+{
+	tlibc_xlsx_reader_t reader;
+
+	int ret;
+
+	memset(&g_definition, 0, sizeof(g_definition));
+
+	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+
+	memset(&g_definition, 0, sizeof(g_definition));
+	tlibc_xlsx_reader_init(&reader, "d:/1.xlsx");
+	tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
+}
+
 int main()
 {
 	init();
@@ -133,6 +151,8 @@ int main()
 	test_compact();
 
 	test_binary();
+
+	test_xlsx();
 
 	return 0;
 }
