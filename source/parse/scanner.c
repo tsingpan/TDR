@@ -356,6 +356,7 @@ static void get_yylval_tok_char(SCANNER *self, int *token, SCANNER_TOKEN_VALUE *
 		goto ERROR_RET;
 	}
 	++YYCURSOR;
+	YYMARKER = YYCURSOR;
 	return;
 ERROR_RET:
 	scanner_error_halt(yylloc, E_LS_CHARACTER_CONSTANT_FORMAT_ERROR);
@@ -405,6 +406,7 @@ static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE
 ERROR_RET:
 	scanner_error_halt(yylloc, E_LS_STRING_CONSTANT_FORMAT_ERROR);
 done:
+	YYMARKER = YYCURSOR;
 	yyleng = YYCURSOR - yytext;
 }
 
