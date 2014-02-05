@@ -136,8 +136,11 @@ void test_xlsx()
 	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
 
 	memset(&g_definition, 0, sizeof(g_definition));
-	tlibc_xlsx_reader_init(&reader, "d:/1.xlsx", NULL);
-	tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
+	tlibc_xlsx_reader_init(&reader, "d:/1.xlsx");
+	tlibc_xlsx_reader_open_sheet(&reader, NULL, 2, 4);
+	//tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
+	tlibc_xlsx_reader_close_sheet(&reader);
+	tlibc_xlsx_reader_fini(&reader);
 }
 
 int main()
