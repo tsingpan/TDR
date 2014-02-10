@@ -158,7 +158,7 @@ int main()
 	init();
 
 	test_xml();
-	/*
+	
 	test_xml2();
 
 	test_compact();
@@ -166,6 +166,6 @@ int main()
 	test_binary();
 
 	test_xlsx();
-*/
+
 	return 0;
 }

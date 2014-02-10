@@ -78,7 +78,9 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	self->language_string_list_num = 0;
 	snprintf(language_path, TLIBC_MAX_PATH_LENGTH, "%s%clanguage%cST_TD_LANGUAGE_STRING_LIBRARY.xml", root_dir, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR);
 
-	if(tlibc_xml_reader_init(&xml_reader, language_path) != E_TLIBC_NOERROR)
+	tlibc_xml_reader_init(&xml_reader);
+
+	if(tlibc_xml_reader_push_file(&xml_reader, language_path) != E_TLIBC_NOERROR)
 	{		
 		ret = E_TD_ERROR;
 		goto done;
@@ -93,7 +95,7 @@ TD_ERROR_CODE language_string_library_init(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 	sort_library(self);
 
 fini:
-	tlibc_xml_reader_fini(&xml_reader);
+	tlibc_xml_reader_pop_file(&xml_reader);
 done:
 	return ret;
 }
