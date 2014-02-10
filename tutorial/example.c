@@ -53,15 +53,18 @@ void test_xml()
 {
 	TLIBC_XML_WRITER xml_writer;	
 	int ret;
-
+	/*
 	tlibc_xml_writer_init(&xml_writer, "t.xml");
 	ret = tlibc_write_ST_DEFINITION(&xml_writer.super, &g_definition);
 	tlibc_xml_writer_fini(&xml_writer);
-
+	*/
 	memset(&g_definition, 0, sizeof(ST_DEFINITION));
 
-	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	tlibc_xml_add_include(&xml_reader, "D:\\build_tdata_example");
+	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
 	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_pop_file(&xml_reader);
 }
 void test_xml2()
 {
@@ -74,8 +77,10 @@ void test_xml2()
 
 	memset(&g_parameters, 0, sizeof(ST_Parameters));
 
-	tlibc_xml_reader_init(&xml_reader, "test_xml2.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	tlibc_xml_reader_push_file(&xml_reader, "test_xml2.xml");
 	ret = tlibc_read_ST_Parameters(&xml_reader.super, &g_parameters);
+	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
 void test_compact()
@@ -89,9 +94,10 @@ void test_compact()
 	
 	memset(&g_definition, 0, sizeof(g_definition));
 
-	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
 	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
-	
+	tlibc_xml_reader_pop_file(&xml_reader);
 
 	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
 	tlibc_write_ST_DEFINITION(&compact_writer.super, &g_definition);
@@ -112,8 +118,10 @@ void test_binary()
 
 	memset(&g_definition, 0, sizeof(g_definition));
 
-	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
 	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_pop_file(&xml_reader);
 
 
 	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
@@ -132,8 +140,10 @@ void test_xlsx()
 
 	memset(&g_definition, 0, sizeof(g_definition));
 
-	tlibc_xml_reader_init(&xml_reader, "t.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
 	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_pop_file(&xml_reader);
 
 	memset(&g_definition, 0, sizeof(g_definition));
 	tlibc_xlsx_reader_init(&reader, "d:/1.xlsx");
@@ -148,7 +158,7 @@ int main()
 	init();
 
 	test_xml();
-
+	/*
 	test_xml2();
 
 	test_compact();
@@ -156,6 +166,6 @@ int main()
 	test_binary();
 
 	test_xlsx();
-
+*/
 	return 0;
 }
