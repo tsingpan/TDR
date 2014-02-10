@@ -147,15 +147,14 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 				generator_print(&self->super, "\t\tif(tlibc_read_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 
 				generator_print(&self->super, "\t\tif(tlibc_read_field_begin(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\tif(tlibc_read_tuint16(self, &data->%s_num) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif(tlibc_read_tuint32(self, &data->%s_num) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\tif(tlibc_read_field_end(self, \"%s_num\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 
 				
 				generator_print(&self->super, "\t\tfor(i = 0; i < %s; ++i)\n", de_struct->field_list.field_list[i].type.ct.vector_length);
 				generator_print(&self->super, "\t\t{\n");
 				generator_print(&self->super, "\t\t\tif(i == data->%s_num) break;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\t\tif(tlibc_read_vector_element_begin(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
-				generator_print(&self->super, "\t\t\tif(tlibc_read_field_begin(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\t\tif(tlibc_read_vector_element_begin(self, \"%s\", i) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				if(vector_type->st == E_ST_STRING)
 				{
 					generator_print(&self->super, "\t\t\tif(tlibc_read_tstring(self, data->%s, %s) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
@@ -171,8 +170,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 					}
 					generator_print(&self->super, ") != E_TLIBC_NOERROR) goto ERROR_RET;\n");
 				}
-				generator_print(&self->super, "\t\t\tif(tlibc_read_field_end(self, \"%s\") != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\t\tif(tlibc_read_vector_element_end(self, i) != E_TLIBC_NOERROR) goto ERROR_RET;\n");
+				generator_print(&self->super, "\t\t\tif(tlibc_read_vector_element_end(self, \"%s\", i) != E_TLIBC_NOERROR) goto ERROR_RET;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\t}\n");				
 
 				generator_print(&self->super, "\t\tif(tlibc_read_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;\n");				

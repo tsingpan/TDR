@@ -56,7 +56,7 @@ struct _ST_TD_LANGUAGE_STRING
 typedef struct _ST_TD_LANGUAGE_STRING_LIBRARY ST_TD_LANGUAGE_STRING_LIBRARY;
 struct _ST_TD_LANGUAGE_STRING_LIBRARY
 {
-	tuint16 language_string_list_num;
+	tuint32 language_string_list_num;
 	ST_TD_LANGUAGE_STRING language_string_list[TD_LANGUAGE_STRING_NUM];
 };
 

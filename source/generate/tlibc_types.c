@@ -99,7 +99,7 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 			//为vector对象自动生成一个计数器对象, 所以一个vector类型的对象需要占用两个符号。
 			if(field_list->field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
-				generator_print(&self->super, "\ttuint16 %s_num;\n", field_list->field_list[i].identifier);
+				generator_print(&self->super, "\ttuint32 %s_num;\n", field_list->field_list[i].identifier);
 				generator_print(&self->super, "\t");
 				if(field_list->field_list[i].type.ct.vector_type.st == E_ST_STRING)
 				{

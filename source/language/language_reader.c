@@ -190,14 +190,14 @@ TLIBC_ERROR_CODE tlibc_read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER 
 		tuint32 i;
 		if(tlibc_read_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_begin(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
-		if(tlibc_read_tuint16(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(tlibc_read_tuint32(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_end(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
 		for(i = 0; i < TD_LANGUAGE_STRING_NUM; ++i)
 		{
 			if(i == data->language_string_list_num) break;
-			if(tlibc_read_field_begin(self, "language_string_list") != E_TLIBC_NOERROR) goto ERROR_RET;
+			if(tlibc_read_vector_element_begin(self, "language_string_list", i) != E_TLIBC_NOERROR) goto ERROR_RET;
 			if(tlibc_read_ST_TD_LANGUAGE_STRING(self, &data->language_string_list[i]) != E_TLIBC_NOERROR) goto ERROR_RET;
-			if(tlibc_read_field_end(self, "language_string_list") != E_TLIBC_NOERROR) goto ERROR_RET;
+			if(tlibc_read_vector_element_end(self, "language_string_list", i) != E_TLIBC_NOERROR) goto ERROR_RET;
 		}
 		if(tlibc_read_vector_end(self) != E_TLIBC_NOERROR) goto ERROR_RET;
 	}

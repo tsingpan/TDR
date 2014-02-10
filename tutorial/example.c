@@ -53,11 +53,11 @@ void test_xml()
 {
 	TLIBC_XML_WRITER xml_writer;	
 	int ret;
-	/*
+	
 	tlibc_xml_writer_init(&xml_writer, "t.xml");
 	ret = tlibc_write_ST_DEFINITION(&xml_writer.super, &g_definition);
 	tlibc_xml_writer_fini(&xml_writer);
-	*/
+	
 	memset(&g_definition, 0, sizeof(ST_DEFINITION));
 
 	tlibc_xml_reader_init(&xml_reader);
@@ -134,23 +134,23 @@ void test_binary()
 
 void test_xlsx()
 {
-	tlibc_xlsx_reader_t reader;
+	tlibc_xlsx_reader_t xlsx_reader;
 
 	int ret;
 
 	memset(&g_definition, 0, sizeof(g_definition));
 
 	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
-	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
+	tlibc_xml_reader_push_file(&xml_reader, "test_xml2.xml");
+	ret = tlibc_read_ST_Parameters(&xml_reader.super, &g_parameters);
 	tlibc_xml_reader_pop_file(&xml_reader);
 
 	memset(&g_definition, 0, sizeof(g_definition));
-	tlibc_xlsx_reader_init(&reader, "d:/1.xlsx");
-	tlibc_xlsx_reader_open_sheet(&reader, NULL, 2, 4);
-	//tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
-	tlibc_xlsx_reader_close_sheet(&reader);
-	tlibc_xlsx_reader_fini(&reader);
+	tlibc_xlsx_reader_init(&xlsx_reader, "d:/1.xlsx");
+	tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2, 4);
+	ret = tlibc_read_ST_Parameters(&xlsx_reader.super, &g_parameters);
+	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
+	tlibc_xlsx_reader_fini(&xlsx_reader);
 }
 
 int main()
