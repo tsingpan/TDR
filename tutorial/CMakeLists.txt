@@ -20,12 +20,13 @@ INCLUDE_DIRECTORIES(
 set(TDATA_OUTPUTS 
 	${GEN_PATH}/common/common_types.h ${GEN_PATH}/common/common_reader.c ${GEN_PATH}/common/common_reader.h 
 	${GEN_PATH}/common/common_writer.c ${GEN_PATH}/common/common_writer.h
-	${GEN_PATH}/definition/definition_types.h ${GEN_PATH}/definition/definition_reader.c ${GEN_PATH}/definition/definition_reader.h 
-	${GEN_PATH}/definition/definition_writer.c ${GEN_PATH}/definition/definition_writer.h
+	${GEN_PATH}/protocol_types.h
+	${GEN_PATH}/protocol_reader.c ${GEN_PATH}/protocol_reader.h 
+	${GEN_PATH}/protocol_writer.c ${GEN_PATH}/protocol_writer.h
 	)
 
 add_custom_command(OUTPUT ${TDATA_OUTPUTS}
-	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc common/common.td definition/definition.td
+	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc common/common.td protocol.td
 )
 
 ADD_EXECUTABLE(Example ${FILE_LIST} ${TDATA_OUTPUTS})

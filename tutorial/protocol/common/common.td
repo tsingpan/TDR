@@ -1,25 +1,16 @@
-const uint32 HP_INVALID_INDEX = 0xffffffff;
-const uint32 MAX_IDENTIFIER_LENGTH = 128;
-const string HOTPOT_VERSION = "0.0.1";
-
-enum HPType
+enum message_id_e
 {
-	E_HP_INT8			= 0,
-	E_HP_INT16			= 1,
-	E_HP_INT32			= 2,
-	E_HP_INT64			= 3,
-	E_HP_UINT8			= 4,
-	E_HP_UINT16			= 5,
-	E_HP_UINT32			= 6,
-	E_HP_UINT64			= 7,
-	E_HP_CHAR			= 8,
-	E_HP_BYTES			= 9,
-	E_HP_STRING			= 10,
-	E_HP_DOUBLE			= 11,
-	E_HP_BOOL			= 12,
-	E_HP_NULL			= 13,
-	E_HP_VECTOR			= 14,
-	E_HP_OBJECT			= 15,
+	E_MID_LOGIN_REQ			= 0,
+	E_MID_LOGIN_RSP			= 1,
 };
 
-const uint32 ttt = count(HPType);
+//这种注释不会出现在最终生成的文件中
+/*
+	这种注释也不会出现在最终生成的文件中
+	但是以#开头的单行注释会出现在最终生成的文件中
+*/
+#用MESSAGE_ID_NUM来记录枚举类型message_id_e中的成员个数, count函数可以对struct, union, enum这三种类型使用
+
+const uint32 MESSAGE_ID_NUM = count(message_id_e);
+const string VERSION = "0.0.1";
+const uint32 MAX_NAME_LENGTH = 1024;

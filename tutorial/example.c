@@ -12,42 +12,16 @@
 
 #include "tlibc/protocol/tlibc_xlsx_reader.h"
 
-#include "definition/definition_types.h"
-#include "definition/definition_writer.h"
-#include "definition/definition_reader.h"
+#include "protocol_types.h"
+#include "protocol_writer.h"
+#include "protocol_reader.h"
 
 
 #include <string.h>
 
 #define MAX_BUFF_SIZE 1024
 
-static ST_DEFINITION g_definition;
-static ST_Parameters g_parameters ;
-void init()
-{
-	g_definition.type = E_DT_CONST;
-	snprintf(g_definition.definition.de_const.identifier, MAX_IDENTIFIER_LENGTH, "hello");
-	g_definition.definition.de_const.identifier[MAX_IDENTIFIER_LENGTH - 1] = 0;
-
-	g_definition.definition.de_const.type.type = E_SNT_SIMPLE;
-	g_definition.definition.de_const.type.st = E_ST_INT32;
-
-	g_definition.definition.de_const.val.type = E_SNVT_INT64;
-	g_definition.definition.de_const.val.val.i64 = 123321;
-
-
-
-	g_parameters.par_list_num = 2;
-	g_parameters.par_list[0].type.type = E_SNT_SIMPLE;
-	g_parameters.par_list[0].type.st = E_ST_UINT32;
-	snprintf(g_parameters.par_list[0].identifier, MAX_IDENTIFIER_LENGTH, "boy");
-
-	g_parameters.par_list[1].type.type = E_SNT_CONTAINER;
-	g_parameters.par_list[1].type.ct = E_CT_STRING;
-	snprintf(g_parameters.par_list[1].identifier, MAX_IDENTIFIER_LENGTH, "girl");
-
-}
-
+/*
 TLIBC_XML_READER xml_reader;
 void test_xml()
 {
@@ -83,59 +57,11 @@ void test_xml2()
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
-void test_compact()
-{
-	char buff[MAX_BUFF_SIZE];
-
-	TLIBC_COMPACT_WRITER compact_writer;
-	TLIBC_COMPACT_READER compact_reader;
-
-	int ret;
-	
-	memset(&g_definition, 0, sizeof(g_definition));
-
-	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
-	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
-	tlibc_xml_reader_pop_file(&xml_reader);
-
-	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
-	tlibc_write_ST_DEFINITION(&compact_writer.super, &g_definition);
-
-	memset(&g_definition, 0, sizeof(g_definition));
-	tlibc_compact_reader_init(&compact_reader, buff, MAX_BUFF_SIZE);
-	tlibc_read_ST_DEFINITION(&compact_reader.super, &g_definition);
-}
-
-void test_binary()
-{
-	char buff[MAX_BUFF_SIZE];
-
-	TLIBC_BINARY_WRITER writer;
-	TLIBC_BINARY_READER reader;
-
-	int ret;
-
-	memset(&g_definition, 0, sizeof(g_definition));
-
-	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
-	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
-	tlibc_xml_reader_pop_file(&xml_reader);
-
-
-	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
-	tlibc_write_ST_DEFINITION(&writer.super, &g_definition);
-
-	memset(&g_definition, 0, sizeof(g_definition));
-	tlibc_binary_reader_init(&reader, buff, MAX_BUFF_SIZE);
-	tlibc_read_ST_DEFINITION(&reader.super, &g_definition);
-}
 
 void test_xlsx()
 {
 	tlibc_xlsx_reader_t xlsx_reader;
-
+	tuint32 i, rows;
 	int ret;
 
 	memset(&g_definition, 0, sizeof(g_definition));
@@ -148,24 +74,76 @@ void test_xlsx()
 	memset(&g_definition, 0, sizeof(g_definition));
 	tlibc_xlsx_reader_init(&xlsx_reader, "d:/1.xlsx");
 	tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2, 4);
-	ret = tlibc_read_ST_Parameters(&xlsx_reader.super, &g_parameters);
+	rows = tlibc_xlsx_reader_num_rows(&xlsx_reader);
+	for(i = 0; i < rows; ++i)
+	{
+		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);
+		ret = tlibc_read_ST_Parameters(&xlsx_reader.super, &g_parameters);
+	}	
 	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
 	tlibc_xlsx_reader_fini(&xlsx_reader);
+}
+*/
+
+void test_compact()
+{
+	char buff[MAX_BUFF_SIZE];
+	TLIBC_COMPACT_WRITER compact_writer;
+	TLIBC_COMPACT_READER compact_reader;
+	message_s message;
+	int ret;
+
+	message.mid = E_MID_LOGIN_REQ;
+	snprintf(message.body.login_req.name, MAX_NAME_LENGTH, "xiaoxingxing");
+	snprintf(message.body.login_req.password, MAX_NAME_LENGTH, "123456");
+	message.body.login_req.age = 27;
+
+	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
+	ret = tlibc_write_message_s(&compact_writer.super, &message);
+
+	memset(&message, 0, sizeof(message));
+	tlibc_compact_reader_init(&compact_reader, buff, MAX_BUFF_SIZE);
+	ret = tlibc_read_message_s(&compact_reader.super, &message);
+}
+
+void test_binary()
+{
+	char buff[MAX_BUFF_SIZE];
+	TLIBC_BINARY_WRITER writer;
+	TLIBC_BINARY_READER reader;
+	message_s message;
+	int ret;
+
+	message.mid = E_MID_LOGIN_RSP;
+	message.body.login_rsp.result = 1;
+	//由于result说明登录失败， 所以session_id实际上是无效的， 并不会被读出。
+	message.body.login_rsp.session_id = 123321;
+
+	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
+	ret = tlibc_write_message_s(&writer.super, &message);
+
+	memset(&message, 0, sizeof(message));
+	tlibc_binary_reader_init(&reader, buff, MAX_BUFF_SIZE);
+	ret = tlibc_read_message_s(&reader.super, &message);
+}
+
+void test_protocol()
+{
+	//compact型协议具有简单的压缩数据功能， 同时处理速度也非常快， 适合外网数据的传输
+	test_compact();
+
+	//binary型协议直接按照C语言默认的编码方式存放， 用小端表示， 速度最快， 不具备压缩功能， 适合内网数据传输
+	test_binary();
 }
 
 int main()
 {
-	init();
+	test_protocol();
 
+	/*
 	test_xml();
-	
-	test_xml2();
-
-	test_compact();
-
-	test_binary();
 
 	test_xlsx();
-
+	*/
 	return 0;
 }
