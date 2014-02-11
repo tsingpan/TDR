@@ -22,24 +22,6 @@
 #define MAX_BUFF_SIZE 1024
 
 /*
-TLIBC_XML_READER xml_reader;
-void test_xml()
-{
-	TLIBC_XML_WRITER xml_writer;	
-	int ret;
-	
-	tlibc_xml_writer_init(&xml_writer, "t.xml");
-	ret = tlibc_write_ST_DEFINITION(&xml_writer.super, &g_definition);
-	tlibc_xml_writer_fini(&xml_writer);
-	
-	memset(&g_definition, 0, sizeof(ST_DEFINITION));
-
-	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_add_include(&xml_reader, "D:\\build_tdata_example");
-	tlibc_xml_reader_push_file(&xml_reader, "t.xml");
-	ret = tlibc_read_ST_DEFINITION(&xml_reader.super, &g_definition);
-	tlibc_xml_reader_pop_file(&xml_reader);
-}
 void test_xml2()
 {
 	TLIBC_XML_WRITER xml_writer;
@@ -136,13 +118,56 @@ void test_protocol()
 	test_binary();
 }
 
+
+
+void test_xml()
+{
+	TLIBC_XML_READER xml_reader;
+	TLIBC_XML_WRITER xml_writer;	
+	int ret;
+	tconnd_config_s config;
+
+	snprintf(config.log_config, MAX_NAME_LENGTH, "/usr/local/tconnd/etc/tconnd_log.xml");
+	config.instance_config_num = 2;
+	snprintf(config.instance_config[0].ip, IP_LENGTH, "127.0.0.1");
+	config.instance_config[0].level = e_low;
+	config.instance_config[0].port = 7001;	
+	config.instance_config[0].backlog = 5;
+	config.instance_config[0].epoll_size = 65536;
+
+	snprintf(config.instance_config[1].ip, IP_LENGTH, "localhost");
+	config.instance_config[1].level = e_high;
+	config.instance_config[1].port = 7002;
+	config.instance_config[1].backlog = 1;
+	config.instance_config[1].epoll_size = 1024;
+
+	tlibc_xml_writer_init(&xml_writer, "tconnd.xml");
+	ret = tlibc_write_tconnd_config_s(&xml_writer.super, &config);
+	tlibc_xml_writer_fini(&xml_writer);
+	
+	memset(&config, 0, sizeof(tconnd_config_s));
+
+	tlibc_xml_reader_init(&xml_reader);	
+	tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml");
+	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
+	tlibc_xml_reader_pop_file(&xml_reader);
+
+	
+	memset(&config, 0, sizeof(tconnd_config_s));
+	//用下面这个命令可以来添加查找包含文件的目录
+	tlibc_xml_add_include(&xml_reader, "./gen");
+	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
+	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
+	tlibc_xml_reader_pop_file(&xml_reader);
+}
+
 int main()
 {
 	test_protocol();
-
-	/*
+	
 	test_xml();
 
+	/*
 	test_xlsx();
 	*/
 	return 0;

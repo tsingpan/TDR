@@ -35,6 +35,32 @@ struct message_s
 	message_body_u body(mid);
 };
 
+
+/*
+	读取配置文件
+*/
+enum tconnd_instance_level_e
+{
+	e_low,
+	e_high,
+};
+const uint32 TONND_CONFIG_NUM = 1024;
+const uint32 IP_LENGTH = 16;
+struct tconnd_instance_config_s
+{
+	tconnd_instance_level_e level;
+	string<IP_LENGTH> ip;
+	uint16 port;
+	uint32 backlog;
+	uint32 epoll_size;
+};
+struct tconnd_config_s
+{
+	string<MAX_NAME_LENGTH>					log_config;
+	vector<tconnd_instance_config_s, TONND_CONFIG_NUM> 	instance_config;
+};
+
+
 /*
 	读取道具表格
 */
@@ -61,20 +87,3 @@ struct item_table_s
 	vector<item_limit_u, ITEM_MAX_LIMIT> limit_list(type);#union类型是可以作为数组的
 };
 
-/*
-	读取配置文件
-*/
-const uint32 TONND_CONFIG_NUM = 1024;
-const uint32 IP_LENGTH = 16;
-struct tconnd_instance_config_s
-{
-	string<IP_LENGTH> ip;
-	uint16 port;
-	uint32 backlog;
-	uint32 epoll_size;
-};
-struct tconnd_config_s
-{
-	string<MAX_NAME_LENGTH>					log_config;
-	vector<tconnd_instance_config_s, TONND_CONFIG_NUM> 	instance_config;
-};
