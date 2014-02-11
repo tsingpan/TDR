@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "tlibc/platform/tlibc_platform.h"
+#include "tlibc/core/tlibc_error_code.h"
 
 #include "tlibc/protocol/tlibc_xml_reader.h"
 #include "tlibc/protocol/tlibc_xml_writer.h"
@@ -16,57 +17,12 @@
 #include "protocol_writer.h"
 #include "protocol_reader.h"
 
+#include <assert.h>
+
 
 #include <string.h>
 
 #define MAX_BUFF_SIZE 1024
-
-/*
-void test_xml2()
-{
-	TLIBC_XML_WRITER xml_writer;
-	int ret;
-
-	tlibc_xml_writer_init(&xml_writer, "test_xml2.xml");
-	ret = tlibc_write_ST_Parameters(&xml_writer.super, &g_parameters);
-	tlibc_xml_writer_fini(&xml_writer);
-
-	memset(&g_parameters, 0, sizeof(ST_Parameters));
-
-	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_reader_push_file(&xml_reader, "test_xml2.xml");
-	ret = tlibc_read_ST_Parameters(&xml_reader.super, &g_parameters);
-	tlibc_xml_reader_pop_file(&xml_reader);
-}
-
-
-void test_xlsx()
-{
-	tlibc_xlsx_reader_t xlsx_reader;
-	tuint32 i, rows;
-	int ret;
-
-	memset(&g_definition, 0, sizeof(g_definition));
-
-	tlibc_xml_reader_init(&xml_reader);
-	tlibc_xml_reader_push_file(&xml_reader, "test_xml2.xml");
-	ret = tlibc_read_ST_Parameters(&xml_reader.super, &g_parameters);
-	tlibc_xml_reader_pop_file(&xml_reader);
-
-	memset(&g_definition, 0, sizeof(g_definition));
-	tlibc_xlsx_reader_init(&xlsx_reader, "d:/1.xlsx");
-	tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2, 4);
-	rows = tlibc_xlsx_reader_num_rows(&xlsx_reader);
-	for(i = 0; i < rows; ++i)
-	{
-		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);
-		ret = tlibc_read_ST_Parameters(&xlsx_reader.super, &g_parameters);
-	}	
-	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
-	tlibc_xlsx_reader_fini(&xlsx_reader);
-}
-*/
-
 void test_compact()
 {
 	char buff[MAX_BUFF_SIZE];
@@ -161,14 +117,47 @@ void test_xml()
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
+#define MAX_ITEM_NUM 1024
+void test_xlsx()
+{
+	tlibc_xlsx_reader_t xlsx_reader;
+	tuint32 i;
+	int ret;
+	item_table_s item_table[MAX_ITEM_NUM];
+	tuint32 item_table_num, row;
+
+	item_table_num = 0;
+	memset(&item_table, 0, sizeof(item_table));
+
+	ret = tlibc_xlsx_reader_init(&xlsx_reader, "./gen/item.xlsx");
+	//sheet为空表示打开第第一页
+	ret = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
+	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
+	for(i = 3; i <= row; ++i)
+	{
+		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);
+		ret = tlibc_read_item_table_s(&xlsx_reader.super, &item_table[item_table_num]);
+		if(ret == E_TLIBC_EMPTY)
+		{
+			continue;
+		}
+		else if(ret != E_TLIBC_NOERROR)
+		{
+			assert(0);
+		}
+		++item_table_num;
+	}	
+	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
+	tlibc_xlsx_reader_fini(&xlsx_reader);
+}
+
 int main()
 {
 	test_protocol();
 	
 	test_xml();
-
-	/*
+	
 	test_xlsx();
-	*/
+	
 	return 0;
 }

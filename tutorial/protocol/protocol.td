@@ -84,6 +84,6 @@ struct item_table_s
 	uint64 id;
 	string<MAX_NAME_LENGTH> name;
 	item_type_e type;
-	vector<item_limit_u, ITEM_MAX_LIMIT> limit_list(type);#union类型是可以作为数组的
+	vector<item_limit_u, ITEM_MAX_LIMIT> limit_list(type);#一般来说不要把union类型作为数组， 这里只是演示下union类型是可以作为数组的。
 };
 
