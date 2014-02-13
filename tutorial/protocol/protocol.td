@@ -14,9 +14,10 @@ struct login_req_s
 	uint8			age;
 };
 
+typedef int32 bool_t;
 struct login_rsp_s
 {
-		int32 result;#0表示成功， 非0表示失败
+		bool_t result;#0表示成功， 非0表示失败
 if(result == 0)	uint64 session_id;#可以使用条件判断与据来规定何时出现这个元素， 合法的运算符有==, !=, &这三种。
 };
 
