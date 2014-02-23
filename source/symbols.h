@@ -21,15 +21,15 @@ typedef enum _SYMBOL_TYPE
 
 typedef struct _ST_SYMBOL_ENUM
 {
-	tuint32 enum_def_list_num;
-	tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	uint32_t enum_def_list_num;
+	char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 }ST_SYMBOL_ENUM;
 
 typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
 struct _ST_UNION_SYMBOL
 {
 	ST_Parameters para;
-	tuint32 union_field_list_num;
+	uint32_t union_field_list_num;
 };
 
 typedef union _SYMBOL_BODY
@@ -40,7 +40,7 @@ typedef union _SYMBOL_BODY
 	ST_FIELD field;
 	ST_SYMBOL_ENUM symbol_enum;
 
-	tuint32 struct_field_list_num;
+	uint32_t struct_field_list_num;
 }SYMBOL_BODY;
 
 #define MAX_SYMBOL_KEY_LENGTH TDATA_MAX_LENGTH_OF_IDENTIFIER * 2
@@ -48,7 +48,7 @@ typedef struct _SYMBOL
 {
 	tlibc_hash_head_t hash_head;
 	char key[MAX_SYMBOL_KEY_LENGTH];
-	tuint32 key_len;
+	uint32_t key_len;
 
 	YYLTYPE yylloc;
 
@@ -69,7 +69,7 @@ typedef struct _PARSER_SYMBOLS
 	const char *struct_name;
 	const ST_Parameter *para;
 
-	tuint32 symbol_list_num;
+	uint32_t symbol_list_num;
 	SYMBOL symbol_list[MAX_SYMBOL_LIST_NUM];
 }SYMBOLS;
 

@@ -15,10 +15,10 @@ TLIBC_ERROR_CODE tlibc_read_EN_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, E
 {
 	if(tlibc_read_enum_begin(self, "EN_TD_LANGUAGE_STRING") != E_TLIBC_NOERROR) goto ERROR_RET;
 
-	if(tlibc_read_tint32(self, (tint32*)data) != E_TLIBC_NOERROR)
+	if(tlibc_read_int32_t(self, (int32_t*)data) != E_TLIBC_NOERROR)
 	{
 		char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
-		if(tlibc_read_tstring(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(tlibc_read_string(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(strcmp(name, "E_LS_UNKNOW") == 0)
 		{
 			*data = E_LS_UNKNOW;
@@ -170,7 +170,7 @@ TLIBC_ERROR_CODE tlibc_read_ST_TD_LANGUAGE_STRING(TLIBC_ABSTRACT_READER *self, S
 	
 	{
 		if(tlibc_read_field_begin(self, "language_string") != E_TLIBC_NOERROR) goto ERROR_RET;
-		if(tlibc_read_tstring(self, data->language_string, TD_MAX_LANGUAGE_STRING_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(tlibc_read_string(self, data->language_string, TD_MAX_LANGUAGE_STRING_LENGTH) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_end(self, "language_string") != E_TLIBC_NOERROR) goto ERROR_RET;
 	}
 
@@ -187,10 +187,10 @@ TLIBC_ERROR_CODE tlibc_read_ST_TD_LANGUAGE_STRING_LIBRARY(TLIBC_ABSTRACT_READER 
 
 	
 	{
-		tuint32 i;
+		uint32_t i;
 		if(tlibc_read_vector_begin(self) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_begin(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
-		if(tlibc_read_tuint32(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;
+		if(tlibc_read_uint32_t(self, &data->language_string_list_num) != E_TLIBC_NOERROR) goto ERROR_RET;
 		if(tlibc_read_field_end(self, "language_string_list_num") != E_TLIBC_NOERROR) goto ERROR_RET;
 		for(i = 0; i < TD_LANGUAGE_STRING_NUM; ++i)
 		{

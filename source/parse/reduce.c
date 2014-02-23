@@ -8,14 +8,14 @@ void reduce_Import(ST_Import* current, const char* str)
 	current->package_name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
 }
 
-void reduce_Typedef(ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const tchar *tok_identifier)
+void reduce_Typedef(ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const char *tok_identifier)
 {
 	current->type = *type;
 	strncpy(current->name, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *identifier, const ST_VALUE *val)
+void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const char *identifier, const ST_VALUE *val)
 {
 	current->type = *type;
 
@@ -24,13 +24,13 @@ void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const tchar *id
 	current->val = *val;
 }
 
-void reduce_Enum(ST_ENUM *current, const tchar *identifier)
+void reduce_Enum(ST_ENUM *current, const char *identifier)
 {
 	strncpy(current->name, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_EnumDef_Value(ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
+void reduce_EnumDef_Value(ST_ENUM_DEF *current, const char *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -38,7 +38,7 @@ void reduce_EnumDef_Value(ST_ENUM_DEF *current, const tchar *identifier, const S
 	current->comment = *comment;
 }
 
-void reduce_EnumDef(ST_ENUM_DEF *current, const tchar *identifier, const ST_VALUE *st_last_value, const ST_UNIX_COMMENT *comment)
+void reduce_EnumDef(ST_ENUM_DEF *current, const char *identifier, const ST_VALUE *st_last_value, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->identifier, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -57,7 +57,7 @@ void reduce_EnumDef(ST_ENUM_DEF *current, const tchar *identifier, const ST_VALU
 	current->comment = *comment;
 }
 
-void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const tchar *tok_identifier)
+void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const char *tok_identifier)
 {
 	current->type = E_SNT_CONTAINER;
 	current->ct.ct = E_CT_VECTOR;
@@ -67,7 +67,7 @@ void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const ST_SIMPLE_TYPE *s
 	current->ct.vector_length[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_SimpleType_tok_t_string(ST_SIMPLE_TYPE *current, const tchar *tok_identifier)
+void reduce_SimpleType_tok_t_string(ST_SIMPLE_TYPE *current, const char *tok_identifier)
 {
 	current->st = E_ST_STRING;
 
@@ -82,7 +82,7 @@ void reduce_SimpleType_tok_t_string(ST_SIMPLE_TYPE *current, const tchar *tok_id
 	}
 }
 
-void reduce_SimpleType_tok_identifier(ST_SIMPLE_TYPE* current, const tchar *tok_identifier)
+void reduce_SimpleType_tok_identifier(ST_SIMPLE_TYPE* current, const char *tok_identifier)
 {
 	current->st = E_ST_REFER;
 	strncpy(current->st_refer, tok_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
@@ -95,38 +95,38 @@ void reduce_Type_SimpleType(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
 	current->st = *simple_type;
 }
 
-void reduce_Value_tok_identifier(ST_VALUE* current, const tchar *sn_identifier)
+void reduce_Value_tok_identifier(ST_VALUE* current, const char *sn_identifier)
 {
 	current->type = E_SNVT_IDENTIFIER;
 	strncpy(current->val.identifier, sn_identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->val.identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Value_tok_char(ST_VALUE* current, const tchar pn_char)
+void reduce_Value_tok_char(ST_VALUE* current, const char pn_char)
 {
 	current->type = E_SNVT_CHAR;
 	current->val.c = pn_char;
 }
 
-void reduce_Value_tok_int64(ST_VALUE* current, const tint64 i64)
+void reduce_Value_tok_int64(ST_VALUE* current, const int64_t i64)
 {
 	current->type = E_SNVT_INT64;
 	current->val.i64 = i64;
 }
 
-void reduce_Value_tok_hex_int64(ST_VALUE* current, const tint64 i64)
+void reduce_Value_tok_hex_int64(ST_VALUE* current, const int64_t i64)
 {
 	current->type = E_SNVT_HEX_INT64;
 	current->val.i64 = i64;
 }
 
-void reduce_Value_tok_uint64(ST_VALUE* current, const tuint64 ui64)
+void reduce_Value_tok_uint64(ST_VALUE* current, const uint64_t ui64)
 {
 	current->type = E_SNVT_UINT64;
 	current->val.ui64 = ui64;
 }
 
-void reduce_Value_tok_hex_uint64(ST_VALUE* current, const tuint64 ui64)
+void reduce_Value_tok_hex_uint64(ST_VALUE* current, const uint64_t ui64)
 {
 	current->type = E_SNVT_HEX_UINT64;
 	current->val.ui64 = ui64;
@@ -144,7 +144,7 @@ void reduce_Value_tok_string(ST_VALUE* current, const char* str)
 	strncpy(current->val.str, str, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 }
 
-void reduce_ArgumentList_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const tchar *identifier)
+void reduce_ArgumentList_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const char *identifier)
 {
 	*current = *argument_list;
 
@@ -153,7 +153,7 @@ void reduce_ArgumentList_ArgumentList_tok_identifier(ST_ARGUMENTS* current, cons
 	++(current->arg_list_num);
 }
 
-void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const tchar *identifier)
+void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const char *identifier)
 {
 	current->arg_list_num = 0;
 	strncpy(current->arg_list[current->arg_list_num], identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
@@ -161,7 +161,7 @@ void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const tchar *iden
 	++(current->arg_list_num);
 }
 
-void reduce_Value_tok_count(const SYMBOLS *symbols, ST_VALUE *current, const tchar *identifier)
+void reduce_Value_tok_count(const SYMBOLS *symbols, ST_VALUE *current, const char *identifier)
 {
 	const SYMBOL *symbol = symbols_search(symbols, "", identifier);
 
@@ -183,7 +183,7 @@ void reduce_Value_tok_count(const SYMBOLS *symbols, ST_VALUE *current, const tch
 	}
 }
 
-void reduce_Union(ST_UNION *current, const tchar *identifier, const ST_Parameters *parameters)
+void reduce_Union(ST_UNION *current, const char *identifier, const ST_Parameters *parameters)
 {
 	strncpy(current->name, identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -191,7 +191,7 @@ void reduce_Union(ST_UNION *current, const tchar *identifier, const ST_Parameter
 	current->parameters = *parameters;
 }
 
-void reduce_UnionField(ST_UNION_FIELD *current, const tchar *key, const ST_SIMPLE_TYPE *simple_type, const tchar *identifier, const ST_UNIX_COMMENT *comment)
+void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const ST_SIMPLE_TYPE *simple_type, const char *identifier, const ST_UNIX_COMMENT *comment)
 {
 	strncpy(current->key, key, TDATA_MAX_LENGTH_OF_IDENTIFIER);
 	current->key[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -205,7 +205,7 @@ void reduce_UnionField(ST_UNION_FIELD *current, const tchar *key, const ST_SIMPL
 }
 
 void reduce_Field(ST_FIELD *current, const ST_CONDITION *condition, const ST_TYPE *type
-					 , const tchar *identifier, const ST_ARGUMENTS *args, const ST_UNIX_COMMENT *comment)
+					 , const char *identifier, const ST_ARGUMENTS *args, const ST_UNIX_COMMENT *comment)
 {
 	current->condition = *condition;
 	current->type = *type;

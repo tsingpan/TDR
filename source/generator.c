@@ -15,10 +15,10 @@ void generator_init(GENERATOR *self, const SYMBOLS *symbols)
 	self->on_document_end = NULL;
 }
 
-TD_ERROR_CODE generator_replace_extension(char *filename, tuint32 filename_length, const char *suffix)
+TD_ERROR_CODE generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix)
 {
-	tuint32 i;
-	tuint32 length = strlen(filename);
+	uint32_t i;
+	uint32_t length = strlen(filename);
 
 	if((filename == NULL) || (suffix == NULL))
 	{
@@ -54,8 +54,8 @@ TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const ch
 {
 	char primary[TLIBC_MAX_PATH_LENGTH];
 	char target_path[TLIBC_MAX_PATH_LENGTH];
-	tuint32 path_length = 0;
-	tuint32 i, document_name_length;
+	uint32_t path_length = 0;
+	uint32_t i, document_name_length;
 
 	//把扩展名替换为指定后缀
 	if(strlen(primary_file) + 1 >= TLIBC_MAX_PATH_LENGTH)
@@ -189,8 +189,8 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 		return E_TD_NOERROR;
 	case E_SNVT_STRING:
 		{
-			tuint32 i;
-			tuint32 len = strlen(val->val.str);
+			uint32_t i;
+			uint32_t len = strlen(val->val.str);
 			generator_print(self, "\"");
 			for(i = 0;i < len; ++i)
 			{
@@ -224,37 +224,37 @@ TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE 
 	switch(simple_type->st)
 	{
 	case E_ST_INT8:
-		generator_print(self, "tint8");
+		generator_print(self, "int8_t");
 		return E_TD_NOERROR;
 	case E_ST_INT16:
-		generator_print(self, "tint16");
+		generator_print(self, "int16_t");
 		return E_TD_NOERROR;
 	case E_ST_INT32:
-		generator_print(self, "tint32");
+		generator_print(self, "int32_t");
 		return E_TD_NOERROR;
 	case E_ST_INT64:
-		generator_print(self, "tint64");
+		generator_print(self, "int64_t");
 		return E_TD_NOERROR;
 	case E_ST_UINT8:
-		generator_print(self, "tuint8");
+		generator_print(self, "uint8_t");
 		return E_TD_NOERROR;
 	case E_ST_UINT16:
-		generator_print(self, "tuint16");
+		generator_print(self, "uint16_t");
 		return E_TD_NOERROR;
 	case E_ST_UINT32:
-		generator_print(self, "tuint32");
+		generator_print(self, "uint32_t");
 		return E_TD_NOERROR;
 	case E_ST_UINT64:
-		generator_print(self, "tuint64");
+		generator_print(self, "uint64_t");
 		return E_TD_NOERROR;
 	case E_ST_STRING:
-		generator_print(self, "tstring");
+		generator_print(self, "char");
 		return E_TD_NOERROR;
 	case E_ST_CHAR:
-		generator_print(self, "tchar");
+		generator_print(self, "char");
 		return E_TD_NOERROR;
 	case E_ST_DOUBLE:
-		generator_print(self, "tdouble");
+		generator_print(self, "double");
 		return E_TD_NOERROR;
 	case E_ST_REFER:
 		generator_print(self, simple_type->st_refer);

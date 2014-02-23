@@ -25,15 +25,15 @@ typedef union _SCANNER_TOKEN_VALUE
 	ST_VALUE sn_value;	
 	char sn_tok_identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
 	ST_Const sn_const;
-	tdouble pn_tok_double;
+	double pn_tok_double;
 	const char* sn_tok_unixcomment;
-	tuint64 sn_uint64;
-	tint64 sn_int64;
-	tdouble sn_d;
-	tuint64 sn_hex_uint64;
-	tint64 sn_hex_int64;
-	tchar* sn_string;
-	tchar sn_char;
+	uint64_t sn_uint64;
+	int64_t sn_int64;
+	double sn_d;
+	uint64_t sn_hex_uint64;
+	int64_t sn_hex_int64;
+	char* sn_string;
+	char sn_char;
 	SN_SIMPLE_TYPE sn_st;
 	ST_ARGUMENTS sn_arguments;
 	SN_CONTAINER_TYPE sn_ct;
@@ -75,10 +75,10 @@ struct _SCANNER_CONTEXT
 	YYCTYPE *yy_text;
 	YYCTYPE *yy_marker;
 	YYCTYPE *yy_start;
-	tuint32 yy_leng;
+	uint32_t yy_leng;
 
-	tuint32 yylineno;
-	tuint32 yycolumn;
+	uint32_t yylineno;
+	uint32_t yycolumn;
 };
 
 #define MAX_LEX_BUFF_SIZE 10000000
@@ -86,7 +86,7 @@ struct _SCANNER_CONTEXT
 typedef struct _SCANNER SCANNER;
 struct _SCANNER
 {
-	tuint32 stack_num;
+	uint32_t stack_num;
 	SCANNER_CONTEXT stack[MAX_SCANNER_STACK_SIZE];
 
 	YYCTYPE *buff_limit;
@@ -97,11 +97,11 @@ struct _SCANNER
 
 void scanner_init(SCANNER *self);
 void scanner_locate(SCANNER *self);
-tint32 scanner_scan(SCANNER *self, YYLTYPE *yylloc);
+int32_t scanner_scan(SCANNER *self, YYLTYPE *yylloc);
 SCANNER_CONTEXT *scanner_top(SCANNER *self);
-tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state);
+int32_t scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state);
 void scanner_pop(SCANNER *self);
-tuint32 scanner_size(SCANNER *self);
+uint32_t scanner_size(SCANNER *self);
 
 int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER *self);
 

@@ -121,10 +121,10 @@ void test_xml()
 void test_xlsx()
 {
 	tlibc_xlsx_reader_t xlsx_reader;
-	tuint32 i;
+	uint32_t i;
 	int ret;
 	item_table_s item_table[MAX_ITEM_NUM];
-	tuint32 item_table_num, row;
+	uint32_t item_table_num, row;
 
 	item_table_num = 0;
 	memset(&item_table, 0, sizeof(item_table));

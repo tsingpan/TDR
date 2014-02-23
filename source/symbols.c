@@ -46,7 +46,7 @@ const SYMBOL* symbols_search(const SYMBOLS *self, const char* preffix, const cha
 	const SYMBOL *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
 	const tlibc_hash_head_t *ele;
-	tuint32 key_len;
+	uint32_t key_len;
 
 	snprintf(key, MAX_SYMBOL_KEY_LENGTH, "%s::%s", preffix, name);
 

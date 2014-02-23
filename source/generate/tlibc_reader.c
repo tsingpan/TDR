@@ -29,7 +29,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_replace_extension(header, MAX_PACKAGE_NAME_LENGTH, TLIBC_READER_HEADER_SUFFIX);
 	generator_print(super, "#include \"%s\"\n", header);
 
-	generator_print(super, "#include \"tlibc/platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include <stdint.h>\n");
 	generator_print(super, "#include <string.h>\n");
 
 	generator_print(super, "\n");
@@ -60,7 +60,7 @@ static TD_ERROR_CODE _on_import(TLIBC_READER_GENERATOR *self, const ST_Import *d
 
 static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
 {
-	tuint32 i;
+	uint32_t i;
 
 	generator_print(&self->super, "\n");
 	generator_print(&self->super, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_enum->name, de_enum->name);
@@ -68,11 +68,11 @@ static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_en
 	generator_print(&self->super, "\tTLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;\n");
 	generator_print(&self->super, "\tif((ret = tlibc_read_enum_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;\n", de_enum->name);
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "\tret = tlibc_read_tint32(self, (tint32*)data);\n");
+	generator_print(&self->super, "\tret = tlibc_read_int32_t(self, (int32_t*)data);\n");
 	generator_print(&self->super, "\tif(ret == E_TLIBC_PLEASE_READ_ENUM_NAME)\n");
 	generator_print(&self->super, "\t{\n");
 	generator_print(&self->super, "\t\tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];\n");
-	generator_print(&self->super, "\t\tif((ret = tlibc_read_tstring(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER)) != E_TLIBC_NOERROR) goto done;\n");
+	generator_print(&self->super, "\t\tif((ret = tlibc_read_string(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER)) != E_TLIBC_NOERROR) goto done;\n");
 
 	generator_print(&self->super, "\t\tfor(;;)\n");
 	generator_print(&self->super, "\t\t{\n");
@@ -107,7 +107,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_en
 
 static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *de_struct)
 {
-	tuint32 i;
+	uint32_t i;
 	generator_print(&self->super, "\n");
 
 	generator_print(&self->super, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, %s *data)\n", de_struct->name, de_struct->name);
@@ -152,11 +152,11 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
-				generator_print(&self->super, "\t\ttuint32 i;\n");
+				generator_print(&self->super, "\t\tuint32_t i;\n");
 				generator_print(&self->super, "\t\tif((ret = tlibc_read_vector_begin(self)) != E_TLIBC_NOERROR) goto done;\n");
 
 				generator_print(&self->super, "\t\tif((ret = tlibc_read_field_begin(self, \"%s_num\")) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
-				generator_print(&self->super, "\t\tif((ret = tlibc_read_tuint32(self, &data->%s_num)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
+				generator_print(&self->super, "\t\tif((ret = tlibc_read_uint32_t(self, &data->%s_num)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
 				generator_print(&self->super, "\t\tif((ret = tlibc_read_field_end(self, \"%s_num\")) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
 
 				
@@ -166,7 +166,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 				generator_print(&self->super, "\t\t\tif((ret = tlibc_read_vector_element_begin(self, \"%s\", i)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
 				if(vector_type->st == E_ST_STRING)
 				{
-					generator_print(&self->super, "\t\t\tif((ret = tlibc_read_tstring(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
+					generator_print(&self->super, "\t\t\tif((ret = tlibc_read_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
 				}
 				else
 				{
@@ -192,7 +192,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 			generator_print(&self->super, "\t\tif((ret = tlibc_read_field_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier);
 			if(st->st == E_ST_STRING)
 			{
-				generator_print(&self->super, "\t\tif((ret = tlibc_read_tstring(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier, de_struct->field_list.field_list[i].type.st.string_length);
+				generator_print(&self->super, "\t\tif((ret = tlibc_read_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;\n", de_struct->field_list.field_list[i].identifier, de_struct->field_list.field_list[i].type.st.string_length);
 			}
 			else
 			{
@@ -223,7 +223,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_GENERATOR *self, const ST_STRUCT *d
 
 static TD_ERROR_CODE _on_union(TLIBC_READER_GENERATOR *self, const ST_UNION *de_union)
 {
-	tuint32 i;
+	uint32_t i;
 
 	generator_print(&self->super, "\n");
 
@@ -241,7 +241,7 @@ static TD_ERROR_CODE _on_union(TLIBC_READER_GENERATOR *self, const ST_UNION *de_
 		generator_print(&self->super, "\t\tif((ret = tlibc_read_field_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;\n", de_union->union_field_list.union_field_list[i].name);
 		if(st->st == E_ST_STRING)
 		{
-			generator_print(&self->super, "\t\tif((ret = tlibc_read_tstring(self, data->%s, %s) != E_TLIBC_NOERROR) goto done;\n", de_union->union_field_list.union_field_list[i].name, de_union->union_field_list.union_field_list[i].simple_type.string_length);
+			generator_print(&self->super, "\t\tif((ret = tlibc_read_string(self, data->%s, %s) != E_TLIBC_NOERROR) goto done;\n", de_union->union_field_list.union_field_list[i].name, de_union->union_field_list.union_field_list[i].simple_type.string_length);
 		}
 		else
 		{

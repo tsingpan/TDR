@@ -21,7 +21,7 @@ void parser_init(PARSER *self)
 
 static void on_document_begin(PARSER *self, const char *file_name)
 {
-	tuint32 i;
+	uint32_t i;
 
 	for(i = 0; i < self->generator_num; ++i)
 	{
@@ -31,7 +31,7 @@ static void on_document_begin(PARSER *self, const char *file_name)
 
 static void on_document_end(PARSER *self, const char *file_name)
 {
-	tuint32 i;
+	uint32_t i;
 	for(i = 0; i < self->generator_num; ++i)
 	{
 		generator_on_document_end(self->generator_list[i], file_name);
@@ -57,9 +57,9 @@ static void parser_push(PARSER *self, const char *source_dir, const char *file_n
 }
 
 int tdataparse (SCANNER *self);
-tint32 parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, tuint32 generator_list_num)
+int32_t parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, uint32_t generator_list_num)
 {
-	tint32 ret;	
+	int32_t ret;	
 
 	self->generator_list = generator_list;
 	self->generator_num = generator_list_num;
@@ -83,7 +83,7 @@ void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
-		tuint32 i;
+		uint32_t i;
 		for(i = 0; i < self->generator_num; ++i)
 		{
 			generator_on_definition(self->generator_list[i], &self->pn_definition);

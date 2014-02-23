@@ -11,7 +11,7 @@
 
 const char* language_string_library_search(const ST_TD_LANGUAGE_STRING_LIBRARY *self, EN_TD_LANGUAGE_STRING sid)
 {
-	tuint32 l, r, m;
+	uint32_t l, r, m;
 
 	l = 0;
 	r = self->language_string_list_num;
@@ -39,11 +39,11 @@ ERROR_RET:
 
 static void sort_library(ST_TD_LANGUAGE_STRING_LIBRARY *self)
 {
-	tuint32 i,j;
+	uint32_t i,j;
 	for(i = 0; i < self->language_string_list_num; ++i)
 	{
 		ST_TD_LANGUAGE_STRING tmp;
-		tuint32 min_j = i;
+		uint32_t min_j = i;
 
 		for(j = i + 1; j < self->language_string_list_num; ++j)
 		{

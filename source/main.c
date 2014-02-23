@@ -47,10 +47,10 @@ static TLIBC_WRITER_GENERATOR tlibc_writer_generator;
 static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
 
 static GENERATOR *generator_list[TD_MAX_GENERATOR];
-static tuint32 generator_num = 0;
-int main(tint32 argc, char **argv)
+static uint32_t generator_num = 0;
+int main(int32_t argc, char **argv)
 {
-	tint32 i;
+	int32_t i;
 
 	if(language_string_library_init(&language_string_library) != E_TD_NOERROR)
 	{

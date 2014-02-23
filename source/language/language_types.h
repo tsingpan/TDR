@@ -9,7 +9,7 @@
 #define _H_LANGUAGE_LANGUAGE_TYPES_H
 
 #include "tlibc/platform/tlibc_platform.h"
-
+#include <stdint.h>
 
 
 typedef enum _EN_TD_LANGUAGE_STRING EN_TD_LANGUAGE_STRING;
@@ -50,13 +50,13 @@ typedef struct _ST_TD_LANGUAGE_STRING ST_TD_LANGUAGE_STRING;
 struct _ST_TD_LANGUAGE_STRING
 {
 	EN_TD_LANGUAGE_STRING language_string_number;
-	tchar language_string[TD_MAX_LANGUAGE_STRING_LENGTH];
+	char language_string[TD_MAX_LANGUAGE_STRING_LENGTH];
 };
 
 typedef struct _ST_TD_LANGUAGE_STRING_LIBRARY ST_TD_LANGUAGE_STRING_LIBRARY;
 struct _ST_TD_LANGUAGE_STRING_LIBRARY
 {
-	tuint32 language_string_list_num;
+	uint32_t language_string_list_num;
 	ST_TD_LANGUAGE_STRING language_string_list[TD_LANGUAGE_STRING_NUM];
 };
 

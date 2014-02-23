@@ -4,8 +4,8 @@
 #include "tlibc/tdata/tdata_types.h"
 
 #include <assert.h>
-
-void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+#include <stdint.h>
+void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	if(symbols_search(symbols, prefix, identifier) == NULL)
 	{
@@ -13,7 +13,7 @@ void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
 	if(symbol != NULL)
@@ -23,7 +23,7 @@ void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc,
 	}
 }
 
-void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbols != NULL);
@@ -35,7 +35,7 @@ void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const SYMBOL * symbol = symbols_search(symbols, prefix, identifier);
 
@@ -45,7 +45,7 @@ void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, co
 	}
 }
 
-void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const SYMBOL * symbol = symbols_search(symbols, prefix, identifier);
 
@@ -56,7 +56,7 @@ void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE
 	}
 }
 
-void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const ST_VALUE *val = NULL;
 	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
@@ -164,7 +164,7 @@ void check_integer_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST
 	}
 }
 
-void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const tchar *prefix, const tchar *identifier)
+void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const SYMBOL* symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbol != NULL);
@@ -249,7 +249,7 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 }
 
 //检查字符串长度是否超过限制
-void check_strlen_too_long(const YYLTYPE *yylloc, const tchar *str, const tchar *suffix, tuint32 limit)
+void check_strlen_too_long(const YYLTYPE *yylloc, const char *str, const char *suffix, uint32_t limit)
 {
 	if(strlen(str) + strlen(suffix) + 1 > limit)
 	{
@@ -283,8 +283,8 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 	SN_SIMPLE_TYPE st;
 
 	SN_VALUE_TYPE vt;
-	tint64 i64 = 0;
-	tuint64 ui64 = 0;
+	int64_t i64 = 0;
+	uint64_t ui64 = 0;
 
 	real_type_ptr = symbols_get_real_type(symbols, type);
 	st = real_type_ptr->st;
@@ -380,9 +380,9 @@ void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuint32 index)
+void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, uint32_t index)
 {
-	tuint32 i;
+	uint32_t i;
 
 	for(i = 0;i < pn_enum->enum_def_list_num; ++i)
 	{
@@ -393,7 +393,7 @@ void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, tuin
 	}
 }
 
-void check_str_equal(const YYLTYPE *yylloc, const tchar *src, const tchar* dst)
+void check_str_equal(const YYLTYPE *yylloc, const char *src, const char* dst)
 {
 	if(strcmp(src, dst) != 0)
 	{

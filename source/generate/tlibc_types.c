@@ -24,7 +24,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	generator_print(super, "#ifndef _H_%s\n", super->document_name);
 	generator_print(super, "#define _H_%s\n", super->document_name);
 	generator_print(super, "\n");
-	generator_print(super, "#include \"tlibc/platform/tlibc_platform.h\"\n");
+	generator_print(super, "#include <stdint.h>\n");
 	
 	generator_print(super, "\n");
 	generator_print(super, "\n");
@@ -68,7 +68,7 @@ static TD_ERROR_CODE _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_c
 
 static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enum)
 {
-	tuint32 i;	
+	uint32_t i;	
 	generator_print(&self->super, "typedef enum _%s %s;\n", de_enum->name, de_enum->name);
 	generator_print(&self->super, "enum _%s\n", de_enum->name);
 	generator_print(&self->super, "{\n");
@@ -91,7 +91,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 
 static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_LIST *field_list)
 {
-	tuint32 i;
+	uint32_t i;
 	for(i = 0; i < field_list->field_list_num; ++i)
 	{
 		if(field_list->field_list[i].type.type == E_SNT_CONTAINER)
@@ -99,11 +99,11 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 			//为vector对象自动生成一个计数器对象, 所以一个vector类型的对象需要占用两个符号。
 			if(field_list->field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
-				generator_print(&self->super, "\ttuint32 %s_num;\n", field_list->field_list[i].identifier);
+				generator_print(&self->super, "\tuint32_t %s_num;\n", field_list->field_list[i].identifier);
 				generator_print(&self->super, "\t");
 				if(field_list->field_list[i].type.ct.vector_type.st == E_ST_STRING)
 				{
-					generator_print(&self->super, "tchar");
+					generator_print(&self->super, "char");
 				}
 				else
 				{
@@ -121,7 +121,7 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 		{
 			if(field_list->field_list[i].type.st.st == E_ST_STRING)
 			{
-				generator_print(&self->super, "\ttchar %s[%s]", field_list->field_list[i].identifier, field_list->field_list[i].type.st.string_length);
+				generator_print(&self->super, "\tchar %s[%s]", field_list->field_list[i].identifier, field_list->field_list[i].type.st.string_length);
 			}
 			else
 			{
@@ -157,12 +157,12 @@ static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de
 
 static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_UNION_FIELD_LIST *union_field_list)
 {
-	tuint32 i;
+	uint32_t i;
 	for(i = 0; i < union_field_list->union_field_list_num; ++i)
 	{
 		if(union_field_list->union_field_list[i].simple_type.st == E_ST_STRING)
 		{
-			generator_print(&self->super, "\ttchar %s[%s]", union_field_list->union_field_list[i].name, union_field_list->union_field_list[i].simple_type.string_length);
+			generator_print(&self->super, "\tchar %s[%s]", union_field_list->union_field_list[i].name, union_field_list->union_field_list[i].simple_type.string_length);
 		}
 		else
 		{

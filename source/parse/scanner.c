@@ -10,22 +10,22 @@
 #include <string.h>
 #include <stdarg.h>
 
-static tint32 path_repair(char* path, tuint32 *len)
+static int32_t path_repair(char* path, uint32_t *len)
 {
 	char file_path[TLIBC_MAX_PATH_LENGTH];
 	char *p[TLIBC_MAX_PATH_LENGTH];
-	tuint32 ptail = 0;
-	tint32 first = 1;
-	tuint32 i = 0;
-	tuint32 j = 0;
-	tuint32 file_path_len = 0;
-	tuint32 tlen = 0;
+	uint32_t ptail = 0;
+	int32_t first = 1;
+	uint32_t i = 0;
+	uint32_t j = 0;
+	uint32_t file_path_len = 0;
+	uint32_t tlen = 0;
 
 	if((path == NULL) || (len == NULL))
 	{
 		return E_TD_ERROR;
 	}
-	file_path_len = (tuint32)strlen(path);
+	file_path_len = (uint32_t)strlen(path);
 
 	snprintf(file_path, TLIBC_MAX_PATH_LENGTH, "%s", path);
 	if(path[0] == '/')
@@ -52,7 +52,7 @@ static tint32 path_repair(char* path, tuint32 *len)
 	{
 		if(p[i][0] == '.')
 		{
-			tlen = (tuint32)strlen(p[i]);			
+			tlen = (uint32_t)strlen(p[i]);			
 			for(j = i - 1; (tlen > 1) && (j >= 0); --j)
 			{
 				if(p[j][0] == '.')
@@ -97,7 +97,7 @@ static tint32 path_repair(char* path, tuint32 *len)
 			}
 		}
 
-		for(j = 0; j < (tint32)strlen(p[i]); ++j)
+		for(j = 0; j < (int32_t)strlen(p[i]); ++j)
 		{
 			if(file_path_len < *len)
 			{
@@ -158,13 +158,13 @@ SCANNER_CONTEXT *scanner_top(SCANNER *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-tint32 scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state)
+int32_t scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
 	YYCTYPE* yy_start = self->buff_curr;
-	tuint32 i = 0;
-	tuint32 len = 0;
+	uint32_t i = 0;
+	uint32_t len = 0;
 	char realPath[TLIBC_MAX_PATH_LENGTH];
 	SCANNER_CONTEXT *scanner = NULL;
 	TD_ERROR_CODE ret = E_TD_NOERROR;
@@ -242,7 +242,7 @@ void scanner_init(SCANNER *self)
 	self->stack_num = 0;
 }
 
-tuint32 scanner_size(SCANNER *self)
+uint32_t scanner_size(SCANNER *self)
 {
 	return self->stack_num;
 }
@@ -364,7 +364,7 @@ ERROR_RET:
 
 static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
-	tuint32 len = 0;
+	uint32_t len = 0;
 	
 	*token = tok_string;
 
@@ -410,7 +410,7 @@ done:
 	yyleng = YYCURSOR - yytext;
 }
 
-static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+static int32_t get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	switch(*token)
 	{
@@ -471,7 +471,7 @@ static tint32 get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval
 		}
 	case tok_unixcomment:
 		{
-			tuint32 i;
+			uint32_t i;
 			yylval->sn_tok_unixcomment = yytext + 1;
 			for(i = yyleng - 1; i > 0; --i)
 			{
