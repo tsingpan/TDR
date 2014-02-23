@@ -67,7 +67,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_en
 	generator_print(&self->super, "\tTLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;\n");
 	generator_print(&self->super, "\tif((ret = tlibc_write_enum_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;\n", de_enum->name);
 	generator_print(&self->super, "\n");
-	generator_print(&self->super, "\tret = tlibc_write_tint32(self, (tint32*)data);\n");
+	generator_print(&self->super, "\tret = tlibc_write_tint32(self, (const tint32*)data);\n");
 	
 	generator_print(&self->super, "\tif(ret == E_TLIBC_PLEASE_READ_ENUM_NAME)\n");
 	generator_print(&self->super, "\t{\n");
