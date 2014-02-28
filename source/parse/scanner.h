@@ -3,7 +3,7 @@
 
 #include "tlibc/platform/tlibc_platform.h"
 #include "tlibc/tdata/tdata_types.h"
-#include "language/language_types.h"
+#include "language/language.h"
 #include "definition.h"
 #include "error.h"
 #include <stdarg.h>

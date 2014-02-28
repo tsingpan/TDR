@@ -39,7 +39,6 @@ void help()
 #define TD_MAX_GENERATOR 16
 
 static PARSER parser;
-static ST_TD_LANGUAGE_STRING_LIBRARY language_string_library;
 static TLIBC_TYPES_GENERATOR tlibc_types_generator;
 static TLIBC_READER_GENERATOR tlibc_reader_generator;
 static TLIBC_READER_HEADER_GENERATOR tlibc_reader_header_generator;
@@ -51,13 +50,6 @@ static uint32_t generator_num = 0;
 int main(int32_t argc, char **argv)
 {
 	int32_t i;
-
-	if(language_string_library_init(&language_string_library) != E_TD_NOERROR)
-	{
-		fprintf(stderr, "Can not load language!\n");
-		goto ERROR_RET;
-	}
-	g_language_string_library = &language_string_library;
 
 	parser_init(&parser);
 	for (i = 1; i < argc; ++i)

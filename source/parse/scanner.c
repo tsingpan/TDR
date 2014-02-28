@@ -248,7 +248,7 @@ uint32_t scanner_size(SCANNER *self)
 }
 static void scanner_error_ap(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, va_list ap)
 {
-	const char *error_str = language_string_library_search(g_language_string_library, result);	
+	const char *error_str = tdata_strerror(result);	
 	if((yylloc) && (yylloc->file_name[0]))
 	{
 		fprintf(stderr, "%s", yylloc->file_name);
