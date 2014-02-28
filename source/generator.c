@@ -120,12 +120,30 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-void generator_print(GENERATOR *self, const char* fmt, ...)
+void generator_print(GENERATOR *self, size_t tabs, const char* fmt, ...)
 {
 	va_list ap;
-
+	size_t i;
 	va_start(ap, fmt);
+	for(i = 0;i < tabs; ++i)
+	{
+		fputc('\t', self->fout);
+	}	
 	vfprintf(self->fout, fmt, ap);
+	va_end(ap);
+}
+
+void generator_printline(GENERATOR *self, size_t tabs, const char* fmt, ...)
+{
+	va_list ap;
+	size_t i;
+	va_start(ap, fmt);
+	for(i = 0;i < tabs; ++i)
+	{
+		fputc('\t', self->fout);
+	}	
+	vfprintf(self->fout, fmt, ap);
+	fputc('\n', self->fout);
 	va_end(ap);
 }
 
@@ -147,31 +165,39 @@ static void write_char(GENERATOR *self, char c)
 	switch(c)
 	{
 	case '\b':
-		generator_print(self, "\\b");
+		fputc('\\', self->fout);
+		fputc('b', self->fout);
 		break;
 	case '\f':
-		generator_print(self, "\\f");
+		fputc('\\', self->fout);
+		fputc('f', self->fout);
 		break;
 	case '\n':
-		generator_print(self, "\\n");
+		fputc('\\', self->fout);
+		fputc('n', self->fout);
 		break;
 	case '\r':
-		generator_print(self, "\\r");
+		fputc('\\', self->fout);
+		fputc('r', self->fout);
 		break;
 	case '\t':
-		generator_print(self, "\\t");
+		fputc('\\', self->fout);
+		fputc('t', self->fout);
 		break;
 	case '\'':
-		generator_print(self, "\\'");
+		fputc('\\', self->fout);
+		fputc('\'', self->fout);
 		break;
 	case '\"':
-		generator_print(self, "\\\"");
+		fputc('\\', self->fout);
+		fputc('"', self->fout);
 		break;
 	case '\\':
-		generator_print(self, "\\\\");
+		fputc('\\', self->fout);
+		fputc('\\', self->fout);
 		break;
 	default:
-		generator_print(self, "%c", c);
+		fputc(c, self->fout);
 	}
 }
 
@@ -180,84 +206,129 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 	switch (val->type)
 	{
 	case E_SNVT_IDENTIFIER:
-		generator_print(self, "%s", val->val.identifier);
+		fprintf(self->fout, "%s", val->val.identifier);
 		return E_TD_NOERROR;
 	case E_SNVT_CHAR:
-		generator_print(self, "\'");
+		fputc('\'', self->fout);
 		write_char(self, val->val.c);
-		generator_print(self, "\'");
+		fputc('\'', self->fout);		
 		return E_TD_NOERROR;
 	case E_SNVT_STRING:
 		{
 			uint32_t i;
 			uint32_t len = strlen(val->val.str);
-			generator_print(self, "\"");
+			fputc('\"', self->fout);
 			for(i = 0;i < len; ++i)
 			{
 				write_char(self, val->val.str[i]);
 			}
-			generator_print(self, "\"");
+			fputc('\"', self->fout);
 			return E_TD_NOERROR;
 		}
 	case E_SNVT_DOUBLE:
-		generator_print(self, "%lf", val->val.d);
-		return E_TD_NOERROR;
+		fprintf(self->fout, "%lf", val->val.d);
+		return E_TD_NOERROR;		
 	case E_SNVT_INT64:
-		generator_print(self, "%lld", val->val.i64);
+		fprintf(self->fout, "%"PRIi64, val->val.i64);
 		return E_TD_NOERROR;
 	case E_SNVT_UINT64:
-		generator_print(self, "%llu", val->val.ui64);
+		fprintf(self->fout, "%"PRIu64, val->val.ui64);
 		return E_TD_NOERROR;
 	case E_SNVT_HEX_INT64:
-		generator_print(self, "0x%llx", val->val.i64);
+		fprintf(self->fout, "0x%"PRIx64, val->val.i64);
 		return E_TD_NOERROR;
 	case E_SNVT_HEX_UINT64:
-		generator_print(self, "0x%llx", val->val.ui64);
+		fprintf(self->fout, "0x%"PRIx64, val->val.ui64);
 		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;		
 	}
 }
 
-TD_ERROR_CODE generator_print_simple_type(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+TD_ERROR_CODE generator_print_type_name(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
 {
 	switch(simple_type->st)
 	{
 	case E_ST_INT8:
-		generator_print(self, "int8_t");
+		fprintf(self->fout, "int8");
 		return E_TD_NOERROR;
 	case E_ST_INT16:
-		generator_print(self, "int16_t");
+		fprintf(self->fout, "int16");
 		return E_TD_NOERROR;
 	case E_ST_INT32:
-		generator_print(self, "int32_t");
+		fprintf(self->fout, "int32");
 		return E_TD_NOERROR;
 	case E_ST_INT64:
-		generator_print(self, "int64_t");
+		fprintf(self->fout, "int64");
 		return E_TD_NOERROR;
 	case E_ST_UINT8:
-		generator_print(self, "uint8_t");
+		fprintf(self->fout, "uint8");
 		return E_TD_NOERROR;
 	case E_ST_UINT16:
-		generator_print(self, "uint16_t");
+		fprintf(self->fout, "uint16");
 		return E_TD_NOERROR;
 	case E_ST_UINT32:
-		generator_print(self, "uint32_t");
+		fprintf(self->fout, "uint32");
 		return E_TD_NOERROR;
 	case E_ST_UINT64:
-		generator_print(self, "uint64_t");
+		fprintf(self->fout, "uint64");
 		return E_TD_NOERROR;
 	case E_ST_STRING:
-		generator_print(self, "char");
+		fprintf(self->fout, "char");
 		return E_TD_NOERROR;
 	case E_ST_CHAR:
-		generator_print(self, "char");
+		fprintf(self->fout, "char");
 		return E_TD_NOERROR;
 	case E_ST_DOUBLE:
-		generator_print(self, "double");
+		fprintf(self->fout, "double");
 		return E_TD_NOERROR;
 	case E_ST_REFER:
-		generator_print(self, simple_type->st_refer);
+		fprintf(self->fout, simple_type->st_refer);
+		return E_TD_NOERROR;
+	default:
+		return E_TD_ERROR;
+	}
+}
+
+TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+{
+	switch(simple_type->st)
+	{
+	case E_ST_INT8:
+		fprintf(self->fout, "int8_t");
+		return E_TD_NOERROR;
+	case E_ST_INT16:
+		fprintf(self->fout, "int16_t");
+		return E_TD_NOERROR;
+	case E_ST_INT32:
+		fprintf(self->fout, "int32_t");
+		return E_TD_NOERROR;
+	case E_ST_INT64:
+		fprintf(self->fout, "int64_t");
+		return E_TD_NOERROR;
+	case E_ST_UINT8:
+		fprintf(self->fout, "uint8_t");
+		return E_TD_NOERROR;
+	case E_ST_UINT16:
+		fprintf(self->fout, "uint16_t");
+		return E_TD_NOERROR;
+	case E_ST_UINT32:
+		fprintf(self->fout, "uint32_t");
+		return E_TD_NOERROR;
+	case E_ST_UINT64:
+		fprintf(self->fout, "uint64_t");
+		return E_TD_NOERROR;
+	case E_ST_STRING:
+		fprintf(self->fout, "char");
+		return E_TD_NOERROR;
+	case E_ST_CHAR:
+		fprintf(self->fout, "char");
+		return E_TD_NOERROR;
+	case E_ST_DOUBLE:
+		fprintf(self->fout, "double");
+		return E_TD_NOERROR;
+	case E_ST_REFER:
+		fprintf(self->fout, simple_type->st_refer);
 		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;
