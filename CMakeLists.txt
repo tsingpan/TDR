@@ -26,6 +26,5 @@ set(SOURCE  ${DIR_HOME}/source)
 
 add_subdirectory(source)
 install(DIRECTORY cmake DESTINATION ".")
-install(DIRECTORY language DESTINATION ".")
 install(DIRECTORY common DESTINATION ".")
 install(FILES README.md DESTINATION ".")

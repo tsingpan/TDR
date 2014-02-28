@@ -30,10 +30,10 @@ void help()
 {
 	fprintf(stderr, "Usage: tdata [options] file\n");
 	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "  -version					Print the compiler version\n");
-	fprintf(stderr, "  -gen types				Gen source\n");
-	fprintf(stderr, "  -s dir					Set the source directory\n");
-	fprintf(stderr, "  -t dir					Set the target directory\n");
+	fprintf(stderr, "  -version						Print the compiler version\n");
+	fprintf(stderr, "  -gen types					Gen source\n");
+	fprintf(stderr, "  -s dir						Set the source directory\n");
+	fprintf(stderr, "  -t dir						Set the target directory\n");
 }
 
 #define TD_MAX_GENERATOR 16

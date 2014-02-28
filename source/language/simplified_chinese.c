@@ -5,56 +5,56 @@ const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid)
 	switch(sid)
 	{
 	case E_LS_UNKNOW:
-		return "Î´Öª´íÎó.";
+		return "æœªçŸ¥é”™è¯¯.";
 	case E_LS_IDENTIFIER_NOT_DEFINED:
-		return "·ûºÅÎ´¶¨Òå[%s::%s]";
+		return "ç¬¦å·æœªå®šä¹‰[%s::%s]";
 	case E_LS_IDENTIFIER_REDEFINITION:
-		return "[%s::%s]·ûºÅÖØ¶¨Òå";
+		return "[%s::%s]ç¬¦å·é‡å®šä¹‰";
 	case E_LS_IDENTIFIER_NOT_INTEGER:
-		return "·ûºÅ[%s::%s]²»ÊÇºÏ·¨ÕûÊı";
+		return "ç¬¦å·[%s::%s]ä¸æ˜¯åˆæ³•æ•´æ•°";
 	case E_LS_IDENTIFIER_NOT_STRING:
-		return "±êÊ¶·û[%s]²»ÊÇ[%s]";
+		return "æ ‡è¯†ç¬¦[%s]ä¸æ˜¯[%s]";
 	case E_LS_STRING_LENGTH_NOT_DEFINED:
-		return "string³¤¶ÈÎ´¶¨Òå";
+		return "stringé•¿åº¦æœªå®šä¹‰";
 	case E_LS_IDENTIFIER_LENGTH_ERROR:
-		return "·ûºÅ³¤¶È³¬¹ı%u";
+		return "ç¬¦å·é•¿åº¦è¶…è¿‡%u";
 	case E_LS_NOT_INTEGER_TYPE:
-		return "²»ÊÇÕûÊıÀàĞÍ";
+		return "ä¸æ˜¯æ•´æ•°ç±»å‹";
 	case E_LS_NOT_INTEGER_VALUE:
-		return "²»ÊÇºÏ·¨ÕûÊı";
+		return "ä¸æ˜¯åˆæ³•æ•´æ•°";
 	case E_LS_ARGUMENT_TYPE_MISMATCH:
-		return "²ÎÊıÀàĞÍ²»Æ¥Åä";
+		return "å‚æ•°ç±»å‹ä¸åŒ¹é…";
 	case E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD:
-		return "²»ÄÜÊ¹ÓÃ±£Áô×Ö[%s]";
+		return "ä¸èƒ½ä½¿ç”¨ä¿ç•™å­—[%s]";
 	case E_LS_SYNTAX_ERROR:
-		return "Óï·¨·ÖÎöÊ±·¢Éú´íÎó[%s]";
+		return "è¯­æ³•åˆ†ææ—¶å‘ç”Ÿé”™è¯¯[%s]";
 	case E_LS_CANNOT_OPEN_FILE:
-		return "ÎŞ·¨´ò¿ªÎÄ¼ş[%s]";
+		return "æ— æ³•æ‰“å¼€æ–‡ä»¶[%s]";
 	case E_LS_OUT_OF_MEMORY:
-		return "ÊÔÍ¼´ò¿ªÎÄ¼ş[%s]·¢ÉúÄÚ´æ·ÖÅä´íÎó";
+		return "è¯•å›¾æ‰“å¼€æ–‡ä»¶[%s]å‘ç”Ÿå†…å­˜åˆ†é…é”™è¯¯";
 	case E_LS_CHARACTER_CONSTANT_FORMAT_ERROR:
-		return "×Ö·ûĞÍ³£Á¿¸ñÊ½´íÎó";
+		return "å­—ç¬¦å‹å¸¸é‡æ ¼å¼é”™è¯¯";
 	case E_LS_STRING_CONSTANT_FORMAT_ERROR:
-		return "×Ö·û´®ĞÍ³£Á¿¸ñÊ½´íÎó";
+		return "å­—ç¬¦ä¸²å‹å¸¸é‡æ ¼å¼é”™è¯¯";
 	case E_LS_NUMBER_ERROR_RANGE:
-		return "Êı×Ö³£Á¿³¬³ö·¶Î§";
+		return "æ•°å­—å¸¸é‡è¶…å‡ºèŒƒå›´";
 	case E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE:
-		return "¶¨Òå³£Á¿Ê±²»¿ÉÖ¸¶¨stringÀàĞÍµÄ³¤¶È";
+		return "å®šä¹‰å¸¸é‡æ—¶ä¸å¯æŒ‡å®šstringç±»å‹çš„é•¿åº¦";
 	case E_LS_CONSTANT_TYPES_DO_NOT_MATCH:
-		return "³£Á¿ÀàĞÍ²»Æ¥Åä";
+		return "å¸¸é‡ç±»å‹ä¸åŒ¹é…";
 	case E_LS_CONST_TYPE_ERROR:
-		return "³£Á¿ÀàĞÍ´íÎó";
+		return "å¸¸é‡ç±»å‹é”™è¯¯";
 	case E_LS_ENUM_HAVE_EQUAL_ELEMENTS:
-		return "Ã¶¾ÙÀàĞÍº¬ÓĞÖØ¸´ÔªËØ[%s]ºÍ[%s]";
+		return "æšä¸¾ç±»å‹å«æœ‰é‡å¤å…ƒç´ [%s]å’Œ[%s]";
 	case E_LS_TOO_MANY_MEMBERS:
-		return "ÀàĞÍ³ÉÔ±ÊıÁ¿²»¿ÉÒÔ³¬¹ı[%u]";
+		return "ç±»å‹æˆå‘˜æ•°é‡ä¸å¯ä»¥è¶…è¿‡[%u]";
 	case E_LS_TOO_MANY_PARAMETERS:
-		return "ĞÎÊ½²ÎÊı²»¿ÉÒÔ³¬¹ı[%u]¸ö";
+		return "å½¢å¼å‚æ•°ä¸å¯ä»¥è¶…è¿‡[%u]ä¸ª";
 	case E_LS_TOO_MANY_ARGUMENTS:
-		return "Êµ¼Ê²ÎÊı²»¿ÉÒÔ³¬¹ı[%u]¸ö";
+		return "å®é™…å‚æ•°ä¸å¯ä»¥è¶…è¿‡[%u]ä¸ª";
 	case E_LS_NOT_ENUM_TYPE:
-		return "²»ÊÇÃ¶¾ÙÀàĞÍ";
+		return "ä¸æ˜¯æšä¸¾ç±»å‹";
 	default:
-		return "Î´Öª´íÎó";
+		return "æœªçŸ¥é”™è¯¯";
 	}
 }
