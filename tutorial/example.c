@@ -13,11 +13,15 @@
 
 #include "tlibc/protocol/tlibc_xlsx_reader.h"
 
+#include "tlibc/protocol/tlibc_mysql_reader.h"
+
+
 #include "protocol_types.h"
 #include "protocol_writer.h"
 #include "protocol_reader.h"
 
 #include <assert.h>
+#include "mysql.h"
 
 
 #include <string.h>
@@ -151,6 +155,62 @@ void test_xlsx()
 	tlibc_xlsx_reader_fini(&xlsx_reader);
 }
 
+
+void test_mysql()
+{
+	MYSQL *mysql = NULL;	
+	const char *sql = "select * from user;";
+	int iret;
+	MYSQL_RES *res;
+	unsigned int field_num;
+	MYSQL_FIELD *fields;
+	tlibc_mysql_reader_t mysql_reader;
+	user_s user;
+	TLIBC_ERROR_CODE ret;
+	
+
+	mysql = mysql_init(NULL);
+	if(mysql == NULL)
+	{		
+		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
+		, 3306, NULL, 0) == NULL)
+	{
+		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	iret = mysql_real_query(mysql, sql, strlen(sql));
+	if(iret != 0)
+	{
+		printf("mysql_real_query Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+	res = mysql_store_result(mysql);
+	field_num = mysql_num_fields(res);
+	fields = mysql_fetch_fields(res);
+
+	tlibc_mysql_reader_init(&mysql_reader, fields, field_num);
+	
+	for(;;)
+	{
+		MYSQL_ROW row = mysql_fetch_row(res);
+		unsigned long *length= mysql_fetch_lengths(res);
+		if((row == NULL) || (length == NULL))
+		{
+			break;
+		}
+		tlibc_mysql_reader_fetch(&mysql_reader, row, length);
+		memset(&user, 0 , sizeof(user));
+		ret = tlibc_read_user_s(&mysql_reader.super, &user);
+	}
+	
+
+}
+
 int main()
 {
 	test_protocol();
@@ -158,6 +218,8 @@ int main()
 	test_xml();
 	
 	test_xlsx();
+
+	test_mysql();
 	
 	return 0;
 }
