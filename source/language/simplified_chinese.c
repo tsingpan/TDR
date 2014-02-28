@@ -1,4 +1,4 @@
-#include "language/language.h"
+﻿#include "language/language.h"
 
 const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid)
 {
