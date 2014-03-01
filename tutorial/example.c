@@ -1,4 +1,4 @@
-#include <stdio.h>
+ï»¿#include <stdio.h>
 #include "tlibc/platform/tlibc_platform.h"
 #include "tlibc/core/tlibc_error_code.h"
 
@@ -14,6 +14,9 @@
 #include "tlibc/protocol/tlibc_xlsx_reader.h"
 
 #include "tlibc/protocol/tlibc_mysql_reader.h"
+
+#include "tlibc/protocol/tlibc_bind_reader.h"
+#include "tlibc/protocol/tlibc_bind_writer.h"
 
 
 #include "protocol_types.h"
@@ -62,7 +65,7 @@ void test_binary()
 
 	message.mid = E_MID_LOGIN_RSP;
 	message.body.login_rsp.result = 1;
-	//ÓÉÓÚresultËµÃ÷µÇÂ¼Ê§°Ü£¬ ËùÒÔsession_idÊµ¼ÊÉÏÊÇÎŞĞ§µÄ£¬ ²¢²»»á±»¶Á³ö¡£
+	//ç”±äºresultè¯´æ˜ç™»å½•å¤±è´¥ï¼Œ æ‰€ä»¥session_idå®é™…ä¸Šæ˜¯æ— æ•ˆçš„ï¼Œ å¹¶ä¸ä¼šè¢«è¯»å‡ºã€‚
 	message.body.login_rsp.session_id = 123321;
 
 	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
@@ -75,10 +78,10 @@ void test_binary()
 
 void test_protocol()
 {
-	//compactĞÍĞ­Òé¾ßÓĞ¼òµ¥µÄÑ¹ËõÊı¾İ¹¦ÄÜ£¬ Í¬Ê±´¦ÀíËÙ¶ÈÒ²·Ç³£¿ì£¬ ÊÊºÏÍâÍøÊı¾İµÄ´«Êä
+	//compactå‹åè®®å…·æœ‰ç®€å•çš„å‹ç¼©æ•°æ®åŠŸèƒ½ï¼Œ åŒæ—¶å¤„ç†é€Ÿåº¦ä¹Ÿéå¸¸å¿«ï¼Œ é€‚åˆå¤–ç½‘æ•°æ®çš„ä¼ è¾“
 	test_compact();
 
-	//binaryĞÍĞ­ÒéÖ±½Ó°´ÕÕCÓïÑÔÄ¬ÈÏµÄ±àÂë·½Ê½´æ·Å£¬ ÓÃĞ¡¶Ë±íÊ¾£¬ ËÙ¶È×î¿ì£¬ ²»¾ß±¸Ñ¹Ëõ¹¦ÄÜ£¬ ÊÊºÏÄÚÍøÊı¾İ´«Êä
+	//binaryå‹åè®®ç›´æ¥æŒ‰ç…§Cè¯­è¨€é»˜è®¤çš„ç¼–ç æ–¹å¼å­˜æ”¾ï¼Œ ç”¨å°ç«¯è¡¨ç¤ºï¼Œ é€Ÿåº¦æœ€å¿«ï¼Œ ä¸å…·å¤‡å‹ç¼©åŠŸèƒ½ï¼Œ é€‚åˆå†…ç½‘æ•°æ®ä¼ è¾“
 	test_binary();
 }
 
@@ -118,7 +121,7 @@ void test_xml()
 
 	
 	memset(&config, 0, sizeof(tconnd_config_s));
-	//ÓÃÏÂÃæÕâ¸öÃüÁî¿ÉÒÔÀ´Ìí¼Ó²éÕÒ°üº¬ÎÄ¼şµÄÄ¿Â¼
+	//ç”¨ä¸‹é¢è¿™ä¸ªå‘½ä»¤å¯ä»¥æ¥æ·»åŠ æŸ¥æ‰¾åŒ…å«æ–‡ä»¶çš„ç›®å½•
 	tlibc_xml_add_include(&xml_reader, "./gen");
 	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
 	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
@@ -138,7 +141,7 @@ void test_xlsx()
 	memset(&item_table, 0, sizeof(item_table));
 
 	ret = tlibc_xlsx_reader_init(&xlsx_reader, "./gen/item.xlsx");
-	//sheetÎª¿Õ±íÊ¾´ò¿ªµÚµÚÒ»Ò³
+	//sheetä¸ºç©ºè¡¨ç¤ºæ‰“å¼€ç¬¬ç¬¬ä¸€é¡µ
 	ret = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
 	for(i = 3; i <= row; ++i)
@@ -230,6 +233,117 @@ void test_mysql()
 
 }
 
+void test_mysql_stmt()
+{
+	TLIBC_ERROR_CODE ret;
+	MYSQL *mysql = NULL;	
+	const char *sql_insert = "insert into user_s value(?, ?, ?);";
+	MYSQL_STMT *stmt;
+	int iret;
+	user_s user;
+	size_t i;
+
+	MYSQL_BIND   par_bind[1024];
+
+	tlibc_bind_writer_t bind_writer;
+	tlibc_bind_const_s bind_vec[1024];
+	size_t				bind_vec_num;
+//	int ivalue;
+
+	mysql = mysql_init(NULL);
+	if(mysql == NULL)
+	{		
+		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
+		, 3306, NULL, 0) == NULL)
+	{
+		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	stmt = mysql_stmt_init(mysql);
+	if(stmt == NULL)
+	{
+		printf("mysql_stmt_init Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+	if(mysql_stmt_prepare(stmt, sql_insert, strlen(sql_insert)))
+	{
+		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+	user.type = e_admin;
+	user.id = 1;
+	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
+	tlibc_bind_writer_init(&bind_writer, bind_vec, sizeof(bind_vec));
+	ret = tlibc_write_user_s(&bind_writer.super, &user);
+	memset(par_bind, 0, sizeof(par_bind));
+	bind_vec_num = bind_writer.idx;
+	for(i = 0;i < bind_vec_num; ++i)
+	{
+		par_bind[i].buffer = (void*)bind_vec[i].buff;
+		switch(bind_vec[i].type)
+		{
+		case e_tlibc_bind_uint8:
+		case e_tlibc_bind_int8:
+			par_bind[i].buffer_type = MYSQL_TYPE_TINY;
+			break;
+		case e_tlibc_bind_uint16:
+		case e_tlibc_bind_int16:
+			par_bind[i].buffer_type = MYSQL_TYPE_SHORT;
+			break;
+		case e_tlibc_bind_uint32:
+		case e_tlibc_bind_int32:
+			par_bind[i].buffer_type = MYSQL_TYPE_LONG;
+			break;
+		case e_tlibc_bind_uint64:
+		case e_tlibc_bind_int64:
+			par_bind[i].buffer_type = MYSQL_TYPE_LONGLONG;
+			break;
+		case e_tlibc_bind_double:
+			par_bind[i].buffer_type = MYSQL_TYPE_DOUBLE;
+			break;
+		case e_tlibc_bind_char:
+			par_bind[i].buffer_type = MYSQL_TYPE_STRING;
+			par_bind[i].buffer_length = 1;
+			break;
+		case e_tlibc_bind_string:
+			par_bind[i].buffer_type = MYSQL_TYPE_STRING;
+			par_bind[i].buffer_length = bind_vec[i].buff_size;
+			break;
+		default:
+			assert(0);
+		}
+		par_bind[i].is_null = NULL;
+		par_bind[i].length = NULL;
+	}
+	/*
+	par_bind[0].buffer_type= MYSQL_TYPE_LONG;
+	par_bind[0].buffer= (char *)&ivalue;
+	par_bind[0].is_null= 0;
+	par_bind[0].length= 0;
+	*/
+	iret = mysql_stmt_bind_param(stmt, par_bind);
+	if(iret)
+	{
+		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+	//ivalue = 10;
+	iret = mysql_stmt_execute(stmt);
+	if(iret != 0)
+	{
+		printf("mysql_real_query Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+}
+
 int main()
 {
 	test_protocol();
@@ -238,7 +352,9 @@ int main()
 	
 	test_xlsx();
 
-	test_mysql();
+	//test_mysql();
+
+	test_mysql_stmt();
 	
 	return 0;
 }
