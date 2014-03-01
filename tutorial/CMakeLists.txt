@@ -33,12 +33,17 @@ set(TDATA_OUTPUTS
 	${GEN_PATH}/protocol_types.h
 	${GEN_PATH}/protocol_reader.c ${GEN_PATH}/protocol_reader.h 
 	${GEN_PATH}/protocol_writer.c ${GEN_PATH}/protocol_writer.h
+	${GEN_PATH}/sql_types.h
+	${GEN_PATH}/sql_reader.c ${GEN_PATH}/sql_reader.h 
+	${GEN_PATH}/sql_writer.c ${GEN_PATH}/sql_writer.h
 	${GEN_PATH}/tconnd_inc.xml ${GEN_PATH}/tconnd_instance1.xml.inc
 	${GEN_PATH}/item.xlsx.xml ${GEN_PATH}/item.xlsx
+	${GEN_PATH}/sql_tables.sql
 	)
 
 add_custom_command(OUTPUT ${TDATA_OUTPUTS}
-	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc common/common.td protocol.td
+	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc protocol.td common/common.td sql.td
+	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen sql sql.td
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_inc.xml ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_instance1.xml.inc ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/item.xlsx ${GEN_PATH}/

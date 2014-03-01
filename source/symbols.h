@@ -19,10 +19,12 @@ typedef enum _SYMBOL_TYPE
 	EN_HST_UNION = 6,
 }SYMBOL_TYPE;
 
+#define NORMAL_CSD_LENGTH 1024
 typedef struct _ST_SYMBOL_ENUM
 {
 	uint32_t enum_def_list_num;
-	char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char *csd;//逗号分开的枚举元素
 }ST_SYMBOL_ENUM;
 
 typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
@@ -43,7 +45,7 @@ typedef union _SYMBOL_BODY
 	uint32_t struct_field_list_num;
 }SYMBOL_BODY;
 
-#define MAX_SYMBOL_KEY_LENGTH TDATA_MAX_LENGTH_OF_IDENTIFIER * 2
+#define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_LENGTH_OF_IDENTIFIER * 2
 typedef struct _SYMBOL
 {
 	tlibc_hash_head_t hash_head;

@@ -2,7 +2,6 @@
 #define _H_DEFINITION
 
 #include "tlibc/platform/tlibc_platform.h"
-#include "tlibc/tdata/tdata_types.h"
 #include <stdint.h>
 
 
@@ -28,10 +27,10 @@ typedef union  _UN_VALUE
 {
     int64_t i64;
     uint64_t ui64;
-    char str[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char str[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     double d;
     char c;
-    char identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
+    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
 }UN_VALUE;
 typedef struct  _ST_VALUE
 {
@@ -52,7 +51,7 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_CHAR = 8,
     E_ST_DOUBLE = 9,
 	E_ST_STRING = 10,
-	E_ST_REFER = 11,//struct, enum, typedef
+	E_ST_REFER = 11,//struct, union, enum, typedef
 }SN_SIMPLE_TYPE;
 typedef enum _SN_TYPE
 {
@@ -63,9 +62,9 @@ typedef struct _ST_SIMPLE_TYPE
 {
 	SN_SIMPLE_TYPE st;
 	
-	char string_length[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char string_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 
-	char st_refer[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char st_refer[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_SIMPLE_TYPE;
 
 typedef enum _SN_CONTAINER_TYPE
@@ -77,7 +76,7 @@ typedef struct _ST_CONTAINER_TYPE
 	SN_CONTAINER_TYPE ct;
 
 	ST_SIMPLE_TYPE vector_type;
-	char vector_length[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char vector_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_CONTAINER_TYPE;
 
 typedef struct  _ST_TYPE
@@ -91,7 +90,7 @@ typedef struct  _ST_TYPE
 typedef struct  _ST_Parameter
 {
     ST_SIMPLE_TYPE type;
-    char identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_Parameter;
 #define MAX_PARAMETER_NUM 1
 typedef struct  _ST_Parameters
@@ -103,7 +102,7 @@ typedef struct  _ST_Parameters
 typedef struct  _ST_ARGUMENTS
 {
 	uint32_t arg_list_num;
-    char arg_list[MAX_ARGUMENT_NUM][TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char arg_list[MAX_ARGUMENT_NUM][TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_ARGUMENTS;
 typedef enum _ST_EXPRESSION_OPER
 {
@@ -115,14 +114,14 @@ typedef enum _ST_EXPRESSION_OPER
 typedef struct  _ST_CONDITION
 {
 	ST_EXPRESSION_OPER oper;
-	char op0[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_VALUE op1;
 }ST_CONDITION;
 typedef struct  _ST_FIELD
 {
     ST_CONDITION condition;
     ST_TYPE type;    
-    char identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_ARGUMENTS args;
     ST_UNIX_COMMENT comment;
 }ST_FIELD;
@@ -130,9 +129,9 @@ typedef struct  _ST_FIELD
 
 typedef struct  _ST_UNION_FIELD
 {
-	char key[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char key[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_SIMPLE_TYPE simple_type;
-	char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_UNIX_COMMENT comment;
 }ST_UNION_FIELD;
 #define MAX_UNION_FIELD_LIST_NUM 65536
@@ -151,19 +150,19 @@ typedef struct  _ST_Import
 typedef struct  _ST_Const
 {
     ST_SIMPLE_TYPE type;
-    char identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     ST_VALUE val;
 }ST_Const;
 typedef struct  _ST_ENUM_DEF
 {
-    char identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     ST_VALUE val;
     ST_UNIX_COMMENT comment;
 }ST_ENUM_DEF;
 #define MAX_ENUM_DEF_LIST_NUM 65536
 typedef struct  _ST_ENUM
 {
-    char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	uint32_t enum_def_list_num;
     ST_ENUM_DEF enum_def_list[MAX_ENUM_DEF_LIST_NUM];
 }ST_ENUM;
@@ -175,19 +174,19 @@ typedef struct  _ST_FIELD_LIST
 }ST_FIELD_LIST;
 typedef struct  _ST_STRUCT
 {
-    char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     ST_FIELD_LIST field_list;
 }ST_STRUCT;
 typedef struct  _ST_UNION
 {
-    char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     ST_Parameters parameters;
     ST_UNION_FIELD_LIST union_field_list;
 }ST_UNION;
 typedef struct  _ST_TYPEDEF
 {
     ST_SIMPLE_TYPE type;
-    char name[TDATA_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_TYPEDEF;
 typedef enum _EN_DEFINITION_TYPE
 {

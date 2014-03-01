@@ -42,8 +42,8 @@ const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid)
 		return "定义常量时不可指定string类型的长度";
 	case E_LS_CONSTANT_TYPES_DO_NOT_MATCH:
 		return "常量类型不匹配";
-	case E_LS_CONST_TYPE_ERROR:
-		return "常量类型错误";
+	case E_LS_TYPE_ERROR:
+		return "类型错误";
 	case E_LS_ENUM_HAVE_EQUAL_ELEMENTS:
 		return "枚举类型含有重复元素[%s]和[%s]";
 	case E_LS_TOO_MANY_MEMBERS:

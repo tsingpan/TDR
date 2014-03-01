@@ -20,6 +20,10 @@
 #include "protocol_writer.h"
 #include "protocol_reader.h"
 
+#include "sql_types.h"
+#include "sql_writer.h"
+#include "sql_reader.h"
+
 #include <assert.h>
 #include "mysql.h"
 
@@ -159,14 +163,20 @@ void test_xlsx()
 void test_mysql()
 {
 	MYSQL *mysql = NULL;	
-	const char *sql = "select * from user;";
+	const char *sql = "select * from user_s;";
 	int iret;
-	MYSQL_RES *res;
-	unsigned int field_num;
-	MYSQL_FIELD *fields;
+	MYSQL_RES *res;	
+	
 	tlibc_mysql_reader_t mysql_reader;
 	user_s user;
 	TLIBC_ERROR_CODE ret;
+	size_t i;
+	MYSQL_FIELD *fields;
+	size_t fields_num;
+
+	const char* tfields[TLIBC_MYSQL_FIELD_VEC_NUM];	
+	size_t tlengths[TLIBC_MYSQL_FIELD_VEC_NUM];
+	const char*trow[TLIBC_MYSQL_FIELD_VEC_NUM];
 	
 
 	mysql = mysql_init(NULL);
@@ -190,20 +200,29 @@ void test_mysql()
 		exit(1);
 	}
 	res = mysql_store_result(mysql);
-	field_num = mysql_num_fields(res);
+	fields_num = mysql_num_fields(res);
 	fields = mysql_fetch_fields(res);
+	for(i = 0;i < fields_num; ++i)
+	{
+		tfields[i] = fields[i].name;
+	}
 
-	tlibc_mysql_reader_init(&mysql_reader, fields, field_num);
+	tlibc_mysql_reader_init(&mysql_reader, tfields, fields_num);
 	
 	for(;;)
 	{
-		MYSQL_ROW row = mysql_fetch_row(res);
-		unsigned long *length= mysql_fetch_lengths(res);
-		if((row == NULL) || (length == NULL))
+		MYSQL_ROW row = mysql_fetch_row(res);		
+		unsigned long *lengths= mysql_fetch_lengths(res);
+		if((row == NULL) || (lengths == NULL))
 		{
 			break;
 		}
-		tlibc_mysql_reader_fetch(&mysql_reader, row, length);
+		for(i = 0;i < fields_num; ++i)
+		{
+			tlengths[i] = lengths[i];
+			trow[i] = row[i];
+		}
+		tlibc_mysql_reader_fetch(&mysql_reader, trow, tlengths);
 		memset(&user, 0 , sizeof(user));
 		ret = tlibc_read_user_s(&mysql_reader.super, &user);
 	}

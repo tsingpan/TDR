@@ -16,7 +16,16 @@ void symbols_init(SYMBOLS *self)
 
 void symbols_clear(SYMBOLS *self)
 {
+	size_t i;
+
 	tlibc_hash_clear(&self->symbols);
+	for(i = 0;i < self->symbol_list_num; ++i)
+	{
+		if(self->symbol_list[i].type == EN_HST_ENUM)
+		{
+			free(self->symbol_list[i].body.symbol_enum.csd);
+		}		
+	}
 	self->symbol_list_num = 0;
 }
 
@@ -132,14 +141,43 @@ void symbols_add_Const(SYMBOLS *self, const YYLTYPE *yylloc, const ST_Const *pn_
 void symbols_add_Enum(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum)
 {
 	SYMBOL *symbol = symbols_alloc(self);
+	size_t i;
+	size_t csd_len;
 
 	symbol->yylloc = *yylloc;
 
 	symbol->type = EN_HST_ENUM;
-	strncpy(symbol->body.symbol_enum.name, pn_enum->name, TDATA_MAX_LENGTH_OF_IDENTIFIER);
-	symbol->body.symbol_enum.name[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(symbol->body.symbol_enum.name, pn_enum->name, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
+	symbol->body.symbol_enum.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	symbol->body.symbol_enum.enum_def_list_num = pn_enum->enum_def_list_num;
+
+	csd_len = 0;
+	for(i = 0;i < pn_enum->enum_def_list_num; ++i)
+	{
+		size_t len = strlen(pn_enum->enum_def_list[i].identifier);
+		csd_len += len + 3;
+	}
+	symbol->body.symbol_enum.csd = (char*)malloc(csd_len);
+	if(symbol->body.symbol_enum.csd == NULL)
+	{
+		scanner_error_halt(yylloc, E_LS_OUT_OF_MEMORY);
+	}
+	csd_len = 0;
+	for(i = 0;i < pn_enum->enum_def_list_num; ++i)
+	{
+		size_t len = strlen(pn_enum->enum_def_list[i].identifier);
+		symbol->body.symbol_enum.csd[csd_len++] = '\'';
+		memcpy(symbol->body.symbol_enum.csd + csd_len, pn_enum->enum_def_list[i].identifier, len);
+		csd_len += len;
+		symbol->body.symbol_enum.csd[csd_len++] = '\'';			
+		symbol->body.symbol_enum.csd[csd_len++] = ',';
+	}
+
+	if(csd_len > 0)
+	{
+		symbol->body.symbol_enum.csd[csd_len - 1] = 0;
+	}
 
 	symbols_save(self, "", pn_enum->name, symbol);
 }
@@ -184,8 +222,8 @@ void symbols_add_Field(SYMBOLS *self, const YYLTYPE *yylloc, const ST_FIELD *pn_
 		list_num.type.st.st = E_ST_UINT16;
 
 		//这里的标识符长度已经检查过了， 不会出界
-		snprintf(list_num.identifier, TDATA_MAX_LENGTH_OF_IDENTIFIER, "%s_num", pn_field->identifier);
-		list_num.identifier[TDATA_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		snprintf(list_num.identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER, "%s_num", pn_field->identifier);
+		list_num.identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 		
 
 		list_num.args.arg_list_num = 0;

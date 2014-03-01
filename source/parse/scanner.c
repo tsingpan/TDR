@@ -485,9 +485,9 @@ static int32_t get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylva
 		}
 	case tok_identifier:
 		{
-			if(yyleng >= TDATA_MAX_LENGTH_OF_IDENTIFIER)
+			if(yyleng >= TLIBC_MAX_LENGTH_OF_IDENTIFIER)
 			{
-				scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TDATA_MAX_LENGTH_OF_IDENTIFIER);
+				scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 			}
 			memcpy(yylval->sn_tok_identifier, yytext, yyleng);
 			yylval->sn_tok_identifier[yyleng] = 0;

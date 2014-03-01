@@ -88,12 +88,3 @@ struct item_table_s
 	vector<item_limit_u, ITEM_MAX_LIMIT> limit_list(type);#一般来说不要把union类型作为数组， 这里只是演示下union类型是可以作为数组的。
 };
 
-
-/*
-	读取数据库
-*/
-struct user_s
-{
-	int32 id;
-	string<MAX_NAME_LENGTH> username;
-};

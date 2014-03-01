@@ -60,6 +60,8 @@ static TD_ERROR_CODE _on_import(TLIBC_READER_GENERATOR *self, const ST_Import *d
 	return E_TD_NOERROR;
 }
 
+
+//todoÓÅ»¯×Ö·û´®Æ¥Åä´úÂë
 static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;
@@ -78,8 +80,8 @@ static TD_ERROR_CODE _on_enum(TLIBC_READER_GENERATOR *self, const ST_ENUM *de_en
 
 	generator_printline(&self->super, 0, "\tif(ret == E_TLIBC_PLEASE_READ_ENUM_NAME)");
 	generator_printline(&self->super, 0, "\t{");
-	generator_printline(&self->super, 0, "\t\tchar name[TDATA_MAX_LENGTH_OF_IDENTIFIER];");
-	generator_printline(&self->super, 0, "\t\tif((ret = tlibc_read_string(self, name, TDATA_MAX_LENGTH_OF_IDENTIFIER)) != E_TLIBC_NOERROR) goto done;");
+	generator_printline(&self->super, 0, "\t\tchar name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];");
+	generator_printline(&self->super, 0, "\t\tif((ret = tlibc_read_string(self, name, TLIBC_MAX_LENGTH_OF_IDENTIFIER)) != E_TLIBC_NOERROR) goto done;");
 
 	generator_printline(&self->super, 0, "\t\tfor(;;)");
 	generator_printline(&self->super, 0, "\t\t{");
