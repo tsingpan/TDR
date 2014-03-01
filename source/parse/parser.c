@@ -19,22 +19,22 @@ void parser_init(PARSER *self)
 	symbols_init(&self->symbols);
 }
 
-static void on_document_begin(PARSER *self, const char *file_name)
+static void on_document_begin(PARSER *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	uint32_t i;
 
 	for(i = 0; i < self->generator_num; ++i)
 	{
-		generator_on_document_begin(self->generator_list[i], file_name);
+		generator_on_document_begin(self->generator_list[i], yylloc, file_name);
 	}
 }
 
-static void on_document_end(PARSER *self, const char *file_name)
+static void on_document_end(PARSER *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	uint32_t i;
 	for(i = 0; i < self->generator_num; ++i)
 	{
-		generator_on_document_end(self->generator_list[i], file_name);
+		generator_on_document_end(self->generator_list[i], yylloc, file_name);
 	}
 }
 
@@ -67,26 +67,61 @@ int32_t parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_
 	
 	parser_push(self, g_source_dir, file_name);
 
-	on_document_begin(self, file_name);
+	on_document_begin(self, NULL, file_name);
 
 	//这玩意自动生成的
 	ret = tdataparse(&self->scanner);
-	on_document_end(self, file_name);
+	on_document_end(self, NULL, file_name);
 	scanner_pop(&self->scanner);
 	symbols_clear(&self->symbols);
 	return E_TD_NOERROR;
 }
 
-
-//do
-void parser_on_definition(PARSER *self, const ST_DEFINITION *pn_definition)
+void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char* struct_name)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
 		uint32_t i;
 		for(i = 0; i < self->generator_num; ++i)
 		{
-			generator_on_definition(self->generator_list[i], &self->pn_definition);
+			generator_on_struct_begin(self->generator_list[i], yylloc, struct_name);
+		}
+	}
+}
+
+void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
+{
+	if(scanner_size(&self->scanner) == 1)
+	{
+		uint32_t i;
+		for(i = 0; i < self->generator_num; ++i)
+		{
+			generator_on_field(self->generator_list[i], yylloc, pn_field);
+		}
+	}
+}
+
+void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+{
+	if(scanner_size(&self->scanner) == 1)
+	{
+		uint32_t i;
+		for(i = 0; i < self->generator_num; ++i)
+		{
+			generator_on_struct_end(self->generator_list[i], yylloc, pn_struct);
+		}
+	}
+}
+
+//do
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
+{
+	if(scanner_size(&self->scanner) == 1)
+	{
+		uint32_t i;
+		for(i = 0; i < self->generator_num; ++i)
+		{
+			generator_on_definition(self->generator_list[i], yylloc, pn_definition);
 		}
 	}
 

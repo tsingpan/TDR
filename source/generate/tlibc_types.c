@@ -7,8 +7,10 @@
 #include <string.h>
 
 
-static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
+static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
 {
+	TLIBC_UNUSED(yylloc);
+
 	generator_open(super, file_name, TLIBC_TYPES_SUFFIX);
 
 	generator_printline(super, 0, "/**");
@@ -31,8 +33,9 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
+static TD_ERROR_CODE on_document_end(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
 {
+	TLIBC_UNUSED(yylloc);
 	TLIBC_UNUSED(file_name);
 
 	generator_printline(super, 0, "");
@@ -210,9 +213,10 @@ static TD_ERROR_CODE _on_comment(TLIBC_TYPES_GENERATOR *self, const ST_UNIX_COMM
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *definition)
+static TD_ERROR_CODE on_definition(GENERATOR *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	TLIBC_TYPES_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_TYPES_GENERATOR, super);
+	TLIBC_UNUSED(yylloc);
 	switch(definition->type)
 	{
 		case E_DT_IMPORT:

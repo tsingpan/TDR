@@ -22,9 +22,13 @@ struct _GENERATOR
 	FILE* fout;
 	char document_name[TLIBC_MAX_PATH_LENGTH];
 
-	TD_ERROR_CODE (*on_document_begin)(GENERATOR *self, const char *file_name);
-	TD_ERROR_CODE (*on_document_end)(GENERATOR *self, const char *file_name);
-	TD_ERROR_CODE (*on_definition)(GENERATOR *self, const ST_DEFINITION *definition);
+	TD_ERROR_CODE (*on_document_begin)(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
+	TD_ERROR_CODE (*on_document_end)(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
+	TD_ERROR_CODE (*on_definition)(GENERATOR *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition);
+
+	TD_ERROR_CODE (*on_struct_begin)(GENERATOR *self, const YYLTYPE *yylloc, const char * struct_name);
+	TD_ERROR_CODE (*on_field)(GENERATOR *self, const YYLTYPE *yylloc, const ST_FIELD *field);
+	TD_ERROR_CODE (*on_struct_end)(GENERATOR *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct);
 };
 
 void generator_init(GENERATOR *self, const SYMBOLS *symbols);
@@ -46,10 +50,16 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 TD_ERROR_CODE generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix);
 
 //virtual functions
-TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition);
+TD_ERROR_CODE generator_on_definition(GENERATOR *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition);
 
-TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const char *file_name);
+TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
 
-TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const char *file_name);
+TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
+
+TD_ERROR_CODE generator_on_struct_begin(GENERATOR *self, const YYLTYPE *yylloc, const char * struct_name);
+
+TD_ERROR_CODE generator_on_field(GENERATOR *self, const YYLTYPE *yylloc, const ST_FIELD *field);
+
+TD_ERROR_CODE generator_on_struct_end(GENERATOR *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct);
 
 #endif

@@ -9,6 +9,8 @@ typedef struct _TLIBC_SQL_GENERATOR TLIBC_SQL_GENERATOR;
 struct _TLIBC_SQL_GENERATOR
 {
 	GENERATOR super;
+	int struct_begin;
+	int first_field;
 };
 
 #define TLIBC_SQL_SUFFIX "_tables.sql"

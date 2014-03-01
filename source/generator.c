@@ -13,6 +13,9 @@ void generator_init(GENERATOR *self, const SYMBOLS *symbols)
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
 	self->on_document_end = NULL;
+	self->on_struct_begin = NULL;
+	self->on_field = NULL;
+	self->on_struct_end = NULL;
 }
 
 TD_ERROR_CODE generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix)
@@ -335,30 +338,57 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 	}
 }
 
-TD_ERROR_CODE generator_on_definition(GENERATOR *self, const ST_DEFINITION *definition)
+TD_ERROR_CODE generator_on_definition(GENERATOR *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	if(self->on_definition != NULL)
 	{
-		return self->on_definition(self, definition);
+		return self->on_definition(self, yylloc, definition);
 	}
 	return E_TD_NOERROR;
 }
 
 
-TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const char *file_name)
+TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	if(self->on_document_begin != NULL)
 	{
-		return self->on_document_begin(self, file_name);
+		return self->on_document_begin(self, yylloc, file_name);
 	}
 	return E_TD_NOERROR;
 }
 
-TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const char *file_name)
+TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	if(self->on_document_end != NULL)
 	{
-		return self->on_document_end(self, file_name);
+		return self->on_document_end(self, yylloc, file_name);
+	}
+	return E_TD_NOERROR;
+}
+
+TD_ERROR_CODE generator_on_struct_begin(GENERATOR *self, const YYLTYPE *yylloc, const char * struct_name)
+{
+	if(self->on_struct_begin != NULL)
+	{
+		return self->on_struct_begin(self, yylloc, struct_name);
+	}
+	return E_TD_NOERROR;
+}
+
+TD_ERROR_CODE generator_on_field(GENERATOR *self, const YYLTYPE *yylloc, const ST_FIELD *field)
+{
+	if(self->on_field != NULL)
+	{
+		return self->on_field(self, yylloc, field);
+	}
+	return E_TD_NOERROR;
+}
+
+TD_ERROR_CODE generator_on_struct_end(GENERATOR *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+{
+	if(self->on_struct_end != NULL)
+	{
+		return self->on_struct_end(self, yylloc, pn_struct);
 	}
 	return E_TD_NOERROR;
 }

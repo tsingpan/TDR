@@ -7,8 +7,9 @@
 #include <string.h>
 #include <assert.h>
 
-static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
+static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
 {
+	TLIBC_UNUSED(yylloc);
 	generator_open(super, file_name, TLIBC_SQL_SUFFIX);
 
 	generator_printline(super, 0, "/**");
@@ -27,8 +28,9 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const char *file_name)
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
+static TD_ERROR_CODE on_document_end(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
 {
+	TLIBC_UNUSED(yylloc);
 	TLIBC_UNUSED(file_name);
 
 	generator_printline(super, 0, "");
@@ -37,147 +39,157 @@ static TD_ERROR_CODE on_document_end(GENERATOR *super, const char *file_name)
 	return E_TD_NOERROR;
 }
 
-static void  visit_struct(TLIBC_SQL_GENERATOR *self, const ST_FIELD_LIST *field_list)
+static TD_ERROR_CODE on_struct_begin(GENERATOR *super, const YYLTYPE *yylloc, const char * struct_name)
 {
-	uint32_t i;
-	for(i = 0; i < field_list->field_list_num; ++i)
-	{
-		const ST_FIELD *field = &field_list->field_list[i];
-		generator_print(&self->super, 1, "`%s` ", field->identifier);
-		if(field->type.type == E_SNT_SIMPLE)
-		{
-			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &field->type.st);
-			switch(st->st)
-			{
-			case E_ST_INT8:
-				generator_print(&self->super, 1, "tinyint signed");
-				break;
-			case E_ST_INT16:
-				generator_print(&self->super, 1, "smallint signed");
-				break;
-			case E_ST_INT32:
-				generator_print(&self->super, 1, "int signed");
-				break;
-			case E_ST_INT64:
-				generator_print(&self->super, 1, "bigint signed");
-				break;
-			case E_ST_UINT8:
-				generator_print(&self->super, 1, "tinyint unsigned");
-				break;
-			case E_ST_UINT16:
-				generator_print(&self->super, 1, "smallint unsigned");
-				break;
-			case E_ST_UINT32:
-				generator_print(&self->super, 1, "int unsigned");
-				break;
-			case E_ST_UINT64:
-				generator_print(&self->super, 1, "bigint unsigned");
-				break;
-			case E_ST_CHAR:
-				generator_print(&self->super, 1, "char(1)");
-				break;
-			//注意一下实数的有效数字
-			case E_ST_DOUBLE:
-				generator_print(&self->super, 1, "double");
-			case E_ST_STRING:
-				{
-					const SYMBOL* rtype = symbols_search(self->super.symbols, "", st->string_length);
-					const ST_VALUE* val;
-					uint64_t ui64 = 0;
-					
-					assert(rtype != NULL);
-					assert(rtype->type == EN_HST_VALUE);
-					val = symbols_get_real_value(self->super.symbols, &rtype->body.val);
-					assert(val != NULL);
+	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+	TLIBC_UNUSED(yylloc);
+	self->struct_begin = TRUE;
+	self->first_field = TRUE;
+	generator_printline(&self->super, 0, "create table `%s`", struct_name);
+	generator_printline(&self->super, 0, "(");
 
-					switch(val->type)
-					{
-					case E_ST_INT8:						
-					case E_ST_INT16:
-					case E_ST_INT32:
-					case E_ST_INT64:
-						ui64 = val->val.i64;
-						break;
-					case E_ST_UINT8:						
-					case E_ST_UINT16:
-					case E_ST_UINT32:
-					case E_ST_UINT64:
-						ui64 = val->val.ui64;
-						break;
-					default:
-						assert(0);
-					}
-					
-					if(ui64 <= TLIBC_UINT8_MAX)
-					{
-						generator_print(&self->super, 1, "char(%"PRIu64")", ui64);
-					}
-					else if(ui64 <= TLIBC_UINT16_MAX)
-					{
-						generator_print(&self->super, 1, "text(%"PRIu64")", ui64);
-					}
-					else
-					{
-						generator_print(&self->super, 1, "longtext(%"PRIu64")", ui64);
-					}
-				
-					break;
-				}
-			case E_ST_REFER:
-				{
-					const SYMBOL* rtype = symbols_search(self->super.symbols, "", st->st_refer);					
-
-					assert(rtype != NULL);
-					if(rtype->type == EN_HST_ENUM)
-					{
-						const ST_SYMBOL_ENUM *senum = &rtype->body.symbol_enum;
-						if(senum->csd[0] == 0)
-						{
-							scanner_error_halt(&rtype->yylloc, E_LS_NOT_ENUM_TYPE);
-						}
-
-						generator_print(&self->super, 1, "ENUM(%s)", senum->csd);
-					}
-					else
-					{
-						scanner_error_halt(&rtype->yylloc, E_LS_TYPE_ERROR);
-					}
-					break;
-				}
-			}
-		}
-		if(i + 1 >= field_list->field_list_num)
-		{
-			generator_printline(&self->super, 0, "");
-		}
-		else
-		{
-			generator_printline(&self->super, 0, ",");
-		}
-	}
+	return E_TLIBC_NOERROR;
 }
 
-static TD_ERROR_CODE on_struct(TLIBC_SQL_GENERATOR *self, const ST_STRUCT *de_struct)
+static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_FIELD *field)
 {
-	generator_printline(&self->super, 0, "create table `%s`", de_struct->name);
-	generator_printline(&self->super, 0, "(");
-	visit_struct(self, &de_struct->field_list);
+	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+
+	const ST_SIMPLE_TYPE *st = NULL;
+	if(!self->first_field)
+	{
+		generator_printline(&self->super, 0, ",");
+	}
+	else
+	{
+		self->first_field = FALSE;
+	}
+	
+
+	generator_print(super, 1, "`%s` ", field->identifier);
+
+	//容器类型的列应当另外存一个表
+	if(field->type.type != E_SNT_SIMPLE)
+	{
+		scanner_error_halt(yylloc, E_LS_TYPE_ERROR);
+	}
+
+	st = symbols_get_real_type(self->super.symbols, &field->type.st);
+	switch(st->st)
+	{
+	case E_ST_INT8:
+		generator_print(super, 1, "tinyint signed");
+		break;
+	case E_ST_INT16:
+		generator_print(super, 1, "smallint signed");
+		break;
+	case E_ST_INT32:
+		generator_print(super, 1, "int signed");
+		break;
+	case E_ST_INT64:
+		generator_print(super, 1, "bigint signed");
+		break;
+	case E_ST_UINT8:
+		generator_print(super, 1, "tinyint unsigned");
+		break;
+	case E_ST_UINT16:
+		generator_print(super, 1, "smallint unsigned");
+		break;
+	case E_ST_UINT32:
+		generator_print(super, 1, "int unsigned");
+		break;
+	case E_ST_UINT64:
+		generator_print(super, 1, "bigint unsigned");
+		break;
+	case E_ST_CHAR:
+		generator_print(super, 1, "char(1)");
+		break;
+	//注意一下实数的有效数字
+	case E_ST_DOUBLE:
+		generator_print(super, 1, "double");
+	case E_ST_STRING:
+		{
+			const SYMBOL* rtype = symbols_search(super->symbols, "", st->string_length);
+			const ST_VALUE* val;
+			uint64_t ui64 = 0;
+					
+			assert(rtype != NULL);
+			assert(rtype->type == EN_HST_VALUE);
+			val = symbols_get_real_value(super->symbols, &rtype->body.val);
+			assert(val != NULL);
+
+			switch(val->type)
+			{
+			case E_ST_INT8:						
+			case E_ST_INT16:
+			case E_ST_INT32:
+			case E_ST_INT64:
+				ui64 = val->val.i64;
+				break;
+			case E_ST_UINT8:						
+			case E_ST_UINT16:
+			case E_ST_UINT32:
+			case E_ST_UINT64:
+				ui64 = val->val.ui64;
+				break;
+			default:
+				assert(0);
+			}
+					
+			if(ui64 <= TLIBC_UINT8_MAX)
+			{
+				generator_print(super, 1, "char(%"PRIu64")", ui64);
+			}
+			else if(ui64 <= TLIBC_UINT16_MAX)
+			{
+				generator_print(super, 1, "text(%"PRIu64")", ui64);
+			}
+			else
+			{
+				generator_print(super, 1, "longtext(%"PRIu64")", ui64);
+			}
+				
+			break;
+		}
+	case E_ST_REFER:
+		{
+			const SYMBOL* rtype = symbols_search(super->symbols, "", st->st_refer);					
+
+			assert(rtype != NULL);
+			if(rtype->type == EN_HST_ENUM)
+			{
+				const ST_SYMBOL_ENUM *senum = &rtype->body.symbol_enum;
+				if(senum->csd[0] == 0)
+				{
+					scanner_error_halt(yylloc, E_LS_NOT_ENUM_TYPE);
+				}
+
+				generator_print(super, 1, "ENUM(%s)", senum->csd);
+			}
+			else
+			{
+				scanner_error_halt(yylloc, E_LS_TYPE_ERROR);
+			}
+			break;
+		}
+	}
+
+	return E_TLIBC_NOERROR;
+}
+
+static TD_ERROR_CODE on_struct_end(GENERATOR *super, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+{
+	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+	TLIBC_UNUSED(yylloc);
+	TLIBC_UNUSED(pn_struct);
+
+	generator_printline(&self->super, 0, "");
 	generator_printline(&self->super, 0, ");");
 	generator_printline(&self->super, 0, "");
 
-	return E_TD_NOERROR;
-}
+	self->struct_begin = FALSE;
 
-static TD_ERROR_CODE on_definition(GENERATOR *super, const ST_DEFINITION *definition)
-{
-	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
-	switch(definition->type)
-	{
-		case E_DT_STRUCT:
-			return on_struct(self, &definition->definition.de_struct);
-		default:
-			return E_TD_NOERROR;
-	}
+	return E_TD_NOERROR;
 }
 
 void tlibc_sql_generator_init(TLIBC_SQL_GENERATOR *self, const SYMBOLS *symbols)
@@ -186,5 +198,9 @@ void tlibc_sql_generator_init(TLIBC_SQL_GENERATOR *self, const SYMBOLS *symbols)
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;
-	self->super.on_definition = on_definition;
+	self->super.on_struct_begin = on_struct_begin;
+	self->super.on_field = on_field;
+	self->super.on_struct_end = on_struct_end;
+
+	self->struct_begin = FALSE;
 }
