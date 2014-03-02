@@ -113,6 +113,7 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 	//注意一下实数的有效数字
 	case E_ST_DOUBLE:
 		generator_print(super, 1, "double");
+		break;
 	case E_ST_STRING:
 		{
 			const SYMBOL* rtype = symbols_search(super->symbols, "", st->string_length);
@@ -157,26 +158,11 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 				
 			break;
 		}
+	//union和struct存到单独的一个表中
+	//enum等同于int32
 	case E_ST_REFER:
 		{
-			const SYMBOL* rtype = symbols_search(super->symbols, "", st->st_refer);					
-
-			assert(rtype != NULL);
-			if(rtype->type == EN_HST_ENUM)
-			{
-				const ST_SYMBOL_ENUM *senum = &rtype->body.symbol_enum;
-				if(senum->csd[0] == 0)
-				{
-					scanner_error_halt(yylloc, E_LS_NOT_ENUM_TYPE);
-				}
-
-				generator_print(super, 1, "ENUM(%s)", senum->csd);
-			}
-			//结构体, union应当另外储存一个表
-			else
-			{
-				scanner_error_halt(yylloc, E_LS_TYPE_ERROR);
-			}
+			scanner_error_halt(yylloc, E_LS_TYPE_ERROR);
 			break;
 		}
 	}

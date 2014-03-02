@@ -241,12 +241,10 @@ void test_mysql_stmt()
 	MYSQL_STMT *stmt;
 	int iret;
 	user_s user;
-	size_t i;
 
 	MYSQL_BIND   par_bind[1024];
 
 	tlibc_bind_writer_t bind_writer;
-	size_t				bind_vec_num;
 
 	mysql = mysql_init(NULL);
 	if(mysql == NULL)
@@ -279,6 +277,11 @@ void test_mysql_stmt()
 	tlibc_bind_writer_init(&bind_writer, par_bind, sizeof(par_bind));
 	
 
+	user.exp = 123.321;
+	user.gold = UINT64_MAX;
+	user.id = 1;
+	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
+
 	ret = tlibc_write_user_s(&bind_writer.super, &user);
 	iret = mysql_stmt_bind_param(stmt, par_bind);
 	if(iret)
@@ -286,9 +289,7 @@ void test_mysql_stmt()
 		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
-	user.type = e_admin;
-	user.id = 1;
-	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
+	
 	
 
 

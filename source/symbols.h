@@ -19,12 +19,10 @@ typedef enum _SYMBOL_TYPE
 	EN_HST_UNION = 6,
 }SYMBOL_TYPE;
 
-#define NORMAL_CSD_LENGTH 1024
 typedef struct _ST_SYMBOL_ENUM
 {
 	uint32_t enum_def_list_num;
 	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-	char *csd;//逗号分开的枚举元素
 }ST_SYMBOL_ENUM;
 
 typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
