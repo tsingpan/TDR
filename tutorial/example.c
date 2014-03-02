@@ -1,4 +1,4 @@
-ï»¿#include <stdio.h>
+#include <stdio.h>
 #include "tlibc/platform/tlibc_platform.h"
 #include "tlibc/core/tlibc_error_code.h"
 
@@ -28,6 +28,7 @@
 #include "sql_reader.h"
 
 #include <assert.h>
+#include <winsock2.h>
 #include "mysql.h"
 
 
@@ -65,7 +66,7 @@ void test_binary()
 
 	message.mid = E_MID_LOGIN_RSP;
 	message.body.login_rsp.result = 1;
-	//ç”±äºresultè¯´æ˜ç™»å½•å¤±è´¥ï¼Œ æ‰€ä»¥session_idå®é™…ä¸Šæ˜¯æ— æ•ˆçš„ï¼Œ å¹¶ä¸ä¼šè¢«è¯»å‡ºã€‚
+	//ÓÉÓÚresultËµÃ÷µÇÂ¼Ê§°Ü£¬ ËùÒÔsession_idÊµ¼ÊÉÏÊÇÎŞĞ§µÄ£¬ ²¢²»»á±»¶Á³ö¡£
 	message.body.login_rsp.session_id = 123321;
 
 	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
@@ -78,10 +79,10 @@ void test_binary()
 
 void test_protocol()
 {
-	//compactå‹åè®®å…·æœ‰ç®€å•çš„å‹ç¼©æ•°æ®åŠŸèƒ½ï¼Œ åŒæ—¶å¤„ç†é€Ÿåº¦ä¹Ÿéå¸¸å¿«ï¼Œ é€‚åˆå¤–ç½‘æ•°æ®çš„ä¼ è¾“
+	//compactĞÍĞ­Òé¾ßÓĞ¼òµ¥µÄÑ¹ËõÊı¾İ¹¦ÄÜ£¬ Í¬Ê±´¦ÀíËÙ¶ÈÒ²·Ç³£¿ì£¬ ÊÊºÏÍâÍøÊı¾İµÄ´«Êä
 	test_compact();
 
-	//binaryå‹åè®®ç›´æ¥æŒ‰ç…§Cè¯­è¨€é»˜è®¤çš„ç¼–ç æ–¹å¼å­˜æ”¾ï¼Œ ç”¨å°ç«¯è¡¨ç¤ºï¼Œ é€Ÿåº¦æœ€å¿«ï¼Œ ä¸å…·å¤‡å‹ç¼©åŠŸèƒ½ï¼Œ é€‚åˆå†…ç½‘æ•°æ®ä¼ è¾“
+	//binaryĞÍĞ­ÒéÖ±½Ó°´ÕÕCÓïÑÔÄ¬ÈÏµÄ±àÂë·½Ê½´æ·Å£¬ ÓÃĞ¡¶Ë±íÊ¾£¬ ËÙ¶È×î¿ì£¬ ²»¾ß±¸Ñ¹Ëõ¹¦ÄÜ£¬ ÊÊºÏÄÚÍøÊı¾İ´«Êä
 	test_binary();
 }
 
@@ -121,7 +122,7 @@ void test_xml()
 
 	
 	memset(&config, 0, sizeof(tconnd_config_s));
-	//ç”¨ä¸‹é¢è¿™ä¸ªå‘½ä»¤å¯ä»¥æ¥æ·»åŠ æŸ¥æ‰¾åŒ…å«æ–‡ä»¶çš„ç›®å½•
+	//ÓÃÏÂÃæÕâ¸öÃüÁî¿ÉÒÔÀ´Ìí¼Ó²éÕÒ°üº¬ÎÄ¼şµÄÄ¿Â¼
 	tlibc_xml_add_include(&xml_reader, "./gen");
 	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
 	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
@@ -141,7 +142,7 @@ void test_xlsx()
 	memset(&item_table, 0, sizeof(item_table));
 
 	ret = tlibc_xlsx_reader_init(&xlsx_reader, "./gen/item.xlsx");
-	//sheetä¸ºç©ºè¡¨ç¤ºæ‰“å¼€ç¬¬ç¬¬ä¸€é¡µ
+	//sheetÎª¿Õ±íÊ¾´ò¿ªµÚµÚÒ»Ò³
 	ret = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
 	for(i = 3; i <= row; ++i)
