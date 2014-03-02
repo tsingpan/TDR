@@ -85,7 +85,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_en
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{
 		generator_printline(&self->super, 0, "\t\tcase %s:", de_enum->enum_def_list[i].identifier);
-		generator_printline(&self->super, 0, "\t\t\tif((ret = tlibc_write_string(self, \"%s\", TLIBC_MAX_LENGTH_OF_IDENTIFIER)) == E_TLIBC_NOERROR) break;", de_enum->enum_def_list[i].identifier);
+		generator_printline(&self->super, 0, "\t\t\tif((ret = tlibc_write_string(self, \"%s\", %u)) == E_TLIBC_NOERROR) break;", de_enum->enum_def_list[i].identifier, strlen(de_enum->enum_def_list[i].identifier));
 		generator_printline(&self->super, 0, "\t\t\tbreak;");
 	}
 	generator_printline(&self->super, 0, "\t\tdefault:");
