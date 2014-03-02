@@ -54,6 +54,8 @@ const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid)
 		return "实际参数不可以超过[%u]个";
 	case E_LS_NOT_ENUM_TYPE:
 		return "不是枚举类型";
+	case E_LS_SQL_NOT_SUPPORT_CONDITION:
+		return "SQL不支持条件判断";
 	default:
 		return "未知错误";
 	}

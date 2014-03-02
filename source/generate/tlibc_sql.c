@@ -68,6 +68,12 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 
 	generator_print(super, 1, "`%s` ", field->identifier);
 
+	//由于sql语句不支持根据数据返回不同的列， 所以不支持条件判断与据
+	if(field->condition.oper != E_EO_NON)
+	{
+		scanner_error_halt(yylloc, E_LS_SQL_NOT_SUPPORT_CONDITION);
+	}
+
 	//容器类型的列应当另外存一个表
 	if(field->type.type != E_SNT_SIMPLE)
 	{
@@ -166,6 +172,7 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 
 				generator_print(super, 1, "ENUM(%s)", senum->csd);
 			}
+			//结构体, union应当另外储存一个表
 			else
 			{
 				scanner_error_halt(yylloc, E_LS_TYPE_ERROR);
