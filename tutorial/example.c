@@ -13,7 +13,6 @@
 
 #include "tlibc/protocol/tlibc_xlsx_reader.h"
 
-#include "tlibc/protocol/tlibc_mysql_reader.h"
 
 #include "tlibc/protocol/tlibc_bind_reader.h"
 #include "tlibc/protocol/tlibc_bind_writer.h"
@@ -162,77 +161,6 @@ void test_xlsx()
 	tlibc_xlsx_reader_fini(&xlsx_reader);
 }
 
-
-void test_mysql()
-{
-	MYSQL *mysql = NULL;	
-	const char *sql = "select * from user_s;";
-	int iret;
-	MYSQL_RES *res;	
-	
-	tlibc_mysql_reader_t mysql_reader;
-	user_s user;
-	TLIBC_ERROR_CODE ret;
-	size_t i;
-	MYSQL_FIELD *fields;
-	size_t fields_num;
-
-	const char* tfields[TLIBC_MYSQL_FIELD_VEC_NUM];	
-	size_t tlengths[TLIBC_MYSQL_FIELD_VEC_NUM];
-	const char*trow[TLIBC_MYSQL_FIELD_VEC_NUM];
-	
-
-	mysql = mysql_init(NULL);
-	if(mysql == NULL)
-	{		
-		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
-		, 3306, NULL, 0) == NULL)
-	{
-		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	iret = mysql_real_query(mysql, sql, strlen(sql));
-	if(iret != 0)
-	{
-		printf("mysql_real_query Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-	res = mysql_store_result(mysql);
-	fields_num = mysql_num_fields(res);
-	fields = mysql_fetch_fields(res);
-	for(i = 0;i < fields_num; ++i)
-	{
-		tfields[i] = fields[i].name;
-	}
-
-	tlibc_mysql_reader_init(&mysql_reader, tfields, fields_num);
-	
-	for(;;)
-	{
-		MYSQL_ROW row = mysql_fetch_row(res);		
-		unsigned long *lengths= mysql_fetch_lengths(res);
-		if((row == NULL) || (lengths == NULL))
-		{
-			break;
-		}
-		for(i = 0;i < fields_num; ++i)
-		{
-			tlengths[i] = lengths[i];
-			trow[i] = row[i];
-		}
-		tlibc_mysql_reader_fetch(&mysql_reader, trow, tlengths);
-		memset(&user, 0 , sizeof(user));
-		ret = tlibc_read_user_s(&mysql_reader.super, &user);
-	}
-	
-
-}
-
 void test_mysql_insert()
 {
 	TLIBC_ERROR_CODE ret;
@@ -298,6 +226,8 @@ void test_mysql_insert()
 		exit(1);
 	}
 
+	mysql_stmt_close(stmt);
+	mysql_close(mysql);
 }
 
 void test_mysql_select()
@@ -374,6 +304,9 @@ void test_mysql_select()
 		}
 		printf("%u\n", user.id);
 	}
+	mysql_stmt_free_result(stmt);
+	mysql_stmt_close(stmt);
+	mysql_close(mysql);
 }
 
 
@@ -384,8 +317,6 @@ int main()
 	test_xml();
 	
 	test_xlsx();
-
-	//test_mysql();
 
 	test_mysql_insert();
 
