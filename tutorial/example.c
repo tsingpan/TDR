@@ -233,16 +233,83 @@ void test_mysql()
 
 }
 
-void test_mysql_stmt()
+void test_mysql_insert()
 {
 	TLIBC_ERROR_CODE ret;
 	MYSQL *mysql = NULL;	
-	const char *sql_insert = "insert into user_s value(?, ?, ?);";
+	const char *sql_insert = "insert into user_s value(?, ?, ?, ?);";
 	MYSQL_STMT *stmt;
 	int iret;
 	user_s user;
 
 	MYSQL_BIND   par_bind[1024];
+
+	tlibc_bind_reader_t bind_reader;
+
+	mysql = mysql_init(NULL);
+	if(mysql == NULL)
+	{		
+		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
+		, 3306, NULL, 0) == NULL)
+	{
+		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
+		exit(1);
+	}
+
+	stmt = mysql_stmt_init(mysql);
+	if(stmt == NULL)
+	{
+		printf("mysql_stmt_init Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+	if(mysql_stmt_prepare(stmt, sql_insert, strlen(sql_insert)))
+	{
+		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+	memset(&par_bind, 0, sizeof(par_bind));
+	tlibc_bind_reader_init(&bind_reader, par_bind, sizeof(par_bind));
+	user.id = 2;
+	user.exp = 123.321;
+	user.gold = UINT32_MAX;
+	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
+
+	ret = tlibc_read_user_s(&bind_reader.super, &user);
+	iret = mysql_stmt_bind_param(stmt, par_bind);
+	if(iret)
+	{
+		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+	
+	
+
+
+	iret = mysql_stmt_execute(stmt);
+	if(iret != 0)
+	{
+		printf("mysql_real_query Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+		exit(1);
+	}
+
+}
+
+void test_mysql_select()
+{
+	TLIBC_ERROR_CODE ret;
+	MYSQL *mysql = NULL;	
+	const char *sql_insert = "select * from user_s;";
+	MYSQL_STMT *stmt;
+	int iret;
+	user_s user;
+
+	MYSQL_BIND   res_bind[1024];
 
 	tlibc_bind_writer_t bind_writer;
 
@@ -263,44 +330,52 @@ void test_mysql_stmt()
 	stmt = mysql_stmt_init(mysql);
 	if(stmt == NULL)
 	{
-		printf("mysql_stmt_init Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		printf("mysql_stmt_init Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
 
 	if(mysql_stmt_prepare(stmt, sql_insert, strlen(sql_insert)))
 	{
-		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
 
-	memset(&par_bind, 0, sizeof(par_bind));
-	tlibc_bind_writer_init(&bind_writer, par_bind, sizeof(par_bind));
-	
-
-	user.exp = 123.321;
-	user.gold = UINT64_MAX;
-	user.id = 1;
-	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
-
+	memset(&res_bind, 0, sizeof(res_bind));
+	tlibc_bind_writer_init(&bind_writer, res_bind, sizeof(res_bind));
 	ret = tlibc_write_user_s(&bind_writer.super, &user);
-	iret = mysql_stmt_bind_param(stmt, par_bind);
+	iret = mysql_stmt_bind_result(stmt, res_bind);
 	if(iret)
 	{
-		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
-	
-	
-
 
 	iret = mysql_stmt_execute(stmt);
 	if(iret != 0)
 	{
-		printf("mysql_real_query Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
+		printf("mysql_real_query Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
 
+
+	iret = mysql_stmt_store_result(stmt);
+	if(iret)
+	{
+			printf("mysql_stmt_store_result Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+			exit(1);
+	}
+
+	for(;;)
+	{
+		memset(&user, 0, sizeof(user));
+		if(mysql_stmt_fetch(stmt) == MYSQL_NO_DATA)
+		{
+			break;
+		}
+		printf("%u\n", user.id);
+	}
 }
+
 
 int main()
 {
@@ -312,7 +387,9 @@ int main()
 
 	//test_mysql();
 
-	test_mysql_stmt();
+	test_mysql_insert();
+
+	test_mysql_select();
 	
 	return 0;
 }
