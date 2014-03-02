@@ -84,28 +84,28 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 	switch(st->st)
 	{
 	case E_ST_INT8:
-		generator_print(super, 1, "tinyint signed");
+		generator_print(super, 1, "tinyint(8) signed");
 		break;
 	case E_ST_INT16:
-		generator_print(super, 1, "smallint signed");
+		generator_print(super, 1, "smallint(16) signed");
 		break;
 	case E_ST_INT32:
-		generator_print(super, 1, "int signed");
+		generator_print(super, 1, "int(32) signed");
 		break;
 	case E_ST_INT64:
-		generator_print(super, 1, "bigint signed");
+		generator_print(super, 1, "bigint(64) signed");
 		break;
 	case E_ST_UINT8:
-		generator_print(super, 1, "tinyint unsigned");
+		generator_print(super, 1, "tinyint(8) unsigned");
 		break;
 	case E_ST_UINT16:
-		generator_print(super, 1, "smallint unsigned");
+		generator_print(super, 1, "smallint(16) unsigned");
 		break;
 	case E_ST_UINT32:
-		generator_print(super, 1, "int unsigned");
+		generator_print(super, 1, "int(32) unsigned");
 		break;
 	case E_ST_UINT64:
-		generator_print(super, 1, "bigint unsigned");
+		generator_print(super, 1, "bigint(64) unsigned");
 		break;
 	case E_ST_CHAR:
 		generator_print(super, 1, "char(1)");
