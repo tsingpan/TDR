@@ -85,7 +85,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_en
 	for(i = 0; i < de_enum->enum_def_list_num; ++i)
 	{
 		generator_printline(&self->super, 0, "\t\tcase %s:", de_enum->enum_def_list[i].identifier);
-		generator_printline(&self->super, 0, "\t\t\tif((ret = tlibc_write_string(self, \"%s\")) == E_TLIBC_NOERROR) break;", de_enum->enum_def_list[i].identifier);
+		generator_printline(&self->super, 0, "\t\t\tif((ret = tlibc_write_string(self, \"%s\", TLIBC_MAX_LENGTH_OF_IDENTIFIER)) == E_TLIBC_NOERROR) break;", de_enum->enum_def_list[i].identifier);
 		generator_printline(&self->super, 0, "\t\t\tbreak;");
 	}
 	generator_printline(&self->super, 0, "\t\tdefault:");
@@ -183,7 +183,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 				generator_printline(&self->super, 3, "{");
 				if(vector_type->st == E_ST_STRING)
 				{
-					generator_printline(&self->super, 4, "if((ret = tlibc_write_string(self, data->%s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier);
+					generator_printline(&self->super, 4, "if((ret = tlibc_write_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
 				}
 				else
 				{
@@ -214,7 +214,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 			generator_printline(&self->super, 2, "{");
 			if(st->st == E_ST_STRING)
 			{
-				generator_printline(&self->super, 3, "if((ret = tlibc_write_string(self, data->%s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier);
+				generator_printline(&self->super, 3, "if((ret = tlibc_write_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier, st->string_length);
 			}
 			else
 			{
@@ -267,7 +267,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 		generator_printline(&self->super, 2, "{");
 		if(st->st == E_ST_STRING)
 		{
-			generator_printline(&self->super, 2, "if((ret = tlibc_write_string(self, data->%s)) != E_TLIBC_NOERROR) goto done;", de_union->union_field_list.union_field_list[i].name);
+			generator_printline(&self->super, 2, "if((ret = tlibc_write_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;", de_union->union_field_list.union_field_list[i].name, st->string_length);
 		}
 		else
 		{

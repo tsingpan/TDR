@@ -22,7 +22,7 @@ if(WIN32)
       PATHS
       $ENV{MYSQL_INCLUDE_DIR}
       $ENV{MYSQL_DIR}/include
-      $ENV{ProgramFiles}/MySQL/**/include
+      $ENV{PROGRAMFILES}/MySQL/**/include
       $ENV{SystemDrive}/MySQL/**/include
    )
 else(WIN32)
@@ -51,14 +51,11 @@ if(WIN32)
       set(build_dist Release)
    endif(CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
 
-#   find_library(MYSQL_LIBRARIES NAMES mysqlclient
+   #   find_library(MYSQL_LIBRARIES NAMES mysqlclient
    find_library(MYSQL_LIBRARIES NAMES libmysql
       PATHS
-      $ENV{MYSQL_DIR}/lib/${binary_dist}
-      $ENV{MYSQL_DIR}/libmysql/${build_dist}
-      $ENV{MYSQL_DIR}/client/${build_dist}
-      $ENV{ProgramFiles}/MySQL/**/lib/${binary_dist}
-      $ENV{SystemDrive}/MySQL/**/lib/${binary_dist}
+      #      $ENV{PROGRAMFILES}/MySQL/**/lib/vs11/debug
+      $ENV{PROGRAMFILES}/MySQL/**/lib/
    )
 else(WIN32)
 #   find_library(MYSQL_LIBRARIES NAMES mysqlclient
@@ -78,7 +75,7 @@ if(WIN32)
    set(MYSQL_LIB_PATHS
       $ENV{MYSQL_DIR}/lib/opt
       $ENV{MYSQL_DIR}/client/release
-      $ENV{ProgramFiles}/MySQL/**/lib/opt
+      $ENV{PROGRAMFILES}/MySQL/**/lib/opt
       $ENV{SystemDrive}/MySQL/**/lib/opt
    )
    find_library(MYSQL_LIBRARIES NAMES mysqlclient

@@ -28,7 +28,6 @@
 #include "sql_reader.h"
 
 #include <assert.h>
-#include <winsock2.h>
 #include "mysql.h"
 
 
@@ -247,9 +246,7 @@ void test_mysql_stmt()
 	MYSQL_BIND   par_bind[1024];
 
 	tlibc_bind_writer_t bind_writer;
-	tlibc_bind_const_s bind_vec[1024];
 	size_t				bind_vec_num;
-//	int ivalue;
 
 	mysql = mysql_init(NULL);
 	if(mysql == NULL)
@@ -278,64 +275,23 @@ void test_mysql_stmt()
 		exit(1);
 	}
 
-	user.type = e_admin;
-	user.id = 1;
-	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
-	tlibc_bind_writer_init(&bind_writer, bind_vec, sizeof(bind_vec));
+	memset(&par_bind, 0, sizeof(par_bind));
+	tlibc_bind_writer_init(&bind_writer, par_bind, sizeof(par_bind));
+	
+
 	ret = tlibc_write_user_s(&bind_writer.super, &user);
-	memset(par_bind, 0, sizeof(par_bind));
-	bind_vec_num = bind_writer.idx;
-	for(i = 0;i < bind_vec_num; ++i)
-	{
-		par_bind[i].buffer = (void*)bind_vec[i].buff;
-		switch(bind_vec[i].type)
-		{
-		case e_tlibc_bind_uint8:
-		case e_tlibc_bind_int8:
-			par_bind[i].buffer_type = MYSQL_TYPE_TINY;
-			break;
-		case e_tlibc_bind_uint16:
-		case e_tlibc_bind_int16:
-			par_bind[i].buffer_type = MYSQL_TYPE_SHORT;
-			break;
-		case e_tlibc_bind_uint32:
-		case e_tlibc_bind_int32:
-			par_bind[i].buffer_type = MYSQL_TYPE_LONG;
-			break;
-		case e_tlibc_bind_uint64:
-		case e_tlibc_bind_int64:
-			par_bind[i].buffer_type = MYSQL_TYPE_LONGLONG;
-			break;
-		case e_tlibc_bind_double:
-			par_bind[i].buffer_type = MYSQL_TYPE_DOUBLE;
-			break;
-		case e_tlibc_bind_char:
-			par_bind[i].buffer_type = MYSQL_TYPE_STRING;
-			par_bind[i].buffer_length = 1;
-			break;
-		case e_tlibc_bind_string:
-			par_bind[i].buffer_type = MYSQL_TYPE_STRING;
-			par_bind[i].buffer_length = bind_vec[i].buff_size;
-			break;
-		default:
-			assert(0);
-		}
-		par_bind[i].is_null = NULL;
-		par_bind[i].length = NULL;
-	}
-	/*
-	par_bind[0].buffer_type= MYSQL_TYPE_LONG;
-	par_bind[0].buffer= (char *)&ivalue;
-	par_bind[0].is_null= 0;
-	par_bind[0].length= 0;
-	*/
 	iret = mysql_stmt_bind_param(stmt, par_bind);
 	if(iret)
 	{
 		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_error(stmt), mysql_stmt_error(stmt));
 		exit(1);
 	}
-	//ivalue = 10;
+	user.type = e_admin;
+	user.id = 1;
+	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
+	
+
+
 	iret = mysql_stmt_execute(stmt);
 	if(iret != 0)
 	{
