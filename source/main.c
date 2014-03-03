@@ -10,6 +10,7 @@
 #include "generate/tlibc_writer.h"
 #include "generate/tlibc_writer_header.h"
 #include "generate/tlibc_sql.h"
+#include "generate/tlibc_cs.h"
 
 
 #include <string.h>
@@ -46,6 +47,7 @@ static TLIBC_READER_HEADER_GENERATOR tlibc_reader_header_generator;
 static TLIBC_WRITER_GENERATOR tlibc_writer_generator;
 static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
 static TLIBC_SQL_GENERATOR tlibc_sql_generator;
+static TLIBC_CS_GENERATOR tlibc_cs_generator;
 
 static GENERATOR *generator_list[TD_MAX_GENERATOR];
 static uint32_t generator_num = 0;
@@ -143,6 +145,12 @@ int main(int32_t argc, char **argv)
 				tlibc_sql_generator_init(&tlibc_sql_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_sql_generator.super;
 			}
+			else if(strcmp(arg, "cs") == 0)
+			{
+				tlibc_cs_generator_init(&tlibc_cs_generator, &parser.symbols);
+				generator_list[generator_num++] = &tlibc_cs_generator.super;
+			}
+
 		}		
 		else
 		{

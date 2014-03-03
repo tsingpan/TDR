@@ -47,6 +47,8 @@ TD_ERROR_CODE generator_print_type_name(GENERATOR *self, const ST_SIMPLE_TYPE *s
 
 TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type);
 
+TD_ERROR_CODE generator_print_cstype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type);
+
 TD_ERROR_CODE generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix);
 
 //virtual functions

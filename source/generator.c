@@ -338,6 +338,55 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 	}
 }
 
+TD_ERROR_CODE generator_print_cstype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+{
+	const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->symbols, simple_type);
+
+	switch(st->st)
+	{
+	case E_ST_INT8:
+		fprintf(self->fout, "sbyte");
+		return E_TD_NOERROR;
+	case E_ST_INT16:
+		fprintf(self->fout, "short");
+		return E_TD_NOERROR;
+	case E_ST_INT32:
+		fprintf(self->fout, "int");
+		return E_TD_NOERROR;
+	case E_ST_INT64:
+		fprintf(self->fout, "long");
+		return E_TD_NOERROR;
+	case E_ST_UINT8:
+		fprintf(self->fout, "byte");
+		return E_TD_NOERROR;
+	case E_ST_UINT16:
+		fprintf(self->fout, "ushort");
+		return E_TD_NOERROR;
+	case E_ST_UINT32:
+		fprintf(self->fout, "uint");
+		return E_TD_NOERROR;
+	case E_ST_UINT64:
+		fprintf(self->fout, "ulong");
+		return E_TD_NOERROR;
+	case E_ST_STRING:
+		fprintf(self->fout, "string");
+		return E_TD_NOERROR;
+	case E_ST_CHAR:
+		fprintf(self->fout, "char");
+		return E_TD_NOERROR;
+	case E_ST_DOUBLE:
+		fprintf(self->fout, "double");
+		return E_TD_NOERROR;
+	case E_ST_REFER:
+		{
+			fprintf(self->fout, st->st_refer);
+			return E_TD_NOERROR;
+		}
+	default:
+		return E_TD_ERROR;
+	}
+}
+
 TD_ERROR_CODE generator_on_definition(GENERATOR *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	if(self->on_definition != NULL)
