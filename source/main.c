@@ -27,15 +27,26 @@ void usage()
 	fprintf(stderr, "Usage: tdata [options] file\n\n");
 	fprintf(stderr, "Use tdata -help for a list of options\n");
 }
-
+/*
+固定源文件夹和目标文件夹， 而不使用-I -O那样的输出方式， 是因为生成C文件时， 需要知道所有.td文件被生成到了那里。
+*/
 void help()
 {
 	fprintf(stderr, "Usage: tdata [options] file\n");
 	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "  -version						Print the compiler version\n");
-	fprintf(stderr, "  -gen types					Gen source\n");
+	fprintf(stderr, "  -version						Print the compiler version\n");	
 	fprintf(stderr, "  -s dir						Set the source directory\n");
 	fprintf(stderr, "  -t dir						Set the target directory\n");
+	fprintf(stderr, "  -gen types					Gen source\n");
+	fprintf(stderr, "Available generators:\n");
+	fprintf(stderr, "tlibc\n");
+	fprintf(stderr, "tlibc_reader_header\n");
+	fprintf(stderr, "tlibc_reader\n");
+	fprintf(stderr, "tlibc_writer_header\n");
+	fprintf(stderr, "tlibc_writer\n");
+	fprintf(stderr, "sql\n");
+	fprintf(stderr, "cs\n");	
+	
 }
 
 #define TD_MAX_GENERATOR 16

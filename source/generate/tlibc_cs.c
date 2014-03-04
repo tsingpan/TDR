@@ -28,6 +28,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, 
 	strncpy(header, file_name, MAX_PACKAGE_NAME_LENGTH);
 	header[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
 	generator_replace_extension(header, MAX_PACKAGE_NAME_LENGTH, TLIBC_CS_SUFFIX);
+	generator_printline(super, 0, "using System;");
 	generator_printline(super, 0, "using TLibCS.Protocol;");
 	generator_printline(super, 0, "");
 	generator_printline(super, 0, "namespace TLibCS.Creation");
@@ -204,7 +205,7 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
-				
+				const SYMBOL* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "writer.WriteVectorBegin();");
 				generator_printline(&self->super, 0, "");
@@ -228,7 +229,8 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 				generator_printline(&self->super, 5, "{");
 				if(st->st == E_ST_REFER)
 				{
-					if(symbols_search(self->super.symbols, "", st->st_refer)->type != EN_HST_ENUM)
+					refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+					if(refer_type->type != EN_HST_ENUM)
 					{
 						generator_print(&self->super, 6, "this._%s[i].Write(writer", de_struct->field_list.field_list[i].identifier);
 						for(j = 0; j < de_struct->field_list.field_list[i].args.arg_list_num; ++j)
@@ -245,9 +247,21 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 				else
 				{
 					generator_printline(&self->super, 6, "writer.Write(this._%s[i]);", de_struct->field_list.field_list[i].identifier);
-				}
-				
+				}				
 				generator_printline(&self->super, 5, "}");
+
+				if(st->st == E_ST_REFER)
+				{
+					if(refer_type->type == EN_HST_ENUM)
+					{
+						generator_printline(&self->super, 5, "else");
+						generator_printline(&self->super, 5, "{");
+						generator_printline(&self->super, 6, "writer.Write(this._%s.ToString());", de_struct->field_list.field_list[i].identifier);
+						generator_printline(&self->super, 5, "}");
+					}
+				}
+			
+
 				generator_printline(&self->super, 5, "writer.WriteVectorElementEnd(\"%s\", i);", de_struct->field_list.field_list[i].identifier);
 				generator_printline(&self->super, 4, "}");
 				generator_printline(&self->super, 4, "writer.WriteVectorEnd();");
@@ -256,11 +270,14 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
 			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
+			const SYMBOL* refer_type = NULL;
+
 			generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
 			generator_printline(&self->super, 4, "{");
 			if(st->st == E_ST_REFER)
 			{
-				if(symbols_search(self->super.symbols, "", st->st_refer)->type != EN_HST_ENUM)
+				refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+				if(refer_type->type != EN_HST_ENUM)
 				{
 					generator_print(&self->super, 5, "this._%s.Write(writer", de_struct->field_list.field_list[i].identifier);
 					for(j = 0; j < de_struct->field_list.field_list[i].args.arg_list_num; ++j)
@@ -278,9 +295,18 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 			{
 				generator_printline(&self->super, 5, "writer.Write(this._%s);", de_struct->field_list.field_list[i].identifier);
 			}
-			
-
 			generator_printline(&self->super, 4, "}");
+
+			if(st->st == E_ST_REFER)
+			{
+				if(refer_type->type == EN_HST_ENUM)
+				{
+					generator_printline(&self->super, 4, "else");
+					generator_printline(&self->super, 4, "{");
+					generator_printline(&self->super, 5, "writer.Write(this._%s.ToString());", de_struct->field_list.field_list[i].identifier);
+					generator_printline(&self->super, 4, "}");
+				}
+			}
 			generator_printline(&self->super, 4, "writer.WriteFieldEnd(\"%s\");", de_struct->field_list.field_list[i].identifier);
 		}
 
@@ -343,6 +369,7 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
+				const SYMBOL* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "reader.ReadVectorBegin();");
 				generator_printline(&self->super, 0, "");
@@ -367,8 +394,8 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 				generator_printline(&self->super, 5, "{");
 				if(st->st == E_ST_REFER)
 				{
-					const SYMBOL* sym = symbols_search(self->super.symbols, "", st->st_refer);
-					if(sym->type != EN_HST_ENUM)
+					refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+					if(refer_type->type != EN_HST_ENUM)
 					{
 						generator_printline(&self->super, 5, "this._%s[i] = new %s();", de_struct->field_list.field_list[i].identifier, st->st_refer);
 						generator_print(&self->super, 5, "this._%s[i].Read(reader", de_struct->field_list.field_list[i].identifier);
@@ -380,9 +407,9 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 					}
 					else
 					{
-						generator_printline(&self->super, 6, "int e;", sym->body.symbol_enum.name);
+						generator_printline(&self->super, 6, "int e;");
 						generator_printline(&self->super, 6, "reader.Read(out e);", de_struct->field_list.field_list[i].identifier);
-						generator_printline(&self->super, 6, "this._%s[i] = (%s)e;", de_struct->field_list.field_list[i].identifier, sym->body.symbol_enum.name);
+						generator_printline(&self->super, 6, "this._%s[i] = (%s)e;", de_struct->field_list.field_list[i].identifier, refer_type->body.symbol_enum.name);
 					}
 				}
 				else
@@ -390,6 +417,18 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 					generator_printline(&self->super, 6, "reader.Read(out this._%s[i]);", de_struct->field_list.field_list[i].identifier);
 				}
 				generator_printline(&self->super, 5, "}");
+				if(st->st == E_ST_REFER)
+				{
+					if(refer_type->type == EN_HST_ENUM)
+					{
+						generator_printline(&self->super, 5, "else");
+						generator_printline(&self->super, 5, "{");
+						generator_printline(&self->super, 6, "string es;");						
+						generator_printline(&self->super, 6, "reader.Read(out es);");
+						generator_printline(&self->super, 6, "this._%s = (%s)Enum.Parse(typeof(%s), es);", de_struct->field_list.field_list[i].identifier, refer_type->body.symbol_enum.name, refer_type->body.symbol_enum.name);
+						generator_printline(&self->super, 5, "}");
+					}
+				}
 				generator_printline(&self->super, 5, "reader.ReadVectorElementEnd(\"%s\", i);", de_struct->field_list.field_list[i].identifier);
 				generator_printline(&self->super, 4, "}");
 				generator_printline(&self->super, 4, "reader.ReadVectorEnd();");
@@ -398,12 +437,13 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
 			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
+			const SYMBOL* refer_type = NULL;
 			generator_printline(&self->super, 4, "if(reader.ReadFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
 			generator_printline(&self->super, 4, "{");
 			if(st->st == E_ST_REFER)
 			{
-				const SYMBOL* sym = symbols_search(self->super.symbols, "", st->st_refer);
-				if(sym->type != EN_HST_ENUM)
+				refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+				if(refer_type->type != EN_HST_ENUM)
 				{
 					generator_print(&self->super, 5, "this._%s.Read(reader", de_struct->field_list.field_list[i].identifier);
 					for(j = 0; j < de_struct->field_list.field_list[i].args.arg_list_num; ++j)
@@ -414,18 +454,28 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 				}
 				else
 				{
-					generator_printline(&self->super, 6, "int e;", sym->body.symbol_enum.name);
+					generator_printline(&self->super, 6, "int e;");
 					generator_printline(&self->super, 6, "reader.Read(out e);", de_struct->field_list.field_list[i].identifier);
-					generator_printline(&self->super, 6, "this._%s = (%s)e;", de_struct->field_list.field_list[i].identifier, sym->body.symbol_enum.name);
+					generator_printline(&self->super, 6, "this._%s = (%s)e;", de_struct->field_list.field_list[i].identifier, refer_type->body.symbol_enum.name);
 				}
 			}
 			else
 			{
 				generator_printline(&self->super, 5, "reader.Read(out this._%s);", de_struct->field_list.field_list[i].identifier);
 			}
-			
-
 			generator_printline(&self->super, 4, "}");
+			if(st->st == E_ST_REFER)
+			{
+				if(refer_type->type == EN_HST_ENUM)
+				{
+					generator_printline(&self->super, 4, "else");
+					generator_printline(&self->super, 4, "{");
+					generator_printline(&self->super, 5, "string es;");						
+					generator_printline(&self->super, 5, "reader.Read(out es);");
+					generator_printline(&self->super, 5, "this._%s = (%s)Enum.Parse(typeof(%s), es);", de_struct->field_list.field_list[i].identifier, refer_type->body.symbol_enum.name, refer_type->body.symbol_enum.name);
+					generator_printline(&self->super, 4, "}");
+				}
+			}
 			generator_printline(&self->super, 4, "reader.ReadFieldEnd(\"%s\");", de_struct->field_list.field_list[i].identifier);
 		}
 
@@ -503,14 +553,14 @@ static void _on_union_write(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
 		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
-
+		const SYMBOL* refer_type = NULL;
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_union->union_field_list.union_field_list[i].name);
 		generator_printline(&self->super, 4, "{");
 		if(st->st == E_ST_REFER)
 		{
-			const SYMBOL* sym = symbols_search(self->super.symbols, "", st->st_refer);
-			if(sym->type != EN_HST_ENUM)
+			refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+			if(refer_type->type != EN_HST_ENUM)
 			{
 				generator_printline(&self->super, 5, "this._%s.Write(writer);", de_union->union_field_list.union_field_list[i].name);
 			}
@@ -524,6 +574,17 @@ static void _on_union_write(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 			generator_printline(&self->super, 5, "writer.Write(this._%s);", de_union->union_field_list.union_field_list[i].name);
 		}
 		generator_printline(&self->super, 4, "}");
+		if(st->st == E_ST_REFER)
+		{
+			if(refer_type->type == EN_HST_ENUM)
+			{
+				generator_printline(&self->super, 4, "else");
+				generator_printline(&self->super, 4, "{");
+				generator_printline(&self->super, 5, "writer.Write(this._%s.ToString());", de_union->union_field_list.union_field_list[i].name);
+				generator_printline(&self->super, 4, "}");
+			}
+		}
+
 		generator_printline(&self->super, 4, "writer.WriteFieldEnd(\"%s\");", de_union->union_field_list.union_field_list[i].name);
 		generator_printline(&self->super, 4, "break;");		
 	}
@@ -546,23 +607,24 @@ static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
 		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
+		const SYMBOL* refer_type = NULL;
 
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 4, "if(reader.ReadFieldBegin(\"%s\"))", de_union->union_field_list.union_field_list[i].name);
 		generator_printline(&self->super, 4, "{");
 		if(st->st == E_ST_REFER)
 		{
-			const SYMBOL* sym = symbols_search(self->super.symbols, "", st->st_refer);
-			if(sym->type != EN_HST_ENUM)
+			refer_type = symbols_search(self->super.symbols, "", st->st_refer);
+			if(refer_type->type != EN_HST_ENUM)
 			{
 				generator_printline(&self->super, 5, "this._%s = new %s();", de_union->union_field_list.union_field_list[i].name, st->st_refer);
 				generator_printline(&self->super, 5, "this._%s.Read(reader);", de_union->union_field_list.union_field_list[i].name, st->st_refer);
 			}
 			else
 			{
-				generator_printline(&self->super, 6, "int e;", sym->body.symbol_enum.name);
+				generator_printline(&self->super, 6, "int e;");
 				generator_printline(&self->super, 6, "reader.Read(out e);", de_union->union_field_list.union_field_list[i].name);
-				generator_printline(&self->super, 6, "this._%s = (%s)e;", de_union->union_field_list.union_field_list[i].name, sym->body.symbol_enum.name);
+				generator_printline(&self->super, 6, "this._%s = (%s)e;", de_union->union_field_list.union_field_list[i].name, refer_type->body.symbol_enum.name);
 			}			
 		}
 		else
@@ -570,6 +632,18 @@ static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 			generator_printline(&self->super, 5, "reader.Read(out this._%s);", de_union->union_field_list.union_field_list[i].name);
 		}
 		generator_printline(&self->super, 4, "}");
+		if(st->st == E_ST_REFER)
+		{
+			if(refer_type->type == EN_HST_ENUM)
+			{
+				generator_printline(&self->super, 4, "else");
+				generator_printline(&self->super, 4, "{");
+				generator_printline(&self->super, 5, "string es;");						
+				generator_printline(&self->super, 5, "reader.Read(out es);");
+				generator_printline(&self->super, 5, "this._%s = (%s)Enum.Parse(typeof(%s), es);", de_union->union_field_list.union_field_list[i].name, refer_type->body.symbol_enum.name, refer_type->body.symbol_enum.name);
+				generator_printline(&self->super, 4, "}");
+			}
+		}
 		generator_printline(&self->super, 4, "reader.ReadFieldEnd(\"%s\");", de_union->union_field_list.union_field_list[i].name);
 		generator_printline(&self->super, 4, "break;");		
 	}
