@@ -38,10 +38,10 @@ static void on_document_end(PARSER *self, const YYLTYPE *yylloc, const char *fil
 	}
 }
 
-static void parser_push(PARSER *self, const char *source_dir, const char *file_name)
+static void parser_push(PARSER *self, const char *file_name)
 {
 	int ret;
-	ret = scanner_push(&self->scanner, source_dir, file_name, yycINITIAL);
+	ret = scanner_push(&self->scanner, file_name, yycINITIAL);
 	if(ret != E_TD_NOERROR)
 	{
 		switch(ret)
@@ -65,7 +65,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_
 	self->generator_num = generator_list_num;
 	scanner_init(&self->scanner);
 	
-	parser_push(self, g_source_dir, file_name);
+	parser_push(self, file_name);
 
 	on_document_begin(self, NULL, file_name);
 
@@ -130,6 +130,6 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITI
 		char file_name[TLIBC_MAX_PATH_LENGTH];
 		snprintf(file_name, TLIBC_MAX_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
 		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
-		parser_push(self, g_source_dir, file_name);
+		parser_push(self, file_name);
 	}
 }

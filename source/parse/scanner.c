@@ -158,7 +158,7 @@ SCANNER_CONTEXT *scanner_top(SCANNER *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-int32_t scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state)
+int32_t scanner_push(SCANNER *self, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
@@ -184,18 +184,31 @@ int32_t scanner_push(SCANNER *self, const char *source_dir, const char *file_nam
 		}
 	}
 
-	snprintf(realPath, TLIBC_MAX_PATH_LENGTH, "%s%c%s", source_dir, TLIBC_FILE_SEPARATOR, file_name);
-	len = TLIBC_MAX_PATH_LENGTH;
-	if(path_repair(realPath, &len) != E_TD_NOERROR)
-	{
-		ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
-		goto ERROR_RET;
-	}
-	fin = fopen(realPath, "r");
+	
+	fin = fopen(file_name, "r");
 	if(fin == NULL)
 	{
-		ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
-		goto ERROR_RET;
+		for(i = 0; i < g_include_dir_num; ++i)
+		{
+			snprintf(realPath, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_include_dir[i], TLIBC_FILE_SEPARATOR, file_name);
+			len = TLIBC_MAX_PATH_LENGTH;
+			if(path_repair(realPath, &len) != E_TD_NOERROR)
+			{
+				ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
+				goto ERROR_RET;
+			}
+			fin = fopen(realPath, "r");
+			if(fin != NULL)
+			{
+				break;
+			}
+		}
+		
+		if(fin == NULL)
+		{
+			ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
+			goto ERROR_RET;
+		}
 	}
 
 	while((c = (char)fgetc(fin)) != EOF)

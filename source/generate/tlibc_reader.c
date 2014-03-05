@@ -25,8 +25,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, 
 
 	
 	//包含header的头文件
-	strncpy(header, file_name, MAX_PACKAGE_NAME_LENGTH);
-	header[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
+	strncpy_notdir(header, file_name, MAX_PACKAGE_NAME_LENGTH - 1);
 	generator_replace_extension(header, MAX_PACKAGE_NAME_LENGTH, TLIBC_READER_HEADER_SUFFIX);
 	generator_printline(super, 0, "#include \"%s\"", header);
 
@@ -52,8 +51,7 @@ static TD_ERROR_CODE on_document_end(GENERATOR *super, const YYLTYPE *yylloc, co
 static TD_ERROR_CODE _on_import(TLIBC_READER_GENERATOR *self, const ST_Import *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
-	strncpy(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH);
-	name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
+	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
 	generator_replace_extension(name, MAX_PACKAGE_NAME_LENGTH, TLIBC_READER_HEADER_SUFFIX);
 	generator_printline(&self->super, 0, "#include \"%s\"", name);
 	generator_printline(&self->super, 0, "");

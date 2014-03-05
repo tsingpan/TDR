@@ -49,8 +49,7 @@ static TD_ERROR_CODE on_document_end(GENERATOR *super, const YYLTYPE *yylloc, co
 static TD_ERROR_CODE _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
-	strncpy(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH);
-	name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
+	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
 	generator_replace_extension(name, MAX_PACKAGE_NAME_LENGTH, TLIBC_TYPES_SUFFIX);
 	generator_printline(&self->super, 0, "#include \"%s\"", name);
 

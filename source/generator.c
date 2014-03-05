@@ -53,41 +53,42 @@ TD_ERROR_CODE generator_replace_extension(char *filename, uint32_t filename_leng
 ERROR_RET:
 	return E_TD_ERROR;
 }
-TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
+
+void strncpy_notdir(char *dest, const char*src, size_t dest_len)
 {
-	char primary[TLIBC_MAX_PATH_LENGTH];
-	char target_path[TLIBC_MAX_PATH_LENGTH];
-	uint32_t path_length = 0;
-	uint32_t i, document_name_length;
+	size_t i;
+	size_t src_len = strlen(src);
+	const char* ptr = src;
 
-	//把扩展名替换为指定后缀
-	if(strlen(primary_file) + 1 >= TLIBC_MAX_PATH_LENGTH)
+	for(i = 0; i < src_len; ++i)
 	{
-		goto ERROR_RET;
-	}
-	strncpy(primary, primary_file, TLIBC_MAX_PATH_LENGTH);
-	generator_replace_extension(primary, TLIBC_MAX_PATH_LENGTH, suffix);
-
-	//创建目录
-	if(strlen(g_target_dir) + strlen(primary) + 1 + 1 >= TLIBC_MAX_PATH_LENGTH)
-	{
-		goto ERROR_RET;
-	}
-	snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_target_dir, TLIBC_FILE_SEPARATOR, primary);
-	target_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
-	path_length = strlen(target_path);
-	for(i = 0; i < path_length; ++i)
-	{
-		if(target_path[i] == TLIBC_FILE_SEPARATOR)
+		if(src[i] == TLIBC_FILE_SEPARATOR)
 		{
-			target_path[i] = 0;
-			tlibc_mkdir(target_path, 0755);
-			target_path[i] = TLIBC_FILE_SEPARATOR;
+			if(i + 1 < src_len)
+			{
+				ptr = src + i + 1;
+			}
 		}
 	}
 
+	strncpy(dest, ptr, dest_len);
+}
+
+TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
+{
+	char target_path[TLIBC_MAX_PATH_LENGTH];
+	uint32_t i, document_name_length;
+
+	strncpy_notdir(self->file_name, primary_file, TLIBC_MAX_PATH_LENGTH);
+	
+	generator_replace_extension(self->file_name, TLIBC_MAX_PATH_LENGTH, suffix);
+
+	//计算输出目标文件的路径
+	snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, self->file_name);
+	
+
 	//计算文档名字
-	strncpy(self->document_name, primary, TLIBC_MAX_PATH_LENGTH);
+	strncpy(self->document_name, self->file_name, TLIBC_MAX_PATH_LENGTH);
 	self->document_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	document_name_length = strlen(self->document_name);
 	for(i = 0;i < document_name_length; ++i)

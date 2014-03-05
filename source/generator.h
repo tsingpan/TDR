@@ -21,6 +21,7 @@ struct _GENERATOR
 	const SYMBOLS *symbols;
 	FILE* fout;
 	char document_name[TLIBC_MAX_PATH_LENGTH];
+	char file_name[TLIBC_MAX_PATH_LENGTH];
 
 	TD_ERROR_CODE (*on_document_begin)(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
 	TD_ERROR_CODE (*on_document_end)(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name);
@@ -32,6 +33,8 @@ struct _GENERATOR
 };
 
 void generator_init(GENERATOR *self, const SYMBOLS *symbols);
+
+void strncpy_notdir(char *dest, const char*src, size_t dest_len);
 
 TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix);
 

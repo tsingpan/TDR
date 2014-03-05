@@ -98,7 +98,7 @@ void scanner_init(SCANNER *self);
 void scanner_locate(SCANNER *self);
 int32_t scanner_scan(SCANNER *self, YYLTYPE *yylloc);
 SCANNER_CONTEXT *scanner_top(SCANNER *self);
-int32_t scanner_push(SCANNER *self, const char *source_dir, const char *file_name, int state);
+int32_t scanner_push(SCANNER *self, const char *file_name, int state);
 void scanner_pop(SCANNER *self);
 uint32_t scanner_size(SCANNER *self);
 

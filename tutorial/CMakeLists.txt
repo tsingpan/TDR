@@ -27,8 +27,8 @@ INCLUDE_DIRECTORIES(
 	)
 
 set(TDATA_OUTPUTS 
-	${GEN_PATH}/common/common_types.h ${GEN_PATH}/common/common_reader.c ${GEN_PATH}/common/common_reader.h 
-	${GEN_PATH}/common/common_writer.c ${GEN_PATH}/common/common_writer.h
+	${GEN_PATH}/common_types.h ${GEN_PATH}/common_reader.c ${GEN_PATH}/common_reader.h 
+	${GEN_PATH}/common_writer.c ${GEN_PATH}/common_writer.h
 	${GEN_PATH}/protocol_types.h
 	${GEN_PATH}/protocol_reader.c ${GEN_PATH}/protocol_reader.h 
 	${GEN_PATH}/protocol_writer.c ${GEN_PATH}/protocol_writer.h
@@ -41,8 +41,8 @@ set(TDATA_OUTPUTS
 	)
 
 add_custom_command(OUTPUT ${TDATA_OUTPUTS}
-	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen tlibc protocol.td common/common.td sql.td
-	COMMAND ${TDATA_EXECUTABLE} -s ${Example_SOURCE_DIR}/protocol -t ${GEN_PATH} -gen sql sql.td
+	COMMAND ${TDATA_EXECUTABLE} -i ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen tlibc ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDATA_EXECUTABLE} -i ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen sql ${Example_SOURCE_DIR}/protocol/sql.td
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_inc.xml ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_instance1.xml.inc ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/item.xlsx ${GEN_PATH}/

@@ -3,7 +3,9 @@
 
 
 
-const char *g_target_dir = "./";
+const char *g_output_dir = "./";
 
 const char *g_source_dir = "./";
 
+const char *g_include_dir[G_INCLUDE_DIR_NUM];
+size_t g_include_dir_num = 0;

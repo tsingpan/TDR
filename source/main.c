@@ -35,8 +35,8 @@ void help()
 	fprintf(stderr, "Usage: tdata [options] file\n");
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version						Print the compiler version\n");	
-	fprintf(stderr, "  -s dir						Set the source directory\n");
-	fprintf(stderr, "  -t dir						Set the target directory\n");
+	fprintf(stderr, "  -o dir						Set the output directory\n");
+	fprintf(stderr, "  -i dir						Add the include directory\n");
 	fprintf(stderr, "  -gen types					Gen source\n");
 	fprintf(stderr, "Available generators:\n");
 	fprintf(stderr, "tlibc\n");
@@ -86,22 +86,28 @@ int main(int32_t argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
-		else if (strcmp(arg, "-s") == 0)
-		{			
-			g_source_dir = argv[++i];
-			if (g_source_dir == NULL)
+		else if (strcmp(arg, "-i") == 0)
+		{
+			if(g_include_dir_num >= G_INCLUDE_DIR_NUM)
 			{
-				fprintf(stderr, "Missing source directory specification\n");
+				fprintf(stderr, "Too many include directories.\n");
+				goto ERROR_RET;
+			}
+			g_include_dir[g_include_dir_num] = argv[++i];
+			if (g_include_dir[g_include_dir_num] == NULL)
+			{
+				fprintf(stderr, "Missing include directory specification\n");
 				usage();
 				goto ERROR_RET;
 			}
+			++g_include_dir_num;
 		}
-		else if (strcmp(arg, "-t") == 0)
+		else if (strcmp(arg, "-o") == 0)
 		{
-			g_target_dir = argv[++i];
-			if (g_target_dir == NULL)
+			g_output_dir = argv[++i];
+			if (g_output_dir == NULL)
 			{
-				fprintf(stderr, "Missing target directory specification\n");
+				fprintf(stderr, "Missing output directory specification\n");
 				usage();
 				goto ERROR_RET;
 			}
