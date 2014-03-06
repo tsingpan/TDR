@@ -36,7 +36,7 @@ void help()
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -version						Print the compiler version\n");	
 	fprintf(stderr, "  -o dir						Set the output directory\n");
-	fprintf(stderr, "  -i dir						Add the include directory\n");
+	fprintf(stderr, "  -I dir						Add the include directory\n");
 	fprintf(stderr, "  -gen types					Gen source\n");
 	fprintf(stderr, "Available generators:\n");
 	fprintf(stderr, "tlibc\n");
@@ -86,7 +86,7 @@ int main(int32_t argc, char **argv)
 			version();
 			goto ERROR_RET;
 		}
-		else if (strcmp(arg, "-i") == 0)
+		else if (strcmp(arg, "-I") == 0)
 		{
 			if(g_include_dir_num >= G_INCLUDE_DIR_NUM)
 			{

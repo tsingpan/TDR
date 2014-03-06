@@ -41,8 +41,8 @@ set(TDATA_OUTPUTS
 	)
 
 add_custom_command(OUTPUT ${TDATA_OUTPUTS}
-	COMMAND ${TDATA_EXECUTABLE} -i ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen tlibc ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -i ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen sql ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDATA_EXECUTABLE} -I ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen tlibc ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDATA_EXECUTABLE} -I ${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -gen sql ${Example_SOURCE_DIR}/protocol/sql.td
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_inc.xml ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_instance1.xml.inc ${GEN_PATH}/
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/item.xlsx ${GEN_PATH}/
