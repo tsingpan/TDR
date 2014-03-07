@@ -44,16 +44,14 @@ TData
 
 	此处省略若干行对象转换为xml的代码。
 
-**有时……**
-
 **这时突然发现之前写的数据转换代码居然长得很类似！**
 
-**更加丧心病狂的是， 这时策划提出修改道具表格， 于是又得把所有代码修改一遍……**
+**更加丧心病狂的是策划刚刚提出修改道具表格， 于是又得把所有代码修改一遍……**
 
 
-**如今有了TData， 只需要把item.h改名为item.td， 然后输入tdata -gen all item.td就可以把前面所有的无聊代码生成出来了！**
+**有了TData之后, 只需要把item.h改名为item.td， 然后输入tdata -gen all item.td就可以把前面所有的无聊代码生成出来了！**
 
-	TData的说明文档, 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
+TData的说明文档, 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
 
 特性
 ====
@@ -65,10 +63,11 @@ TData
 
 安装
 ====
-由于跨平台的需要， 请先安装[CMake](http://www.cmake.org/), 由于代码本身并没有任何依赖库所以安装过程极为简单。
-shell> mkdir build
-shell> git clone https://github.com/TDorm/TData TData
-shell> cd build
-shell> cmake ../TData
-shell> make
-shell> sudo make install
+- 由于跨平台的需要， 请先安装[CMake](http://www.cmake.org/), 由于代码本身并没有任何依赖库所以安装过程极为简单。
+
+	shell> mkdir build
+	shell> git clone https://github.com/TDorm/TData TData
+	shell> cd build
+	shell> cmake ../TData
+	shell> make
+	shell> sudo make install
