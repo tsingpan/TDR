@@ -1,7 +1,10 @@
 SET(PNAME "TData")
+SET(PONAME "tdata")
 project(${PNAME})
 
 cmake_minimum_required(VERSION 2.6)
+OPTION(WITH_RE2C "选择此项让re2c重新生成读取正则表达式的代码, 请确认re2c已被正确安装， 并且在命令行输入re2c可以访问。" OFF)
+OPTION(WITH_BISON "选择此项让bison重新生成语法分析的代码, 请确认bison已被正确安装， 并且在命令行输入re2c可以访问。" OFF)
 
 IF(WIN32)
 	SET(CMAKE_C_FLAGS_DEBUG "/Od /Z7 /W4 /MDd")

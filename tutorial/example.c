@@ -1,21 +1,21 @@
 #include <stdio.h>
-#include "tlibc/platform/tlibc_platform.h"
-#include "tlibc/core/tlibc_error_code.h"
+#include "platform/tlibc_platform.h"
+#include "core/tlibc_error_code.h"
 
-#include "tlibc/protocol/tlibc_xml_reader.h"
-#include "tlibc/protocol/tlibc_xml_writer.h"
+#include "protocol/tlibc_xml_reader.h"
+#include "protocol/tlibc_xml_writer.h"
 
-#include "tlibc/protocol/tlibc_compact_reader.h"
-#include "tlibc/protocol/tlibc_compact_writer.h"
+#include "protocol/tlibc_compact_reader.h"
+#include "protocol/tlibc_compact_writer.h"
 
-#include "tlibc/protocol/tlibc_binary_reader.h"
-#include "tlibc/protocol/tlibc_binary_writer.h"
+#include "protocol/tlibc_binary_reader.h"
+#include "protocol/tlibc_binary_writer.h"
 
-#include "tlibc/protocol/tlibc_xlsx_reader.h"
+#include "protocol/tlibc_xlsx_reader.h"
 
 
-#include "tlibc/protocol/tlibc_bind_reader.h"
-#include "tlibc/protocol/tlibc_bind_writer.h"
+#include "protocol/tlibc_bind_reader.h"
+#include "protocol/tlibc_bind_writer.h"
 
 
 #include "protocol_types.h"

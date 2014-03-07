@@ -1,13 +1,25 @@
-find_path(TLIBC_INCLUDE_DIR NAMES tlibc/platform/tlibc_platform.h
-	PATHS $ENV{TLIBC_HOME}/include
-   )
+if(WIN32)
+	find_path(TLIBC_INCLUDE_DIR NAMES platform/tlibc_platform.h
+		PATHS
+		$ENV{PROGRAMFILES}/TLibC/include
+	   )
+else()
+	find_path(TLIBC_INCLUDE_DIR NAMES platform/tlibc_platform.h
+		PATHS
+		/usr/local/TLibC/include
+	   )
+endif(WIN32)
 
-find_library(TLIBC_LIBRARIES NAMES tlibc
-	PATHS $ENV{TLIBC_HOME}/lib
-   )
+if(WIN32)
+	find_library(TLIBC_LIBRARIES NAMES tlibc
+		PATHS 
+		$ENV{PROGRAMFILES}/TLibC/lib
+	   )
+else()
+	find_library(TLIBC_LIBRARIES NAMES tlibc
+		PATHS 
+		/usr/local/TLibC/lib
+	   )
+endif(WIN32)
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(TLibC  DEFAULT_MSG
-	TLIBC_INCLUDE_DIR TLIBC_LIBRARIES)
-
-mark_as_advanced(TLIBC_LIBRARIES TLIBC_LIBRARIES)
+mark_as_advanced(LIBC_INCLUDE_DIR TLIBC_LIBRARIES)
