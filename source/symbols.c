@@ -3,8 +3,8 @@
 #include "error.h"
 #include "parse/scanner.h"
 #include <stdio.h>
-#include "tlibc/platform/tlibc_platform.h"
-#include "tlibc/core/tlibc_hash.h"
+#include "platform/tlibc_platform.h"
+#include "core/tlibc_hash.h"
 
 #include <assert.h>
 

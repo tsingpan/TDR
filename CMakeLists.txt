@@ -1,10 +1,7 @@
-project(TData)
+SET(PNAME "TData")
+project(${PNAME})
 
-cmake_minimum_required(VERSION 2.8)
-
-IF (CMAKE_BUILD_TYPE STREQUAL "")
-    SET(CMAKE_BUILD_TYPE "Debug")
-ENDIF()
+cmake_minimum_required(VERSION 2.6)
 
 IF(WIN32)
 	SET(CMAKE_C_FLAGS_DEBUG "/Od /Z7 /W4 /MDd")
@@ -14,17 +11,19 @@ ELSE()
 	SET(CMAKE_C_FLAGS_RELEASE "-O2 -Wall")
 ENDIF()
 
-SET(CMAKE_MODULE_PATH "$ENV{TLIBC_HOME}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
-set(DIR_HOME ${TData_SOURCE_DIR})
-set(BUILD_HOME ${TData_BINARY_DIR})
+SET(BUILDTYPE_DOCSTRING "Choose the type of build, options are: Debug(${CMAKE_C_FLAGS_DEBUG}) Release(${CMAKE_C_FLAGS_RELEASE})")
+IF(WIN32)
+	SET(CMAKE_BUILD_TYPE "Debug" CACHE STRING ${BUILDTYPE_DOCSTRING} FORCE)
+ELSE()
+	SET(CMAKE_BUILD_TYPE "Debug" CACHE STRING ${BUILDTYPE_DOCSTRING} FORCE)
+	SET(CMAKE_INSTALL_PREFIX "/usr/local/${PNAME}" CACHE STRING "" FORCE)
+ENDIF()
 
-set(_BUILD_INCLUDE ${BUILD_HOME}/_include)
-set(_BUILD_SOURCE ${BUILD_HOME}/_source)
+SET(CMAKE_MODULE_PATH "${${PNAME}_SOURCE_DIR}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
+set(DIR_HOME ${${PNAME}_SOURCE_DIR})
+set(BUILD_HOME ${${PNAME}_BINARY_DIR})
 
 set(INCLUDE  ${DIR_HOME}/include)
 set(SOURCE  ${DIR_HOME}/source)
 
 add_subdirectory(source)
-install(DIRECTORY cmake DESTINATION ".")
-install(DIRECTORY common DESTINATION ".")
-install(FILES README.md DESTINATION ".")

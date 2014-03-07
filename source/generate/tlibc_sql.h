@@ -1,7 +1,7 @@
 #ifndef _H_TLIBC_SQL_HEADER
 #define _H_TLIBC_SQL_HEADER
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 #include "symbols.h"
 #include "generator.h"
 

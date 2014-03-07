@@ -2,7 +2,7 @@
 #define _H_CHECK
 
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 
 #include "parse/parser.h"
 #include <stdint.h>

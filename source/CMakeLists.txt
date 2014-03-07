@@ -1,4 +1,7 @@
-PROJECT(TData)
+set(GEN_PATH ${BUILD_HOME}/gen)
+set(GEN_INCLUDE ${GEN_PATH}/include)
+set(GEN_SOURCE ${GEN_PATH}/source)
+
 
 FILE(GLOB FILE_LIST *.h *.c)
 
@@ -14,15 +17,15 @@ source_group("generate" FILES ${GENERATE_FILE_LIST})
 FILE(GLOB_RECURSE FLEX_FILE *.re)
 FILE(GLOB_RECURSE BISON_FILE *.yy)
 
-set(FLEX_HEADER ${_BUILD_INCLUDE}/tdata_l.h)
-set(FLEX_OUTPUTS ${_BUILD_SOURCE}/tdata_l.c)
-set(BISON_DEFINES_OUTPUTS ${_BUILD_INCLUDE}/tdata_y.h)
-set(BISON_OUTPUTS ${_BUILD_SOURCE}/tdata_y.c)
+set(FLEX_HEADER ${GEN_INCLUDE}/tdata_l.h)
+set(FLEX_OUTPUTS ${GEN_SOURCE}/tdata_l.c)
+set(BISON_DEFINES_OUTPUTS ${GEN_INCLUDE}/tdata_y.h)
+set(BISON_OUTPUTS ${GEN_SOURCE}/tdata_y.c)
 
 
 #linux 需要创建目录，否则Flex和Bison无法生成文件
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_SOURCE})
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_BUILD_INCLUDE})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_SOURCE})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_INCLUDE})
 
 find_package(TLibC REQUIRED)
 
@@ -34,7 +37,7 @@ add_custom_command(OUTPUT ${FLEX_OUTPUTS} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPU
 INCLUDE_DIRECTORIES(
 	${INCLUDE}
 	${TLIBC_INCLUDE_DIR}
-	${_BUILD_INCLUDE}
+	${GEN_INCLUDE}
 	.
 	)
 ADD_EXECUTABLE(TData ${FILE_LIST} ${LANGUAGE_FILE_LIST} ${PARSE_FILE_LIST} ${GENERATE_FILE_LIST} ${FLEX_FILE} ${BISON_FILE} ${FLEX_OUTPUTS} ${FLEX_HEADER} ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS})

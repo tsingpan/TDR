@@ -1,7 +1,7 @@
 #ifndef _H_DEFINITION
 #define _H_DEFINITION
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 #include <stdint.h>
 
 

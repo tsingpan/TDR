@@ -1,7 +1,7 @@
 #ifndef _H_SCANNER
 #define _H_SCANNER
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 #include "language/language.h"
 #include "definition.h"
 #include "error.h"

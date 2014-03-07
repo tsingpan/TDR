@@ -2,7 +2,7 @@
 #define _H_REDUCE
 
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 
 #include "parse/parser.h"
 

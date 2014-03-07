@@ -3,10 +3,10 @@
 
 #include "definition.h"
 
-#include "tlibc/platform/tlibc_platform.h"
+#include "platform/tlibc_platform.h"
 #include "parse/scanner.h"
 
-#include "tlibc/core/tlibc_hash.h"
+#include "core/tlibc_hash.h"
 
 typedef enum _SYMBOL_TYPE
 {
