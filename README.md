@@ -63,9 +63,10 @@ TData的说明文档, 请点击这里 → [https://github.com/TDorm/TData/wiki](https://git
 
 安装
 ====
-- mkdir build
-- git clone https://github.com/TDorm/TData TData
-- cd build
-- cmake ../TData
-- make
-- sudo make install
+
+	mkdir build
+	git clone https://github.com/TDorm/TData TData
+	cd build
+	cmake ../TData
+	make
+	sudo make install
