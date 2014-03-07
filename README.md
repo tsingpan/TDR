@@ -63,11 +63,9 @@ TData的说明文档, 请点击这里 → [https://github.com/TDorm/TData/wiki](https://git
 
 安装
 ====
-- 由于跨平台的需要， 请先安装[CMake](http://www.cmake.org/), 由于代码本身并没有任何依赖库所以安装过程极为简单。
-
-	mkdir build
-	git clone https://github.com/TDorm/TData TData
-	cd build
-	cmake ../TData
-	make
-	sudo make install
+- mkdir build
+- git clone https://github.com/TDorm/TData TData
+- cd build
+- cmake ../TData
+- make
+- sudo make install
