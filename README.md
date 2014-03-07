@@ -1,12 +1,63 @@
 TData
 ======
-**多平台多语言的数据描述工具!**
+**之前我们在C语言的一个头文件item.h里定义了一个结构体item_table_s表示游戏的道具**
 
-- cmake 编译器的cmake脚本文件
-- source 编译器源代码
-- language 编译器提示字符串
-- common 公共的定义
-- tutorial 使用范例
+	enum item_type_e
+	{
+		e_crystal,
+		e_ectype,
+		e_other,
+	};
+
+	union item_limit_u
+	{
+		uint32 level;
+		uint32 mapid;
+		uint32 gold;
+	};
+
+	const uint32 ITEM_MAX_LIMIT = 10;
+	struct item_table_s
+	{
+		uint64 id;
+		string name;
+		item_type_e type;
+		vector<item_limit_u> limit_list;
+	};
+
+**有时需要从mysql中读取玩家身上的道具**
+
+	此处省略若干服务器读取mysql数据库的代码。
+
+
+**有时需要用网络协议把这个道具发送给客户端**
+
+	此处省略若干行服务器序列化对象到缓存的代码。
+	此处省略若干行客户端反序列化缓存到结构体的代码。
+
+**有时服务器需要读取策划同学填写的道具表资源Excel文件**
+
+	此处省略若干行服务器读取Excel代码。
+	此处省略若干行客户端读取Excel代码。
+
+**有时运维网站需要一个xml描述的道具**
+
+	此处省略若干行对象转换为xml的代码。
+
+**有时……**
+
+**这时突然发现之前写的数据转换代码居然长得很类似！**
+
+**更加丧心病狂的是， 这时策划提出修改道具表格， 于是又得把所有代码修改一遍……**
+
+
+**如今有了TData， 只需要把item.h改名为item.td， 然后输入tdata -gen all item.td就可以把前面所有的无聊代码生成出来了！**
+
+	TData的说明文档, 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
+
+特性
+====
+	编译器无依赖库， 使用C语言编写， 可以支持Windows, Linux, OSX平台。
 
 问题和反馈
 ==========
@@ -14,65 +65,10 @@ TData
 
 安装
 ====
-###TData
-
-1.安装[Bison](http://www.gnu.org/software/bison/) 2.7.1
-
-		Windows
-			安装Cygwin并选中里面的Bison工具。
-		Linux
-			apt-get install bison
-
-		OS X
-			./configure
-			make
-			make install
-
-2.安装[re2c](http://sourceforge.net/projects/re2c/) 0.13.5
-
-		Windows
-			下载re2c.exe放到本地的一个文件夹中， 并把文件夹路径加入path环境变量
-		Linux
-			apt-get install re2c
-		OS X
-			./configure
-			make
-			make install
-
-3.安装[CMake](http://www.cmake.org/) 2.8.11.1
-
-4.下载[TData](https://github.com/randyliu/TData)源代码
-
-		git clone https://github.com/randyliu/TData
-
-5.CMake生成工程文件
-
-		使用方法请参考 → [http://www.cmake.org/](http://www.cmake.org/)
-
-6.编译
-
-		Windows
-			打开Microsoft Visual Studio， 点击编译。
-		Linux
-			make
-		OS X
-			make
-
-7.安装
-
-		Windows
-			在Microsoft Visual Studio中执行INSTALL项目。
-		Linux
-			make install
-		OS X
-			make install
-
-8.配置环境变量
-
-		配置TDATA_HOME环境变量为安装目录
-		Windows
-			新建一个环境变量TDATA_HOME=C:\Program Files\TData
-		Linux
-			export TDATA_HOME=/usr/local
-		OS X
-			export TDATA_HOME=/usr/local
+由于跨平台的需要， 请先安装[CMake](http://www.cmake.org/), 由于代码本身并没有任何依赖库所以安装过程极为简单。
+shell> mkdir build
+shell> git clone https://github.com/TDorm/TData TData
+shell> cd build
+shell> cmake ../TData
+shell> make
+shell> sudo make install
