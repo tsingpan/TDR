@@ -48,7 +48,7 @@ static TD_ERROR_CODE on_struct_begin(GENERATOR *super, const YYLTYPE *yylloc, co
 	generator_printline(&self->super, 0, "create table `%s`", struct_name);
 	generator_printline(&self->super, 0, "(");
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 }
 
 static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_FIELD *field)
@@ -167,7 +167,7 @@ static TD_ERROR_CODE on_field(GENERATOR *super, const YYLTYPE *yylloc, const ST_
 		}
 	}
 
-	return E_TLIBC_NOERROR;
+	return E_TD_NOERROR;
 }
 
 static TD_ERROR_CODE on_struct_end(GENERATOR *super, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)

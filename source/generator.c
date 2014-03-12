@@ -287,7 +287,7 @@ TD_ERROR_CODE generator_print_type_name(GENERATOR *self, const ST_SIMPLE_TYPE *s
 		fprintf(self->fout, "double");
 		return E_TD_NOERROR;
 	case E_ST_REFER:
-		fprintf(self->fout, simple_type->st_refer);
+		fprintf(self->fout, "%s", simple_type->st_refer);
 		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;
@@ -332,7 +332,7 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 		fprintf(self->fout, "double");
 		return E_TD_NOERROR;
 	case E_ST_REFER:
-		fprintf(self->fout, simple_type->st_refer);
+		fprintf(self->fout, "%s", simple_type->st_refer);
 		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;
@@ -380,7 +380,7 @@ TD_ERROR_CODE generator_print_cstype(GENERATOR *self, const ST_SIMPLE_TYPE *simp
 		return E_TD_NOERROR;
 	case E_ST_REFER:
 		{
-			fprintf(self->fout, st->st_refer);
+			fprintf(self->fout, "%s", st->st_refer);
 			return E_TD_NOERROR;
 		}
 	default:

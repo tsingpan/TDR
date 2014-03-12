@@ -53,7 +53,7 @@ static int32_t path_repair(char* path, uint32_t *len)
 		if(p[i][0] == '.')
 		{
 			tlen = (uint32_t)strlen(p[i]);			
-			for(j = i - 1; (tlen > 1) && (j >= 0); --j)
+			for(j = i - 1; tlen > 1; --j)
 			{
 				if(p[j][0] == '.')
 				{
