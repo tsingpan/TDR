@@ -36,18 +36,18 @@ void help()
 	fprintf(stderr, "  -o dir                       Set the output directory for gen-* packages.\n");
 	fprintf(stderr, "                               default: current directory.\n");
 	
-	fprintf(stderr, "  -I dir						Add a directory to the list of directories.\n");
+	fprintf(stderr, "  -I dir                       Add a directory to the list of directories.\n");
 	fprintf(stderr, "                               searched for include directives.\n");
 	fprintf(stderr, "  -gen STR                     Generate code with a generator.\n");
-	fprintf(stderr, "                               For each named %.td input files, a generator will generate an output file only.\n");
+	fprintf(stderr, "                               For each named %%.td input files, a generator will generate an output file only.\n");
 	fprintf(stderr, "Available generators:\n");
-	fprintf(stderr, "types_h        Generate the %_types.h file for tlibc.\n");
-	fprintf(stderr, "reader_h       Generate the %_reader.h file for tlibc.\n");
-	fprintf(stderr, "reader_c       Generate the %_reader.c file for tlibc.\n");
-	fprintf(stderr, "writer_h       Generate the %_writer.h file for tlibc.\n");
-	fprintf(stderr, "writer_c       Generate the %_writer.c file for tlibc.\n");	
-	fprintf(stderr, "cs             Generate the %.cs file for tlibcs.\n");
-	fprintf(stderr, "sql            Generate the %.sql file for MySQL.\n");
+	fprintf(stderr, "types_h        Generate the %%_types.h file for tlibc.\n");
+	fprintf(stderr, "reader_h       Generate the %%_reader.h file for tlibc.\n");
+	fprintf(stderr, "reader_c       Generate the %%_reader.c file for tlibc.\n");
+	fprintf(stderr, "writer_h       Generate the %%_writer.h file for tlibc.\n");
+	fprintf(stderr, "writer_c       Generate the %%_writer.c file for tlibc.\n");	
+	fprintf(stderr, "cs             Generate the %%.cs file for tlibcs.\n");
+	fprintf(stderr, "sql            Generate the %%.sql file for MySQL.\n");
 	
 }
 
