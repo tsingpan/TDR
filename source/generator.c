@@ -349,6 +349,8 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 			case EN_HST_UNION:
 				fprintf(self->fout, "union %s", simple_type->st_refer);
 				break;
+			default:
+				break;
 			}
 
 			return E_TD_NOERROR;
