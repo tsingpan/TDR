@@ -129,14 +129,21 @@ void test_xml_once()
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
-#define MAX_XML_FILES 100
+#define MAX_XML_FILES 10000
+//it takes 5 seconds by reading 10000 xml.
 void test_xml()
 {
 	size_t i;
+	time_t start_time;
+	time_t current_time;
+
+	start_time = time(0);
 	for(i = 0; i < MAX_XML_FILES; ++i)
 	{
 		test_xml_once();
 	}
+	current_time = time(0);
+	printf("it takes %u seconds by reading %u xml.\n", (uint32_t)(current_time - start_time), i);
 }
 #define MAX_ITEM_NUM 65536
 item_table_t g_item_table[MAX_ITEM_NUM];
@@ -182,9 +189,9 @@ void test_xlsx_read_once()
 	tlibc_xlsx_reader_fini(&xlsx_reader);
 }
 
-//13s 50files
-#define MAX_XLSX_FILES 50
-
+#define MAX_XLSX_FILES 100
+//item.xlsx have 20002 rows
+//it takes 12 seconds by reading 100 xlsx.
 void test_xlsx()
 {
 	uint32_t i;
