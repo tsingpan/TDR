@@ -16,7 +16,8 @@ TData = [DDL](http://en.wikipedia.org/wiki/DDL) + Compiler
 
 安装
 ====
-由于跨平台的需要， 使用[CMake](http://www.cmake.org)作为构建工具， Linux下面一个典型的安装过程如下。查看详细的安装说明， 请点击这里 → [https://github.com/randyliu/TData/wiki/Installation](https://github.com/randyliu/TData/wiki/Installation)
+详细的安装说明， 请点击这里 → [https://github.com/randyliu/TData/wiki/Installation](https://github.com/randyliu/TData/wiki/Installation)
+Linux下面一个典型的过程方法如下：
 
 	git clone https://github.com/TDorm/TData TData
 	mkdir build
