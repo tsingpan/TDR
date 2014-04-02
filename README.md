@@ -5,7 +5,8 @@ TData数据描述语言的手册， 请点击这里 → [https://github.com/TDorm/TData/wiki](ht
 
 特性
 ====
-	编译器使用re2c生成词法分析代码， bison生成语法分析代码。 使用C语言编写， 无依赖库， 具有很高的可移植性， 支持Windows, Linux, Unix(OsX)平台。
+	编译器使用re2c生成词法分析代码， bison生成语法分析代码。 
+	使用C语言编写， 无依赖库， 具有很高的可移植性， 支持Windows, Linux, Unix(OsX)平台。
 
 问题和反馈
 ==========
