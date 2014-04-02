@@ -126,8 +126,9 @@ done:
 	return ret;
 }
 
-#define MAX_XML_FILES 10000
-//it takes 5 seconds by reading 10000 xml.
+#define MAX_XML_FILES 100000
+//it takes 8 seconds by reading 100000 xml.
+//k480n-i7 debian 32
 void test_xml()
 {
 	size_t i;
@@ -245,7 +246,8 @@ done:
 
 #define MAX_XLSX_FILES 100
 //item.xlsx have 20002 rows
-//it takes 12 seconds by reading 100 xlsx.
+//it takes 14 seconds by reading 100 xlsx.
+//k480n-i7 debian 32
 void test_xlsx()
 {
 	uint32_t i;
