@@ -1,8 +1,8 @@
 TData
 ======
-TData编译器可以生成TData数据描述语言， 在各种平台和语言下的对应代码。
+TData = [DDL](http://en.wikipedia.org/wiki/DDL) + 编译器
 
-TData数据描述语言的手册， 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
+详细手册， 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
 
 特性
 ====
@@ -16,10 +16,10 @@ TData数据描述语言的手册， 请点击这里 → [https://github.com/TDorm/TData/wiki](ht
 
 安装
 ====
-由于跨平台的需要， 使用[CMake](http://www.cmake.org)作为构建工具， Linux下面一个典型的安装过程如下：
+由于跨平台的需要， 使用[CMake](http://www.cmake.org)作为构建工具， Linux下面一个典型的安装过程如下， 详细的安装说明， 请点击这里 → [https://github.com/randyliu/TData/wiki/Installation](https://github.com/randyliu/TData/wiki/Installation)
 
-	mkdir build
 	git clone https://github.com/TDorm/TData TData
+	mkdir build
 	cd build
 	cmake ../TData
 	make
