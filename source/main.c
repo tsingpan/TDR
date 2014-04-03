@@ -27,25 +27,27 @@ void usage()
 	fprintf(stderr, "Usage: tdata [options] file\n\n");
 	fprintf(stderr, "Use tdata -help for a list of options\n");
 }
-/*
-固定源文件夹和目标文件夹， 而不使用-I -O那样的输出方式， 是因为生成C文件时， 需要知道所有.td文件被生成到了那里。
-*/
+
 void help()
 {
-	fprintf(stderr, "Usage: tdata [options] file\n");
+	fprintf(stderr, "Usage: tdata [options] file.\n");
 	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "  -version						Print the compiler version\n");	
-	fprintf(stderr, "  -o dir						Set the output directory\n");
-	fprintf(stderr, "  -I dir						Add the include directory\n");
-	fprintf(stderr, "  -gen types					Gen source\n");
+	fprintf(stderr, "  -version                     Print the compiler version.\n");	
+	fprintf(stderr, "  -o dir                       Set the output directory for gen-* packages.\n");
+	fprintf(stderr, "                               default: current directory.\n");
+	
+	fprintf(stderr, "  -I dir						Add a directory to the list of directories.\n");
+	fprintf(stderr, "                               searched for include directives.\n");
+	fprintf(stderr, "  -gen STR                     Generate code with a generator.\n");
+	fprintf(stderr, "                               For each named %.td input files, a generator will generate an output file only.\n");
 	fprintf(stderr, "Available generators:\n");
-	fprintf(stderr, "tlibc\n");
-	fprintf(stderr, "tlibc_reader_header\n");
-	fprintf(stderr, "tlibc_reader\n");
-	fprintf(stderr, "tlibc_writer_header\n");
-	fprintf(stderr, "tlibc_writer\n");
-	fprintf(stderr, "sql\n");
-	fprintf(stderr, "cs\n");	
+	fprintf(stderr, "types_h        Generate the %_types.h file for tlibc.\n");
+	fprintf(stderr, "reader_h       Generate the %_reader.h file for tlibc.\n");
+	fprintf(stderr, "reader_c       Generate the %_reader.c file for tlibc.\n");
+	fprintf(stderr, "writer_h       Generate the %_writer.h file for tlibc.\n");
+	fprintf(stderr, "writer_c       Generate the %_writer.c file for tlibc.\n");	
+	fprintf(stderr, "cs             Generate the %.cs file for tlibcs.\n");
+	fprintf(stderr, "sql            Generate the %.sql file for MySQL.\n");
 	
 }
 
@@ -115,59 +117,42 @@ int main(int32_t argc, char **argv)
 		else if (strcmp(arg, "-gen") == 0)
 		{
 			arg = argv[++i];
-			if(strcmp(arg, "tlibc") == 0)
-			{
-				tlibc_types_generator_init(&tlibc_types_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_types_generator.super;
-
-				tlibc_reader_generator_init(&tlibc_reader_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_reader_generator.super;
-
-				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
-
-				tlibc_writer_generator_init(&tlibc_writer_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_writer_generator.super;
-
-				tlibc_writer_header_generator_init(&tlibc_writer_header_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
-			}
-			else if(strcmp(arg, "tlibc_types") == 0)
+			
+			if(strcmp(arg, "types_h") == 0)
 			{
 				tlibc_types_generator_init(&tlibc_types_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 			}
-			else if(strcmp(arg, "tlibc_reader") == 0)
-			{
-				tlibc_reader_generator_init(&tlibc_reader_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_reader_generator.super;
-			}
-			else if(strcmp(arg, "tlibc_reader_header") == 0)
+			else if(strcmp(arg, "reader_h") == 0)
 			{
 				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
-			else if(strcmp(arg, "tlibc_writer") == 0)
+			else if(strcmp(arg, "reader_c") == 0)
 			{
-				tlibc_writer_generator_init(&tlibc_writer_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_writer_generator.super;
-			}
-			else if(strcmp(arg, "tlibc_writer_header") == 0)
+				tlibc_reader_generator_init(&tlibc_reader_generator, &parser.symbols);
+				generator_list[generator_num++] = &tlibc_reader_generator.super;
+			}			
+			else if(strcmp(arg, "writer_h") == 0)
 			{
 				tlibc_writer_header_generator_init(&tlibc_writer_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
 			}
-			else if(strcmp(arg, "sql") == 0)
+			else if(strcmp(arg, "writer_c") == 0)
 			{
-				tlibc_sql_generator_init(&tlibc_sql_generator, &parser.symbols);
-				generator_list[generator_num++] = &tlibc_sql_generator.super;
+				tlibc_writer_generator_init(&tlibc_writer_generator, &parser.symbols);
+				generator_list[generator_num++] = &tlibc_writer_generator.super;
 			}
 			else if(strcmp(arg, "cs") == 0)
 			{
 				tlibc_cs_generator_init(&tlibc_cs_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_cs_generator.super;
 			}
-
+			else if(strcmp(arg, "sql") == 0)
+			{
+				tlibc_sql_generator_init(&tlibc_sql_generator, &parser.symbols);
+				generator_list[generator_num++] = &tlibc_sql_generator.super;
+			}
 		}		
 		else
 		{
