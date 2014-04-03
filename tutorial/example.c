@@ -160,7 +160,7 @@ void test_xml()
 
 	start_time = time(0);
 	for(i = 0; i < MAX_XML_FILES; ++i)
-	{		
+	{
 		read_xml("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 	}
 	current_time = time(0);
@@ -169,8 +169,9 @@ void test_xml()
 
 	memset(&config, 0, sizeof(tconnd_config_t));
 	//用下面这个命令可以来添加查找包含文件的目录
-	tlibc_xml_add_include(&xml_reader, "./gen");
-	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
+	tlibc_xml_reader_init(&xml_reader);
+	ret = tlibc_xml_add_include(&xml_reader, "./gen");
+	ret = tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
 	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
