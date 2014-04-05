@@ -2,7 +2,7 @@
 #include "parse/parser.h"
 #include "language/language.h"
 #include "version.h"
-#include "getopt_long.h"
+#include "getopt.h"
 
 
 #include "generate/generator_types_h.h"
