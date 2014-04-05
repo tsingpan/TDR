@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_TDATA_D_BUILD_TDATA_GEN_INCLUDE_TDATA_Y_H_INCLUDED
-# define YY_TDATA_D_BUILD_TDATA_GEN_INCLUDE_TDATA_Y_H_INCLUDED
+#ifndef YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED
+# define YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -52,7 +52,7 @@ extern int tdatadebug;
 
 
 /* Line 2053 of yacc.c  */
-#line 56 "D:/build/tdata/gen/include/tdata_y.h"
+#line 56 "D:/GitHub/TData/source/gen/include/tdata_y.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -132,4 +132,4 @@ int tdataparse ();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_TDATA_D_BUILD_TDATA_GEN_INCLUDE_TDATA_Y_H_INCLUDED  */
+#endif /* !YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED  */

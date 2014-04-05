@@ -39,7 +39,9 @@ const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid)
 	case E_LS_NUMBER_ERROR_RANGE:
 		return "数字常量超出范围";
 	case E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE:
-		return "定义常量时不可指定string类型的长度";
+		return "这里不可指定string类型的长度";
+	case E_LS_MUST_DEFINE_STRING_LENGTH_HERE:
+		return "这里不可以缺少string类型的长度";
 	case E_LS_CONSTANT_TYPES_DO_NOT_MATCH:
 		return "常量类型不匹配";
 	case E_LS_TYPE_ERROR:

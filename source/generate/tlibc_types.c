@@ -192,12 +192,15 @@ static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_u
 	return E_TD_NOERROR;
 }
 
-//只能typedef除了string之外的SimpleType
 static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *de_typedef)
 {
 	generator_print(&self->super, 0, "typedef ");
 	generator_print_ctype(&self->super, &de_typedef->type);
 	generator_print(&self->super, 0, " %s", de_typedef->name);
+	if(de_typedef->type.st == E_ST_STRING)
+	{
+		generator_print(&self->super, 0, "[%s]", de_typedef->type.string_length);
+	}
 	generator_print(&self->super, 0, ";");
 	generator_printline(&self->super, 0, "");
 	return E_TD_NOERROR;

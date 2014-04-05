@@ -97,18 +97,29 @@ done:
 	return;
 }
 
-//检查string长度未定义
-void check_string_length_not_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type)
+//检查string长度是否定义
+void check_string_length(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type, int defined)
 {
 	if(symbol_type->st != E_ST_STRING)
 	{
 		goto done;
 	}
 
-	if(symbol_type->string_length[0] != 0)
+	if(defined)
 	{
-		scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+		if(symbol_type->string_length[0] == 0)
+		{
+			scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+		}
 	}
+	else
+	{
+		if(symbol_type->string_length[0] != 0)
+		{
+			scanner_error_halt(yylloc, E_LS_CAN_NOT_DEFINE_STRING_LENGTH_HERE);
+		}
+	}
+	
 done:
 	return;
 }

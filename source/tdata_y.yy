@@ -176,6 +176,7 @@ Typedef :
 	tok_typedef SimpleType tok_identifier ';'
 	{
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $3);
+		check_string_length(&yylloc, &$2, TRUE);
 
 		reduce_Typedef(&$$, &$2, $3);
 
@@ -187,7 +188,7 @@ Const :
 	{
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_string_length_not_defined(&yylloc, &$2);
+		check_string_length(&yylloc, &$2, FALSE);
 
 		check_value_type(&GET_SYMBOLS, &yylloc, &$2, &$5);
 
