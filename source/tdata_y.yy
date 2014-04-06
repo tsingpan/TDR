@@ -1,5 +1,5 @@
 %define api.pure
-%parse-param { SCANNER *self }
+%parse-param { scanner_t *self }
 %pure_parser
 %{
 //bison生成的代码会有几个warning, 在这里屏蔽掉

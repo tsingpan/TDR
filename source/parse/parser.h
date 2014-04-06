@@ -13,7 +13,7 @@
 typedef struct _PARSER PARSER;
 struct _PARSER 
 {
-	SCANNER scanner;
+	scanner_t scanner;
 
 	GENERATOR **generator_list;
 	uint32_t generator_num;

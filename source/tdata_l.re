@@ -5,7 +5,7 @@
 #include "tdata_l.h"
 #include "tdata_y.h"
 
-int32_t scanner_scan(SCANNER *self, YYLTYPE *yylloc)
+int32_t scanner_scan(scanner_t *self, YYLTYPE *yylloc)
 {
 restart:
 	if(YYCURSOR >= YYLIMIT)

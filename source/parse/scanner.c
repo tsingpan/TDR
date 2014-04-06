@@ -126,10 +126,10 @@ static int32_t path_repair(char* path, uint32_t *len)
 
 
 
-void scanner_locate(SCANNER *self)
+void scanner_locate(scanner_t *self)
 {
 	const char *i;
-	SCANNER_CONTEXT *sp = scanner_top(self);
+	scanner_context_t *sp = scanner_top(self);
 	for(i = sp->yy_last; i < sp->yy_cursor;++i)
 	{
 		if(*i == '\n')
@@ -149,7 +149,7 @@ void scanner_locate(SCANNER *self)
 	sp->yy_last = sp->yy_cursor;
 }
 
-SCANNER_CONTEXT *scanner_top(SCANNER *self)
+scanner_context_t *scanner_top(scanner_t *self)
 {
 	if((self->stack_num <= 0) || (self->stack_num > MAX_SCANNER_STACK_SIZE))
 	{
@@ -158,15 +158,15 @@ SCANNER_CONTEXT *scanner_top(SCANNER *self)
 	return &self->stack[self->stack_num - 1];
 }
 
-int32_t scanner_push(SCANNER *self, const char *file_name, int state)
+int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 {
 	FILE* fin;
 	char c;
 	YYCTYPE* yy_start = self->buff_curr;
 	uint32_t i = 0;
 	uint32_t len = 0;
-	char realPath[TLIBC_MAX_PATH_LENGTH];
-	SCANNER_CONTEXT *scanner = NULL;
+	char *real_path = NULL;
+	scanner_context_t *scanner = NULL;
 	TD_ERROR_CODE ret = E_TD_NOERROR;
 
 	if(self->stack_num >= MAX_SCANNER_STACK_SIZE)
@@ -184,20 +184,29 @@ int32_t scanner_push(SCANNER *self, const char *file_name, int state)
 		}
 	}
 
+	if(self->file_vec_num >= MAX_SCANNER_FILE_NUM)
+	{
+		ret = E_TD_SCANNER_OUT_OF_MEMORY;
+		goto ERROR_RET;
+	}
+	real_path = self->file_vec[self->file_vec_num].file_name;
 	
-	fin = fopen(file_name, "r");
+	strncpy(real_path, file_name, TLIBC_MAX_PATH_LENGTH);
+	real_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+	fin = fopen(real_path, "r");
 	if(fin == NULL)
 	{
 		for(i = 0; i < g_include_dir_num; ++i)
 		{
-			snprintf(realPath, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_include_dir[i], TLIBC_FILE_SEPARATOR, file_name);
+			snprintf(real_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_include_dir[i], TLIBC_FILE_SEPARATOR, file_name);
+			real_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 			len = TLIBC_MAX_PATH_LENGTH;
-			if(path_repair(realPath, &len) != E_TD_NOERROR)
+			if(path_repair(real_path, &len) != E_TD_NOERROR)
 			{
 				ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
 				goto ERROR_RET;
 			}
-			fin = fopen(realPath, "r");
+			fin = fopen(real_path, "r");
 			if(fin != NULL)
 			{
 				break;
@@ -209,6 +218,13 @@ int32_t scanner_push(SCANNER *self, const char *file_name, int state)
 			ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
 			goto ERROR_RET;
 		}
+	}
+
+	if(tlibc_hash_find_const(&self->file_hash, real_path, strlen(real_path)) != NULL)
+	{
+		//由于这个文件已经被展开过， 所以返回成功。
+		ret = E_TD_NOERROR;
+		goto F_ERROR_RET;
 	}
 
 	while((c = (char)fgetc(fin)) != EOF)
@@ -224,7 +240,7 @@ int32_t scanner_push(SCANNER *self, const char *file_name, int state)
 	fclose(fin);
 
 	scanner = &self->stack[self->stack_num];
-	strncpy(scanner->file_name, file_name, TLIBC_MAX_PATH_LENGTH);
+	strncpy(scanner->file_name, real_path, TLIBC_MAX_PATH_LENGTH);
 	scanner->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	scanner->yy_start = yy_start;
 	scanner->yy_limit = self->buff_curr;
@@ -236,6 +252,9 @@ int32_t scanner_push(SCANNER *self, const char *file_name, int state)
 	scanner->yycolumn = 1;
 	++(self->stack_num);
 
+	tlibc_hash_insert(&self->file_hash, real_path, strlen(real_path), &self->file_vec[self->file_vec_num].hash_head);
+	++(self->file_vec_num);
+
 	return E_TD_NOERROR;
 F_ERROR_RET:
 	fclose(fin);
@@ -243,19 +262,21 @@ ERROR_RET:
 	return ret;
 }
 
-void scanner_pop(SCANNER *self)
+void scanner_pop(scanner_t *self)
 {
 	--(self->stack_num);
 }
 
-void scanner_init(SCANNER *self)
+void scanner_init(scanner_t *self)
 {
 	self->buff_curr = self->buff;
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
+	self->file_vec_num = 0;
+	tlibc_hash_init(&self->file_hash, self->file_hash_buckets, MAX_SCANNER_FILE_BUCKETS);
 }
 
-uint32_t scanner_size(SCANNER *self)
+uint32_t scanner_size(scanner_t *self)
 {
 	return self->stack_num;
 }
@@ -295,7 +316,7 @@ void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...
 }
 
 #define MAX_SCANNER_ERROR_MSG_LENGTH 256
-void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...)
+void tdataerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...)
 {
 	va_list ap;
 	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
@@ -331,7 +352,7 @@ static int read_char(char c)
 	}
 }
 
-static void get_yylval_tok_char(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+static void get_yylval_tok_char(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	*token = tok_char;
 	if(YYCURSOR >= YYLIMIT)
@@ -375,7 +396,7 @@ ERROR_RET:
 	scanner_error_halt(yylloc, E_LS_CHARACTER_CONSTANT_FORMAT_ERROR);
 }
 
-static void get_yylval_tok_string(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+static void get_yylval_tok_string(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	uint32_t len = 0;
 	
@@ -423,7 +444,7 @@ done:
 	yyleng = YYCURSOR - yytext;
 }
 
-static int32_t get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
+static int32_t get_yylval(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yylval, const YYLTYPE *yylloc)
 {
 	switch(*token)
 	{
@@ -573,13 +594,13 @@ static int32_t get_yylval(SCANNER *self, int *token, SCANNER_TOKEN_VALUE * yylva
 }
 
 
-int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER *self)
+int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self)
 {
 	int ret = 0;
 
 	for(;;)
 	{
-		SCANNER_CONTEXT *scanner = scanner_top(self);
+		scanner_context_t *scanner = scanner_top(self);
 		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_PATH_LENGTH);
 		yylloc_param->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		ret = scanner_scan(self, yylloc_param);

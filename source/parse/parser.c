@@ -56,7 +56,7 @@ static void parser_push(PARSER *self, const char *file_name)
 	}
 }
 
-int tdataparse (SCANNER *self);
+int tdataparse (scanner_t *self);
 int32_t parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, uint32_t generator_list_num)
 {
 	int32_t ret;	

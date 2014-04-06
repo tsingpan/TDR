@@ -209,7 +209,7 @@ int tdataparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (SCANNER *self);
+int tdataparse (scanner_t *self);
 #else
 int tdataparse ();
 #endif
@@ -915,7 +915,7 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, SCANNER *self)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, scanner_t *self)
 #else
 static void
 yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, self)
@@ -923,7 +923,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, self)
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
-    SCANNER *self;
+    scanner_t *self;
 #endif
 {
   FILE *yyo = yyoutput;
@@ -949,7 +949,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, self)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, SCANNER *self)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, scanner_t *self)
 #else
 static void
 yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, self)
@@ -957,7 +957,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, self)
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
-    SCANNER *self;
+    scanner_t *self;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -1010,14 +1010,14 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, SCANNER *self)
+yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, scanner_t *self)
 #else
 static void
 yy_reduce_print (yyvsp, yylsp, yyrule, self)
     YYSTYPE *yyvsp;
     YYLTYPE *yylsp;
     int yyrule;
-    SCANNER *self;
+    scanner_t *self;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -1319,7 +1319,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, SCANNER *self)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, scanner_t *self)
 #else
 static void
 yydestruct (yymsg, yytype, yyvaluep, yylocationp, self)
@@ -1327,7 +1327,7 @@ yydestruct (yymsg, yytype, yyvaluep, yylocationp, self)
     int yytype;
     YYSTYPE *yyvaluep;
     YYLTYPE *yylocationp;
-    SCANNER *self;
+    scanner_t *self;
 #endif
 {
   YYUSE (yyvaluep);
@@ -1362,11 +1362,11 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (SCANNER *self)
+yyparse (scanner_t *self)
 #else
 int
 yyparse (self)
-    SCANNER *self;
+    scanner_t *self;
 #endif
 #endif
 {

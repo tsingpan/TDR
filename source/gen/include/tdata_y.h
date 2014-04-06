@@ -126,7 +126,7 @@ int tdataparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (SCANNER *self);
+int tdataparse (scanner_t *self);
 #else
 int tdataparse ();
 #endif

@@ -2,6 +2,7 @@
 #define _H_SCANNER
 
 #include "platform/tlibc_platform.h"
+#include "core/tlibc_hash.h"
 #include "language/language.h"
 #include "definition.h"
 #include "error.h"
@@ -62,10 +63,14 @@ typedef union _SCANNER_TOKEN_VALUE
 #define BEGIN(state) YYSETCONDITION(STATE(state))
 #define YYSTATE      YYGETCONDITION()
 
-
-typedef struct _SCANNER_CONTEXT SCANNER_CONTEXT;
-struct _SCANNER_CONTEXT
+typedef struct scanner_file_s
 {
+	tlibc_hash_head_t hash_head;
+	char file_name[TLIBC_MAX_PATH_LENGTH];
+}scanner_file_t;
+
+typedef struct scanner_context_s
+{	
 	char file_name[TLIBC_MAX_PATH_LENGTH];
 	int yy_state;
 	YYCTYPE *yy_last;
@@ -77,32 +82,39 @@ struct _SCANNER_CONTEXT
 	uint32_t yy_leng;
 
 	uint32_t yylineno;
-	uint32_t yycolumn;
-};
+	uint32_t yycolumn;	
+}scanner_context_t;
+
+//最多解析65536个字符
+#define MAX_SCANNER_FILE_NUM 10240
+#define MAX_SCANNER_FILE_BUCKETS 65536
 
 #define MAX_LEX_BUFF_SIZE 10000000
 #define MAX_SCANNER_STACK_SIZE 1024
-typedef struct _SCANNER SCANNER;
-struct _SCANNER
+typedef struct scanner_s
 {
 	uint32_t stack_num;
-	SCANNER_CONTEXT stack[MAX_SCANNER_STACK_SIZE];
+	scanner_context_t stack[MAX_SCANNER_STACK_SIZE];
 
 	YYCTYPE *buff_limit;
 	YYCTYPE *buff_curr;
 	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
-};
 
+	tlibc_hash_bucket_t file_hash_buckets[MAX_SCANNER_FILE_BUCKETS];
+	tlibc_hash_t file_hash;
+	uint32_t file_vec_num;
+	scanner_file_t file_vec[MAX_SCANNER_FILE_NUM];
+}scanner_t;
 
-void scanner_init(SCANNER *self);
-void scanner_locate(SCANNER *self);
-int32_t scanner_scan(SCANNER *self, YYLTYPE *yylloc);
-SCANNER_CONTEXT *scanner_top(SCANNER *self);
-int32_t scanner_push(SCANNER *self, const char *file_name, int state);
-void scanner_pop(SCANNER *self);
-uint32_t scanner_size(SCANNER *self);
+void scanner_init(scanner_t *self);
+void scanner_locate(scanner_t *self);
+int32_t scanner_scan(scanner_t *self, YYLTYPE *yylloc);
+scanner_context_t *scanner_top(scanner_t *self);
+int32_t scanner_push(scanner_t *self, const char *file_name, int state);
+void scanner_pop(scanner_t *self);
+uint32_t scanner_size(scanner_t *self);
 
-int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , SCANNER *self);
+int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self);
 
 
 
@@ -111,6 +123,6 @@ void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
 //此函数会调用exit
 void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
 //此函数会调用exit
-void tdataerror(const YYLTYPE *yylloc, SCANNER *self, const char *s, ...);
+void tdataerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...);
 
 #endif//_H_SCANNER

@@ -5,6 +5,8 @@
 
 //让我们首先来看一个网络协议的例子
 import "common/common.td"
+//重复包含一个文件， 并不会出错， 因为编译器只会展开第一个文件。
+import "common/common.td"
 
 
 struct login_req_s
