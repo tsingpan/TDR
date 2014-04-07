@@ -332,8 +332,27 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 		fprintf(self->fout, "double");
 		return E_TD_NOERROR;
 	case E_ST_REFER:
-		fprintf(self->fout, "%s", simple_type->st_refer);
-		return E_TD_NOERROR;
+		{			
+			const SYMBOL *symbol = symbols_search(self->symbols, "", simple_type->st_refer);
+
+			switch(symbol->type)
+			{
+			case EN_HST_TYPEDEF:
+				fprintf(self->fout, "%s", simple_type->st_refer);
+				break;
+			case EN_HST_ENUM:
+				fprintf(self->fout, "enum %s", simple_type->st_refer);
+				break;
+			case EN_HST_STRUCT:
+				fprintf(self->fout, "struct %s", simple_type->st_refer);
+				break;
+			case EN_HST_UNION:
+				fprintf(self->fout, "union %s", simple_type->st_refer);
+				break;
+			}
+
+			return E_TD_NOERROR;
+		}
 	default:
 		return E_TD_ERROR;
 	}

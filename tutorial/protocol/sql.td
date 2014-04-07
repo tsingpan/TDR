@@ -4,7 +4,7 @@
 
 import "common/common.td"
 
-struct user_s
+struct user
 {
 	int32 id;
 	string<MAX_NAME_LENGTH> username;

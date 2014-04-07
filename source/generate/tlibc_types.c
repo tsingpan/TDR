@@ -71,7 +71,7 @@ static TD_ERROR_CODE _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_c
 static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;	
-	generator_printline(&self->super, 0, "typedef enum _%s", de_enum->name);
+	generator_printline(&self->super, 0, "typedef enum %s", de_enum->name);
 	generator_printline(&self->super, 0, "{");
 	for(i = 0;i < de_enum->enum_def_list_num; ++i)
 	{
@@ -87,7 +87,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 			generator_printline(&self->super, 0, "");
 		}		
 	}
-	generator_printline(&self->super, 0, "}%s;", de_enum->name);
+	generator_printline(&self->super, 0, "}%s_t;", de_enum->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -146,10 +146,10 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 
 static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
 {	
-	generator_printline(&self->super, 0, "typedef struct _%s", de_struct->name);
+	generator_printline(&self->super, 0, "typedef struct %s", de_struct->name);
 	generator_printline(&self->super, 0, "{");
 	_on_field_list(self, &de_struct->field_list);
-	generator_printline(&self->super, 0, "}%s;", de_struct->name);
+	generator_printline(&self->super, 0, "}%s_t;", de_struct->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -183,10 +183,10 @@ static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_
 
 static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
 {
-	generator_printline(&self->super, 0, "typedef union _%s", de_union->name);
+	generator_printline(&self->super, 0, "typedef union %s", de_union->name);
 	generator_printline(&self->super, 0, "{");
 	_on_union_field_list(self, &de_union->union_field_list);
-	generator_printline(&self->super, 0, "}%s;", de_union->name);
+	generator_printline(&self->super, 0, "}%s_t;", de_union->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;

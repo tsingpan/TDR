@@ -63,7 +63,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_en
 {
 	uint32_t i;
 	generator_printline(&self->super, 0, "");
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)", de_enum->name, de_enum->name);
+	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const enum %s *data)", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "{");
 	generator_printline(&self->super, 0, "\tTLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;");
 	generator_printline(&self->super, 0, "\tif((ret = tlibc_write_enum_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;", de_enum->name);
@@ -113,7 +113,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *d
 	uint32_t i;
 	generator_printline(&self->super, 0, "");
 
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data)", de_struct->name, de_struct->name);
+	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const struct %s *data)", de_struct->name, de_struct->name);
 
 	generator_printline(&self->super, 0, "{");
 	generator_printline(&self->super, 0, "\tTLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;");
@@ -250,7 +250,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 
 	generator_printline(&self->super, 0, "");
 
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const %s *data, %s selector)", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
+	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const union %s *data, enum %s selector)", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
 	generator_printline(&self->super, 0, "{");
 	generator_printline(&self->super, 0, "\tTLIBC_ERROR_CODE ret = E_TLIBC_NOERROR;");
 	generator_printline(&self->super, 0, "\tif((ret = tlibc_write_union_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;", de_union->name);

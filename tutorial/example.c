@@ -38,7 +38,7 @@ void test_compact()
 	char buff[MAX_BUFF_SIZE];
 	TLIBC_COMPACT_WRITER compact_writer;
 	TLIBC_COMPACT_READER compact_reader;
-	message_s message;
+	message_t message;
 	int ret;
 
 	message.mid = E_MID_LOGIN_REQ;
@@ -47,11 +47,11 @@ void test_compact()
 	message.body.login_req.age = 27;
 
 	tlibc_compact_writer_init(&compact_writer, buff, MAX_BUFF_SIZE);
-	ret = tlibc_write_message_s(&compact_writer.super, &message);
+	ret = tlibc_write_message(&compact_writer.super, &message);
 
 	memset(&message, 0, sizeof(message));
 	tlibc_compact_reader_init(&compact_reader, buff, MAX_BUFF_SIZE);
-	ret = tlibc_read_message_s(&compact_reader.super, &message);
+	ret = tlibc_read_message(&compact_reader.super, &message);
 }
 
 void test_binary()
@@ -59,7 +59,7 @@ void test_binary()
 	char buff[MAX_BUFF_SIZE];
 	TLIBC_BINARY_WRITER writer;
 	TLIBC_BINARY_READER reader;
-	message_s message;
+	message_t message;
 	int ret;
 
 	message.mid = E_MID_LOGIN_RSP;
@@ -68,11 +68,11 @@ void test_binary()
 	message.body.login_rsp.session_id = 123321;
 
 	tlibc_binary_writer_init(&writer, buff, MAX_BUFF_SIZE);
-	ret = tlibc_write_message_s(&writer.super, &message);
+	ret = tlibc_write_message(&writer.super, &message);
 
 	memset(&message, 0, sizeof(message));
 	tlibc_binary_reader_init(&reader, buff, MAX_BUFF_SIZE);
-	ret = tlibc_read_message_s(&reader.super, &message);
+	ret = tlibc_read_message(&reader.super, &message);
 }
 
 void test_protocol()
@@ -91,7 +91,7 @@ void test_xml()
 	TLIBC_XML_READER xml_reader;
 	TLIBC_XML_WRITER xml_writer;	
 	int ret;
-	tconnd_config_s config;
+	tconnd_config_t config;
 
 	snprintf(config.log_config, MAX_NAME_LENGTH, "/usr/local/tconnd/etc/tconnd_log.xml");
 	config.instance_config_num = 2;
@@ -108,22 +108,22 @@ void test_xml()
 	config.instance_config[1].epoll_size = 1024;
 
 	tlibc_xml_writer_init(&xml_writer, "tconnd.xml");
-	ret = tlibc_write_tconnd_config_s(&xml_writer.super, &config);
+	ret = tlibc_write_tconnd_config(&xml_writer.super, &config);
 	tlibc_xml_writer_fini(&xml_writer);
 	
-	memset(&config, 0, sizeof(tconnd_config_s));
+	memset(&config, 0, sizeof(tconnd_config_t));
 
 	tlibc_xml_reader_init(&xml_reader);	
 	tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml");
-	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
+	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
 	tlibc_xml_reader_pop_file(&xml_reader);
 
 	
-	memset(&config, 0, sizeof(tconnd_config_s));
+	memset(&config, 0, sizeof(tconnd_config_t));
 	//用下面这个命令可以来添加查找包含文件的目录
 	tlibc_xml_add_include(&xml_reader, "./gen");
 	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
-	ret = tlibc_read_tconnd_config_s(&xml_reader.super, &config);
+	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
@@ -133,7 +133,7 @@ void test_xlsx()
 	tlibc_xlsx_reader_t xlsx_reader;
 	uint32_t i;
 	int ret;
-	item_table_s item_table[MAX_ITEM_NUM];
+	item_table_t item_table[MAX_ITEM_NUM];
 	uint32_t item_table_num, row;
 
 	item_table_num = 0;
@@ -146,7 +146,7 @@ void test_xlsx()
 	for(i = 3; i <= row; ++i)
 	{
 		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);
-		ret = tlibc_read_item_table_s(&xlsx_reader.super, &item_table[item_table_num]);
+		ret = tlibc_read_item_table(&xlsx_reader.super, &item_table[item_table_num]);
 		if(ret == E_TLIBC_EMPTY)
 		{
 			continue;
@@ -165,10 +165,10 @@ void test_mysql_insert()
 {
 	TLIBC_ERROR_CODE ret;
 	MYSQL *mysql = NULL;	
-	const char *sql_insert = "insert into user_s value(?, ?, ?, ?);";
+	const char *sql_insert = "insert into user value(?, ?, ?, ?);";
 	MYSQL_STMT *stmt;
 	int iret;
-	user_s user;
+	user_t user;
 
 	MYSQL_BIND   par_bind[1024];
 
@@ -208,7 +208,7 @@ void test_mysql_insert()
 	user.gold = UINT32_MAX;
 	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
 
-	ret = tlibc_read_user_s(&bind_reader.super, &user);
+	ret = tlibc_read_user(&bind_reader.super, &user);
 	iret = mysql_stmt_bind_param(stmt, par_bind);
 	if(iret)
 	{
@@ -237,7 +237,7 @@ void test_mysql_select()
 	const char *sql_insert = "select * from user_s;";
 	MYSQL_STMT *stmt;
 	int iret;
-	user_s user;
+	user_t user;
 
 	MYSQL_BIND   res_bind[1024];
 
@@ -272,7 +272,7 @@ void test_mysql_select()
 
 	memset(&res_bind, 0, sizeof(res_bind));
 	tlibc_bind_writer_init(&bind_writer, res_bind, sizeof(res_bind));
-	ret = tlibc_write_user_s(&bind_writer.super, &user);
+	ret = tlibc_write_user(&bind_writer.super, &user);
 	iret = mysql_stmt_bind_result(stmt, res_bind);
 	if(iret)
 	{

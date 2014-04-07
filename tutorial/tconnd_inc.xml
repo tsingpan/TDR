@@ -1,4 +1,4 @@
-<tconnd_config_s>
+<tconnd_config>
 	<log_config>/usr/local/tconnd/etc/tconnd_log.xml</log_config>
 	<vector>
 		<instance_config>
@@ -11,4 +11,4 @@
 		<!--可以使用include命令来包含另外一个xml， 消除配置文件中的重复部分-->
 		<!include "tconnd_instance1.xml.inc"/>
 	</vector>
-</tconnd_config_s>
+</tconnd_config>

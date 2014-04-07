@@ -68,7 +68,7 @@ static TD_ERROR_CODE _on_import(TLIBC_READER_HEADER_GENERATOR *self, const ST_Im
 
 static TD_ERROR_CODE _on_enum(TLIBC_READER_HEADER_GENERATOR *self, const ST_ENUM *de_enum)
 {	
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, %s *data);", de_enum->name, de_enum->name);
+	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, enum %s *data);", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -76,7 +76,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_READER_HEADER_GENERATOR *self, const ST_ENUM
 
 static TD_ERROR_CODE _on_struct(TLIBC_READER_HEADER_GENERATOR *self, const ST_STRUCT *de_struct)
 {
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, %s *data);", de_struct->name, de_struct->name);
+	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, struct %s *data);", de_struct->name, de_struct->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -84,7 +84,10 @@ static TD_ERROR_CODE _on_struct(TLIBC_READER_HEADER_GENERATOR *self, const ST_ST
 
 static TD_ERROR_CODE _on_union(TLIBC_READER_HEADER_GENERATOR *self, const ST_UNION *de_union)
 {
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, %s *data, %s selector);", de_union->name, de_union->name, de_union->parameters.par_list[0].type.st_refer);
+	generator_print(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, union %s *data, ", de_union->name, de_union->name);
+	generator_print_ctype(&self->super, &de_union->parameters.par_list[0].type);
+	generator_printline(&self->super, 0, " selector);");
+	
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
