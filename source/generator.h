@@ -12,8 +12,8 @@
 
 //定义计数器对象
 #define VEC_NUM_TYPE_STYLE "%s_num"
-static const ST_SIMPLE_TYPE g_vec_num_type = {E_ST_UINT32, "", ""};
-static const ST_SIMPLE_TYPE g_enum_type = {E_ST_INT32, "", ""};
+static const syn_simple_type_t g_vec_num_type = {E_ST_UINT32, "", ""};
+static const syn_simple_type_t g_enum_type = {E_ST_INT32, "", ""};
 
 typedef struct generator_s generator_t;
 struct generator_s
@@ -46,11 +46,11 @@ error_code_t generator_close(generator_t *self);
 
 error_code_t generator_print_value(generator_t *self, const syn_value_t *val);
 
-error_code_t generator_print_type_name(generator_t *self, const ST_SIMPLE_TYPE *simple_type);
+error_code_t generator_print_type_name(generator_t *self, const syn_simple_type_t *simple_type);
 
-error_code_t generator_print_ctype(generator_t *self, const ST_SIMPLE_TYPE *simple_type);
+error_code_t generator_print_ctype(generator_t *self, const syn_simple_type_t *simple_type);
 
-error_code_t generator_print_cstype(generator_t *self, const ST_SIMPLE_TYPE *simple_type);
+error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *simple_type);
 
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix);
 

@@ -82,7 +82,7 @@ void check_identifier_is_positive_integer(const symbols_t *symbols, const YYLTYP
 	}
 }
 
-void check_string_length_defined(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type)
+void check_string_length_defined(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type)
 {
 	if(symbol_type->st != E_ST_STRING)
 	{
@@ -98,7 +98,7 @@ done:
 }
 
 //检查string长度是否定义
-void check_string_length(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_type, int defined)
+void check_string_length(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type, int defined)
 {
 	if(symbol_type->st != E_ST_STRING)
 	{
@@ -125,9 +125,9 @@ done:
 }
 
 //检查类型是否为整数
-void check_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+void check_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_simple_type_t *simple_type)
 {
-	const ST_SIMPLE_TYPE *real_type = symbols_get_real_type(symbols, simple_type);
+	const syn_simple_type_t *real_type = symbols_get_real_type(symbols, simple_type);
 	assert(real_type != NULL);
 	
 	switch(real_type->st)
@@ -189,10 +189,10 @@ void check_identifier_refer_to_a_field_with_integer_type(const symbols_t *symbol
 
 void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments)
 {
-	const ST_SIMPLE_TYPE *field_type = NULL;
+	const syn_simple_type_t *field_type = NULL;
 
-	const ST_SIMPLE_TYPE *par_type = NULL;
-	const ST_SIMPLE_TYPE *arg_type = NULL;
+	const syn_simple_type_t *par_type = NULL;
+	const syn_simple_type_t *arg_type = NULL;
 
 	//获取变量类型
 	if(type->type == E_SNT_CONTAINER)
@@ -286,11 +286,11 @@ default:\
 	scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);\
 }
 
-void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const syn_value_t *val)
+void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_simple_type_t *type, const syn_value_t *val)
 {
-	const ST_SIMPLE_TYPE *real_type_ptr = NULL;
+	const syn_simple_type_t *real_type_ptr = NULL;
 	const syn_value_t *real_val_ptr = NULL;
-	SN_SIMPLE_TYPE st;
+	syn_simple_type_type_t st;
 
 	syn_value_type_t vt;
 	int64_t i64 = 0;
@@ -372,7 +372,7 @@ void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_
 	}
 }
 
-void check_simpletype_is_enum(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+void check_simpletype_is_enum(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_simple_type_t *simple_type)
 {
 	const symbol_t* enum_symbol;
 	simple_type = symbols_get_real_type(symbols, simple_type);

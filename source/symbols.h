@@ -84,7 +84,7 @@ const symbol_t* symbols_search(const symbols_t *self, const char* preffix, const
 void symbols_save(symbols_t *self, const char* preffix, const char *name, symbol_t *symbol);
 
 //过滤typedef
-const ST_SIMPLE_TYPE* symbols_get_real_type(const symbols_t *self, const ST_SIMPLE_TYPE* sn_type);
+const syn_simple_type_t* symbols_get_real_type(const symbols_t *self, const syn_simple_type_t* sn_type);
 
 //过滤常量赋值
 const syn_value_t* symbols_get_real_value(const symbols_t *self, const syn_value_t* sn_value);

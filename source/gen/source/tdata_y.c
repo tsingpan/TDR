@@ -1824,7 +1824,7 @@ yyreduce:
 /* Line 1787 of yacc.c  */
 #line 235 "D:/GitHub/TData/source/tdata_y.yy"
     {
-		ST_SIMPLE_TYPE enum_type;
+		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (5)].sn_tok_identifier));
@@ -1842,7 +1842,7 @@ yyreduce:
 /* Line 1787 of yacc.c  */
 #line 249 "D:/GitHub/TData/source/tdata_y.yy"
     {
-		ST_SIMPLE_TYPE enum_type;
+		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (3)].sn_tok_identifier));

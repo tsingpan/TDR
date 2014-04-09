@@ -98,7 +98,7 @@ static void print_struct_header(generator_cs_t *self, const char *name, const ST
 	for(i = 0; i < field_list->field_list_num; ++i)
 	{
 		const ST_FIELD *field = &field_list->field_list[i];
-		const ST_SIMPLE_TYPE *st = NULL;
+		const syn_simple_type_t *st = NULL;
 		
 
 		if(field->type.type == E_SNT_CONTAINER)
@@ -204,7 +204,7 @@ static void _on_struct_write(generator_cs_t *self, const ST_STRUCT *de_struct)
 		{
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
-				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
+				const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
 				const symbol_t* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "writer.WriteVectorBegin();");
@@ -269,7 +269,7 @@ static void _on_struct_write(generator_cs_t *self, const ST_STRUCT *de_struct)
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
-			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
+			const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
 			const symbol_t* refer_type = NULL;
 
 			generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
@@ -368,7 +368,7 @@ static void _on_struct_read(generator_cs_t *self, const ST_STRUCT *de_struct)
 		{
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
-				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
+				const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
 				const symbol_t* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "reader.ReadVectorBegin();");
@@ -436,7 +436,7 @@ static void _on_struct_read(generator_cs_t *self, const ST_STRUCT *de_struct)
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
-			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
+			const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
 			const symbol_t* refer_type = NULL;
 			generator_printline(&self->super, 4, "if(reader.ReadFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
 			generator_printline(&self->super, 4, "{");
@@ -514,7 +514,7 @@ static void print_union_header(generator_cs_t *self, const char *name, const ST_
 	for(i = 0; i < union_field_list->union_field_list_num; ++i)
 	{
 		const ST_UNION_FIELD *field = &union_field_list->union_field_list[i];
-		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &field->simple_type);
+		const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &field->simple_type);
 
 		generator_print(&self->super, 2, "private ");
 
@@ -552,7 +552,7 @@ static void _on_union_write(generator_cs_t *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 3, "{");
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
-		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
+		const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
 		const symbol_t* refer_type = NULL;
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_union->union_field_list.union_field_list[i].name);
@@ -606,7 +606,7 @@ static void _on_union_read(generator_cs_t *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 3, "{");
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
-		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
+		const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
 		const symbol_t* refer_type = NULL;
 
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);

@@ -64,7 +64,7 @@ ERROR_RET:
 	return NULL;
 }
 
-const ST_SIMPLE_TYPE* symbols_get_real_type(const symbols_t *self, const ST_SIMPLE_TYPE* sn_type)
+const syn_simple_type_t* symbols_get_real_type(const symbols_t *self, const syn_simple_type_t* sn_type)
 {
 	if(sn_type->st == E_ST_REFER)
 	{

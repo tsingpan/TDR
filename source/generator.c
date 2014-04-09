@@ -249,7 +249,7 @@ error_code_t generator_print_value(generator_t *self, const syn_value_t *val)
 	}
 }
 
-error_code_t generator_print_type_name(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
+error_code_t generator_print_type_name(generator_t *self, const syn_simple_type_t *simple_type)
 {
 	switch(simple_type->st)
 	{
@@ -294,7 +294,7 @@ error_code_t generator_print_type_name(generator_t *self, const ST_SIMPLE_TYPE *
 	}
 }
 
-error_code_t generator_print_ctype(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
+error_code_t generator_print_ctype(generator_t *self, const syn_simple_type_t *simple_type)
 {
 	switch(simple_type->st)
 	{
@@ -360,9 +360,9 @@ error_code_t generator_print_ctype(generator_t *self, const ST_SIMPLE_TYPE *simp
 	}
 }
 
-error_code_t generator_print_cstype(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
+error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *simple_type)
 {
-	const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->symbols, simple_type);
+	const syn_simple_type_t *st = symbols_get_real_type(self->symbols, simple_type);
 
 	switch(st->st)
 	{

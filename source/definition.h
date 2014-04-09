@@ -41,7 +41,13 @@ typedef struct  syn_value_s
     syn_value_body_t val;
 }syn_value_t;
 
-typedef enum _SN_SIMPLE_TYPE
+typedef enum syn_type_type_e
+{
+	E_SNT_SIMPLE = 0,
+	E_SNT_CONTAINER = 1,
+}syn_type_type_t;
+
+typedef enum syn_simple_type_type_e
 {
     E_ST_INT8 = 0,
     E_ST_INT16 = 1,
@@ -55,44 +61,39 @@ typedef enum _SN_SIMPLE_TYPE
     E_ST_DOUBLE = 9,
 	E_ST_STRING = 10,
 	E_ST_REFER = 11,//struct, union, enum, typedef
-}SN_SIMPLE_TYPE;
-typedef enum _SN_TYPE
+}syn_simple_type_type_t;
+typedef struct syn_simple_type_s
 {
-    E_SNT_SIMPLE = 0,
-    E_SNT_CONTAINER = 1,
-}SN_TYPE;
-typedef struct _ST_SIMPLE_TYPE
-{
-	SN_SIMPLE_TYPE st;
+	syn_simple_type_type_t st;
 	
 	char string_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 
 	char st_refer[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-}ST_SIMPLE_TYPE;
+}syn_simple_type_t;
 
-typedef enum _SN_CONTAINER_TYPE
+typedef enum syn_container_type_type_e
 {
 	E_CT_VECTOR = 0,
-}SN_CONTAINER_TYPE;
-typedef struct _ST_CONTAINER_TYPE
+}syn_container_type_type_t;
+typedef struct syn_container_type_s
 {
-	SN_CONTAINER_TYPE ct;
+	syn_container_type_type_t ct;
 
-	ST_SIMPLE_TYPE vector_type;
+	syn_simple_type_t vector_type;
 	char vector_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-}ST_CONTAINER_TYPE;
+}syn_container_type_t;
 
 typedef struct  _ST_TYPE
 {
-    SN_TYPE type;
+    syn_type_type_t type;
     
-	ST_SIMPLE_TYPE st;
+	syn_simple_type_t st;
 
-	ST_CONTAINER_TYPE ct;	
+	syn_container_type_t ct;	
 }ST_TYPE;
 typedef struct  _ST_Parameter
 {
-    ST_SIMPLE_TYPE type;
+    syn_simple_type_t type;
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_Parameter;
 #define MAX_PARAMETER_NUM 1
@@ -133,7 +134,7 @@ typedef struct  _ST_FIELD
 typedef struct  _ST_UNION_FIELD
 {
 	char key[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-	ST_SIMPLE_TYPE simple_type;
+	syn_simple_type_t simple_type;
 	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	syn_unix_comment_t comment;
 }ST_UNION_FIELD;
@@ -152,7 +153,7 @@ typedef struct  _ST_Import
 }ST_Import;
 typedef struct  _ST_Const
 {
-    ST_SIMPLE_TYPE type;
+    syn_simple_type_t type;
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
     syn_value_t val;
 }ST_Const;
@@ -188,7 +189,7 @@ typedef struct  _ST_UNION
 }ST_UNION;
 typedef struct  _ST_TYPEDEF
 {
-    ST_SIMPLE_TYPE type;
+    syn_simple_type_t type;
     char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 }ST_TYPEDEF;
 typedef enum _EN_DEFINITION_TYPE

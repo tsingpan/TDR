@@ -55,7 +55,7 @@ static error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const ST
 {
 	generator_sql_t *self = TLIBC_CONTAINER_OF(super, generator_sql_t, super);
 
-	const ST_SIMPLE_TYPE *st = NULL;
+	const syn_simple_type_t *st = NULL;
 	if(!self->first_field)
 	{
 		generator_printline(&self->super, 0, ",");

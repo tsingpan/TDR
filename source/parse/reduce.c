@@ -8,14 +8,14 @@ void reduce_Import(ST_Import* current, const char* str)
 	current->package_name[MAX_PACKAGE_NAME_LENGTH - 1] = 0;
 }
 
-void reduce_Typedef(ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const char *tok_identifier)
+void reduce_Typedef(ST_TYPEDEF *current, syn_simple_type_t* type, const char *tok_identifier)
 {
 	current->type = *type;
 	strncpy(current->name, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const char *identifier, const syn_value_t *val)
+void reduce_Const(ST_Const* current, const syn_simple_type_t *type, const char *identifier, const syn_value_t *val)
 {
 	current->type = *type;
 
@@ -57,7 +57,7 @@ void reduce_EnumDef(ST_ENUM_DEF *current, const char *identifier, const syn_valu
 	current->comment = *comment;
 }
 
-void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type, const char *tok_identifier)
+void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const syn_simple_type_t *simple_type, const char *tok_identifier)
 {
 	current->type = E_SNT_CONTAINER;
 	current->ct.ct = E_CT_VECTOR;
@@ -67,7 +67,7 @@ void reduce_ContainerType_tok_t_vector(ST_TYPE *current, const ST_SIMPLE_TYPE *s
 	current->ct.vector_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_SimpleType_tok_t_string(ST_SIMPLE_TYPE *current, const char *tok_identifier)
+void reduce_SimpleType_tok_t_string(syn_simple_type_t *current, const char *tok_identifier)
 {
 	current->st = E_ST_STRING;
 
@@ -82,14 +82,14 @@ void reduce_SimpleType_tok_t_string(ST_SIMPLE_TYPE *current, const char *tok_ide
 	}
 }
 
-void reduce_SimpleType_tok_identifier(ST_SIMPLE_TYPE* current, const char *tok_identifier)
+void reduce_SimpleType_tok_identifier(syn_simple_type_t* current, const char *tok_identifier)
 {
 	current->st = E_ST_REFER;
 	strncpy(current->st_refer, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->st_refer[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Type_SimpleType(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
+void reduce_Type_SimpleType(ST_TYPE *current, const syn_simple_type_t *simple_type)
 {
 	current->type = E_SNT_SIMPLE;
 	current->st = *simple_type;
@@ -191,7 +191,7 @@ void reduce_Union(ST_UNION *current, const char *identifier, const ST_Parameters
 	current->parameters = *parameters;
 }
 
-void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const ST_SIMPLE_TYPE *simple_type, const char *identifier, const syn_unix_comment_t *comment)
+void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const syn_simple_type_t *simple_type, const char *identifier, const syn_unix_comment_t *comment)
 {
 	strncpy(current->key, key, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->key[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;

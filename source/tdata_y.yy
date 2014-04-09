@@ -233,7 +233,7 @@ EnumDefList :
 EnumDef : 
 	tok_identifier '=' Value ',' UnixCommentOrNot
 	{
-		ST_SIMPLE_TYPE enum_type;
+		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $1);
@@ -247,7 +247,7 @@ EnumDef :
 	}
 |	tok_identifier ',' UnixCommentOrNot
 	{
-		ST_SIMPLE_TYPE enum_type;
+		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $1);

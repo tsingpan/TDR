@@ -159,7 +159,7 @@ static error_code_t _on_struct(generator_reader_c_t *self, const ST_STRUCT *de_s
 		{
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
-				const ST_SIMPLE_TYPE *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);				
+				const syn_simple_type_t *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);				
 				generator_printline(&self->super, 2, "uint32_t i;");
 				generator_printline(&self->super, 2, "if((ret = tlibc_read_vector_begin(self)) != E_TLIBC_NOERROR) goto done;");
 			
@@ -210,7 +210,7 @@ static error_code_t _on_struct(generator_reader_c_t *self, const ST_STRUCT *de_s
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
-			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
+			const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
 
 			generator_printline(&self->super, 2, "if((ret = tlibc_read_field_begin(self, \"%s\")) == E_TLIBC_NOERROR)", de_struct->field_list.field_list[i].identifier);			
 			generator_printline(&self->super, 2, "{");
@@ -263,7 +263,7 @@ static error_code_t _on_union(generator_reader_c_t *self, const ST_UNION *de_uni
 	generator_printline(&self->super, 0, "\t{");
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
-		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
+		const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
 
 		generator_printline(&self->super, 1, "case %s:", de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 2, "if((ret = tlibc_read_field_begin(self, \"%s\")) == E_TLIBC_NOERROR)", de_union->union_field_list.union_field_list[i].name);
