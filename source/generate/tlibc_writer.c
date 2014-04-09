@@ -9,7 +9,7 @@
 #include <assert.h>
 
 
-static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
+static TD_ERROR_CODE on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
 	char header[MAX_PACKAGE_NAME_LENGTH];	
 	TLIBC_UNUSED(yylloc);
@@ -37,7 +37,7 @@ static TD_ERROR_CODE on_document_begin(GENERATOR *super, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_document_end(GENERATOR *super, const YYLTYPE *yylloc, const char *file_name)
+static TD_ERROR_CODE on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {	
 	TLIBC_UNUSED(file_name);
 	TLIBC_UNUSED(yylloc);
@@ -293,7 +293,7 @@ static TD_ERROR_CODE _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_definition(GENERATOR *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static TD_ERROR_CODE on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	TLIBC_WRITER_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_WRITER_GENERATOR, super);
 	TLIBC_UNUSED(yylloc);

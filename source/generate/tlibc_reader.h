@@ -8,7 +8,7 @@
 typedef struct _TLIBC_READER_GENERATOR TLIBC_READER_GENERATOR;
 struct _TLIBC_READER_GENERATOR
 {
-	GENERATOR super;
+	generator_t super;
 };
 
 #define TLIBC_READER_SUFFIX "_reader.c"

@@ -8,7 +8,7 @@
 typedef struct _TLIBC_SQL_GENERATOR TLIBC_SQL_GENERATOR;
 struct _TLIBC_SQL_GENERATOR
 {
-	GENERATOR super;
+	generator_t super;
 	int struct_begin;
 	int first_field;
 };

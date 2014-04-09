@@ -8,7 +8,7 @@
 typedef struct _TLIBC_CS_GENERATOR TLIBC_CS_GENERATOR;
 struct _TLIBC_CS_GENERATOR
 {
-	GENERATOR super;
+	generator_t super;
 };
 
 #define TLIBC_CS_SUFFIX "_types.cs"

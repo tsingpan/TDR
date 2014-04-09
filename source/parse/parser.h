@@ -15,7 +15,7 @@ struct _PARSER
 {
 	scanner_t scanner;
 
-	GENERATOR **generator_list;
+	generator_t **generator_list;
 	uint32_t generator_num;
 		
 	SYMBOLS symbols;
@@ -25,7 +25,7 @@ struct _PARSER
 
 void parser_init(PARSER *self);
 
-int32_t parser_parse(PARSER *self, const char* file_name, GENERATOR **generator_list, uint32_t generator_list_num);
+int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generator_list, uint32_t generator_list_num);
 
 void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char *struct_name);
 

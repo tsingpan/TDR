@@ -62,7 +62,7 @@ static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
 static TLIBC_SQL_GENERATOR tlibc_sql_generator;
 static TLIBC_CS_GENERATOR tlibc_cs_generator;
 
-static GENERATOR *generator_list[TD_MAX_GENERATOR];
+static generator_t *generator_list[TD_MAX_GENERATOR];
 static uint32_t generator_num = 0;
 int main(int32_t argc, char **argv)
 {

@@ -8,7 +8,7 @@
 typedef struct _TLIBC_WRITER_HEADER_GENERATOR TLIBC_WRITER_HEADER_GENERATOR;
 struct _TLIBC_WRITER_HEADER_GENERATOR
 {
-	GENERATOR super;
+	generator_t super;
 };
 
 #define TLIBC_WRITER_HEADER_SUFFIX "_writer.h"

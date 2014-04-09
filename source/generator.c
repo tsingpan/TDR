@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-void generator_init(GENERATOR *self, const SYMBOLS *symbols)
+void generator_init(generator_t *self, const SYMBOLS *symbols)
 {
 	self->symbols = symbols;
 	self->fout = NULL;
@@ -74,7 +74,7 @@ void strncpy_notdir(char *dest, const char*src, size_t dest_len)
 	strncpy(dest, ptr, dest_len);
 }
 
-TD_ERROR_CODE generator_open(GENERATOR *self, const char *primary_file, const char *suffix)
+TD_ERROR_CODE generator_open(generator_t *self, const char *primary_file, const char *suffix)
 {
 	char target_path[TLIBC_MAX_PATH_LENGTH];
 	uint32_t i, document_name_length;
@@ -124,7 +124,7 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-void generator_print(GENERATOR *self, size_t tabs, const char* fmt, ...)
+void generator_print(generator_t *self, size_t tabs, const char* fmt, ...)
 {
 	va_list ap;
 	size_t i;
@@ -137,7 +137,7 @@ void generator_print(GENERATOR *self, size_t tabs, const char* fmt, ...)
 	va_end(ap);
 }
 
-void generator_printline(GENERATOR *self, size_t tabs, const char* fmt, ...)
+void generator_printline(generator_t *self, size_t tabs, const char* fmt, ...)
 {
 	va_list ap;
 	size_t i;
@@ -151,7 +151,7 @@ void generator_printline(GENERATOR *self, size_t tabs, const char* fmt, ...)
 	va_end(ap);
 }
 
-TD_ERROR_CODE generator_close(GENERATOR *self)
+TD_ERROR_CODE generator_close(generator_t *self)
 {
 	if(self->fout == NULL)
 	{
@@ -164,7 +164,7 @@ ERROR_RET:
 	return E_TD_ERROR;
 }
 
-static void write_char(GENERATOR *self, char c)
+static void write_char(generator_t *self, char c)
 {
 	switch(c)
 	{
@@ -205,7 +205,7 @@ static void write_char(GENERATOR *self, char c)
 	}
 }
 
-TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
+TD_ERROR_CODE generator_print_value(generator_t *self, const ST_VALUE *val)
 {
 	switch (val->type)
 	{
@@ -249,7 +249,7 @@ TD_ERROR_CODE generator_print_value(GENERATOR *self, const ST_VALUE *val)
 	}
 }
 
-TD_ERROR_CODE generator_print_type_name(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+TD_ERROR_CODE generator_print_type_name(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
 {
 	switch(simple_type->st)
 	{
@@ -294,7 +294,7 @@ TD_ERROR_CODE generator_print_type_name(GENERATOR *self, const ST_SIMPLE_TYPE *s
 	}
 }
 
-TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+TD_ERROR_CODE generator_print_ctype(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
 {
 	switch(simple_type->st)
 	{
@@ -360,7 +360,7 @@ TD_ERROR_CODE generator_print_ctype(GENERATOR *self, const ST_SIMPLE_TYPE *simpl
 	}
 }
 
-TD_ERROR_CODE generator_print_cstype(GENERATOR *self, const ST_SIMPLE_TYPE *simple_type)
+TD_ERROR_CODE generator_print_cstype(generator_t *self, const ST_SIMPLE_TYPE *simple_type)
 {
 	const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->symbols, simple_type);
 
@@ -409,7 +409,7 @@ TD_ERROR_CODE generator_print_cstype(GENERATOR *self, const ST_SIMPLE_TYPE *simp
 	}
 }
 
-TD_ERROR_CODE generator_on_definition(GENERATOR *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+TD_ERROR_CODE generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	if(self->on_definition != NULL)
 	{
@@ -419,7 +419,7 @@ TD_ERROR_CODE generator_on_definition(GENERATOR *self, const YYLTYPE *yylloc, co
 }
 
 
-TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name)
+TD_ERROR_CODE generator_on_document_begin(generator_t *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	if(self->on_document_begin != NULL)
 	{
@@ -428,7 +428,7 @@ TD_ERROR_CODE generator_on_document_begin(GENERATOR *self, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const YYLTYPE *yylloc, const char *file_name)
+TD_ERROR_CODE generator_on_document_end(generator_t *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	if(self->on_document_end != NULL)
 	{
@@ -437,7 +437,7 @@ TD_ERROR_CODE generator_on_document_end(GENERATOR *self, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-TD_ERROR_CODE generator_on_struct_begin(GENERATOR *self, const YYLTYPE *yylloc, const char * struct_name)
+TD_ERROR_CODE generator_on_struct_begin(generator_t *self, const YYLTYPE *yylloc, const char * struct_name)
 {
 	if(self->on_struct_begin != NULL)
 	{
@@ -446,7 +446,7 @@ TD_ERROR_CODE generator_on_struct_begin(GENERATOR *self, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-TD_ERROR_CODE generator_on_field(GENERATOR *self, const YYLTYPE *yylloc, const ST_FIELD *field)
+TD_ERROR_CODE generator_on_field(generator_t *self, const YYLTYPE *yylloc, const ST_FIELD *field)
 {
 	if(self->on_field != NULL)
 	{
@@ -455,7 +455,7 @@ TD_ERROR_CODE generator_on_field(GENERATOR *self, const YYLTYPE *yylloc, const S
 	return E_TD_NOERROR;
 }
 
-TD_ERROR_CODE generator_on_struct_end(GENERATOR *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+TD_ERROR_CODE generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
 {
 	if(self->on_struct_end != NULL)
 	{

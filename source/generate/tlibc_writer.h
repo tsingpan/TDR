@@ -8,7 +8,7 @@
 typedef struct _TLIBC_WRITER_GENERATOR TLIBC_WRITER_GENERATOR;
 struct _TLIBC_WRITER_GENERATOR
 {
-	GENERATOR super;
+	generator_t super;
 };
 
 #define TLIBC_WRITER_SUFFIX "_writer.c"
