@@ -32,6 +32,7 @@
 
 
 #include <string.h>
+#include <time.h>
 
 #define MAX_BUFF_SIZE 1024
 void test_compact()
@@ -87,7 +88,7 @@ void test_protocol()
 
 
 
-void test_xml()
+void test_xml_once()
 {
 	tlibc_xml_reader_t xml_reader;
 	tlibc_xml_writer_t xml_writer;	
@@ -128,27 +129,36 @@ void test_xml()
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
-#define MAX_ITEM_NUM 1024
-void test_xlsx()
+#define MAX_XML_FILES 102400
+void test_xml()
+{
+	size_t i;
+	for(i = 0; i < MAX_XML_FILES; ++i)
+	{
+		test_xml_once();
+	}
+}
+#define MAX_ITEM_NUM 65536
+item_table_t g_item_table[MAX_ITEM_NUM];
+
+void test_xlsx_read_once()
 {
 	tlibc_xlsx_reader_t xlsx_reader;
 	uint32_t i;
 	tlibc_error_code_t ret;
-	item_table_t item_table[MAX_ITEM_NUM];
+
 	uint32_t item_table_num, row;
 
 	item_table_num = 0;
-	memset(&item_table, 0, sizeof(item_table));
+	//memset(&g_item_table, 0, sizeof(g_item_table));
 
 	ret = tlibc_xlsx_reader_init(&xlsx_reader, "./gen/item.xlsx");
-	//sheet为空表示打开第第一页
 	ret = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
 	for(i = 3; i <= row; ++i)
 	{
-		
 		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);		
-		ret = tlibc_read_item_table(&xlsx_reader.super, &item_table[item_table_num]);		
+		ret = tlibc_read_item_table(&xlsx_reader.super, &g_item_table[item_table_num]);		
 
 		if(ret == E_TLIBC_EMPTY)
 		{
@@ -156,20 +166,39 @@ void test_xlsx()
 		}
 		else if(ret != E_TLIBC_NOERROR)
 		{
-			const char *location = tlibc_xlsx_last_location(&xlsx_reader);
-			if(location != NULL)
+			const char *col = tlibc_xlsx_last_col(&xlsx_reader);
+			if((col != NULL) && (col[0]))
 			{
-				fprintf(stderr, "%s, %s\n", location, tstrerror(ret));
+				fprintf(stderr, "%s%d, %s\n", col, i, tstrerror(ret));
 			}
 			else
 			{
-				fprintf(stderr, "%s\n", tstrerror(ret));
+				fprintf(stderr, "?%d, %s\n", i, tstrerror(ret));
 			}			
 		}
 		++item_table_num;
 	}	
 	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
 	tlibc_xlsx_reader_fini(&xlsx_reader);
+}
+
+//50个1m的xlsx耗时19s
+#define MAX_XLSX_FILES 50
+
+void test_xlsx()
+{
+	uint32_t i;
+	time_t start_time;
+	time_t current_time;
+
+	start_time = time(0);
+	for(i = 0; i < MAX_XLSX_FILES; ++i)
+	{
+		test_xlsx_read_once();
+	}
+	current_time = time(0);
+	printf("it takes %llu seconds by reading %u xlsx.\n", current_time - start_time, i);
+	
 }
 
 void test_mysql_insert()
@@ -327,7 +356,7 @@ int main()
 	
 	test_xml();
 	
-	test_xlsx();
+	//test_xlsx();
 
 	/*
 	test_mysql_insert();
