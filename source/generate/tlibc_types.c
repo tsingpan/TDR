@@ -7,7 +7,7 @@
 #include <string.h>
 
 
-static TD_ERROR_CODE on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
+static td_error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
 	TLIBC_UNUSED(yylloc);
 
@@ -33,7 +33,7 @@ static TD_ERROR_CODE on_document_begin(generator_t *super, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
+static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
 	TLIBC_UNUSED(yylloc);
 	TLIBC_UNUSED(file_name);
@@ -46,7 +46,7 @@ static TD_ERROR_CODE on_document_end(generator_t *super, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de_import)
+static td_error_code_t _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
 	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -59,7 +59,7 @@ static TD_ERROR_CODE _on_import(TLIBC_TYPES_GENERATOR *self, const ST_Import *de
 
 
 
-static TD_ERROR_CODE _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_const)
+static td_error_code_t _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_const)
 {
 	generator_print(&self->super, 0, "#define %s ", de_const->identifier);
 	generator_print_value(&self->super, &de_const->val);
@@ -68,7 +68,7 @@ static TD_ERROR_CODE _on_const(TLIBC_TYPES_GENERATOR *self, const ST_Const *de_c
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enum)
+static td_error_code_t _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;	
 	generator_printline(&self->super, 0, "typedef enum %s", de_enum->name);
@@ -93,7 +93,7 @@ static TD_ERROR_CODE _on_enum(TLIBC_TYPES_GENERATOR *self, const ST_ENUM *de_enu
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_LIST *field_list)
+static td_error_code_t _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_LIST *field_list)
 {
 	uint32_t i;
 	for(i = 0; i < field_list->field_list_num; ++i)
@@ -144,7 +144,7 @@ static TD_ERROR_CODE _on_field_list(TLIBC_TYPES_GENERATOR *self, const ST_FIELD_
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
+static td_error_code_t _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de_struct)
 {	
 	generator_printline(&self->super, 0, "typedef struct %s", de_struct->name);
 	generator_printline(&self->super, 0, "{");
@@ -156,7 +156,7 @@ static TD_ERROR_CODE _on_struct(TLIBC_TYPES_GENERATOR *self, const ST_STRUCT *de
 }
 
 
-static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_UNION_FIELD_LIST *union_field_list)
+static td_error_code_t _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_UNION_FIELD_LIST *union_field_list)
 {
 	uint32_t i;
 	for(i = 0; i < union_field_list->union_field_list_num; ++i)
@@ -181,7 +181,7 @@ static TD_ERROR_CODE _on_union_field_list(TLIBC_TYPES_GENERATOR *self, const ST_
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
+static td_error_code_t _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_union)
 {
 	generator_printline(&self->super, 0, "typedef union %s", de_union->name);
 	generator_printline(&self->super, 0, "{");
@@ -192,7 +192,7 @@ static TD_ERROR_CODE _on_union(TLIBC_TYPES_GENERATOR *self, const ST_UNION *de_u
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *de_typedef)
+static td_error_code_t _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *de_typedef)
 {
 	generator_print(&self->super, 0, "typedef ");
 	generator_print_ctype(&self->super, &de_typedef->type);
@@ -206,7 +206,7 @@ static TD_ERROR_CODE _on_typedef(TLIBC_TYPES_GENERATOR *self, const ST_TYPEDEF *
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_comment(TLIBC_TYPES_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
+static td_error_code_t _on_comment(TLIBC_TYPES_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
 {
 	if(de_unix_comment->text[0])
 	{
@@ -215,7 +215,7 @@ static TD_ERROR_CODE _on_comment(TLIBC_TYPES_GENERATOR *self, const ST_UNIX_COMM
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	TLIBC_TYPES_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_TYPES_GENERATOR, super);
 	TLIBC_UNUSED(yylloc);
@@ -240,7 +240,7 @@ static TD_ERROR_CODE on_definition(generator_t *super, const YYLTYPE *yylloc, co
 	}
 }
 
-void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const SYMBOLS *symbols)
+void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 

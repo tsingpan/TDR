@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-static TD_ERROR_CODE on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
+static td_error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
 	char header[MAX_PACKAGE_NAME_LENGTH];	
 	TLIBC_UNUSED(yylloc);
@@ -38,7 +38,7 @@ static TD_ERROR_CODE on_document_begin(generator_t *super, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
+static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {	
 	TLIBC_UNUSED(file_name);
 	TLIBC_UNUSED(yylloc);
@@ -50,7 +50,7 @@ static TD_ERROR_CODE on_document_end(generator_t *super, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_const(TLIBC_CS_GENERATOR *self, const ST_Const *de_const)
+static td_error_code_t _on_const(TLIBC_CS_GENERATOR *self, const ST_Const *de_const)
 {
 	generator_printline(&self->super, 1, "public static partial class Constants");
 	generator_printline(&self->super, 1, "{");
@@ -64,7 +64,7 @@ static TD_ERROR_CODE _on_const(TLIBC_CS_GENERATOR *self, const ST_Const *de_cons
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_enum(TLIBC_CS_GENERATOR *self, const ST_ENUM *de_enum)
+static td_error_code_t _on_enum(TLIBC_CS_GENERATOR *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;
 
@@ -205,7 +205,7 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
-				const SYMBOL* refer_type = NULL;
+				const td_symbol_t* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "writer.WriteVectorBegin();");
 				generator_printline(&self->super, 0, "");
@@ -270,7 +270,7 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
 			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
-			const SYMBOL* refer_type = NULL;
+			const td_symbol_t* refer_type = NULL;
 
 			generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
 			generator_printline(&self->super, 4, "{");
@@ -369,7 +369,7 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 			if(de_struct->field_list.field_list[i].type.ct.ct == E_CT_VECTOR)
 			{
 				const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
-				const SYMBOL* refer_type = NULL;
+				const td_symbol_t* refer_type = NULL;
 
 				generator_printline(&self->super, 4, "reader.ReadVectorBegin();");
 				generator_printline(&self->super, 0, "");
@@ -437,7 +437,7 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)
 		{
 			const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.st);
-			const SYMBOL* refer_type = NULL;
+			const td_symbol_t* refer_type = NULL;
 			generator_printline(&self->super, 4, "if(reader.ReadFieldBegin(\"%s\"))", de_struct->field_list.field_list[i].identifier);
 			generator_printline(&self->super, 4, "{");
 			if(st->st == E_ST_REFER)
@@ -491,7 +491,7 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 
 
 
-static TD_ERROR_CODE _on_struct(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct)
+static td_error_code_t _on_struct(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct)
 {
 	print_struct_header(self, de_struct->name, &de_struct->field_list);
 
@@ -553,7 +553,7 @@ static void _on_union_write(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
 		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
-		const SYMBOL* refer_type = NULL;
+		const td_symbol_t* refer_type = NULL;
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 4, "if(writer.WriteFieldBegin(\"%s\"))", de_union->union_field_list.union_field_list[i].name);
 		generator_printline(&self->super, 4, "{");
@@ -607,7 +607,7 @@ static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	for(i = 0; i < de_union->union_field_list.union_field_list_num; ++i)
 	{
 		const ST_SIMPLE_TYPE *st = symbols_get_real_type(self->super.symbols, &de_union->union_field_list.union_field_list[i].simple_type);
-		const SYMBOL* refer_type = NULL;
+		const td_symbol_t* refer_type = NULL;
 
 		generator_printline(&self->super, 3, "case %s.%s:", de_union->parameters.par_list[0].type.st_refer, de_union->union_field_list.union_field_list[i].key);
 		generator_printline(&self->super, 4, "if(reader.ReadFieldBegin(\"%s\"))", de_union->union_field_list.union_field_list[i].name);
@@ -655,7 +655,7 @@ static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 2, "}");
 }
 
-static TD_ERROR_CODE _on_union(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
+static td_error_code_t _on_union(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 {	
 	print_union_header(self, de_union->name, &de_union->union_field_list);
 	
@@ -668,13 +668,13 @@ static TD_ERROR_CODE _on_union(TLIBC_CS_GENERATOR *self, const ST_UNION *de_unio
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE _on_unix_comment(TLIBC_CS_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
+static td_error_code_t _on_unix_comment(TLIBC_CS_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
 {
 	generator_printline(&self->super, 0, "//%s", de_unix_comment->text);
 	return E_TD_NOERROR;
 }
 
-static TD_ERROR_CODE on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
 	TLIBC_CS_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_CS_GENERATOR, super);
 	TLIBC_UNUSED(yylloc);
@@ -697,7 +697,7 @@ static TD_ERROR_CODE on_definition(generator_t *super, const YYLTYPE *yylloc, co
 	}
 }
 
-void tlibc_cs_generator_init(TLIBC_CS_GENERATOR *self, const SYMBOLS *symbols)
+void tlibc_cs_generator_init(TLIBC_CS_GENERATOR *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 

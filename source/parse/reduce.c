@@ -161,9 +161,9 @@ void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const char *ident
 	++(current->arg_list_num);
 }
 
-void reduce_Value_tok_count(const SYMBOLS *symbols, ST_VALUE *current, const char *identifier)
+void reduce_Value_tok_count(const td_symbols_t *symbols, ST_VALUE *current, const char *identifier)
 {
-	const SYMBOL *symbol = symbols_search(symbols, "", identifier);
+	const td_symbol_t *symbol = symbols_search(symbols, "", identifier);
 
 	current->type = E_SNVT_UINT64;
 	switch(symbol->type)

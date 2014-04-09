@@ -13,6 +13,6 @@ struct _TLIBC_WRITER_HEADER_GENERATOR
 
 #define TLIBC_WRITER_HEADER_SUFFIX "_writer.h"
 
-void tlibc_writer_header_generator_init(TLIBC_WRITER_HEADER_GENERATOR *self, const SYMBOLS *symbols);
+void tlibc_writer_header_generator_init(TLIBC_WRITER_HEADER_GENERATOR *self, const td_symbols_t *symbols);
 
 #endif//_H_TLIBC_WRITER_HEADER

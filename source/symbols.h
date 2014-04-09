@@ -8,7 +8,7 @@
 
 #include "core/tlibc_hash.h"
 
-typedef enum _SYMBOL_TYPE
+typedef enum td_symbol_type_e
 {
 	EN_HST_VALUE = 0,		//const and enumdef
 	EN_HST_TYPEDEF = 1,
@@ -17,34 +17,34 @@ typedef enum _SYMBOL_TYPE
 	EN_HST_ENUM = 4,
 	EN_HST_STRUCT = 5,
 	EN_HST_UNION = 6,
-}SYMBOL_TYPE;
+}td_symbol_type_t;
 
-typedef struct _ST_SYMBOL_ENUM
+typedef struct td_symbol_enum_s
 {
 	uint32_t enum_def_list_num;
 	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-}ST_SYMBOL_ENUM;
+}td_symbol_enum_t;
 
-typedef struct _ST_UNION_SYMBOL ST_UNION_SYMBOL;
-struct _ST_UNION_SYMBOL
+typedef struct ts_symbol_union_s ts_symbol_union_t;
+struct ts_symbol_union_s
 {
 	ST_Parameters para;
 	uint32_t union_field_list_num;
 };
 
-typedef union _SYMBOL_BODY
+typedef union td_symbol_body_u
 {
 	ST_TYPEDEF type;
 	ST_VALUE val;
-	ST_UNION_SYMBOL union_symbol;
+	ts_symbol_union_t union_symbol;
 	ST_FIELD field;
-	ST_SYMBOL_ENUM symbol_enum;
+	td_symbol_enum_t symbol_enum;
 
 	uint32_t struct_field_list_num;
-}SYMBOL_BODY;
+}td_symbol_body_t;
 
 #define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_LENGTH_OF_IDENTIFIER * 2
-typedef struct _SYMBOL
+typedef struct td_symbol_s
 {
 	tlibc_hash_head_t hash_head;
 	char key[MAX_SYMBOL_KEY_LENGTH];
@@ -52,13 +52,13 @@ typedef struct _SYMBOL
 
 	YYLTYPE yylloc;
 
-	SYMBOL_TYPE type;
-	SYMBOL_BODY body;
-}SYMBOL;
+	td_symbol_type_t type;
+	td_symbol_body_t body;
+}td_symbol_t;
 
 #define MAX_SYMBOL_LIST_NUM 65536
 #define MAX_SYMBOL_BUCKETS 65536
-typedef struct _PARSER_SYMBOLS
+typedef struct td_symbols_s
 {
 	tlibc_hash_bucket_t symbol_buckets[MAX_SYMBOL_BUCKETS];
 	tlibc_hash_t symbols;
@@ -70,41 +70,41 @@ typedef struct _PARSER_SYMBOLS
 	const ST_Parameter *para;
 
 	uint32_t symbol_list_num;
-	SYMBOL symbol_list[MAX_SYMBOL_LIST_NUM];
-}SYMBOLS;
+	td_symbol_t symbol_list[MAX_SYMBOL_LIST_NUM];
+}td_symbols_t;
 
 
 
-void symbols_init(SYMBOLS *self);
+void symbols_init(td_symbols_t *self);
 
-void symbols_clear(SYMBOLS *self);
+void symbols_clear(td_symbols_t *self);
 
-const SYMBOL* symbols_search(const SYMBOLS *self, const char* preffix, const char* name);
+const td_symbol_t* symbols_search(const td_symbols_t *self, const char* preffix, const char* name);
 
-void symbols_save(SYMBOLS *self, const char* preffix, const char *name, SYMBOL *symbol);
+void symbols_save(td_symbols_t *self, const char* preffix, const char *name, td_symbol_t *symbol);
 
 //过滤typedef
-const ST_SIMPLE_TYPE* symbols_get_real_type(const SYMBOLS *self, const ST_SIMPLE_TYPE* sn_type);
+const ST_SIMPLE_TYPE* symbols_get_real_type(const td_symbols_t *self, const ST_SIMPLE_TYPE* sn_type);
 
 //过滤常量赋值
-const ST_VALUE* symbols_get_real_value(const SYMBOLS *self, const ST_VALUE* sn_value);
+const ST_VALUE* symbols_get_real_value(const td_symbols_t *self, const ST_VALUE* sn_value);
 
 
-void symbols_add_Typedef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef);
+void symbols_add_Typedef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef);
 
-void symbols_add_Enum(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum);
+void symbols_add_Enum(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum);
 
-void symbols_add_UnionField(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field);
+void symbols_add_UnionField(td_symbols_t *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field);
 
-void symbols_add_Field(SYMBOLS *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
+void symbols_add_Field(td_symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
 
-void symbols_add_Struct(SYMBOLS *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct);
+void symbols_add_Struct(td_symbols_t *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct);
 
-void symbols_add_Union(SYMBOLS *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
+void symbols_add_Union(td_symbols_t *self, const YYLTYPE *yylloc, const ST_UNION *de_union);
 
-void symbols_add_EnumDef(SYMBOLS *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def);
+void symbols_add_EnumDef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def);
 
-void symbols_add_Const(SYMBOLS *self, const YYLTYPE *yylloc, const ST_Const *pn_const);
+void symbols_add_Const(td_symbols_t *self, const YYLTYPE *yylloc, const ST_Const *pn_const);
 
 
 #endif //_H_SYMBOLS

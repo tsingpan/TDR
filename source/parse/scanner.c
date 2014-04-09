@@ -167,7 +167,7 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 	uint32_t len = 0;
 	char *real_path = NULL;
 	scanner_context_t *scanner = NULL;
-	TD_ERROR_CODE ret = E_TD_NOERROR;
+	td_error_code_t ret = E_TD_NOERROR;
 
 	if(self->stack_num >= MAX_SCANNER_STACK_SIZE)
 	{

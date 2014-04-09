@@ -4,7 +4,7 @@
 
 #include <assert.h>
 #include <stdint.h>
-void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_defined(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	if(symbols_search(symbols, prefix, identifier) == NULL)
 	{
@@ -12,9 +12,9 @@ void check_identifier_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_not_defined(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t *symbol = symbols_search(symbols, prefix, identifier);
 	if(symbol != NULL)
 	{
 		scanner_error(yylloc, E_LS_IDENTIFIER_REDEFINITION, prefix, identifier);
@@ -22,9 +22,9 @@ void check_identifier_not_defined(const SYMBOLS *symbols, const YYLTYPE *yylloc,
 	}
 }
 
-void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_is_type(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t *symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbols != NULL);
 
 	if((symbol->type != EN_HST_TYPEDEF) && (symbol->type != EN_HST_ENUM) 
@@ -34,9 +34,9 @@ void check_identifier_is_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, con
 	}
 }
 
-void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_is_value(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const SYMBOL * symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t * symbol = symbols_search(symbols, prefix, identifier);
 
 	if(symbol->type != EN_HST_VALUE)
 	{
@@ -44,9 +44,9 @@ void check_identifier_is_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, co
 	}
 }
 
-void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_not_defined_as_value(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const SYMBOL * symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t * symbol = symbols_search(symbols, prefix, identifier);
 
 	if((symbol) && (symbol->type == EN_HST_VALUE))
 	{
@@ -55,10 +55,10 @@ void check_identifier_not_defined_as_value(const SYMBOLS *symbols, const YYLTYPE
 	}
 }
 
-void check_identifier_is_positive_integer(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_is_positive_integer(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const ST_VALUE *val = NULL;
-	const SYMBOL *symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t *symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbols != NULL);
 
 	assert(symbol->type == EN_HST_VALUE);
@@ -125,7 +125,7 @@ done:
 }
 
 //检查类型是否为整数
-void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+void check_integer_type(const td_symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
 {
 	const ST_SIMPLE_TYPE *real_type = symbols_get_real_type(symbols, simple_type);
 	assert(real_type != NULL);
@@ -143,7 +143,7 @@ void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_
 		break;
 	case E_ST_REFER:
 		{
-			const SYMBOL* enum_type = symbols_search(symbols, "", real_type->st_refer);
+			const td_symbol_t* enum_type = symbols_search(symbols, "", real_type->st_refer);
 			assert(enum_type != NULL);
 			if(enum_type->type != EN_HST_ENUM)
 			{
@@ -156,7 +156,7 @@ void check_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_
 	}
 }
 
-void check_integer_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_VALUE *val)
+void check_integer_value(const td_symbols_t *symbols, const YYLTYPE *yylloc, const ST_VALUE *val)
 {
 	const ST_VALUE *real_val;
 	real_val = symbols_get_real_value(symbols, val);
@@ -174,9 +174,9 @@ void check_integer_value(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST
 	}
 }
 
-void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_refer_to_a_field_with_integer_type(const td_symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const SYMBOL* symbol = symbols_search(symbols, prefix, identifier);
+	const td_symbol_t* symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbol != NULL);
 	assert(symbol->type == EN_HST_FIELD);
 	if(symbol->body.field.type.type != E_SNT_SIMPLE)
@@ -187,7 +187,7 @@ void check_identifier_refer_to_a_field_with_integer_type(const SYMBOLS *symbols,
 	check_integer_type(symbols, yylloc, &symbol->body.field.type.st);
 }
 
-void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments)
+void check_arguments(const td_symbols_t *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments)
 {
 	const ST_SIMPLE_TYPE *field_type = NULL;
 
@@ -211,7 +211,7 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 	//获取实际参数类型
 	if(arguments->arg_list_num == 1)
 	{
-		const SYMBOL* arg_field_symbol = NULL;
+		const td_symbol_t* arg_field_symbol = NULL;
 		arg_field_symbol = symbols_search(symbols, symbols->struct_name, arguments->arg_list[0]);
 		assert(arg_field_symbol != NULL);
 		assert(arg_field_symbol->type == EN_HST_FIELD);
@@ -226,7 +226,7 @@ void check_arguments(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_TYP
 	//获取形式参数类
 	if(field_type->st == E_ST_REFER)
 	{
-		const SYMBOL* union_symbol = symbols_search(symbols, "", field_type->st_refer);
+		const td_symbol_t* union_symbol = symbols_search(symbols, "", field_type->st_refer);
 		assert(union_symbol != NULL);
 		if(union_symbol->type == EN_HST_UNION)
 		{
@@ -286,7 +286,7 @@ default:\
 	scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);\
 }
 
-void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val)
+void check_value_type(const td_symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val)
 {
 	const ST_SIMPLE_TYPE *real_type_ptr = NULL;
 	const ST_VALUE *real_val_ptr = NULL;
@@ -372,9 +372,9 @@ void check_value_type(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SI
 	}
 }
 
-void check_simpletype_is_enum(const SYMBOLS *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
+void check_simpletype_is_enum(const td_symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type)
 {
-	const SYMBOL* enum_symbol;
+	const td_symbol_t* enum_symbol;
 	simple_type = symbols_get_real_type(symbols, simple_type);
 	assert(simple_type != NULL);
 	if(simple_type->st != E_ST_REFER)

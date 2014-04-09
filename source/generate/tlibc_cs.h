@@ -13,6 +13,6 @@ struct _TLIBC_CS_GENERATOR
 
 #define TLIBC_CS_SUFFIX "_types.cs"
 
-void tlibc_cs_generator_init(TLIBC_CS_GENERATOR *self, const SYMBOLS *symbols);
+void tlibc_cs_generator_init(TLIBC_CS_GENERATOR *self, const td_symbols_t *symbols);
 
 #endif//_H_TLIBC_CS

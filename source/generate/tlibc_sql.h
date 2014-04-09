@@ -15,6 +15,6 @@ struct _TLIBC_SQL_GENERATOR
 
 #define TLIBC_SQL_SUFFIX "_tables.sql"
 
-void tlibc_sql_generator_init(TLIBC_SQL_GENERATOR *self, const SYMBOLS *symbols);
+void tlibc_sql_generator_init(TLIBC_SQL_GENERATOR *self, const td_symbols_t *symbols);
 
 #endif//_H_TLIBC_SQL_HEADER

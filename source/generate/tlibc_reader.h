@@ -13,6 +13,6 @@ struct _TLIBC_READER_GENERATOR
 
 #define TLIBC_READER_SUFFIX "_reader.c"
 
-void tlibc_reader_generator_init(TLIBC_READER_GENERATOR *self, const SYMBOLS *symbols);
+void tlibc_reader_generator_init(TLIBC_READER_GENERATOR *self, const td_symbols_t *symbols);
 
 #endif//_H_TLIBC_READER

@@ -47,7 +47,7 @@ void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const char *ident
 
 void reduce_ArgumentList_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const ST_ARGUMENTS* argument_list, const char *identifier);
 
-void reduce_Value_tok_count(const SYMBOLS *symbols, ST_VALUE *current, const char *identifier);
+void reduce_Value_tok_count(const td_symbols_t *symbols, ST_VALUE *current, const char *identifier);
 
 void reduce_Union(ST_UNION *current, const char *identifier, const ST_Parameters *parameters);
 

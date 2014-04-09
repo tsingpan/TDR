@@ -14,6 +14,6 @@ struct _TLIBC_TYPES_GENERATOR
 
 #define TLIBC_TYPES_SUFFIX "_types.h"
 
-void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const SYMBOLS *symbols);
+void tlibc_types_generator_init(TLIBC_TYPES_GENERATOR *self, const td_symbols_t *symbols);
 
 #endif//_H_TLIBC_TYPES
