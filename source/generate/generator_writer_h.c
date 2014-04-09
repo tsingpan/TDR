@@ -69,7 +69,7 @@ static error_code_t _on_import(td_generator_writer_h_t *self, const syn_import_t
 
 static error_code_t _on_enum(td_generator_writer_h_t *self, const syn_enum_t *de_enum)
 {
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const enum %s *data);", de_enum->name, de_enum->name);
+	generator_printline(&self->super, 0, "tlibc_error_code_t tlibc_write_%s(tlibc_abstract_writer_t *self, const enum %s *data);", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -77,7 +77,7 @@ static error_code_t _on_enum(td_generator_writer_h_t *self, const syn_enum_t *de
 
 static error_code_t _on_struct(td_generator_writer_h_t *self, const syn_struct_t *de_struct)
 {
-	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const struct %s *data);", de_struct->name, de_struct->name);
+	generator_printline(&self->super, 0, "tlibc_error_code_t tlibc_write_%s(tlibc_abstract_writer_t *self, const struct %s *data);", de_struct->name, de_struct->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -85,7 +85,7 @@ static error_code_t _on_struct(td_generator_writer_h_t *self, const syn_struct_t
 
 static error_code_t _on_union(td_generator_writer_h_t *self, const syn_union_t *de_union)
 {
-	generator_print(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const union %s *data, ", de_union->name, de_union->name);
+	generator_print(&self->super, 0, "tlibc_error_code_t tlibc_write_%s(tlibc_abstract_writer_t *self, const union %s *data, ", de_union->name, de_union->name);
 	generator_print_ctype(&self->super, &de_union->parameters.par_list[0].type);
 	generator_printline(&self->super, 0, " selector);");
 	generator_printline(&self->super, 0, "");

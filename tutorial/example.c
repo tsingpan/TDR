@@ -14,8 +14,8 @@
 #include "protocol/tlibc_xlsx_reader.h"
 
 
-#include "protocol/tlibc_bind_reader.h"
-#include "protocol/tlibc_bind_writer.h"
+#include "protocol/tlibc_mybind_reader.h"
+#include "protocol/tlibc_mybind_writer.h"
 
 
 #include "protocol_types.h"
@@ -36,8 +36,8 @@
 void test_compact()
 {
 	char buff[MAX_BUFF_SIZE];
-	TLIBC_COMPACT_WRITER compact_writer;
-	TLIBC_COMPACT_READER compact_reader;
+	tlibc_compact_writer_t compact_writer;
+	tlibc_compact_reader_t compact_reader;
 	message_t message;
 	int ret;
 
@@ -57,8 +57,8 @@ void test_compact()
 void test_binary()
 {
 	char buff[MAX_BUFF_SIZE];
-	TLIBC_BINARY_WRITER writer;
-	TLIBC_BINARY_READER reader;
+	tlibc_binary_writer_t writer;
+	tlibc_binary_reader_t reader;
 	message_t message;
 	int ret;
 
@@ -88,8 +88,8 @@ void test_protocol()
 
 void test_xml()
 {
-	TLIBC_XML_READER xml_reader;
-	TLIBC_XML_WRITER xml_writer;	
+	tlibc_xml_reader_t xml_reader;
+	tlibc_xml_writer_t xml_writer;	
 	int ret;
 	tconnd_config_t config;
 
@@ -163,7 +163,7 @@ void test_xlsx()
 
 void test_mysql_insert()
 {
-	TLIBC_ERROR_CODE ret;
+	tlibc_error_code_t ret;
 	MYSQL *mysql = NULL;	
 	const char *sql_insert = "insert into user value(?, ?, ?, ?);";
 	MYSQL_STMT *stmt;
@@ -172,7 +172,7 @@ void test_mysql_insert()
 
 	MYSQL_BIND   par_bind[1024];
 
-	tlibc_bind_reader_t bind_reader;
+	tlibc_mybind_reader_t bind_reader;
 
 	mysql = mysql_init(NULL);
 	if(mysql == NULL)
@@ -232,7 +232,7 @@ void test_mysql_insert()
 
 void test_mysql_select()
 {
-	TLIBC_ERROR_CODE ret;
+	tlibc_error_code_t ret;
 	MYSQL *mysql = NULL;	
 	const char *sql_insert = "select * from user_s;";
 	MYSQL_STMT *stmt;
@@ -241,7 +241,7 @@ void test_mysql_select()
 
 	MYSQL_BIND   res_bind[1024];
 
-	tlibc_bind_writer_t bind_writer;
+	tlibc_mybind_writer_t bind_writer;
 
 	mysql = mysql_init(NULL);
 	if(mysql == NULL)
