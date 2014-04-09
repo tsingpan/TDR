@@ -89,7 +89,7 @@ void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char* str
 	}
 }
 
-void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
+void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
@@ -101,7 +101,7 @@ void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_fie
 	}
 }
 
-void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
@@ -114,7 +114,7 @@ void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *
 }
 
 //do
-void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition)
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definition_t *pn_definition)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{

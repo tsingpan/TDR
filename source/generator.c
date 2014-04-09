@@ -409,7 +409,7 @@ error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *
 	}
 }
 
-error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition)
 {
 	if(self->on_definition != NULL)
 	{
@@ -446,7 +446,7 @@ error_code_t generator_on_struct_begin(generator_t *self, const YYLTYPE *yylloc,
 	return E_TD_NOERROR;
 }
 
-error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const ST_FIELD *field)
+error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field)
 {
 	if(self->on_field != NULL)
 	{
@@ -455,7 +455,7 @@ error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const 
 	return E_TD_NOERROR;
 }
 
-error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
 {
 	if(self->on_struct_end != NULL)
 	{

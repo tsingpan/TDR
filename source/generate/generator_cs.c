@@ -50,7 +50,7 @@ static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, c
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_const(generator_cs_t *self, const ST_Const *de_const)
+static error_code_t _on_const(generator_cs_t *self, const syn_const_t *de_const)
 {
 	generator_printline(&self->super, 1, "public static partial class Constants");
 	generator_printline(&self->super, 1, "{");
@@ -64,7 +64,7 @@ static error_code_t _on_const(generator_cs_t *self, const ST_Const *de_const)
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_enum(generator_cs_t *self, const ST_ENUM *de_enum)
+static error_code_t _on_enum(generator_cs_t *self, const syn_enum_t *de_enum)
 {
 	uint32_t i;
 
@@ -89,7 +89,7 @@ static error_code_t _on_enum(generator_cs_t *self, const ST_ENUM *de_enum)
 	return E_TD_NOERROR;
 }
 
-static void print_struct_header(generator_cs_t *self, const char *name, const ST_FIELD_LIST *field_list)
+static void print_struct_header(generator_cs_t *self, const char *name, const syn_field_list_t *field_list)
 {
 	size_t i;
 
@@ -97,7 +97,7 @@ static void print_struct_header(generator_cs_t *self, const char *name, const ST
 	generator_printline(&self->super, 1, "{");
 	for(i = 0; i < field_list->field_list_num; ++i)
 	{
-		const ST_FIELD *field = &field_list->field_list[i];
+		const syn_field_t *field = &field_list->field_list[i];
 		const syn_simple_type_t *st = NULL;
 		
 
@@ -156,7 +156,7 @@ static void print_struct_header(generator_cs_t *self, const char *name, const ST
 	}
 }
 
-static void _on_struct_write(generator_cs_t *self, const ST_STRUCT *de_struct)
+static void _on_struct_write(generator_cs_t *self, const syn_struct_t *de_struct)
 {
 	uint32_t i, j;
 
@@ -320,7 +320,7 @@ static void _on_struct_write(generator_cs_t *self, const ST_STRUCT *de_struct)
 }
 
 
-static void _on_struct_read(generator_cs_t *self, const ST_STRUCT *de_struct)
+static void _on_struct_read(generator_cs_t *self, const syn_struct_t *de_struct)
 {
 	uint32_t i, j;
 
@@ -491,7 +491,7 @@ static void _on_struct_read(generator_cs_t *self, const ST_STRUCT *de_struct)
 
 
 
-static error_code_t _on_struct(generator_cs_t *self, const ST_STRUCT *de_struct)
+static error_code_t _on_struct(generator_cs_t *self, const syn_struct_t *de_struct)
 {
 	print_struct_header(self, de_struct->name, &de_struct->field_list);
 
@@ -505,7 +505,7 @@ static error_code_t _on_struct(generator_cs_t *self, const ST_STRUCT *de_struct)
 }
 
 
-static void print_union_header(generator_cs_t *self, const char *name, const ST_UNION_FIELD_LIST *union_field_list)
+static void print_union_header(generator_cs_t *self, const char *name, const syn_union_field_list_t *union_field_list)
 {
 	size_t i;
 
@@ -513,7 +513,7 @@ static void print_union_header(generator_cs_t *self, const char *name, const ST_
 	generator_printline(&self->super, 1, "{");
 	for(i = 0; i < union_field_list->union_field_list_num; ++i)
 	{
-		const ST_UNION_FIELD *field = &union_field_list->union_field_list[i];
+		const syn_union_field_t *field = &union_field_list->union_field_list[i];
 		const syn_simple_type_t *st = symbols_get_real_type(self->super.symbols, &field->simple_type);
 
 		generator_print(&self->super, 2, "private ");
@@ -542,7 +542,7 @@ static void print_union_header(generator_cs_t *self, const char *name, const ST_
 	}
 }
 
-static void _on_union_write(generator_cs_t *self, const ST_UNION *de_union)
+static void _on_union_write(generator_cs_t *self, const syn_union_t *de_union)
 {
 	uint32_t i;
 	generator_printline(&self->super, 2, "public void Write(TWriter writer, %s selector)", de_union->parameters.par_list[0].type.st_refer);
@@ -596,7 +596,7 @@ static void _on_union_write(generator_cs_t *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 2, "}");
 }
 
-static void _on_union_read(generator_cs_t *self, const ST_UNION *de_union)
+static void _on_union_read(generator_cs_t *self, const syn_union_t *de_union)
 {
 	uint32_t i;
 	generator_printline(&self->super, 2, "public void Read(TReader reader, %s selector)", de_union->parameters.par_list[0].type.st_refer);
@@ -655,7 +655,7 @@ static void _on_union_read(generator_cs_t *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 2, "}");
 }
 
-static error_code_t _on_union(generator_cs_t *self, const ST_UNION *de_union)
+static error_code_t _on_union(generator_cs_t *self, const syn_union_t *de_union)
 {	
 	print_union_header(self, de_union->name, &de_union->union_field_list);
 	
@@ -674,7 +674,7 @@ static error_code_t _on_unix_comment(generator_cs_t *self, const syn_unix_commen
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const syn_definition_t *definition)
 {
 	generator_cs_t *self = TLIBC_CONTAINER_OF(super, generator_cs_t, super);
 	TLIBC_UNUSED(yylloc);

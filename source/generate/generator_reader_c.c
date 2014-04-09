@@ -48,7 +48,7 @@ static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, c
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_import(generator_reader_c_t *self, const ST_Import *de_import)
+static error_code_t _on_import(generator_reader_c_t *self, const syn_import_t *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
 	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -62,7 +62,7 @@ static error_code_t _on_import(generator_reader_c_t *self, const ST_Import *de_i
 
 
 //todoÓÅ»¯×Ö·û´®Æ¥Åä´úÂë
-static error_code_t _on_enum(generator_reader_c_t *self, const ST_ENUM *de_enum)
+static error_code_t _on_enum(generator_reader_c_t *self, const syn_enum_t *de_enum)
 {
 	uint32_t i;
 	
@@ -114,7 +114,7 @@ static error_code_t _on_enum(generator_reader_c_t *self, const ST_ENUM *de_enum)
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_struct(generator_reader_c_t *self, const ST_STRUCT *de_struct)
+static error_code_t _on_struct(generator_reader_c_t *self, const syn_struct_t *de_struct)
 {
 	uint32_t i;
 	generator_printline(&self->super, 0, "");
@@ -249,7 +249,7 @@ static error_code_t _on_struct(generator_reader_c_t *self, const ST_STRUCT *de_s
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_union(generator_reader_c_t *self, const ST_UNION *de_union)
+static error_code_t _on_union(generator_reader_c_t *self, const syn_union_t *de_union)
 {
 	uint32_t i;
 
@@ -299,7 +299,7 @@ static error_code_t _on_union(generator_reader_c_t *self, const ST_UNION *de_uni
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const syn_definition_t *definition)
 {
 	generator_reader_c_t *self = TLIBC_CONTAINER_OF(super, generator_reader_c_t, super);
 	TLIBC_UNUSED(yylloc);

@@ -51,7 +51,7 @@ static error_code_t on_struct_begin(generator_t *super, const YYLTYPE *yylloc, c
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const ST_FIELD *field)
+static error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const syn_field_t *field)
 {
 	generator_sql_t *self = TLIBC_CONTAINER_OF(super, generator_sql_t, super);
 
@@ -170,7 +170,7 @@ static error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const ST
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_struct_end(generator_t *super, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
+static error_code_t on_struct_end(generator_t *super, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
 {
 	generator_sql_t *self = TLIBC_CONTAINER_OF(super, generator_sql_t, super);
 	TLIBC_UNUSED(yylloc);

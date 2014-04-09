@@ -25,11 +25,11 @@ struct generator_s
 
 	error_code_t (*on_document_begin)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_document_end)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
-	error_code_t (*on_definition)(generator_t *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition);
+	error_code_t (*on_definition)(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
 
 	error_code_t (*on_struct_begin)(generator_t *self, const YYLTYPE *yylloc, const char * struct_name);
-	error_code_t (*on_field)(generator_t *self, const YYLTYPE *yylloc, const ST_FIELD *field);
-	error_code_t (*on_struct_end)(generator_t *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct);
+	error_code_t (*on_field)(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field);
+	error_code_t (*on_struct_end)(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 };
 
 void generator_init(generator_t *self, const symbols_t *symbols);
@@ -55,7 +55,7 @@ error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix);
 
 //virtual functions
-error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const ST_DEFINITION *definition);
+error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
 
 error_code_t generator_on_document_begin(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 
@@ -63,8 +63,8 @@ error_code_t generator_on_document_end(generator_t *self, const YYLTYPE *yylloc,
 
 error_code_t generator_on_struct_begin(generator_t *self, const YYLTYPE *yylloc, const char * struct_name);
 
-error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const ST_FIELD *field);
+error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field);
 
-error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct);
+error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 
 #endif

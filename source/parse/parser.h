@@ -20,7 +20,7 @@ struct _PARSER
 		
 	symbols_t symbols;
 
-	ST_DEFINITION pn_definition;
+	syn_definition_t pn_definition;
 };
 
 void parser_init(PARSER *self);
@@ -29,10 +29,10 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generato
 
 void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char *struct_name);
 
-void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field);
+void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field);
 
-void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct);
+void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 
-void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const ST_DEFINITION *pn_definition);
+void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definition_t *pn_definition);
 
 #endif//_H_PARSER

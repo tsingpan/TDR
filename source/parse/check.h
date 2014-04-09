@@ -42,7 +42,7 @@ void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const 
 void check_identifier_refer_to_a_field_with_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier);
 
 //检查实际参数和形式参数是否匹配
-void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments);
+void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_type_t *type, const syn_arguments_t *arguments);
 
 //检查字符串长度是否超过限制
 void check_strlen_too_long(const YYLTYPE *yylloc, const char *str, const char *suffix, uint32_t limit);
@@ -54,7 +54,7 @@ void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const syn
 void check_simpletype_is_enum(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_simple_type_t *simple_type);
 
 //检查枚举不包含重复元素
-void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, uint32_t index);
+void check_enumdef_is_unique(const YYLTYPE *yylloc, const syn_enum_t *pn_enum, uint32_t index);
 
 //检查字符串是否相等
 void check_str_equal(const YYLTYPE *yylloc, const char *src, const char* dst);

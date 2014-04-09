@@ -187,7 +187,7 @@ void check_identifier_refer_to_a_field_with_integer_type(const symbols_t *symbol
 	check_integer_type(symbols, yylloc, &symbol->body.field.type.st);
 }
 
-void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_TYPE *type, const ST_ARGUMENTS *arguments)
+void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_type_t *type, const syn_arguments_t *arguments)
 {
 	const syn_simple_type_t *field_type = NULL;
 
@@ -390,7 +390,7 @@ void check_simpletype_is_enum(const symbols_t *symbols, const YYLTYPE *yylloc, c
 	}
 }
 
-void check_enumdef_is_unique(const YYLTYPE *yylloc, const ST_ENUM *pn_enum, uint32_t index)
+void check_enumdef_is_unique(const YYLTYPE *yylloc, const syn_enum_t *pn_enum, uint32_t index)
 {
 	uint32_t i;
 

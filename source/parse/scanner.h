@@ -19,12 +19,12 @@ typedef struct _YYLTYPE
 
 typedef union _SCANNER_TOKEN_VALUE
 {
-	ST_Import sn_import;
-	ST_TYPE sn_type;
+	syn_import_t sn_import;
+	syn_type_t sn_type;
 	syn_simple_type_t sn_simple_type;
 	syn_value_t sn_value;	
 	char sn_tok_identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-	ST_Const sn_const;
+	syn_const_t sn_const;
 	double pn_tok_double;
 	const char* sn_tok_unixcomment;
 	uint64_t sn_uint64;
@@ -35,16 +35,16 @@ typedef union _SCANNER_TOKEN_VALUE
 	char* sn_string;
 	char sn_char;
 	syn_simple_type_type_t sn_st;
-	ST_ARGUMENTS sn_arguments;
+	syn_arguments_t sn_arguments;
 	syn_container_type_type_t sn_ct;
-	ST_TYPEDEF sn_typedef;
+	syn_typedef_t sn_typedef;
 	syn_unix_comment_t sn_unix_comment;
-	ST_ENUM_DEF sn_enum_def;
-	ST_Parameter sn_parameter;
-	ST_Parameters sn_parameters;
-	ST_CONDITION sn_condition;
-	ST_UNION_FIELD sn_union_field;
-	ST_FIELD sn_field;
+	enum_def_t sn_enum_def;
+	syn_parameter_t sn_parameter;
+	syn_parameters_t sn_parameters;
+	syn_condition_t sn_condition;
+	syn_union_field_t sn_union_field;
+	syn_field_t sn_field;
 }SCANNER_TOKEN_VALUE;
 
 #define YYSTYPE SCANNER_TOKEN_VALUE

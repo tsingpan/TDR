@@ -108,7 +108,7 @@ const syn_value_t* symbols_get_real_value(const symbols_t *self, const syn_value
 
 
 
-void symbols_add_Typedef(symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef)
+void symbols_add_Typedef(symbols_t *self, const YYLTYPE *yylloc, const syn_typedef_t *pn_typedef)
 {
 	symbol_t *symbol = symbols_alloc(self);
 
@@ -118,7 +118,7 @@ void symbols_add_Typedef(symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDE
 	symbols_save(self, "", pn_typedef->name, symbol);
 }
 
-void symbols_add_Const(symbols_t *self, const YYLTYPE *yylloc, const ST_Const *pn_const)
+void symbols_add_Const(symbols_t *self, const YYLTYPE *yylloc, const syn_const_t *pn_const)
 {
 	symbol_t *symbol = symbols_alloc(self);
 
@@ -129,7 +129,7 @@ void symbols_add_Const(symbols_t *self, const YYLTYPE *yylloc, const ST_Const *p
 	symbols_save(self, "", pn_const->identifier, symbol);
 }
 
-void symbols_add_Enum(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum)
+void symbols_add_Enum(symbols_t *self, const YYLTYPE *yylloc, const syn_enum_t *pn_enum)
 {
 	symbol_t *symbol = symbols_alloc(self);
 
@@ -144,7 +144,7 @@ void symbols_add_Enum(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *pn_
 	symbols_save(self, "", pn_enum->name, symbol);
 }
 
-void symbols_add_EnumDef(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def)
+void symbols_add_EnumDef(symbols_t *self, const YYLTYPE *yylloc, const enum_def_t *pn_enum_def)
 {
 	symbol_t *symbol = symbols_alloc(self);
 	symbol_t *enum_symbol = symbols_alloc(self);
@@ -158,7 +158,7 @@ void symbols_add_EnumDef(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM_D
 	symbols_save(self, self->enum_name, pn_enum_def->identifier, enum_symbol);
 }
 
-void symbols_add_UnionField(symbols_t *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field)
+void symbols_add_UnionField(symbols_t *self, const YYLTYPE *yylloc, const syn_union_field_t *pn_union_field)
 {
 	symbol_t *symbol = symbols_alloc(self);
 
@@ -169,14 +169,14 @@ void symbols_add_UnionField(symbols_t *self, const YYLTYPE *yylloc, const ST_UNI
 
 }
 
-void symbols_add_Field(symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
+void symbols_add_Field(symbols_t *self, const YYLTYPE *yylloc, const syn_field_t *pn_field)
 {
 	symbol_t *symbol = NULL;
 
 	//如果是数据， 那么构造出一个计数器变量
 	if(pn_field->type.type == E_SNT_CONTAINER)
 	{
-		ST_FIELD list_num;
+		syn_field_t list_num;
 		assert(pn_field->type.ct.ct == E_CT_VECTOR);
 		list_num.condition.oper = E_EO_NON;
 
@@ -206,7 +206,7 @@ void symbols_add_Field(symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD *p
 	symbols_save(self, self->struct_name, pn_field->identifier, symbol);
 }
 
-void symbols_add_Struct(symbols_t *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct)
+void symbols_add_Struct(symbols_t *self, const YYLTYPE *yylloc, const syn_struct_t *de_struct)
 {
 	symbol_t *symbol = symbols_alloc(self);
 
@@ -217,7 +217,7 @@ void symbols_add_Struct(symbols_t *self, const YYLTYPE *yylloc, const ST_STRUCT 
 	symbols_save(self, "", de_struct->name, symbol);
 }
 
-void symbols_add_Union(symbols_t *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
+void symbols_add_Union(symbols_t *self, const YYLTYPE *yylloc, const syn_union_t *de_union)
 {
 	symbol_t *symbol = symbols_alloc(self);
 

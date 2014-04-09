@@ -54,7 +54,7 @@ static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, c
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_import(generator_reader_h_t *self, const ST_Import *de_import)
+static error_code_t _on_import(generator_reader_h_t *self, const syn_import_t *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];
 	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -66,7 +66,7 @@ static error_code_t _on_import(generator_reader_h_t *self, const ST_Import *de_i
 
 
 
-static error_code_t _on_enum(generator_reader_h_t *self, const ST_ENUM *de_enum)
+static error_code_t _on_enum(generator_reader_h_t *self, const syn_enum_t *de_enum)
 {	
 	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, enum %s *data);", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "");
@@ -74,7 +74,7 @@ static error_code_t _on_enum(generator_reader_h_t *self, const ST_ENUM *de_enum)
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_struct(generator_reader_h_t *self, const ST_STRUCT *de_struct)
+static error_code_t _on_struct(generator_reader_h_t *self, const syn_struct_t *de_struct)
 {
 	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, struct %s *data);", de_struct->name, de_struct->name);
 	generator_printline(&self->super, 0, "");
@@ -82,7 +82,7 @@ static error_code_t _on_struct(generator_reader_h_t *self, const ST_STRUCT *de_s
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_union(generator_reader_h_t *self, const ST_UNION *de_union)
+static error_code_t _on_union(generator_reader_h_t *self, const syn_union_t *de_union)
 {
 	generator_print(&self->super, 0, "TLIBC_ERROR_CODE tlibc_read_%s(TLIBC_ABSTRACT_READER *self, union %s *data, ", de_union->name, de_union->name);
 	generator_print_ctype(&self->super, &de_union->parameters.par_list[0].type);
@@ -93,7 +93,7 @@ static error_code_t _on_union(generator_reader_h_t *self, const ST_UNION *de_uni
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
+static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const syn_definition_t *definition)
 {
 	generator_reader_h_t *self = TLIBC_CONTAINER_OF(super, generator_reader_h_t, super);
 	TLIBC_UNUSED(yylloc);
