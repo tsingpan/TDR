@@ -119,9 +119,9 @@ int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanne
 
 
 //此函数不会调用exit
-void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
+void scanner_error(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
-void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...);
+void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
 void tdataerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...);
 

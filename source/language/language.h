@@ -1,7 +1,7 @@
 #ifndef _H_LANGUAGE_H
 #define _H_LANGUAGE_H
 
-typedef enum _EN_TD_LANGUAGE_STRING
+typedef enum language_string_e
 {
 	E_LS_UNKNOW = 0,
 	E_LS_IDENTIFIER_NOT_DEFINED = 1,
@@ -31,9 +31,9 @@ typedef enum _EN_TD_LANGUAGE_STRING
 	E_LS_NOT_ENUM_TYPE = 25,
 	E_LS_SQL_NOT_SUPPORT_CONDITION = 26,
 	E_LS_MAX,
-}EN_TD_LANGUAGE_STRING;
+}language_string_t;
 
-const char* tdata_strerror(EN_TD_LANGUAGE_STRING sid);
+const char* tdata_strerror(language_string_t sid);
 
 
 #endif//_H_LANGUAGE_H

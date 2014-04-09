@@ -167,7 +167,7 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 	uint32_t len = 0;
 	char *real_path = NULL;
 	scanner_context_t *scanner = NULL;
-	td_error_code_t ret = E_TD_NOERROR;
+	error_code_t ret = E_TD_NOERROR;
 
 	if(self->stack_num >= MAX_SCANNER_STACK_SIZE)
 	{
@@ -280,7 +280,7 @@ uint32_t scanner_size(scanner_t *self)
 {
 	return self->stack_num;
 }
-static void scanner_error_ap(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, va_list ap)
+static void scanner_error_ap(const YYLTYPE *yylloc, language_string_t result, va_list ap)
 {
 	const char *error_str = tdata_strerror(result);	
 	if((yylloc) && (yylloc->file_name[0]))
@@ -296,7 +296,7 @@ static void scanner_error_ap(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result
 	fprintf(stderr, "\n");
 }
 
-void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...)
+void scanner_error(const YYLTYPE *yylloc, language_string_t result, ...)
 {
 	va_list ap;
 	va_start(ap, result);
@@ -305,7 +305,7 @@ void scanner_error(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...)
 }
 
 
-void scanner_error_halt(const YYLTYPE *yylloc, EN_TD_LANGUAGE_STRING result, ...) 
+void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...) 
 {
 	va_list ap;
 	va_start(ap, result);

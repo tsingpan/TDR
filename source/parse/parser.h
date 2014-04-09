@@ -18,7 +18,7 @@ struct _PARSER
 	generator_t **generator_list;
 	uint32_t generator_num;
 		
-	td_symbols_t symbols;
+	symbols_t symbols;
 
 	ST_DEFINITION pn_definition;
 };

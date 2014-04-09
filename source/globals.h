@@ -10,8 +10,8 @@
 
 extern const char *g_output_dir;
 
-#define G_INCLUDE_DIR_NUM 1024
-extern const char *g_include_dir[G_INCLUDE_DIR_NUM];
+#define INCLUDE_DIR_NUM 1024
+extern const char *g_include_dir[INCLUDE_DIR_NUM];
 extern size_t g_include_dir_num;
 
 #endif //_H_GLOBALS_H

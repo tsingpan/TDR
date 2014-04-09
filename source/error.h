@@ -3,8 +3,8 @@
 
 #include "platform/tlibc_platform.h"
 
-typedef enum td_error_code_e td_error_code_t;
-enum td_error_code_e
+typedef enum error_code_e error_code_t;
+enum error_code_e
 {
 	E_TD_NOERROR = 0,
 	E_TD_ERROR = -1,

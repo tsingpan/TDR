@@ -8,21 +8,21 @@
 
 #include <assert.h>
 
-void symbols_init(td_symbols_t *self)
+void symbols_init(symbols_t *self)
 {
 	tlibc_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
 	self->symbol_list_num = 0;
 }
 
-void symbols_clear(td_symbols_t *self)
+void symbols_clear(symbols_t *self)
 {
 	tlibc_hash_clear(&self->symbols);
 	self->symbol_list_num = 0;
 }
 
-static td_symbol_t *symbols_alloc(td_symbols_t *self)
+static symbol_t *symbols_alloc(symbols_t *self)
 {
-	td_symbol_t *ret = NULL;
+	symbol_t *ret = NULL;
 	if(self->symbol_list_num >= MAX_SYMBOL_LIST_NUM)
 	{
 		scanner_error_halt(NULL, E_LS_UNKNOW);
@@ -32,7 +32,7 @@ static td_symbol_t *symbols_alloc(td_symbols_t *self)
 	return ret;
 }
 
-void symbols_save(td_symbols_t *self, const char *preffix, const char *name, td_symbol_t *symbol)
+void symbols_save(symbols_t *self, const char *preffix, const char *name, symbol_t *symbol)
 {
 	snprintf(symbol->key, MAX_SYMBOL_KEY_LENGTH, "%s::%s", preffix, name);
 	symbol->key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
@@ -41,9 +41,9 @@ void symbols_save(td_symbols_t *self, const char *preffix, const char *name, td_
 	tlibc_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
 }
 
-const td_symbol_t* symbols_search(const td_symbols_t *self, const char* preffix, const char* name)
+const symbol_t* symbols_search(const symbols_t *self, const char* preffix, const char* name)
 {
-	const td_symbol_t *symbol;
+	const symbol_t *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
 	const tlibc_hash_head_t *ele;
 	uint32_t key_len;
@@ -57,18 +57,18 @@ const td_symbol_t* symbols_search(const td_symbols_t *self, const char* preffix,
 	{
 		goto ERROR_RET;
 	}
-	symbol = TLIBC_CONTAINER_OF(ele, const td_symbol_t, hash_head);
+	symbol = TLIBC_CONTAINER_OF(ele, const symbol_t, hash_head);
 
 	return symbol;
 ERROR_RET:
 	return NULL;
 }
 
-const ST_SIMPLE_TYPE* symbols_get_real_type(const td_symbols_t *self, const ST_SIMPLE_TYPE* sn_type)
+const ST_SIMPLE_TYPE* symbols_get_real_type(const symbols_t *self, const ST_SIMPLE_TYPE* sn_type)
 {
 	if(sn_type->st == E_ST_REFER)
 	{
-		const td_symbol_t *ptr = symbols_search(self, "", sn_type->st_refer);
+		const symbol_t *ptr = symbols_search(self, "", sn_type->st_refer);
 		if(ptr == NULL)
 		{
 			return NULL;
@@ -85,11 +85,11 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(const td_symbols_t *self, const ST_S
 	return sn_type;
 }
 
-const ST_VALUE* symbols_get_real_value(const td_symbols_t *self, const ST_VALUE* sn_value)
+const ST_VALUE* symbols_get_real_value(const symbols_t *self, const ST_VALUE* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{
-		const td_symbol_t *ptr = symbols_search(self, "", sn_value->val.identifier);
+		const symbol_t *ptr = symbols_search(self, "", sn_value->val.identifier);
 		if(ptr == NULL)
 		{
 			return NULL;
@@ -108,9 +108,9 @@ const ST_VALUE* symbols_get_real_value(const td_symbols_t *self, const ST_VALUE*
 
 
 
-void symbols_add_Typedef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef)
+void symbols_add_Typedef(symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_TYPEDEF;
@@ -118,9 +118,9 @@ void symbols_add_Typedef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_TYP
 	symbols_save(self, "", pn_typedef->name, symbol);
 }
 
-void symbols_add_Const(td_symbols_t *self, const YYLTYPE *yylloc, const ST_Const *pn_const)
+void symbols_add_Const(symbols_t *self, const YYLTYPE *yylloc, const ST_Const *pn_const)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_VALUE;
@@ -129,9 +129,9 @@ void symbols_add_Const(td_symbols_t *self, const YYLTYPE *yylloc, const ST_Const
 	symbols_save(self, "", pn_const->identifier, symbol);
 }
 
-void symbols_add_Enum(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum)
+void symbols_add_Enum(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *pn_enum)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->yylloc = *yylloc;
 
@@ -144,10 +144,10 @@ void symbols_add_Enum(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM *
 	symbols_save(self, "", pn_enum->name, symbol);
 }
 
-void symbols_add_EnumDef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def)
+void symbols_add_EnumDef(symbols_t *self, const YYLTYPE *yylloc, const ST_ENUM_DEF *pn_enum_def)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
-	td_symbol_t *enum_symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
+	symbol_t *enum_symbol = symbols_alloc(self);
 	symbol->type = EN_HST_VALUE;
 	symbol->body.val = pn_enum_def->val;
 
@@ -158,9 +158,9 @@ void symbols_add_EnumDef(td_symbols_t *self, const YYLTYPE *yylloc, const ST_ENU
 	symbols_save(self, self->enum_name, pn_enum_def->identifier, enum_symbol);
 }
 
-void symbols_add_UnionField(td_symbols_t *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field)
+void symbols_add_UnionField(symbols_t *self, const YYLTYPE *yylloc, const ST_UNION_FIELD *pn_union_field)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->type = EN_HST_UNION_FIELD;
 
@@ -169,9 +169,9 @@ void symbols_add_UnionField(td_symbols_t *self, const YYLTYPE *yylloc, const ST_
 
 }
 
-void symbols_add_Field(td_symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
+void symbols_add_Field(symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD *pn_field)
 {
-	td_symbol_t *symbol = NULL;
+	symbol_t *symbol = NULL;
 
 	//如果是数据， 那么构造出一个计数器变量
 	if(pn_field->type.type == E_SNT_CONTAINER)
@@ -206,9 +206,9 @@ void symbols_add_Field(td_symbols_t *self, const YYLTYPE *yylloc, const ST_FIELD
 	symbols_save(self, self->struct_name, pn_field->identifier, symbol);
 }
 
-void symbols_add_Struct(td_symbols_t *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct)
+void symbols_add_Struct(symbols_t *self, const YYLTYPE *yylloc, const ST_STRUCT *de_struct)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_STRUCT;
@@ -217,9 +217,9 @@ void symbols_add_Struct(td_symbols_t *self, const YYLTYPE *yylloc, const ST_STRU
 	symbols_save(self, "", de_struct->name, symbol);
 }
 
-void symbols_add_Union(td_symbols_t *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
+void symbols_add_Union(symbols_t *self, const YYLTYPE *yylloc, const ST_UNION *de_union)
 {
-	td_symbol_t *symbol = symbols_alloc(self);
+	symbol_t *symbol = symbols_alloc(self);
 
 	symbol->yylloc = *yylloc;
 	symbol->type = EN_HST_UNION;

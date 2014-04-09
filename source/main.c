@@ -4,13 +4,13 @@
 #include "version.h"
 
 
-#include "generate/tlibc_types.h"
-#include "generate/tlibc_reader.h"
-#include "generate/tlibc_reader_header.h"
-#include "generate/tlibc_writer.h"
-#include "generate/tlibc_writer_header.h"
-#include "generate/tlibc_sql.h"
-#include "generate/tlibc_cs.h"
+#include "generate/generator_types_h.h"
+#include "generate/generator_reader_c.h"
+#include "generate/generator_reader_h.h"
+#include "generate/generator_writer_c.h"
+#include "generate/generator_writer_h.h"
+#include "generate/generator_sql.h"
+#include "generate/generator_cs.h"
 
 
 #include <string.h>
@@ -19,7 +19,7 @@
 
 void version()
 {
-	printf("TData version %s\n", TDATA_VERSION);
+	printf("TData version %s\n", VERSION);
 }
 
 void usage()
@@ -54,13 +54,13 @@ void help()
 #define TD_MAX_GENERATOR 16
 
 static PARSER parser;
-static td_generator_types_h_t tlibc_types_generator;
-static td_generator_reader_c_t tlibc_reader_generator;
-static td_generator_reader_h_t tlibc_reader_header_generator;
-static td_generator_writer_c_t tlibc_writer_generator;
+static generator_types_h_t tlibc_types_generator;
+static generator_reader_c_t tlibc_reader_generator;
+static generator_reader_h_t tlibc_reader_header_generator;
+static generator_writer_c_t tlibc_writer_generator;
 static td_generator_writer_h_t tlibc_writer_header_generator;
-static td_generator_sql_t tlibc_sql_generator;
-static td_generator_cs_t tlibc_cs_generator;
+static generator_sql_t tlibc_sql_generator;
+static generator_cs_t tlibc_cs_generator;
 
 static generator_t *generator_list[TD_MAX_GENERATOR];
 static uint32_t generator_num = 0;
@@ -90,7 +90,7 @@ int main(int32_t argc, char **argv)
 		}
 		else if (strcmp(arg, "-I") == 0)
 		{
-			if(g_include_dir_num >= G_INCLUDE_DIR_NUM)
+			if(g_include_dir_num >= INCLUDE_DIR_NUM)
 			{
 				fprintf(stderr, "Too many include directories.\n");
 				goto ERROR_RET;
@@ -120,37 +120,37 @@ int main(int32_t argc, char **argv)
 			
 			if(strcmp(arg, "types_h") == 0)
 			{
-				tlibc_types_generator_init(&tlibc_types_generator, &parser.symbols);
+				generator_types_h_init(&tlibc_types_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_types_generator.super;
 			}
 			else if(strcmp(arg, "reader_h") == 0)
 			{
-				tlibc_reader_header_generator_init(&tlibc_reader_header_generator, &parser.symbols);
+				generator_reader_h_init(&tlibc_reader_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_header_generator.super;
 			}
 			else if(strcmp(arg, "reader_c") == 0)
 			{
-				tlibc_reader_generator_init(&tlibc_reader_generator, &parser.symbols);
+				generator_reader_c_init(&tlibc_reader_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_reader_generator.super;
 			}			
 			else if(strcmp(arg, "writer_h") == 0)
 			{
-				tlibc_writer_header_generator_init(&tlibc_writer_header_generator, &parser.symbols);
+				generator_writer_h_init(&tlibc_writer_header_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_writer_header_generator.super;
 			}
 			else if(strcmp(arg, "writer_c") == 0)
 			{
-				tlibc_writer_generator_init(&tlibc_writer_generator, &parser.symbols);
+				generator_writer_c_init(&tlibc_writer_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_writer_generator.super;
 			}
 			else if(strcmp(arg, "cs") == 0)
 			{
-				tlibc_cs_generator_init(&tlibc_cs_generator, &parser.symbols);
+				generator_cs_init(&tlibc_cs_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_cs_generator.super;
 			}
 			else if(strcmp(arg, "sql") == 0)
 			{
-				tlibc_sql_generator_init(&tlibc_sql_generator, &parser.symbols);
+				generator_sql_init(&tlibc_sql_generator, &parser.symbols);
 				generator_list[generator_num++] = &tlibc_sql_generator.super;
 			}
 		}		
