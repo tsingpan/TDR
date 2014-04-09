@@ -5,14 +5,14 @@
 #include <stdint.h>
 
 
-#define TD_MAX_COMMENT_LENGTH 1024
-typedef struct  _ST_UNIX_COMMENT
+#define MAX_COMMENT_LENGTH 1024
+typedef struct syn_unix_comment_s
 {
-    char text[TD_MAX_COMMENT_LENGTH];
-}ST_UNIX_COMMENT;
+    char text[MAX_COMMENT_LENGTH];
+}syn_unix_comment_t;
 
 
-typedef enum _SN_VALUE_TYPE
+typedef enum syn_value_type_e
 {
     E_SNVT_IDENTIFIER = 0,
     E_SNVT_CHAR = 1,
@@ -22,8 +22,10 @@ typedef enum _SN_VALUE_TYPE
     E_SNVT_UINT64 = 5,
     E_SNVT_HEX_INT64 = 6,
     E_SNVT_HEX_UINT64 = 7,
-}SN_VALUE_TYPE;
-typedef union  _UN_VALUE
+}syn_value_type_t;
+
+
+typedef union syn_value_body_u
 {
     int64_t i64;
     uint64_t ui64;
@@ -31,12 +33,13 @@ typedef union  _UN_VALUE
     double d;
     char c;
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
-}UN_VALUE;
-typedef struct  _ST_VALUE
+}syn_value_body_t;
+
+typedef struct  syn_value_s
 {
-    SN_VALUE_TYPE type;
-    UN_VALUE val;
-}ST_VALUE;
+    syn_value_type_t type;
+    syn_value_body_t val;
+}syn_value_t;
 
 typedef enum _SN_SIMPLE_TYPE
 {
@@ -115,7 +118,7 @@ typedef struct  _ST_CONDITION
 {
 	ST_EXPRESSION_OPER oper;
 	char op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-	ST_VALUE op1;
+	syn_value_t op1;
 }ST_CONDITION;
 typedef struct  _ST_FIELD
 {
@@ -123,7 +126,7 @@ typedef struct  _ST_FIELD
     ST_TYPE type;    
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_ARGUMENTS args;
-    ST_UNIX_COMMENT comment;
+    syn_unix_comment_t comment;
 }ST_FIELD;
 
 
@@ -132,7 +135,7 @@ typedef struct  _ST_UNION_FIELD
 	char key[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_SIMPLE_TYPE simple_type;
 	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-	ST_UNIX_COMMENT comment;
+	syn_unix_comment_t comment;
 }ST_UNION_FIELD;
 #define MAX_UNION_FIELD_LIST_NUM 65536
 typedef struct  _ST_UNION_FIELD_LIST
@@ -151,13 +154,13 @@ typedef struct  _ST_Const
 {
     ST_SIMPLE_TYPE type;
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-    ST_VALUE val;
+    syn_value_t val;
 }ST_Const;
 typedef struct  _ST_ENUM_DEF
 {
     char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-    ST_VALUE val;
-    ST_UNIX_COMMENT comment;
+    syn_value_t val;
+    syn_unix_comment_t comment;
 }ST_ENUM_DEF;
 #define MAX_ENUM_DEF_LIST_NUM 65536
 typedef struct  _ST_ENUM
@@ -202,7 +205,7 @@ typedef union  _UN_DEFINITION
 {
     ST_Import de_import;
     ST_Const de_const;
-    ST_UNIX_COMMENT de_unix_comment;
+    syn_unix_comment_t de_unix_comment;
     ST_ENUM de_enum;
     ST_STRUCT de_struct;
     ST_UNION de_union;

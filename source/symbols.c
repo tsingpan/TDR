@@ -85,7 +85,7 @@ const ST_SIMPLE_TYPE* symbols_get_real_type(const symbols_t *self, const ST_SIMP
 	return sn_type;
 }
 
-const ST_VALUE* symbols_get_real_value(const symbols_t *self, const ST_VALUE* sn_value)
+const syn_value_t* symbols_get_real_value(const symbols_t *self, const syn_value_t* sn_value)
 {
 	if(sn_value->type == E_SNVT_IDENTIFIER)
 	{

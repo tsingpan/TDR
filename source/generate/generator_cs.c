@@ -668,7 +668,7 @@ static error_code_t _on_union(generator_cs_t *self, const ST_UNION *de_union)
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_unix_comment(generator_cs_t *self, const ST_UNIX_COMMENT *de_unix_comment)
+static error_code_t _on_unix_comment(generator_cs_t *self, const syn_unix_comment_t *de_unix_comment)
 {
 	generator_printline(&self->super, 0, "//%s", de_unix_comment->text);
 	return E_TD_NOERROR;

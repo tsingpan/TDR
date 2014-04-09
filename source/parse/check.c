@@ -57,7 +57,7 @@ void check_identifier_not_defined_as_value(const symbols_t *symbols, const YYLTY
 
 void check_identifier_is_positive_integer(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
-	const ST_VALUE *val = NULL;
+	const syn_value_t *val = NULL;
 	const symbol_t *symbol = symbols_search(symbols, prefix, identifier);
 	assert(symbols != NULL);
 
@@ -156,9 +156,9 @@ void check_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const S
 	}
 }
 
-void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_VALUE *val)
+void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_value_t *val)
 {
-	const ST_VALUE *real_val;
+	const syn_value_t *real_val;
 	real_val = symbols_get_real_value(symbols, val);
 	assert(real_val != NULL);
 
@@ -286,13 +286,13 @@ default:\
 	scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);\
 }
 
-void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val)
+void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const syn_value_t *val)
 {
 	const ST_SIMPLE_TYPE *real_type_ptr = NULL;
-	const ST_VALUE *real_val_ptr = NULL;
+	const syn_value_t *real_val_ptr = NULL;
 	SN_SIMPLE_TYPE st;
 
-	SN_VALUE_TYPE vt;
+	syn_value_type_t vt;
 	int64_t i64 = 0;
 	uint64_t ui64 = 0;
 

@@ -117,7 +117,7 @@ static error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const ST
 	case E_ST_STRING:
 		{
 			const symbol_t* rtype = symbols_search(super->symbols, "", st->string_length);
-			const ST_VALUE* val;
+			const syn_value_t* val;
 			uint64_t ui64 = 0;
 					
 			assert(rtype != NULL);

@@ -15,7 +15,7 @@ void reduce_Typedef(ST_TYPEDEF *current, ST_SIMPLE_TYPE* type, const char *tok_i
 	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const char *identifier, const ST_VALUE *val)
+void reduce_Const(ST_Const* current, const ST_SIMPLE_TYPE *type, const char *identifier, const syn_value_t *val)
 {
 	current->type = *type;
 
@@ -30,7 +30,7 @@ void reduce_Enum(ST_ENUM *current, const char *identifier)
 	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_EnumDef_Value(ST_ENUM_DEF *current, const char *identifier, const ST_VALUE *st_value, const ST_UNIX_COMMENT *comment)
+void reduce_EnumDef_Value(ST_ENUM_DEF *current, const char *identifier, const syn_value_t *st_value, const syn_unix_comment_t *comment)
 {
 	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -38,7 +38,7 @@ void reduce_EnumDef_Value(ST_ENUM_DEF *current, const char *identifier, const ST
 	current->comment = *comment;
 }
 
-void reduce_EnumDef(ST_ENUM_DEF *current, const char *identifier, const ST_VALUE *st_last_value, const ST_UNIX_COMMENT *comment)
+void reduce_EnumDef(ST_ENUM_DEF *current, const char *identifier, const syn_value_t *st_last_value, const syn_unix_comment_t *comment)
 {
 	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -95,50 +95,50 @@ void reduce_Type_SimpleType(ST_TYPE *current, const ST_SIMPLE_TYPE *simple_type)
 	current->st = *simple_type;
 }
 
-void reduce_Value_tok_identifier(ST_VALUE* current, const char *sn_identifier)
+void reduce_Value_tok_identifier(syn_value_t* current, const char *sn_identifier)
 {
 	current->type = E_SNVT_IDENTIFIER;
 	strncpy(current->val.identifier, sn_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->val.identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
-void reduce_Value_tok_char(ST_VALUE* current, const char pn_char)
+void reduce_Value_tok_char(syn_value_t* current, const char pn_char)
 {
 	current->type = E_SNVT_CHAR;
 	current->val.c = pn_char;
 }
 
-void reduce_Value_tok_int64(ST_VALUE* current, const int64_t i64)
+void reduce_Value_tok_int64(syn_value_t* current, const int64_t i64)
 {
 	current->type = E_SNVT_INT64;
 	current->val.i64 = i64;
 }
 
-void reduce_Value_tok_hex_int64(ST_VALUE* current, const int64_t i64)
+void reduce_Value_tok_hex_int64(syn_value_t* current, const int64_t i64)
 {
 	current->type = E_SNVT_HEX_INT64;
 	current->val.i64 = i64;
 }
 
-void reduce_Value_tok_uint64(ST_VALUE* current, const uint64_t ui64)
+void reduce_Value_tok_uint64(syn_value_t* current, const uint64_t ui64)
 {
 	current->type = E_SNVT_UINT64;
 	current->val.ui64 = ui64;
 }
 
-void reduce_Value_tok_hex_uint64(ST_VALUE* current, const uint64_t ui64)
+void reduce_Value_tok_hex_uint64(syn_value_t* current, const uint64_t ui64)
 {
 	current->type = E_SNVT_HEX_UINT64;
 	current->val.ui64 = ui64;
 }
 
-void reduce_Value_tok_double(ST_VALUE* current, const double d)
+void reduce_Value_tok_double(syn_value_t* current, const double d)
 {
 	current->type = E_SNVT_DOUBLE;
 	current->val.d = d;
 }
 
-void reduce_Value_tok_string(ST_VALUE* current, const char* str)
+void reduce_Value_tok_string(syn_value_t* current, const char* str)
 {
 	current->type = E_SNVT_STRING;
 	strncpy(current->val.str, str, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
@@ -161,7 +161,7 @@ void reduce_ArgumentList_tok_identifier(ST_ARGUMENTS* current, const char *ident
 	++(current->arg_list_num);
 }
 
-void reduce_Value_tok_count(const symbols_t *symbols, ST_VALUE *current, const char *identifier)
+void reduce_Value_tok_count(const symbols_t *symbols, syn_value_t *current, const char *identifier)
 {
 	const symbol_t *symbol = symbols_search(symbols, "", identifier);
 
@@ -191,7 +191,7 @@ void reduce_Union(ST_UNION *current, const char *identifier, const ST_Parameters
 	current->parameters = *parameters;
 }
 
-void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const ST_SIMPLE_TYPE *simple_type, const char *identifier, const ST_UNIX_COMMENT *comment)
+void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const ST_SIMPLE_TYPE *simple_type, const char *identifier, const syn_unix_comment_t *comment)
 {
 	strncpy(current->key, key, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 	current->key[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -205,7 +205,7 @@ void reduce_UnionField(ST_UNION_FIELD *current, const char *key, const ST_SIMPLE
 }
 
 void reduce_Field(ST_FIELD *current, const ST_CONDITION *condition, const ST_TYPE *type
-					 , const char *identifier, const ST_ARGUMENTS *args, const ST_UNIX_COMMENT *comment)
+					 , const char *identifier, const ST_ARGUMENTS *args, const syn_unix_comment_t *comment)
 {
 	current->condition = *condition;
 	current->type = *type;

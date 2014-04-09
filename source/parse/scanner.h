@@ -22,7 +22,7 @@ typedef union _SCANNER_TOKEN_VALUE
 	ST_Import sn_import;
 	ST_TYPE sn_type;
 	ST_SIMPLE_TYPE sn_simple_type;
-	ST_VALUE sn_value;	
+	syn_value_t sn_value;	
 	char sn_tok_identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
 	ST_Const sn_const;
 	double pn_tok_double;
@@ -38,7 +38,7 @@ typedef union _SCANNER_TOKEN_VALUE
 	ST_ARGUMENTS sn_arguments;
 	SN_CONTAINER_TYPE sn_ct;
 	ST_TYPEDEF sn_typedef;
-	ST_UNIX_COMMENT sn_unix_comment;
+	syn_unix_comment_t sn_unix_comment;
 	ST_ENUM_DEF sn_enum_def;
 	ST_Parameter sn_parameter;
 	ST_Parameters sn_parameters;

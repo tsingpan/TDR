@@ -44,7 +44,7 @@ void generator_printline(generator_t *self, size_t tabs, const char* fmt, ...);
 
 error_code_t generator_close(generator_t *self);
 
-error_code_t generator_print_value(generator_t *self, const ST_VALUE *val);
+error_code_t generator_print_value(generator_t *self, const syn_value_t *val);
 
 error_code_t generator_print_type_name(generator_t *self, const ST_SIMPLE_TYPE *simple_type);
 

@@ -36,7 +36,7 @@ void check_string_length(const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *symbol_typ
 void check_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);
 
 //检查值是整数
-void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_VALUE *value);
+void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const syn_value_t *value);
 
 //检查符号指向一个整数类型的struct成员
 void check_identifier_refer_to_a_field_with_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier);
@@ -48,7 +48,7 @@ void check_arguments(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_T
 void check_strlen_too_long(const YYLTYPE *yylloc, const char *str, const char *suffix, uint32_t limit);
 
 //检查类型和值是否匹配
-void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const ST_VALUE *val);
+void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *type, const syn_value_t *val);
 
 //检查不包含重复值的枚举类型
 void check_simpletype_is_enum(const symbols_t *symbols, const YYLTYPE *yylloc, const ST_SIMPLE_TYPE *simple_type);

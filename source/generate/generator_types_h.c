@@ -206,7 +206,7 @@ static error_code_t _on_typedef(generator_types_h_t *self, const ST_TYPEDEF *de_
 	return E_TD_NOERROR;
 }
 
-static error_code_t _on_comment(generator_types_h_t *self, const ST_UNIX_COMMENT *de_unix_comment)
+static error_code_t _on_comment(generator_types_h_t *self, const syn_unix_comment_t *de_unix_comment)
 {
 	if(de_unix_comment->text[0])
 	{

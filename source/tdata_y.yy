@@ -642,15 +642,15 @@ Value :
 UnixComment:
 	tok_unixcomment
 	{
-		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
-		$$.text[TD_MAX_COMMENT_LENGTH - 1] = 0;
+		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
+		$$.text[MAX_COMMENT_LENGTH - 1] = 0;
 	};
 
 UnixCommentOrNot:
 	tok_unixcomment
 	{
-		strncpy($$.text, $1, TD_MAX_COMMENT_LENGTH);
-		$$.text[TD_MAX_COMMENT_LENGTH - 1] = 0;
+		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
+		$$.text[MAX_COMMENT_LENGTH - 1] = 0;
 	}
 |
 	{

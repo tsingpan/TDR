@@ -205,7 +205,7 @@ static void write_char(generator_t *self, char c)
 	}
 }
 
-error_code_t generator_print_value(generator_t *self, const ST_VALUE *val)
+error_code_t generator_print_value(generator_t *self, const syn_value_t *val)
 {
 	switch (val->type)
 	{

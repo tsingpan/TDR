@@ -2386,8 +2386,8 @@ yyreduce:
 /* Line 1787 of yacc.c  */
 #line 644 "D:/GitHub/TData/source/tdata_y.yy"
     {
-		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), TD_MAX_COMMENT_LENGTH);
-		(yyval.sn_unix_comment).text[TD_MAX_COMMENT_LENGTH - 1] = 0;
+		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
+		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
 	}
     break;
 
@@ -2395,8 +2395,8 @@ yyreduce:
 /* Line 1787 of yacc.c  */
 #line 651 "D:/GitHub/TData/source/tdata_y.yy"
     {
-		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), TD_MAX_COMMENT_LENGTH);
-		(yyval.sn_unix_comment).text[TD_MAX_COMMENT_LENGTH - 1] = 0;
+		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
+		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
 	}
     break;
 

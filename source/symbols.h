@@ -35,7 +35,7 @@ struct symbol_union_s
 typedef union symbol_body_u
 {
 	ST_TYPEDEF type;
-	ST_VALUE val;
+	syn_value_t val;
 	symbol_union_t union_symbol;
 	ST_FIELD field;
 	symbol_enum_t symbol_enum;
@@ -87,7 +87,7 @@ void symbols_save(symbols_t *self, const char* preffix, const char *name, symbol
 const ST_SIMPLE_TYPE* symbols_get_real_type(const symbols_t *self, const ST_SIMPLE_TYPE* sn_type);
 
 //过滤常量赋值
-const ST_VALUE* symbols_get_real_value(const symbols_t *self, const ST_VALUE* sn_value);
+const syn_value_t* symbols_get_real_value(const symbols_t *self, const syn_value_t* sn_value);
 
 
 void symbols_add_Typedef(symbols_t *self, const YYLTYPE *yylloc, const ST_TYPEDEF *pn_typedef);
