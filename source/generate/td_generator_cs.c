@@ -50,7 +50,7 @@ static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_const(TLIBC_CS_GENERATOR *self, const ST_Const *de_const)
+static td_error_code_t _on_const(td_generator_cs_t *self, const ST_Const *de_const)
 {
 	generator_printline(&self->super, 1, "public static partial class Constants");
 	generator_printline(&self->super, 1, "{");
@@ -64,7 +64,7 @@ static td_error_code_t _on_const(TLIBC_CS_GENERATOR *self, const ST_Const *de_co
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_enum(TLIBC_CS_GENERATOR *self, const ST_ENUM *de_enum)
+static td_error_code_t _on_enum(td_generator_cs_t *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;
 
@@ -89,7 +89,7 @@ static td_error_code_t _on_enum(TLIBC_CS_GENERATOR *self, const ST_ENUM *de_enum
 	return E_TD_NOERROR;
 }
 
-static void print_struct_header(TLIBC_CS_GENERATOR *self, const char *name, const ST_FIELD_LIST *field_list)
+static void print_struct_header(td_generator_cs_t *self, const char *name, const ST_FIELD_LIST *field_list)
 {
 	size_t i;
 
@@ -156,7 +156,7 @@ static void print_struct_header(TLIBC_CS_GENERATOR *self, const char *name, cons
 	}
 }
 
-static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct)
+static void _on_struct_write(td_generator_cs_t *self, const ST_STRUCT *de_struct)
 {
 	uint32_t i, j;
 
@@ -320,7 +320,7 @@ static void _on_struct_write(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struc
 }
 
 
-static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct)
+static void _on_struct_read(td_generator_cs_t *self, const ST_STRUCT *de_struct)
 {
 	uint32_t i, j;
 
@@ -491,7 +491,7 @@ static void _on_struct_read(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct
 
 
 
-static td_error_code_t _on_struct(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_struct)
+static td_error_code_t _on_struct(td_generator_cs_t *self, const ST_STRUCT *de_struct)
 {
 	print_struct_header(self, de_struct->name, &de_struct->field_list);
 
@@ -505,7 +505,7 @@ static td_error_code_t _on_struct(TLIBC_CS_GENERATOR *self, const ST_STRUCT *de_
 }
 
 
-static void print_union_header(TLIBC_CS_GENERATOR *self, const char *name, const ST_UNION_FIELD_LIST *union_field_list)
+static void print_union_header(td_generator_cs_t *self, const char *name, const ST_UNION_FIELD_LIST *union_field_list)
 {
 	size_t i;
 
@@ -542,7 +542,7 @@ static void print_union_header(TLIBC_CS_GENERATOR *self, const char *name, const
 	}
 }
 
-static void _on_union_write(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
+static void _on_union_write(td_generator_cs_t *self, const ST_UNION *de_union)
 {
 	uint32_t i;
 	generator_printline(&self->super, 2, "public void Write(TWriter writer, %s selector)", de_union->parameters.par_list[0].type.st_refer);
@@ -596,7 +596,7 @@ static void _on_union_write(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 2, "}");
 }
 
-static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
+static void _on_union_read(td_generator_cs_t *self, const ST_UNION *de_union)
 {
 	uint32_t i;
 	generator_printline(&self->super, 2, "public void Read(TReader reader, %s selector)", de_union->parameters.par_list[0].type.st_refer);
@@ -655,7 +655,7 @@ static void _on_union_read(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
 	generator_printline(&self->super, 2, "}");
 }
 
-static td_error_code_t _on_union(TLIBC_CS_GENERATOR *self, const ST_UNION *de_union)
+static td_error_code_t _on_union(td_generator_cs_t *self, const ST_UNION *de_union)
 {	
 	print_union_header(self, de_union->name, &de_union->union_field_list);
 	
@@ -668,7 +668,7 @@ static td_error_code_t _on_union(TLIBC_CS_GENERATOR *self, const ST_UNION *de_un
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_unix_comment(TLIBC_CS_GENERATOR *self, const ST_UNIX_COMMENT *de_unix_comment)
+static td_error_code_t _on_unix_comment(td_generator_cs_t *self, const ST_UNIX_COMMENT *de_unix_comment)
 {
 	generator_printline(&self->super, 0, "//%s", de_unix_comment->text);
 	return E_TD_NOERROR;
@@ -676,7 +676,7 @@ static td_error_code_t _on_unix_comment(TLIBC_CS_GENERATOR *self, const ST_UNIX_
 
 static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
-	TLIBC_CS_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_CS_GENERATOR, super);
+	td_generator_cs_t *self = TLIBC_CONTAINER_OF(super, td_generator_cs_t, super);
 	TLIBC_UNUSED(yylloc);
 	switch(definition->type)
 	{
@@ -697,7 +697,7 @@ static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, 
 	}
 }
 
-void tlibc_cs_generator_init(TLIBC_CS_GENERATOR *self, const td_symbols_t *symbols)
+void tlibc_cs_generator_init(td_generator_cs_t *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 

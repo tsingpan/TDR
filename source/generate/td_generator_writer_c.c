@@ -48,7 +48,7 @@ static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_import(TLIBC_WRITER_GENERATOR *self, const ST_Import *de_import)
+static td_error_code_t _on_import(td_generator_writer_c_t *self, const ST_Import *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
 	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -59,7 +59,7 @@ static td_error_code_t _on_import(TLIBC_WRITER_GENERATOR *self, const ST_Import 
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_enum)
+static td_error_code_t _on_enum(td_generator_writer_c_t *self, const ST_ENUM *de_enum)
 {
 	uint32_t i;
 	generator_printline(&self->super, 0, "");
@@ -108,7 +108,7 @@ static td_error_code_t _on_enum(TLIBC_WRITER_GENERATOR *self, const ST_ENUM *de_
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT *de_struct)
+static td_error_code_t _on_struct(td_generator_writer_c_t *self, const ST_STRUCT *de_struct)
 {
 	uint32_t i;
 	generator_printline(&self->super, 0, "");
@@ -244,7 +244,7 @@ static td_error_code_t _on_struct(TLIBC_WRITER_GENERATOR *self, const ST_STRUCT 
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *de_union)
+static td_error_code_t _on_union(td_generator_writer_c_t *self, const ST_UNION *de_union)
 {
 	uint32_t i;
 
@@ -295,7 +295,7 @@ static td_error_code_t _on_union(TLIBC_WRITER_GENERATOR *self, const ST_UNION *d
 
 static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
-	TLIBC_WRITER_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_WRITER_GENERATOR, super);
+	td_generator_writer_c_t *self = TLIBC_CONTAINER_OF(super, td_generator_writer_c_t, super);
 	TLIBC_UNUSED(yylloc);
 	switch(definition->type)
 	{
@@ -318,7 +318,7 @@ static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, 
 	}
 }
 
-void tlibc_writer_generator_init(TLIBC_WRITER_GENERATOR *self, const td_symbols_t *symbols)
+void tlibc_writer_generator_init(td_generator_writer_c_t *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 

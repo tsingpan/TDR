@@ -41,7 +41,7 @@ static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc
 
 static td_error_code_t on_struct_begin(generator_t *super, const YYLTYPE *yylloc, const char * struct_name)
 {
-	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+	td_generator_sql_t *self = TLIBC_CONTAINER_OF(super, td_generator_sql_t, super);
 	TLIBC_UNUSED(yylloc);
 	self->struct_begin = TRUE;
 	self->first_field = TRUE;
@@ -53,7 +53,7 @@ static td_error_code_t on_struct_begin(generator_t *super, const YYLTYPE *yylloc
 
 static td_error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const ST_FIELD *field)
 {
-	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+	td_generator_sql_t *self = TLIBC_CONTAINER_OF(super, td_generator_sql_t, super);
 
 	const ST_SIMPLE_TYPE *st = NULL;
 	if(!self->first_field)
@@ -172,7 +172,7 @@ static td_error_code_t on_field(generator_t *super, const YYLTYPE *yylloc, const
 
 static td_error_code_t on_struct_end(generator_t *super, const YYLTYPE *yylloc, const ST_STRUCT *pn_struct)
 {
-	TLIBC_SQL_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_SQL_GENERATOR, super);
+	td_generator_sql_t *self = TLIBC_CONTAINER_OF(super, td_generator_sql_t, super);
 	TLIBC_UNUSED(yylloc);
 	TLIBC_UNUSED(pn_struct);
 
@@ -185,7 +185,7 @@ static td_error_code_t on_struct_end(generator_t *super, const YYLTYPE *yylloc, 
 	return E_TD_NOERROR;
 }
 
-void tlibc_sql_generator_init(TLIBC_SQL_GENERATOR *self, const td_symbols_t *symbols)
+void tlibc_sql_generator_init(td_generator_sql_t *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 

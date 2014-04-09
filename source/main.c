@@ -54,13 +54,13 @@ void help()
 #define TD_MAX_GENERATOR 16
 
 static PARSER parser;
-static TLIBC_TYPES_GENERATOR tlibc_types_generator;
-static TLIBC_READER_GENERATOR tlibc_reader_generator;
-static TLIBC_READER_HEADER_GENERATOR tlibc_reader_header_generator;
-static TLIBC_WRITER_GENERATOR tlibc_writer_generator;
-static TLIBC_WRITER_HEADER_GENERATOR tlibc_writer_header_generator;
-static TLIBC_SQL_GENERATOR tlibc_sql_generator;
-static TLIBC_CS_GENERATOR tlibc_cs_generator;
+static td_generator_types_h_t tlibc_types_generator;
+static td_generator_reader_c_t tlibc_reader_generator;
+static td_generator_reader_h_t tlibc_reader_header_generator;
+static td_generator_writer_c_t tlibc_writer_generator;
+static td_generator_writer_h_t tlibc_writer_header_generator;
+static td_generator_sql_t tlibc_sql_generator;
+static td_generator_cs_t tlibc_cs_generator;
 
 static generator_t *generator_list[TD_MAX_GENERATOR];
 static uint32_t generator_num = 0;

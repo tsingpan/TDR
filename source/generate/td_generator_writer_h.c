@@ -54,7 +54,7 @@ static td_error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_import(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_Import *de_import)
+static td_error_code_t _on_import(td_generator_writer_h_t *self, const ST_Import *de_import)
 {
 	char name[MAX_PACKAGE_NAME_LENGTH];	
 	strncpy_notdir(name, de_import->package_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -67,7 +67,7 @@ static td_error_code_t _on_import(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_
 
 
 
-static td_error_code_t _on_enum(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_ENUM *de_enum)
+static td_error_code_t _on_enum(td_generator_writer_h_t *self, const ST_ENUM *de_enum)
 {
 	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const enum %s *data);", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "");
@@ -75,7 +75,7 @@ static td_error_code_t _on_enum(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_EN
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_struct(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_STRUCT *de_struct)
+static td_error_code_t _on_struct(td_generator_writer_h_t *self, const ST_STRUCT *de_struct)
 {
 	generator_printline(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const struct %s *data);", de_struct->name, de_struct->name);
 	generator_printline(&self->super, 0, "");
@@ -83,7 +83,7 @@ static td_error_code_t _on_struct(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_
 	return E_TD_NOERROR;
 }
 
-static td_error_code_t _on_union(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_UNION *de_union)
+static td_error_code_t _on_union(td_generator_writer_h_t *self, const ST_UNION *de_union)
 {
 	generator_print(&self->super, 0, "TLIBC_ERROR_CODE tlibc_write_%s(TLIBC_ABSTRACT_WRITER *self, const union %s *data, ", de_union->name, de_union->name);
 	generator_print_ctype(&self->super, &de_union->parameters.par_list[0].type);
@@ -94,7 +94,7 @@ static td_error_code_t _on_union(TLIBC_WRITER_HEADER_GENERATOR *self, const ST_U
 
 static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const ST_DEFINITION *definition)
 {
-	TLIBC_WRITER_HEADER_GENERATOR *self = TLIBC_CONTAINER_OF(super, TLIBC_WRITER_HEADER_GENERATOR, super);
+	td_generator_writer_h_t *self = TLIBC_CONTAINER_OF(super, td_generator_writer_h_t, super);
 	TLIBC_UNUSED(yylloc);
 	switch(definition->type)
 	{
@@ -117,7 +117,7 @@ static td_error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, 
 	}
 }
 
-void tlibc_writer_header_generator_init(TLIBC_WRITER_HEADER_GENERATOR *self, const td_symbols_t *symbols)
+void tlibc_writer_header_generator_init(td_generator_writer_h_t *self, const td_symbols_t *symbols)
 {
 	generator_init(&self->super, symbols);
 
