@@ -67,26 +67,41 @@ struct tconnd_config
 /*
 	读取道具表格
 */
-enum item_type_e
+enum item_type
 {
-	e_crystal,
-	e_ectype,
-	e_other,
+	crystal,
+	other,
 };
 
-union item_limit(item_type_e selector)
-{
-e_crystal:	uint32 level;
-e_ectype:	uint32 mapid;
-e_other:	uint32 gold;
-};
-
-const uint32 ITEM_MAX_LIMIT = 10;
+const uint32 ITEM_NAME_LENGTH = 1024;
 struct item_table
 {
-	uint64 id;
-	string<MAX_NAME_LENGTH> name;
-	item_type_e type;
-	vector<item_limit, ITEM_MAX_LIMIT> limit_list(type);#一般来说不要把union类型作为数组， 这里只是演示下union类型是可以作为数组的。
+	uint32 						ID;
+	string<ITEM_NAME_LENGTH>			ItemName;
+	int32						Metempsychosis;
+	uint32						UseTime;
+	uint32						Bill;
+	uint16						ReplaceItem;
+	int32						Medals;
+	int32						Value;
+	int32						ReserveMoneyFlag;
+	uint8						Quality;
+	item_type					ItemType;
+	uint32						UseSingTime;
+	uint32						UserTarget;
+	uint32						CanMoved;
+	uint32						CanDeleted;
+	uint32						CanTrade;
+	uint32						CanSold;
+	uint32						CanStored;
+	uint32						CanLocked;
+	uint32						CanBound;
+	uint32						IsExclusive;
+	uint32						IsExpendable;
+	uint32						ColdDownType;
+	uint32						ColdDownTime;
+	uint32						CanDrop;
+	uint32						DecomposePackID;
+	uint32						IsMerge;
 };
 

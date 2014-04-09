@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "platform/tlibc_platform.h"
 #include "core/tlibc_error_code.h"
+#include "core/tlibc_string.h"
 
 #include "protocol/tlibc_xml_reader.h"
 #include "protocol/tlibc_xml_writer.h"
@@ -132,7 +133,7 @@ void test_xlsx()
 {
 	tlibc_xlsx_reader_t xlsx_reader;
 	uint32_t i;
-	int ret;
+	tlibc_error_code_t ret;
 	item_table_t item_table[MAX_ITEM_NUM];
 	uint32_t item_table_num, row;
 
@@ -145,15 +146,25 @@ void test_xlsx()
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
 	for(i = 3; i <= row; ++i)
 	{
-		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);
-		ret = tlibc_read_item_table(&xlsx_reader.super, &item_table[item_table_num]);
+		
+		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);		
+		ret = tlibc_read_item_table(&xlsx_reader.super, &item_table[item_table_num]);		
+
 		if(ret == E_TLIBC_EMPTY)
 		{
 			continue;
 		}
 		else if(ret != E_TLIBC_NOERROR)
 		{
-			assert(0);
+			const char *location = tlibc_xlsx_last_location(&xlsx_reader);
+			if(location != NULL)
+			{
+				fprintf(stderr, "%s, %s\n", location, tstrerror(ret));
+			}
+			else
+			{
+				fprintf(stderr, "%s\n", tstrerror(ret));
+			}			
 		}
 		++item_table_num;
 	}	
@@ -318,9 +329,10 @@ int main()
 	
 	test_xlsx();
 
+	/*
 	test_mysql_insert();
 
 	test_mysql_select();
-	
+	*/	
 	return 0;
 }
