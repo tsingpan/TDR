@@ -1,6 +1,6 @@
 TData
 ======
-TData = [DDL](http://en.wikipedia.org/wiki/DDL) + [Compiler](http://en.wikipedia.org/wiki/Compiler)
+TData = [DDL](http://en.wikipedia.org/wiki/Data_Definition_Language) + [Compiler](http://en.wikipedia.org/wiki/Compiler)
 
 详细手册， 请点击这里 → [https://github.com/TDorm/TData/wiki](https://github.com/TDorm/TData/wiki)
 
