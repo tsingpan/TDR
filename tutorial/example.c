@@ -202,7 +202,7 @@ void test_mysql_insert()
 	}
 
 	memset(&par_bind, 0, sizeof(par_bind));
-	tlibc_bind_reader_init(&bind_reader, par_bind, sizeof(par_bind));
+	tlibc_mybind_reader_init(&bind_reader, par_bind, sizeof(par_bind));
 	user.id = 2;
 	user.exp = 123.321;
 	user.gold = UINT32_MAX;
@@ -271,7 +271,7 @@ void test_mysql_select()
 	}
 
 	memset(&res_bind, 0, sizeof(res_bind));
-	tlibc_bind_writer_init(&bind_writer, res_bind, sizeof(res_bind));
+	tlibc_mybind_writer_init(&bind_writer, res_bind, sizeof(res_bind));
 	ret = tlibc_write_user(&bind_writer.super, &user);
 	iret = mysql_stmt_bind_result(stmt, res_bind);
 	if(iret)
