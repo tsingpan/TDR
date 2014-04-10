@@ -91,7 +91,33 @@ void test_protocol()
 void test_xml_once()
 {
 	tlibc_xml_reader_t xml_reader;
-	tlibc_xml_writer_t xml_writer;	
+	tlibc_error_code_t ret;
+	tconnd_config_t config;
+
+	tlibc_xml_reader_init(&xml_reader);	
+	tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml");
+	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
+	tlibc_xml_reader_pop_file(&xml_reader);
+
+	/*
+	memset(&config, 0, sizeof(tconnd_config_t));
+	//用下面这个命令可以来添加查找包含文件的目录
+	tlibc_xml_add_include(&xml_reader, "./gen");
+	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
+	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
+	tlibc_xml_reader_pop_file(&xml_reader);
+	*/
+}
+
+#define MAX_XML_FILES 10000
+//it takes 5 seconds by reading 10000 xml.
+void test_xml()
+{
+	size_t i;
+	time_t start_time;
+	time_t current_time;
+
+	tlibc_xml_writer_t xml_writer;
 	int ret;
 	tconnd_config_t config;
 
@@ -112,30 +138,9 @@ void test_xml_once()
 	tlibc_xml_writer_init(&xml_writer, "tconnd.xml");
 	ret = tlibc_write_tconnd_config(&xml_writer.super, &config);
 	tlibc_xml_writer_fini(&xml_writer);
-	
-	memset(&config, 0, sizeof(tconnd_config_t));
 
-	tlibc_xml_reader_init(&xml_reader);	
-	tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml");
-	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
-	tlibc_xml_reader_pop_file(&xml_reader);
 
 	
-	memset(&config, 0, sizeof(tconnd_config_t));
-	//用下面这个命令可以来添加查找包含文件的目录
-	tlibc_xml_add_include(&xml_reader, "./gen");
-	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
-	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
-	tlibc_xml_reader_pop_file(&xml_reader);
-}
-
-#define MAX_XML_FILES 10000
-//it takes 5 seconds by reading 10000 xml.
-void test_xml()
-{
-	size_t i;
-	time_t start_time;
-	time_t current_time;
 
 	start_time = time(0);
 	for(i = 0; i < MAX_XML_FILES; ++i)
@@ -365,9 +370,9 @@ int main()
 {
 	test_protocol();
 	
-	//test_xml();
+	test_xml();
 	
-	test_xlsx();
+	//test_xlsx();
 
 	/*
 	test_mysql_insert();
