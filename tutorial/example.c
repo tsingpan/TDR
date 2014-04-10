@@ -129,7 +129,7 @@ void test_xml_once()
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
 
-#define MAX_XML_FILES 102400
+#define MAX_XML_FILES 100
 void test_xml()
 {
 	size_t i;
@@ -198,7 +198,7 @@ void test_xlsx()
 		test_xlsx_read_once();
 	}
 	current_time = time(0);
-	printf("it takes %llu seconds by reading %u xlsx.\n", current_time - start_time, i);
+	printf("it takes %u seconds by reading %u xlsx.\n", (uint32_t)(current_time - start_time), i);
 	
 }
 
