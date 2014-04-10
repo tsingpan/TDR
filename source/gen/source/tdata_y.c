@@ -2141,7 +2141,7 @@ yyreduce:
 
 		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
 
-		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
+		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
 
 		check_string_length_defined(&yylloc, &(yyvsp[(3) - (6)].sn_simple_type));
 
@@ -2249,7 +2249,7 @@ yyreduce:
 
 		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
-		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
+		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
 		reduce_SimpleType_tok_t_string(&(yyval.sn_simple_type), (yyvsp[(3) - (4)].sn_tok_identifier));
 	}

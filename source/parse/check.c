@@ -55,7 +55,7 @@ void check_identifier_not_defined_as_value(const symbols_t *symbols, const YYLTY
 	}
 }
 
-void check_identifier_is_positive_integer(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
+void check_identifier_is_non_zero_positive_integer(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier)
 {
 	const syn_value_t *val = NULL;
 	const symbol_t *symbol = symbols_search(symbols, prefix, identifier);
@@ -70,12 +70,16 @@ void check_identifier_is_positive_integer(const symbols_t *symbols, const YYLTYP
 	{
 	case E_SNVT_INT64:
 	case E_SNVT_HEX_INT64:
-		if(val->val.i64 < 0)
+		if(val->val.i64 <= 0)
 		{
 			scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_INTEGER, prefix, identifier);
 		}
 	case E_SNVT_UINT64:
 	case E_SNVT_HEX_UINT64:
+		if(val->val.ui64 <= 0)
+		{
+			scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_INTEGER, prefix, identifier);
+		}
 		break;
 	default:
 		scanner_error_halt(yylloc, E_LS_IDENTIFIER_NOT_STRING, prefix, identifier, "integer");

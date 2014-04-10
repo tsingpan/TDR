@@ -494,7 +494,7 @@ ContainerType:
 
 		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $5);
 
-		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", $5);
+		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", $5);
 
 		check_string_length_defined(&yylloc, &$3);
 
@@ -556,7 +556,7 @@ SimpleType:
 
 		check_identifier_is_value(&GET_SYMBOLS, &yylloc, "", $3);
 
-		check_identifier_is_positive_integer(&GET_SYMBOLS, &yylloc, "", $3);
+		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", $3);
 
 		reduce_SimpleType_tok_t_string(&$$, $3);
 	}
