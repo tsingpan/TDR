@@ -157,7 +157,7 @@ static error_code_t _on_struct(generator_writer_c_t *self, const syn_struct_t *d
 				const syn_simple_type_t *vector_type = symbols_get_real_type(self->super.symbols, &de_struct->field_list.field_list[i].type.ct.vector_type);
 				generator_printline(&self->super, 0, "\t\tuint32_t i;");				
 
-				generator_printline(&self->super, 0, "\t\tif((ret = tlibc_write_vector_begin(self)) != E_TLIBC_NOERROR) goto done;");
+				generator_printline(&self->super, 0, "\t\tif((ret = tlibc_write_vector_begin(self, \"%s\")) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier);
 
 				generator_printline(&self->super, 0, "");
 				generator_printline(&self->super, 2, "{");
@@ -201,7 +201,7 @@ static error_code_t _on_struct(generator_writer_c_t *self, const syn_struct_t *d
 				generator_printline(&self->super, 3, "if((ret = tlibc_write_vector_element_end(self, \"%s\", i)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier);
 				generator_printline(&self->super, 2, "}");
 				generator_printline(&self->super, 0, "");
-				generator_printline(&self->super, 2, "if((ret = tlibc_write_vector_end(self)) != E_TLIBC_NOERROR) goto done;");				
+				generator_printline(&self->super, 2, "if((ret = tlibc_write_vector_end(self, \"%s\")) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier);
 			}
 		}
 		else if(de_struct->field_list.field_list[i].type.type == E_SNT_SIMPLE)

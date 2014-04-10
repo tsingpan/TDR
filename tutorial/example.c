@@ -370,9 +370,9 @@ int main()
 {
 	test_protocol();
 	
-	test_xml();
+	//test_xml();
 	
-	//test_xlsx();
+	test_xlsx();
 
 	/*
 	test_mysql_insert();
