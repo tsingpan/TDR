@@ -147,6 +147,7 @@ void test_xml()
 }
 #define MAX_ITEM_NUM 65536
 item_table_t g_item_table[MAX_ITEM_NUM];
+#define COL_STR_LEN 1024
 
 void test_xlsx_read_once()
 {
@@ -173,10 +174,13 @@ void test_xlsx_read_once()
 		}
 		else if(ret != E_TLIBC_NOERROR)
 		{
-			const char *col = tlibc_xlsx_last_col(&xlsx_reader);
-			if((col != NULL) && (col[0]))
+			size_t col = tlibc_xlsx_current_col(&xlsx_reader);
+			char col_str[COL_STR_LEN];
+			const char* col_str_ptr = tlibc_xlsx_num2str(col, col_str, COL_STR_LEN);
+
+			if(col_str_ptr != NULL)
 			{
-				fprintf(stderr, "%s%d, %s\n", col, i, tstrerror(ret));
+				fprintf(stderr, "%s%d, %s\n", col_str_ptr, i, tstrerror(ret));
 			}
 			else
 			{
