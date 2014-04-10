@@ -185,7 +185,7 @@ static error_code_t _on_struct(generator_reader_c_t *self, const syn_struct_t *d
 				generator_printline(&self->super, 3, "{");
 				if(vector_type->st == E_ST_STRING)
 				{
-					generator_printline(&self->super, 4, "if((ret = tlibc_read_string(self, data->%s, %s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
+					generator_printline(&self->super, 4, "if((ret = tlibc_read_string(self, data->%s[i], %s)) != E_TLIBC_NOERROR) goto done;", de_struct->field_list.field_list[i].identifier, vector_type->string_length);
 				}
 				else
 				{

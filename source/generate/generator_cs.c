@@ -39,7 +39,7 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 }
 
 static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
-{	
+{
 	TLIBC_UNUSED(file_name);
 	TLIBC_UNUSED(yylloc);
 
@@ -166,7 +166,7 @@ static void _on_struct_write(generator_cs_t *self, const syn_struct_t *de_struct
 	generator_printline(&self->super, 3, "writer.WriteStructBegin(\"%s\");", de_struct->name);
 
 	for(i = 0; i < de_struct->field_list.field_list_num; ++i)
-	{		
+	{
 		//condition
 		if(de_struct->field_list.field_list[i].condition.oper != E_EO_NON)
 		{

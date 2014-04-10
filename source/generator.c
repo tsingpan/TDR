@@ -62,7 +62,7 @@ void strncpy_notdir(char *dest, const char*src, size_t dest_len)
 
 	for(i = 0; i < src_len; ++i)
 	{
-		if(src[i] == TLIBC_FILE_SEPARATOR)
+		if((src[i] == '/') || (src[i] == '\\'))
 		{
 			if(i + 1 < src_len)
 			{
@@ -72,6 +72,44 @@ void strncpy_notdir(char *dest, const char*src, size_t dest_len)
 	}
 
 	strncpy(dest, ptr, dest_len);
+}
+
+void strncpy_dir(char *dest, const char*src, size_t dest_len)
+{
+	size_t i;
+	size_t src_len = strlen(src);
+	const char* ptr = NULL;
+	size_t len;
+
+	for(i = 0; i < src_len; ++i)
+	{
+		if((src[i] == '/') || (src[i] == '\\'))
+		{
+			if(i + 1 < src_len)
+			{
+				ptr = src + i + 1;
+			}
+		}
+	}
+
+	if(ptr)
+	{
+		len = ptr - src;	
+		if(len >= dest_len)
+		{
+			len = dest_len - 1;
+		}
+		memcpy(dest, src , len);
+		dest[len] = 0;
+	}
+	else
+	{
+		if(dest_len > 0)
+		{
+			dest[0] = 0;
+		}
+	}
+	
 }
 
 error_code_t generator_open(generator_t *self, const char *primary_file, const char *suffix)
@@ -84,7 +122,24 @@ error_code_t generator_open(generator_t *self, const char *primary_file, const c
 	generator_replace_extension(self->file_name, TLIBC_MAX_PATH_LENGTH, suffix);
 
 	//计算输出目标文件的路径
-	snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, self->file_name);
+	if(g_output_dir)
+	{
+		snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, self->file_name);
+	}
+	else
+	{
+		char opath[TLIBC_MAX_PATH_LENGTH];
+		strncpy_dir(opath, primary_file, TLIBC_MAX_PATH_LENGTH);
+		if(opath[0])
+		{
+			snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", opath, TLIBC_FILE_SEPARATOR, self->file_name);
+		}
+		else
+		{
+			snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s", self->file_name);
+		}		
+	}
+	
 	
 
 	//计算文档名字
@@ -117,10 +172,9 @@ error_code_t generator_open(generator_t *self, const char *primary_file, const c
 		goto ERROR_RET;
 	}
 
-	
-
 	return E_TD_NOERROR;
 ERROR_RET:
+	scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, target_path);
 	return E_TD_ERROR;
 }
 

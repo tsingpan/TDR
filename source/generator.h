@@ -36,6 +36,8 @@ void generator_init(generator_t *self, const symbols_t *symbols);
 
 void strncpy_notdir(char *dest, const char*src, size_t dest_len);
 
+void strncpy_dir(char *dest, const char*src, size_t dest_len);
+
 error_code_t generator_open(generator_t *self, const char *primary_file, const char *suffix);
 
 void generator_print(generator_t *self, size_t tabs, const char* fmt, ...);

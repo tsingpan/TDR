@@ -3,7 +3,7 @@
 
 
 
-const char *g_output_dir = "./";
+const char *g_output_dir = NULL;
 
 const char *g_source_dir = "./";
 

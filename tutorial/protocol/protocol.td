@@ -74,6 +74,7 @@ enum item_type
 };
 
 const uint32 ITEM_NAME_LENGTH = 1024;
+const uint32 ITEM_VEC_NUM = 10;
 struct item_table
 {
 	uint32 						ID;
@@ -103,5 +104,6 @@ struct item_table
 	uint32						CanDrop;
 	uint32						DecomposePackID;
 	uint32						IsMerge;
+	vector<string<ITEM_NAME_LENGTH>, ITEM_VEC_NUM>	vec;
 };
 
