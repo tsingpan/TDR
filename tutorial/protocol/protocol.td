@@ -105,5 +105,6 @@ struct item_table
 	uint32						DecomposePackID;
 	uint32						IsMerge;
 	vector<string<ITEM_NAME_LENGTH>, ITEM_VEC_NUM>	vec;
+	vector<uint64, ITEM_VEC_NUM>	vec_int;
 };
 
