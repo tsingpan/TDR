@@ -182,7 +182,8 @@ void test_xlsx_read_once()
 	tlibc_xlsx_reader_fini(&xlsx_reader);
 }
 
-//50个1m的xlsx耗时19s
+//27列20002行， 总共1.16mb的测试用例， 重复读取100次， 耗时12秒。
+//由于cache是否影响效率未知， 所以还需进一步测试。
 #define MAX_XLSX_FILES 50
 
 void test_xlsx()
@@ -354,9 +355,9 @@ int main()
 {
 	test_protocol();
 	
-	test_xml();
+	//test_xml();
 	
-	//test_xlsx();
+	test_xlsx();
 
 	/*
 	test_mysql_insert();
