@@ -87,26 +87,43 @@ void test_protocol()
 }
 
 
-
-void test_xml_once()
+typedef tlibc_error_code_t (*reader_func)(tlibc_abstract_reader_t *self, void *data);
+int read_xml(const char* file, void *ptr, reader_func reader)
 {
+	int ret = TRUE;
 	tlibc_xml_reader_t xml_reader;
-	tlibc_error_code_t ret;
-	tconnd_config_t config;
+	tlibc_error_code_t r;
 
 	tlibc_xml_reader_init(&xml_reader);	
-	tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml");
-	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
-	tlibc_xml_reader_pop_file(&xml_reader);
+	if(tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml") != E_TLIBC_NOERROR)
+	{
+		ret = FALSE;
+		goto done;
+	}
 
-	/*
-	memset(&config, 0, sizeof(tconnd_config_t));
-	//用下面这个命令可以来添加查找包含文件的目录
-	tlibc_xml_add_include(&xml_reader, "./gen");
-	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
-	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
+	r = reader(&xml_reader.super, ptr); 
+	if(r != E_TLIBC_NOERROR)
+	{
+		const tlibc_xml_reader_yyltype_t *lo = tlibc_xml_current_location(&xml_reader);
+		if(lo)
+		{
+			fprintf(stderr, "%s(%d,%d - %d,%d) %s\n"
+				, lo->file_name
+				, lo->first_line, lo->first_column, lo->last_line, lo->last_column
+				, tstrerror(r));
+		}
+		else
+		{
+			fprintf(stderr, "%s %s", file, tstrerror(r));
+		}   	
+
+		ret = FALSE;
+		goto pop_file;
+	}
+pop_file:
 	tlibc_xml_reader_pop_file(&xml_reader);
-	*/
+done:
+	return ret;
 }
 
 #define MAX_XML_FILES 10000
@@ -116,7 +133,7 @@ void test_xml()
 	size_t i;
 	time_t start_time;
 	time_t current_time;
-
+	tlibc_xml_reader_t xml_reader;
 	tlibc_xml_writer_t xml_writer;
 	int ret;
 	tconnd_config_t config;
@@ -140,44 +157,64 @@ void test_xml()
 	tlibc_xml_writer_fini(&xml_writer);
 
 
-	
-
 	start_time = time(0);
 	for(i = 0; i < MAX_XML_FILES; ++i)
-	{
-		test_xml_once();
+	{		
+		read_xml("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 	}
 	current_time = time(0);
 	printf("it takes %u seconds by reading %u xml.\n", (uint32_t)(current_time - start_time), i);
+
+
+	memset(&config, 0, sizeof(tconnd_config_t));
+	//用下面这个命令可以来添加查找包含文件的目录
+	tlibc_xml_add_include(&xml_reader, "./gen");
+	tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
+	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
+	tlibc_xml_reader_pop_file(&xml_reader);
 }
 #define MAX_ITEM_NUM 65536
 item_table_t g_item_table[MAX_ITEM_NUM];
+size_t g_item_table_num;
 #define COL_STR_LEN 1024
 
-void test_xlsx_read_once()
+int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, reader_func reader)
 {
+	int ret = TRUE;
 	tlibc_xlsx_reader_t xlsx_reader;
 	uint32_t i;
-	tlibc_error_code_t ret;
+	tlibc_error_code_t r;
+	uint32_t num, row;
 
-	uint32_t item_table_num, row;
-
-	item_table_num = 0;
-	//memset(&g_item_table, 0, sizeof(g_item_table));
-
-	ret = tlibc_xlsx_reader_init(&xlsx_reader, "./gen/item.xlsx");
-	ret = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
+	num = 0;
+	r = tlibc_xlsx_reader_init(&xlsx_reader, file);
+	if(r != E_TLIBC_NOERROR)
+	{
+		ret = FALSE;
+		goto done;
+	}
+	r = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
+	if(r != E_TLIBC_NOERROR)
+	{
+		ret = FALSE;
+		goto fini;
+	}
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
 	for(i = 3; i <= row; ++i)
 	{
-		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);		
-		ret = tlibc_read_item_table(&xlsx_reader.super, &g_item_table[item_table_num]);		
+		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);	
+		if(num >= *list_num)
+		{
+			ret = FALSE;
+			goto close_sheet;
+		}
+		r = reader(&xlsx_reader.super, list + unit_size * num);
 
-		if(ret == E_TLIBC_EMPTY)
+		if(r == E_TLIBC_EMPTY)
 		{
 			continue;
 		}
-		else if(ret != E_TLIBC_NOERROR)
+		else if(r != E_TLIBC_NOERROR)
 		{
 			size_t col = tlibc_xlsx_current_col(&xlsx_reader);
 			char col_str[COL_STR_LEN];
@@ -185,17 +222,25 @@ void test_xlsx_read_once()
 
 			if(col_str_ptr != NULL)
 			{
-				fprintf(stderr, "%s%d, %s\n", col_str_ptr, i, tstrerror(ret));
+				fprintf(stderr, "%s%d, %s\n", col_str_ptr, i, tstrerror(r));
 			}
 			else
 			{
-				fprintf(stderr, "?%d, %s\n", i, tstrerror(ret));
-			}			
+				fprintf(stderr, "?%d, %s\n", i, tstrerror(r));
+			}
+			ret = FALSE;
+			goto close_sheet;
 		}
-		++item_table_num;
-	}	
+		++num;
+	}
+	*list_num = num;
+
+close_sheet:
 	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
+fini:
 	tlibc_xlsx_reader_fini(&xlsx_reader);
+done:
+	return ret;
 }
 
 #define MAX_XLSX_FILES 100
@@ -210,7 +255,8 @@ void test_xlsx()
 	start_time = time(0);
 	for(i = 0; i < MAX_XLSX_FILES; ++i)
 	{
-		test_xlsx_read_once();
+		g_item_table_num = MAX_ITEM_NUM;
+		read_xlsx("./gen/item.xlsx", (char*)g_item_table, sizeof(item_table_t), &g_item_table_num, (reader_func)tlibc_read_item_table);
 	}
 	current_time = time(0);
 	printf("it takes %u seconds by reading %u xlsx.\n", (uint32_t)(current_time - start_time), i);
@@ -370,7 +416,7 @@ int main()
 {
 	test_protocol();
 	
-	//test_xml();
+	test_xml();
 	
 	test_xlsx();
 
