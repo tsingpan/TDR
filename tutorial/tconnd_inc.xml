@@ -1,14 +1,16 @@
 <tconnd_config>
 	<log_config>/usr/local/tconnd/etc/tconnd_log.xml</log_config>
-	<vector>
-		<instance_config>
+	<instance_config>
+		<!--可以使用include命令来包含另外一个xml， 消除配置文件中的重复部分-->
+		<!include "tconnd_instance1.xml.inc"/>
+		<element>
 			<level>e_low</level>
 			<ip>127.0.0.1</ip>
 			<port>7001</port>
 			<backlog>5</backlog>
 			<epoll_size>65536</epoll_size>
-		</instance_config>
-		<!--可以使用include命令来包含另外一个xml， 消除配置文件中的重复部分-->
+		</element>
+		<!-- 重复包含同一个文件会导致重复展开， 并不会报错。-->
 		<!include "tconnd_instance1.xml.inc"/>
-	</vector>
+	</instance_config>
 </tconnd_config>
