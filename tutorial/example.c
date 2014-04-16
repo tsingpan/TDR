@@ -88,7 +88,7 @@ void test_protocol()
 
 
 typedef tlibc_error_code_t (*reader_func)(tlibc_abstract_reader_t *self, void *data);
-int read_xml(const char* file, void *ptr, reader_func reader)
+int read_xml_from_file(const char* file, void *ptr, reader_func reader)
 {
 	int ret = TRUE;
 	tlibc_xml_reader_t xml_reader;
@@ -126,9 +126,47 @@ done:
 	return ret;
 }
 
+int read_xml_from_buff(const char* start, const char*limit, void *ptr, reader_func reader)
+{
+	int ret = TRUE;
+	tlibc_xml_reader_t xml_reader;
+	tlibc_error_code_t r;
+
+	tlibc_xml_reader_init(&xml_reader);	
+	if(tlibc_xml_reader_push_buff(&xml_reader, start, limit) != E_TLIBC_NOERROR)
+	{
+		ret = FALSE;
+		goto done;
+	}
+
+	r = reader(&xml_reader.super, ptr); 
+	if(r != E_TLIBC_NOERROR)
+	{
+		const tlibc_xml_reader_yyltype_t *lo = tlibc_xml_current_location(&xml_reader);
+		if(lo)
+		{
+			fprintf(stderr, "(%d,%d - %d,%d) %s\n"
+				, lo->first_line, lo->first_column, lo->last_line, lo->last_column
+				, tstrerror(r));
+		}
+		else
+		{
+			fprintf(stderr, "%s", tstrerror(r));
+		}   	
+
+		ret = FALSE;
+		goto pop_file;
+	}
+pop_file:
+	tlibc_xml_reader_pop_file(&xml_reader);
+done:
+	return ret;
+}
+
 #define MAX_XML_FILES 100000
 //it takes 7 seconds by reading 100000 xml.
 //k480n-i7 debian 32
+#define XML_OUTPUT_BUF 65536
 void test_xml()
 {
 	size_t i;
@@ -138,6 +176,11 @@ void test_xml()
 	tlibc_xml_writer_t xml_writer;
 	int ret;
 	tconnd_config_t config;
+	int bret;
+	FILE* fout;
+	const char*ch;
+
+	static char output_buff[XML_OUTPUT_BUF];
 
 	snprintf(config.log_config, MAX_NAME_LENGTH, "/usr/local/tconnd/etc/tconnd_log.xml");
 	config.instance_config_num = 2;
@@ -153,15 +196,26 @@ void test_xml()
 	config.instance_config[1].backlog = 1;
 	config.instance_config[1].epoll_size = 1024;
 
-	tlibc_xml_writer_init(&xml_writer, "tconnd.xml");
+	tlibc_xml_writer_init(&xml_writer, output_buff, output_buff + sizeof(output_buff));
 	ret = tlibc_write_tconnd_config(&xml_writer.super, &config);
-	tlibc_xml_writer_fini(&xml_writer);
+	assert(ret == E_TLIBC_NOERROR);
+	fout = fopen("tconnd.xml", "w");
+	assert(fout != NULL);
+	for(ch = xml_writer.start; ch < xml_writer.cur; ++ch)
+	{
+		fputc(*ch, fout);
+	}
+	fclose(fout);
+	memset(&config, 1, sizeof(tconnd_config_t));
+	bret = read_xml_from_buff(output_buff, output_buff + sizeof(output_buff), &config, (reader_func)tlibc_read_tconnd_config);
+	memset(&config, 1, sizeof(tconnd_config_t));
+	bret = read_xml_from_file("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 
-
+	memset(&config, 0, sizeof(tconnd_config_t));
 	start_time = time(0);
 	for(i = 0; i < MAX_XML_FILES; ++i)
 	{
-		read_xml("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
+		bret = read_xml_from_file("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 	}
 	current_time = time(0);
 	printf("it takes %u seconds by reading %u xml.\n", (uint32_t)(current_time - start_time), i);
