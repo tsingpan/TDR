@@ -1,8 +1,8 @@
 #include "parse/parser.h"
 #include "error.h"
 
-#include "tdata_y.h"
-#include "tdata_l.h"
+#include "scanner_l.h"
+#include "parser_y.h"
 #include "parse/scanner.h"
 #include "globals.h"
 
@@ -56,7 +56,7 @@ static void parser_push(PARSER *self, const char *file_name)
 	}
 }
 
-int tdataparse (scanner_t *self);
+int tdrparse (scanner_t *self);
 int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generator_list, uint32_t generator_list_num)
 {
 	int32_t ret;	
@@ -70,7 +70,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generato
 	on_document_begin(self, NULL, file_name);
 
 	//这玩意自动生成的
-	ret = tdataparse(&self->scanner);
+	ret = tdrparse(&self->scanner);
 	on_document_end(self, NULL, file_name);
 	scanner_pop(&self->scanner);
 	symbols_clear(&self->symbols);

@@ -1,6 +1,6 @@
 ﻿#include "language/language.h"
 
-const char* tdata_strerror(language_string_t sid)
+const char* tdr_strerror(language_string_t sid)
 {
 	switch(sid)
 	{

@@ -1,5 +1,5 @@
-SET(PNAME "TData")
-SET(PONAME "tdata")
+SET(PNAME "TDR")
+SET(PONAME "tdr")
 project(${PNAME})
 
 cmake_minimum_required(VERSION 2.6)

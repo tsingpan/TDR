@@ -5,7 +5,7 @@ FILE(GLOB_RECURSE FILE_LIST *.h *.c)
 
 SET(CMAKE_MODULE_PATH "${Example_SOURCE_DIR}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
 
-find_package(TData REQUIRED)
+find_package(TDR REQUIRED)
 find_package(TLibC REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(
 	${MYSQL_INCLUDE_DIR}
 	)
 
-set(TDATA_OUTPUTS 
+set(TDR_OUTPUTS 
 	${GEN_PATH}/common_types.h ${GEN_PATH}/common_reader.c ${GEN_PATH}/common_reader.h 
 	${GEN_PATH}/common_writer.c ${GEN_PATH}/common_writer.h
 	${GEN_PATH}/protocol_types.h
@@ -48,18 +48,18 @@ set(TDATA_OUTPUTS
 	${GEN_PATH}/sql_tables.sql
 	)
 
-add_custom_command(OUTPUT ${TDATA_OUTPUTS}
+add_custom_command(OUTPUT ${TDR_OUTPUTS}
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH}
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gtypes_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDATA_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -g sql ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gtypes_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -g sql ${Example_SOURCE_DIR}/protocol/sql.td
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_inc.xml ${GEN_PATH}
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_instance1.xml.inc ${GEN_PATH}
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/item.xlsx ${GEN_PATH}
 )
 
-ADD_EXECUTABLE(Example ${FILE_LIST} ${TDATA_OUTPUTS})
+ADD_EXECUTABLE(Example ${FILE_LIST} ${TDR_OUTPUTS})
 TARGET_LINK_LIBRARIES(Example ${ZLIB_LIBRARIES} ${MYSQL_LIBRARIES} ${TLIBC_LIBRARIES})

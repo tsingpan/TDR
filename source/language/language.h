@@ -33,7 +33,7 @@ typedef enum language_string_e
 	E_LS_MAX,
 }language_string_t;
 
-const char* tdata_strerror(language_string_t sid);
+const char* tdr_strerror(language_string_t sid);
 
 
 #endif//_H_LANGUAGE_H

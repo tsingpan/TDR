@@ -2,8 +2,8 @@
 #include "parse/scanner.h"
 
 
-#include "tdata_l.h"
-#include "tdata_y.h"
+#include "scanner_l.h"
+#include "parser_y.h"
 
 int32_t scanner_scan(scanner_t *self, YYLTYPE *yylloc)
 {

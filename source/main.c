@@ -20,18 +20,18 @@
 
 void version()
 {
-	printf("TData version %s\n", VERSION);
+	printf("%s version %s\n", PROJECT_NAME, VERSION);
 }
 
 void usage()
 {
-	fprintf(stderr, "Usage: tdata [options] file\n\n");
-	fprintf(stderr, "Use tdata --help for a list of options\n");
+	fprintf(stderr, "Usage: %s [options] file\n\n", PROGRAM_NAME);
+	fprintf(stderr, "Use %s --help for a list of options\n", PROGRAM_NAME);
 }
 
 void help()
 {
-	fprintf(stderr, "Usage: tdata [options] file.\n");
+	fprintf(stderr, "Usage: %s [options] file.\n", PROGRAM_NAME);
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -h, --help                   Display this information.\n");
 	fprintf(stderr, "  -v, --version                Print the compiler version.\n");

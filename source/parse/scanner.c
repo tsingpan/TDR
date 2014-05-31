@@ -3,7 +3,7 @@
 
 #include "error.h"
 #include "language/language.h"
-#include "tdata_y.h"
+#include "parser_y.h"
 #include "globals.h"
 
 #include <errno.h>
@@ -282,7 +282,7 @@ uint32_t scanner_size(scanner_t *self)
 }
 static void scanner_error_ap(const YYLTYPE *yylloc, language_string_t result, va_list ap)
 {
-	const char *error_str = tdata_strerror(result);	
+	const char *error_str = tdr_strerror(result);	
 	if((yylloc) && (yylloc->file_name[0]))
 	{
 		fprintf(stderr, "%s", yylloc->file_name);
@@ -316,7 +316,7 @@ void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...)
 }
 
 #define MAX_SCANNER_ERROR_MSG_LENGTH 256
-void tdataerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...)
+void tdrerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...)
 {
 	va_list ap;
 	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
@@ -594,7 +594,7 @@ static int32_t get_yylval(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yyl
 }
 
 
-int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self)
+int tdrlex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self)
 {
 	int ret = 0;
 

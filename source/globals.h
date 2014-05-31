@@ -4,8 +4,6 @@
 #include "parse/parser.h"
 
 
-#define TDATA_HOME "TDATA_HOME"
-
 //全局变量都是只读的哦
 
 extern const char *g_output_dir;

@@ -30,18 +30,18 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED
-# define YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED
+#ifndef YY_TDR_D_GITHUB_TDR_SOURCE_GEN_INCLUDE_PARSER_Y_H_INCLUDED
+# define YY_TDR_D_GITHUB_TDR_SOURCE_GEN_INCLUDE_PARSER_Y_H_INCLUDED
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
 #if YYDEBUG
-extern int tdatadebug;
+extern int tdrdebug;
 #endif
 /* "%code requires" blocks.  */
 /* Line 2053 of yacc.c  */
-#line 30 "D:/GitHub/TData/source/tdata_y.yy"
+#line 30 "D:/GitHub/TDR/source/parser_y.yy"
 
 #include "parse/parser.h"
 #include "parse/scanner.h"
@@ -52,7 +52,7 @@ extern int tdatadebug;
 
 
 /* Line 2053 of yacc.c  */
-#line 56 "D:/GitHub/TData/source/gen/include/tdata_y.h"
+#line 56 "D:/GitHub/TDR/source/gen/include/parser_y.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -120,16 +120,16 @@ typedef struct YYLTYPE
 
 #ifdef YYPARSE_PARAM
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (void *YYPARSE_PARAM);
+int tdrparse (void *YYPARSE_PARAM);
 #else
-int tdataparse ();
+int tdrparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (scanner_t *self);
+int tdrparse (scanner_t *self);
 #else
-int tdataparse ();
+int tdrparse ();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_TDATA_D_GITHUB_TDATA_SOURCE_GEN_INCLUDE_TDATA_Y_H_INCLUDED  */
+#endif /* !YY_TDR_D_GITHUB_TDR_SOURCE_GEN_INCLUDE_PARSER_Y_H_INCLUDED  */

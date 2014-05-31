@@ -60,18 +60,18 @@
 
 
 /* Substitute the variable and function names.  */
-#define yyparse         tdataparse
-#define yylex           tdatalex
-#define yyerror         tdataerror
-#define yylval          tdatalval
-#define yychar          tdatachar
-#define yydebug         tdatadebug
-#define yynerrs         tdatanerrs
-#define yylloc          tdatalloc
+#define yyparse         tdrparse
+#define yylex           tdrlex
+#define yyerror         tdrerror
+#define yylval          tdrlval
+#define yychar          tdrchar
+#define yydebug         tdrdebug
+#define yynerrs         tdrnerrs
+#define yylloc          tdrlloc
 
 /* Copy the first part of user declarations.  */
 /* Line 371 of yacc.c  */
-#line 4 "D:/GitHub/TData/source/tdata_y.yy"
+#line 4 "D:/GitHub/TDR/source/parser_y.yy"
 
 //bison生成的代码会有几个warning, 在这里屏蔽掉
 #ifdef _WIN32
@@ -96,7 +96,7 @@
 #define GET_FIELD_LIST GET_DEFINITION.definition.de_struct.field_list
 
 /* Line 371 of yacc.c  */
-#line 100 "D:/GitHub/TData/source/gen/source/tdata_y.c"
+#line 100 "D:/GitHub/TDR/source/gen/source/parser_y.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -120,11 +120,11 @@
 # define YYDEBUG 0
 #endif
 #if YYDEBUG
-extern int tdatadebug;
+extern int tdrdebug;
 #endif
 /* "%code requires" blocks.  */
 /* Line 387 of yacc.c  */
-#line 30 "D:/GitHub/TData/source/tdata_y.yy"
+#line 30 "D:/GitHub/TDR/source/parser_y.yy"
 
 #include "parse/parser.h"
 #include "parse/scanner.h"
@@ -135,7 +135,7 @@ extern int tdatadebug;
 
 
 /* Line 387 of yacc.c  */
-#line 139 "D:/GitHub/TData/source/gen/source/tdata_y.c"
+#line 139 "D:/GitHub/TDR/source/gen/source/parser_y.c"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -203,15 +203,15 @@ typedef struct YYLTYPE
 
 #ifdef YYPARSE_PARAM
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (void *YYPARSE_PARAM);
+int tdrparse (void *YYPARSE_PARAM);
 #else
-int tdataparse ();
+int tdrparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int tdataparse (scanner_t *self);
+int tdrparse (scanner_t *self);
 #else
-int tdataparse ();
+int tdrparse ();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
@@ -220,7 +220,7 @@ int tdataparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 224 "D:/GitHub/TData/source/gen/source/tdata_y.c"
+#line 224 "D:/GitHub/TDR/source/gen/source/parser_y.c"
 
 #ifdef short
 # undef short
@@ -1663,7 +1663,7 @@ yyreduce:
     {
         case 3:
 /* Line 1787 of yacc.c  */
-#line 126 "D:/GitHub/TData/source/tdata_y.yy"
+#line 126 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		parser_on_definition(GET_PARSER, &yylloc, &GET_DEFINITION);
 	}
@@ -1671,14 +1671,14 @@ yyreduce:
 
   case 4:
 /* Line 1787 of yacc.c  */
-#line 129 "D:/GitHub/TData/source/tdata_y.yy"
+#line 129 "D:/GitHub/TDR/source/parser_y.yy"
     {
 	}
     break;
 
   case 5:
 /* Line 1787 of yacc.c  */
-#line 134 "D:/GitHub/TData/source/tdata_y.yy"
+#line 134 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_IMPORT;
 		GET_DEFINITION.definition.de_import = (yyvsp[(1) - (1)].sn_import);
@@ -1687,7 +1687,7 @@ yyreduce:
 
   case 6:
 /* Line 1787 of yacc.c  */
-#line 139 "D:/GitHub/TData/source/tdata_y.yy"
+#line 139 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_CONST;
 		GET_DEFINITION.definition.de_const = (yyvsp[(1) - (1)].sn_const);
@@ -1696,7 +1696,7 @@ yyreduce:
 
   case 7:
 /* Line 1787 of yacc.c  */
-#line 144 "D:/GitHub/TData/source/tdata_y.yy"
+#line 144 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_TYPEDEF;
 		GET_DEFINITION.definition.de_typedef = (yyvsp[(1) - (1)].sn_typedef);
@@ -1705,7 +1705,7 @@ yyreduce:
 
   case 8:
 /* Line 1787 of yacc.c  */
-#line 149 "D:/GitHub/TData/source/tdata_y.yy"
+#line 149 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_STRUCT;
 	}
@@ -1713,7 +1713,7 @@ yyreduce:
 
   case 9:
 /* Line 1787 of yacc.c  */
-#line 153 "D:/GitHub/TData/source/tdata_y.yy"
+#line 153 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_UNION;
 	}
@@ -1721,7 +1721,7 @@ yyreduce:
 
   case 10:
 /* Line 1787 of yacc.c  */
-#line 157 "D:/GitHub/TData/source/tdata_y.yy"
+#line 157 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_ENUM;
 	}
@@ -1729,7 +1729,7 @@ yyreduce:
 
   case 11:
 /* Line 1787 of yacc.c  */
-#line 161 "D:/GitHub/TData/source/tdata_y.yy"
+#line 161 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.type = E_DT_UNIX_COMMENT;
 		GET_DEFINITION.definition.de_unix_comment = (yyvsp[(1) - (1)].sn_unix_comment);
@@ -1738,7 +1738,7 @@ yyreduce:
 
   case 12:
 /* Line 1787 of yacc.c  */
-#line 168 "D:/GitHub/TData/source/tdata_y.yy"
+#line 168 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_strlen_too_long(&yylloc, (yyvsp[(2) - (2)].sn_string), "", MAX_PACKAGE_NAME_LENGTH);
 		
@@ -1749,7 +1749,7 @@ yyreduce:
 
   case 13:
 /* Line 1787 of yacc.c  */
-#line 177 "D:/GitHub/TData/source/tdata_y.yy"
+#line 177 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 		check_string_length(&yylloc, &(yyvsp[(2) - (4)].sn_simple_type), TRUE);
@@ -1762,7 +1762,7 @@ yyreduce:
 
   case 14:
 /* Line 1787 of yacc.c  */
-#line 188 "D:/GitHub/TData/source/tdata_y.yy"
+#line 188 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -1778,7 +1778,7 @@ yyreduce:
 
   case 15:
 /* Line 1787 of yacc.c  */
-#line 202 "D:/GitHub/TData/source/tdata_y.yy"
+#line 202 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_SYMBOLS.enum_name = (yyvsp[(2) - (2)].sn_tok_identifier);
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
@@ -1787,7 +1787,7 @@ yyreduce:
 
   case 16:
 /* Line 1787 of yacc.c  */
-#line 207 "D:/GitHub/TData/source/tdata_y.yy"
+#line 207 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (7)].sn_tok_identifier));
 
@@ -1799,7 +1799,7 @@ yyreduce:
 
   case 17:
 /* Line 1787 of yacc.c  */
-#line 217 "D:/GitHub/TData/source/tdata_y.yy"
+#line 217 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_DEFINITION.definition.de_enum.enum_def_list_num >= MAX_ENUM_DEF_LIST_NUM)
 		{
@@ -1814,7 +1814,7 @@ yyreduce:
 
   case 18:
 /* Line 1787 of yacc.c  */
-#line 229 "D:/GitHub/TData/source/tdata_y.yy"
+#line 229 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num++] = (yyvsp[(1) - (1)].sn_enum_def);
 	}
@@ -1822,7 +1822,7 @@ yyreduce:
 
   case 19:
 /* Line 1787 of yacc.c  */
-#line 235 "D:/GitHub/TData/source/tdata_y.yy"
+#line 235 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
@@ -1840,7 +1840,7 @@ yyreduce:
 
   case 20:
 /* Line 1787 of yacc.c  */
-#line 249 "D:/GitHub/TData/source/tdata_y.yy"
+#line 249 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
@@ -1864,7 +1864,7 @@ yyreduce:
 
   case 21:
 /* Line 1787 of yacc.c  */
-#line 271 "D:/GitHub/TData/source/tdata_y.yy"
+#line 271 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (2)].sn_tok_identifier));
 		GET_SYMBOLS.union_name = (yyvsp[(2) - (2)].sn_tok_identifier);
@@ -1874,7 +1874,7 @@ yyreduce:
 
   case 22:
 /* Line 1787 of yacc.c  */
-#line 277 "D:/GitHub/TData/source/tdata_y.yy"
+#line 277 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Union(&GET_DEFINITION.definition.de_union, (yyvsp[(2) - (8)].sn_tok_identifier), &(yyvsp[(4) - (8)].sn_parameters));
 
@@ -1884,7 +1884,7 @@ yyreduce:
 
   case 23:
 /* Line 1787 of yacc.c  */
-#line 285 "D:/GitHub/TData/source/tdata_y.yy"
+#line 285 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_UNION_FIELD_LIST.union_field_list_num >= MAX_UNION_FIELD_LIST_NUM)
 		{
@@ -1897,7 +1897,7 @@ yyreduce:
 
   case 24:
 /* Line 1787 of yacc.c  */
-#line 295 "D:/GitHub/TData/source/tdata_y.yy"
+#line 295 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num++] = (yyvsp[(1) - (1)].sn_union_field);
 	}
@@ -1905,7 +1905,7 @@ yyreduce:
 
   case 25:
 /* Line 1787 of yacc.c  */
-#line 301 "D:/GitHub/TData/source/tdata_y.yy"
+#line 301 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined_as_value(&GET_SYMBOLS, &yylloc, "", (yyvsp[(4) - (6)].sn_tok_identifier));
 
@@ -1921,7 +1921,7 @@ yyreduce:
 
   case 26:
 /* Line 1787 of yacc.c  */
-#line 315 "D:/GitHub/TData/source/tdata_y.yy"
+#line 315 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters) = (yyvsp[(2) - (3)].sn_parameters);
 	}
@@ -1929,7 +1929,7 @@ yyreduce:
 
   case 27:
 /* Line 1787 of yacc.c  */
-#line 319 "D:/GitHub/TData/source/tdata_y.yy"
+#line 319 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters).par_list_num = 0;
 	}
@@ -1937,7 +1937,7 @@ yyreduce:
 
   case 28:
 /* Line 1787 of yacc.c  */
-#line 325 "D:/GitHub/TData/source/tdata_y.yy"
+#line 325 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if((yyvsp[(1) - (3)].sn_parameters).par_list_num >= MAX_PARAMETER_NUM)
 		{
@@ -1950,7 +1950,7 @@ yyreduce:
 
   case 29:
 /* Line 1787 of yacc.c  */
-#line 335 "D:/GitHub/TData/source/tdata_y.yy"
+#line 335 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters).par_list[0] = (yyvsp[(1) - (1)].sn_parameter);
 		(yyval.sn_parameters).par_list_num = 1;
@@ -1959,7 +1959,7 @@ yyreduce:
 
   case 30:
 /* Line 1787 of yacc.c  */
-#line 342 "D:/GitHub/TData/source/tdata_y.yy"
+#line 342 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_str_equal(&yylloc, (yyvsp[(2) - (2)].sn_tok_identifier), "selector");
 
@@ -1973,7 +1973,7 @@ yyreduce:
 
   case 31:
 /* Line 1787 of yacc.c  */
-#line 360 "D:/GitHub/TData/source/tdata_y.yy"
+#line 360 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		parser_on_struct_begin(GET_PARSER, &yylloc, (yyvsp[(2) - (2)].sn_tok_identifier));
 
@@ -1986,7 +1986,7 @@ yyreduce:
 
   case 32:
 /* Line 1787 of yacc.c  */
-#line 369 "D:/GitHub/TData/source/tdata_y.yy"
+#line 369 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy(GET_DEFINITION.definition.de_struct.name, (yyvsp[(2) - (7)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
@@ -1998,7 +1998,7 @@ yyreduce:
 
   case 33:
 /* Line 1787 of yacc.c  */
-#line 379 "D:/GitHub/TData/source/tdata_y.yy"
+#line 379 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_FIELD_LIST.field_list_num >= MAX_FIELD_LIST_NUM)
 		{
@@ -2011,7 +2011,7 @@ yyreduce:
 
   case 34:
 /* Line 1787 of yacc.c  */
-#line 389 "D:/GitHub/TData/source/tdata_y.yy"
+#line 389 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num++] = (yyvsp[(1) - (1)].sn_field);
 	}
@@ -2019,7 +2019,7 @@ yyreduce:
 
   case 35:
 /* Line 1787 of yacc.c  */
-#line 395 "D:/GitHub/TData/source/tdata_y.yy"
+#line 395 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2055,7 +2055,7 @@ yyreduce:
 
   case 36:
 /* Line 1787 of yacc.c  */
-#line 429 "D:/GitHub/TData/source/tdata_y.yy"
+#line 429 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2073,7 +2073,7 @@ yyreduce:
 
   case 37:
 /* Line 1787 of yacc.c  */
-#line 443 "D:/GitHub/TData/source/tdata_y.yy"
+#line 443 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2092,7 +2092,7 @@ yyreduce:
 
   case 38:
 /* Line 1787 of yacc.c  */
-#line 458 "D:/GitHub/TData/source/tdata_y.yy"
+#line 458 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2111,7 +2111,7 @@ yyreduce:
 
   case 39:
 /* Line 1787 of yacc.c  */
-#line 473 "D:/GitHub/TData/source/tdata_y.yy"
+#line 473 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_condition).oper = E_EO_NON;
 	}
@@ -2119,7 +2119,7 @@ yyreduce:
 
   case 40:
 /* Line 1787 of yacc.c  */
-#line 482 "D:/GitHub/TData/source/tdata_y.yy"
+#line 482 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Type_SimpleType(&(yyval.sn_type), &(yyvsp[(1) - (1)].sn_simple_type));
 	}
@@ -2127,7 +2127,7 @@ yyreduce:
 
   case 41:
 /* Line 1787 of yacc.c  */
-#line 486 "D:/GitHub/TData/source/tdata_y.yy"
+#line 486 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_type) = (yyvsp[(1) - (1)].sn_type);
 	}
@@ -2135,7 +2135,7 @@ yyreduce:
 
   case 42:
 /* Line 1787 of yacc.c  */
-#line 492 "D:/GitHub/TData/source/tdata_y.yy"
+#line 492 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
 
@@ -2151,7 +2151,7 @@ yyreduce:
 
   case 43:
 /* Line 1787 of yacc.c  */
-#line 506 "D:/GitHub/TData/source/tdata_y.yy"
+#line 506 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2159,7 +2159,7 @@ yyreduce:
 
   case 44:
 /* Line 1787 of yacc.c  */
-#line 510 "D:/GitHub/TData/source/tdata_y.yy"
+#line 510 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2167,7 +2167,7 @@ yyreduce:
 
   case 45:
 /* Line 1787 of yacc.c  */
-#line 514 "D:/GitHub/TData/source/tdata_y.yy"
+#line 514 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2175,7 +2175,7 @@ yyreduce:
 
   case 46:
 /* Line 1787 of yacc.c  */
-#line 518 "D:/GitHub/TData/source/tdata_y.yy"
+#line 518 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2183,7 +2183,7 @@ yyreduce:
 
   case 47:
 /* Line 1787 of yacc.c  */
-#line 522 "D:/GitHub/TData/source/tdata_y.yy"
+#line 522 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2191,7 +2191,7 @@ yyreduce:
 
   case 48:
 /* Line 1787 of yacc.c  */
-#line 526 "D:/GitHub/TData/source/tdata_y.yy"
+#line 526 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2199,7 +2199,7 @@ yyreduce:
 
   case 49:
 /* Line 1787 of yacc.c  */
-#line 530 "D:/GitHub/TData/source/tdata_y.yy"
+#line 530 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2207,7 +2207,7 @@ yyreduce:
 
   case 50:
 /* Line 1787 of yacc.c  */
-#line 534 "D:/GitHub/TData/source/tdata_y.yy"
+#line 534 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2215,7 +2215,7 @@ yyreduce:
 
   case 51:
 /* Line 1787 of yacc.c  */
-#line 538 "D:/GitHub/TData/source/tdata_y.yy"
+#line 538 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2223,7 +2223,7 @@ yyreduce:
 
   case 52:
 /* Line 1787 of yacc.c  */
-#line 542 "D:/GitHub/TData/source/tdata_y.yy"
+#line 542 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2231,7 +2231,7 @@ yyreduce:
 
   case 53:
 /* Line 1787 of yacc.c  */
-#line 546 "D:/GitHub/TData/source/tdata_y.yy"
+#line 546 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2243,7 +2243,7 @@ yyreduce:
 
   case 54:
 /* Line 1787 of yacc.c  */
-#line 554 "D:/GitHub/TData/source/tdata_y.yy"
+#line 554 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
@@ -2257,7 +2257,7 @@ yyreduce:
 
   case 55:
 /* Line 1787 of yacc.c  */
-#line 564 "D:/GitHub/TData/source/tdata_y.yy"
+#line 564 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_SimpleType_tok_t_string(&(yyval.sn_simple_type), NULL);
 	}
@@ -2265,7 +2265,7 @@ yyreduce:
 
   case 56:
 /* Line 1787 of yacc.c  */
-#line 571 "D:/GitHub/TData/source/tdata_y.yy"
+#line 571 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_arguments) = (yyvsp[(2) - (3)].sn_arguments);
 	}
@@ -2273,7 +2273,7 @@ yyreduce:
 
   case 57:
 /* Line 1787 of yacc.c  */
-#line 575 "D:/GitHub/TData/source/tdata_y.yy"
+#line 575 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_arguments).arg_list_num = 0;
 	}
@@ -2281,7 +2281,7 @@ yyreduce:
 
   case 58:
 /* Line 1787 of yacc.c  */
-#line 581 "D:/GitHub/TData/source/tdata_y.yy"
+#line 581 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if((yyvsp[(1) - (3)].sn_arguments).arg_list_num >= MAX_ARGUMENT_NUM)
 		{
@@ -2294,7 +2294,7 @@ yyreduce:
 
   case 59:
 /* Line 1787 of yacc.c  */
-#line 590 "D:/GitHub/TData/source/tdata_y.yy"
+#line 590 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2304,7 +2304,7 @@ yyreduce:
 
   case 60:
 /* Line 1787 of yacc.c  */
-#line 598 "D:/GitHub/TData/source/tdata_y.yy"
+#line 598 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_uint64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_uint64));
 	}
@@ -2312,7 +2312,7 @@ yyreduce:
 
   case 61:
 /* Line 1787 of yacc.c  */
-#line 602 "D:/GitHub/TData/source/tdata_y.yy"
+#line 602 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_hex_uint64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_hex_uint64));
 	}
@@ -2320,7 +2320,7 @@ yyreduce:
 
   case 62:
 /* Line 1787 of yacc.c  */
-#line 606 "D:/GitHub/TData/source/tdata_y.yy"
+#line 606 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_int64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_int64));
 	}
@@ -2328,7 +2328,7 @@ yyreduce:
 
   case 63:
 /* Line 1787 of yacc.c  */
-#line 610 "D:/GitHub/TData/source/tdata_y.yy"
+#line 610 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_hex_int64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_hex_int64));
 	}
@@ -2336,7 +2336,7 @@ yyreduce:
 
   case 64:
 /* Line 1787 of yacc.c  */
-#line 614 "D:/GitHub/TData/source/tdata_y.yy"
+#line 614 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_double(&(yyval.sn_value), (yyvsp[(1) - (1)].pn_tok_double));
 	}
@@ -2344,7 +2344,7 @@ yyreduce:
 
   case 65:
 /* Line 1787 of yacc.c  */
-#line 618 "D:/GitHub/TData/source/tdata_y.yy"
+#line 618 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_string(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_string));
 	}
@@ -2352,7 +2352,7 @@ yyreduce:
 
   case 66:
 /* Line 1787 of yacc.c  */
-#line 622 "D:/GitHub/TData/source/tdata_y.yy"
+#line 622 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_char(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_char));
 	}
@@ -2360,7 +2360,7 @@ yyreduce:
 
   case 67:
 /* Line 1787 of yacc.c  */
-#line 626 "D:/GitHub/TData/source/tdata_y.yy"
+#line 626 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2372,7 +2372,7 @@ yyreduce:
 
   case 68:
 /* Line 1787 of yacc.c  */
-#line 634 "D:/GitHub/TData/source/tdata_y.yy"
+#line 634 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
@@ -2384,7 +2384,7 @@ yyreduce:
 
   case 69:
 /* Line 1787 of yacc.c  */
-#line 644 "D:/GitHub/TData/source/tdata_y.yy"
+#line 644 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
 		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
@@ -2393,7 +2393,7 @@ yyreduce:
 
   case 70:
 /* Line 1787 of yacc.c  */
-#line 651 "D:/GitHub/TData/source/tdata_y.yy"
+#line 651 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
 		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
@@ -2402,7 +2402,7 @@ yyreduce:
 
   case 71:
 /* Line 1787 of yacc.c  */
-#line 656 "D:/GitHub/TData/source/tdata_y.yy"
+#line 656 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_unix_comment).text[0] = 0;
 	}
@@ -2410,7 +2410,7 @@ yyreduce:
 
 
 /* Line 1787 of yacc.c  */
-#line 2414 "D:/GitHub/TData/source/gen/source/tdata_y.c"
+#line 2414 "D:/GitHub/TDR/source/gen/source/parser_y.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2649,5 +2649,5 @@ yyreturn:
 
 
 /* Line 2050 of yacc.c  */
-#line 660 "D:/GitHub/TData/source/tdata_y.yy"
+#line 660 "D:/GitHub/TDR/source/parser_y.yy"
 

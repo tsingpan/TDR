@@ -114,7 +114,7 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state);
 void scanner_pop(scanner_t *self);
 uint32_t scanner_size(scanner_t *self);
 
-int tdatalex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self);
+int tdrlex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_t *self);
 
 
 
@@ -123,6 +123,6 @@ void scanner_error(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
 void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
-void tdataerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...);
+void tdrerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...);
 
 #endif//_H_SCANNER

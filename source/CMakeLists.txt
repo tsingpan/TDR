@@ -25,8 +25,8 @@ source_group("generate" FILES ${GENERATE_FILE_LIST})
 FILE(GLOB_RECURSE FLEX_FILE *.re)
 FILE(GLOB_RECURSE BISON_FILE *.yy)
 
-set(RE2C_HEADER ${GEN_INCLUDE}/tdata_l.h)
-set(RE2C_OUTPUTS ${GEN_SOURCE}/tdata_l.c)
+set(RE2C_HEADER ${GEN_INCLUDE}/scanner_l.h)
+set(RE2C_OUTPUTS ${GEN_SOURCE}/scanner_l.c)
 if(WITH_RE2C)
 	add_custom_command(OUTPUT ${RE2C_OUTPUTS} ${RE2C_HEADER}
 	COMMAND re2c -c -F -t${RE2C_HEADER} -o${RE2C_OUTPUTS} ${FLEX_FILE}
@@ -34,12 +34,12 @@ if(WITH_RE2C)
 else()
 endif(WITH_RE2C)
 
-set(BISON_DEFINES_OUTPUTS ${GEN_INCLUDE}/tdata_y.h)
-set(BISON_OUTPUTS ${GEN_SOURCE}/tdata_y.c)
+set(BISON_DEFINES_OUTPUTS ${GEN_INCLUDE}/parser_y.h)
+set(BISON_OUTPUTS ${GEN_SOURCE}/parser_y.c)
 if(WITH_BISON)
 	add_custom_command(OUTPUT ${BISON_DEFINES_OUTPUTS} ${BISON_OUTPUTS}
-		COMMAND bison -ptdata -o${BISON_OUTPUTS} ${BISON_FILE}
-		COMMAND bison -ptdata --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
+		COMMAND bison -p${PONAME} -o${BISON_OUTPUTS} ${BISON_FILE}
+		COMMAND bison -p${PONAME} --defines=${BISON_DEFINES_OUTPUTS} ${BISON_FILE}
 	)
 else()
 endif(WITH_BISON)
