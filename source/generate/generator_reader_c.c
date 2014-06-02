@@ -324,9 +324,9 @@ static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, con
 	}
 }
 
-void generator_reader_c_init(generator_reader_c_t *self, const symbols_t *symbols, int make_rule)
+void generator_reader_c_init(generator_reader_c_t *self, const symbols_t *symbols)
 {
-	generator_init(&self->super, symbols, make_rule);
+	generator_init(&self->super, symbols);
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;

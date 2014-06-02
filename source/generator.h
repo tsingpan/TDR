@@ -10,7 +10,6 @@
 #include "definition.h"
 
 
-#define DEP_SUFFIX "d"
 #define VEC_NUM_TYPE_STYLE "%s_num"
 static const syn_simple_type_t g_vec_num_type = {E_ST_UINT32, "", ""};
 static const syn_simple_type_t g_enum_type = {E_ST_INT32, "", ""};
@@ -22,24 +21,18 @@ struct generator_s
 	FILE* fout;
 	char target_filename[TLIBC_MAX_PATH_LENGTH];
 
-
-	int make_rule;
-	FILE* dfout;
-	char dep_filename[TLIBC_MAX_PATH_LENGTH];
-
 	char document_name[TLIBC_MAX_PATH_LENGTH];
 
 	error_code_t (*on_document_begin)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_document_end)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_definition)(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
-	error_code_t (*on_alldefinition)(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
 
 	error_code_t (*on_struct_begin)(generator_t *self, const YYLTYPE *yylloc, const char * struct_name);
 	error_code_t (*on_field)(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field);
 	error_code_t (*on_struct_end)(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 };
 
-void generator_init(generator_t *self, const symbols_t *symbols, int make_rule);
+void generator_init(generator_t *self, const symbols_t *symbols);
 
 void strncpy_notdir(char *dest, const char*src, size_t dest_len);
 
@@ -66,8 +59,6 @@ error_code_t generator_replace_extension(char *filename, uint32_t filename_lengt
 
 //virtual functions
 error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
-
-error_code_t generator_on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
 
 error_code_t generator_on_document_begin(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 

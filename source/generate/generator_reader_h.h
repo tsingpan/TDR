@@ -13,6 +13,6 @@ struct generator_reader_h_s
 
 #define GENERATOR_READER_H_SUFFIX "_reader.h"
 
-void generator_reader_h_init(generator_reader_h_t *self, const symbols_t *symbols, int make_rule);
+void generator_reader_h_init(generator_reader_h_t *self, const symbols_t *symbols);
 
 #endif//_H_GENERATOR_READER_H_H

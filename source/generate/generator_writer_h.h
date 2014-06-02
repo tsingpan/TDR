@@ -13,6 +13,6 @@ struct td_generator_writer_h_s
 
 #define GENERATOR_WRITER_H_SUFFIX "_writer.h"
 
-void generator_writer_h_init(td_generator_writer_h_t *self, const symbols_t *symbols, int make_rule);
+void generator_writer_h_init(td_generator_writer_h_t *self, const symbols_t *symbols);
 
 #endif//_H_GENERATOR_WRITER_H_H

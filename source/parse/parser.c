@@ -47,8 +47,29 @@ static void parser_push(PARSER *self, const char *file_name)
 	}
 }
 
+static void parser_make_rule(PARSER *self)
+{
+	size_t i;
+	char filename[TLIBC_MAX_PATH_LENGTH];
+	FILE *fout;
+	snprintf(filename, TLIBC_MAX_PATH_LENGTH, "%s.%s", self->generator->target_filename, DEP_SUFFIX);
+	fout = fopen(filename, "w");
+	if(fout == NULL)
+	{
+		scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, filename);
+	}
+
+	fprintf(fout, "%s: \\\n", self->generator->target_filename);
+	for(i = 0; i <self->scanner.file_vec_num; ++i)
+	{
+		fprintf(fout, "    %s\\\n", self->scanner.file_vec[i].file_name);
+	}
+	fprintf(fout, "\n");
+	fclose(fout);
+}
+
 int tdrparse (scanner_t *self);
-int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator)
+int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator, int make_rule)
 {
 	int32_t ret;
 
@@ -58,9 +79,11 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	parser_push(self, file_name);
 
 	on_document_begin(self, NULL, file_name);
-
-	//这玩意自动生成的
 	ret = tdrparse(&self->scanner);
+	if(make_rule)
+	{
+		parser_make_rule(self);
+	}	
 	on_document_end(self, NULL, file_name);
 	scanner_pop(&self->scanner);
 	symbols_clear(&self->symbols);
@@ -106,6 +129,4 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definit
 		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		parser_push(self, file_name);
 	}
-
-	generator_on_alldefinition(self->generator, yylloc, pn_definition);
 }

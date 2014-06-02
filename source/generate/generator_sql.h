@@ -15,6 +15,6 @@ struct generator_sql_s
 
 #define GENERATOR_SQL_SUFFIX "_tables.sql"
 
-void generator_sql_init(generator_sql_t *self, const symbols_t *symbols, int make_rule);
+void generator_sql_init(generator_sql_t *self, const symbols_t *symbols);
 
 #endif//_H_GENERATOR_SQL_H
