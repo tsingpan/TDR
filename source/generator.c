@@ -6,21 +6,16 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-static error_code_t on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
-
-void generator_init(generator_t *self, const symbols_t *symbols, int make_rule)
+void generator_init(generator_t *self, const symbols_t *symbols)
 {
 	self->symbols = symbols;
 	self->fout = NULL;
-	self->dfout = NULL;
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
 	self->on_document_end = NULL;
 	self->on_struct_begin = NULL;
 	self->on_field = NULL;
 	self->on_struct_end = NULL;
-	self->on_alldefinition = on_alldefinition;
-	self->make_rule = make_rule;
 }
 
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix)
@@ -178,20 +173,6 @@ error_code_t generator_open(generator_t *self, const char *original_file, const 
 		goto ERROR_RET;
 	}
 
-	if(self->make_rule)
-	{
-		memcpy(self->dep_filename, self->target_filename, TLIBC_MAX_PATH_LENGTH);
-		generator_replace_extension(self->dep_filename, TLIBC_MAX_PATH_LENGTH, DEP_SUFFIX);
-		self->dfout = fopen(self->dep_filename, "w");
-		if(self->dfout == NULL)
-		{
-			memcpy(errormsg_filename, self->dep_filename, TLIBC_MAX_PATH_LENGTH);
-			goto ERROR_RET;
-		}
-
-		fprintf(self->dfout, "%s: %s\\\n", self->target_filename, original_file);
-	}
-
 	return E_TD_NOERROR;
 ERROR_RET:
 	scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, errormsg_filename);
@@ -227,11 +208,6 @@ void generator_printline(generator_t *self, size_t tabs, const char* fmt, ...)
 
 void generator_close(generator_t *self)
 {
-	if(self->make_rule)
-	{
-		fclose(self->dfout);
-	}
-
 	fclose(self->fout);
 }
 
@@ -489,34 +465,6 @@ error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, c
 	return E_TD_NOERROR;
 }
 
-static error_code_t on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition)
-{
-	TLIBC_UNUSED(yylloc);
-
-	if(self->dfout == NULL)
-	{
-		goto done;
-	}
-
-	if(definition->type == E_DT_IMPORT)
-	{
-		fprintf(self->dfout, "    %s\\\n", definition->definition.de_import.package_name);
-	}
-
-done:
-	return E_TD_NOERROR;
-}
-
-error_code_t generator_on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition)
-{
-	if(self->on_definition != NULL)
-	{
-		return self->on_alldefinition(self, yylloc, definition);
-	}
-	return E_TD_NOERROR;
-}
-
-
 error_code_t generator_on_document_begin(generator_t *self, const YYLTYPE *yylloc, const char *file_name)
 {
 	if(self->on_document_begin != NULL)
@@ -532,6 +480,7 @@ error_code_t generator_on_document_end(generator_t *self, const YYLTYPE *yylloc,
 	{
 		return self->on_document_end(self, yylloc, file_name);
 	}
+
 	return E_TD_NOERROR;
 }
 

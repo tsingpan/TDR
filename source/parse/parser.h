@@ -9,6 +9,7 @@
 #include "symbols.h"
 #include "definition.h"
 
+#define DEP_SUFFIX "d"
 
 typedef struct _PARSER PARSER;
 struct _PARSER 
@@ -24,7 +25,7 @@ struct _PARSER
 
 void parser_init(PARSER *self);
 
-int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator);
+int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator, int make_rule);
 
 void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char *struct_name);
 
