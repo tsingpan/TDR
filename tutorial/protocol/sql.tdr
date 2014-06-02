@@ -2,7 +2,7 @@
 	¶ÁÈ¡Êý¾Ý¿â
 */
 
-import "common/common.td"
+import "common/common.tdr"
 
 struct user
 {

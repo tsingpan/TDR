@@ -50,12 +50,12 @@ set(TDR_OUTPUTS
 
 add_custom_command(OUTPUT ${TDR_OUTPUTS}
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${GEN_PATH}
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gtypes_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_h ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_c ${Example_SOURCE_DIR}/protocol/protocol.td ${Example_SOURCE_DIR}/protocol/common/common.td ${Example_SOURCE_DIR}/protocol/sql.td
-	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -g sql ${Example_SOURCE_DIR}/protocol/sql.td
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gtypes_h ${Example_SOURCE_DIR}/protocol/protocol.tdr ${Example_SOURCE_DIR}/protocol/common/common.tdr ${Example_SOURCE_DIR}/protocol/sql.tdr
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_h ${Example_SOURCE_DIR}/protocol/protocol.tdr ${Example_SOURCE_DIR}/protocol/common/common.tdr ${Example_SOURCE_DIR}/protocol/sql.tdr
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -greader_c ${Example_SOURCE_DIR}/protocol/protocol.tdr ${Example_SOURCE_DIR}/protocol/common/common.tdr ${Example_SOURCE_DIR}/protocol/sql.tdr
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_h ${Example_SOURCE_DIR}/protocol/protocol.tdr ${Example_SOURCE_DIR}/protocol/common/common.tdr ${Example_SOURCE_DIR}/protocol/sql.tdr
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o${GEN_PATH} -gwriter_c ${Example_SOURCE_DIR}/protocol/protocol.tdr ${Example_SOURCE_DIR}/protocol/common/common.tdr ${Example_SOURCE_DIR}/protocol/sql.tdr
+	COMMAND ${TDR_EXECUTABLE} -I${Example_SOURCE_DIR}/protocol -o ${GEN_PATH} -g sql ${Example_SOURCE_DIR}/protocol/sql.tdr
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_inc.xml ${GEN_PATH}
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/tconnd_instance1.xml.inc ${GEN_PATH}
 	COMMAND ${CMAKE_COMMAND} -E copy ${Example_SOURCE_DIR}/item.xlsx ${GEN_PATH}
