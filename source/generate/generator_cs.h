@@ -13,6 +13,6 @@ struct generator_cs_s
 
 #define GENERATOR_CS_SUFFIX "_types.cs"
 
-void generator_cs_init(generator_cs_t *self, const symbols_t *symbols);
+void generator_cs_init(generator_cs_t *self, const symbols_t *symbols, int make_rule);
 
 #endif//_H_TD_GENERATOR_CS_H

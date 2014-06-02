@@ -6,16 +6,21 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-void generator_init(generator_t *self, const symbols_t *symbols)
+static error_code_t on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
+
+void generator_init(generator_t *self, const symbols_t *symbols, int make_rule)
 {
 	self->symbols = symbols;
 	self->fout = NULL;
+	self->dfout = NULL;
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
 	self->on_document_end = NULL;
 	self->on_struct_begin = NULL;
 	self->on_field = NULL;
 	self->on_struct_end = NULL;
+	self->on_alldefinition = on_alldefinition;
+	self->make_rule = make_rule;
 }
 
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix)
@@ -108,42 +113,42 @@ void strncpy_dir(char *dest, const char*src, size_t dest_len)
 		{
 			dest[0] = 0;
 		}
-	}
-	
+	}	
 }
 
-error_code_t generator_open(generator_t *self, const char *primary_file, const char *suffix)
+error_code_t generator_open(generator_t *self, const char *original_file, const char *suffix)
 {
-	char target_path[TLIBC_MAX_PATH_LENGTH];
 	uint32_t i, document_name_length;
+	char file_name[TLIBC_MAX_PATH_LENGTH];
+	char errormsg_filename[TLIBC_MAX_PATH_LENGTH];
 
-	strncpy_notdir(self->file_name, primary_file, TLIBC_MAX_PATH_LENGTH);
+	strncpy_notdir(file_name, original_file, TLIBC_MAX_PATH_LENGTH);
 	
-	generator_replace_extension(self->file_name, TLIBC_MAX_PATH_LENGTH, suffix);
+	generator_replace_extension(file_name, TLIBC_MAX_PATH_LENGTH, suffix);
 
 	//计算输出目标文件的路径
 	if(g_output_dir)
 	{
-		snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, self->file_name);
+		snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, file_name);
 	}
 	else
 	{
 		char opath[TLIBC_MAX_PATH_LENGTH];
-		strncpy_dir(opath, primary_file, TLIBC_MAX_PATH_LENGTH);
+		strncpy_dir(opath, original_file, TLIBC_MAX_PATH_LENGTH);
 		if(opath[0])
 		{
-			snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", opath, TLIBC_FILE_SEPARATOR, self->file_name);
+			snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s%c%s", opath, TLIBC_FILE_SEPARATOR, file_name);
 		}
 		else
 		{
-			snprintf(target_path, TLIBC_MAX_PATH_LENGTH, "%s", self->file_name);
+			snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s", file_name);
 		}		
 	}
 	
 	
 
 	//计算文档名字
-	strncpy(self->document_name, self->file_name, TLIBC_MAX_PATH_LENGTH);
+	strncpy(self->document_name, file_name, TLIBC_MAX_PATH_LENGTH);
 	self->document_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 	document_name_length = strlen(self->document_name);
 	for(i = 0;i < document_name_length; ++i)
@@ -166,15 +171,30 @@ error_code_t generator_open(generator_t *self, const char *primary_file, const c
 
 
 
-	self->fout = fopen(target_path, "w");
+	self->fout = fopen(self->target_filename, "w");
 	if(self->fout == NULL)
 	{
+		memcpy(errormsg_filename, self->target_filename, TLIBC_MAX_PATH_LENGTH);
 		goto ERROR_RET;
+	}
+
+	if(self->make_rule)
+	{
+		memcpy(self->dep_filename, self->target_filename, TLIBC_MAX_PATH_LENGTH);
+		generator_replace_extension(self->dep_filename, TLIBC_MAX_PATH_LENGTH, DEP_SUFFIX);
+		self->dfout = fopen(self->dep_filename, "w");
+		if(self->dfout == NULL)
+		{
+			memcpy(errormsg_filename, self->dep_filename, TLIBC_MAX_PATH_LENGTH);
+			goto ERROR_RET;
+		}
+
+		fprintf(self->dfout, "%s: %s\\\n", self->target_filename, original_file);
 	}
 
 	return E_TD_NOERROR;
 ERROR_RET:
-	scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, target_path);
+	scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, errormsg_filename);
 	return E_TD_ERROR;
 }
 
@@ -205,17 +225,14 @@ void generator_printline(generator_t *self, size_t tabs, const char* fmt, ...)
 	va_end(ap);
 }
 
-error_code_t generator_close(generator_t *self)
+void generator_close(generator_t *self)
 {
-	if(self->fout == NULL)
+	if(self->make_rule)
 	{
-		goto ERROR_RET;		
+		fclose(self->dfout);
 	}
 
 	fclose(self->fout);
-	return E_TD_NOERROR;
-ERROR_RET:
-	return E_TD_ERROR;
 }
 
 static void write_char(generator_t *self, char c)
@@ -468,6 +485,33 @@ error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, c
 	if(self->on_definition != NULL)
 	{
 		return self->on_definition(self, yylloc, definition);
+	}
+	return E_TD_NOERROR;
+}
+
+static error_code_t on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition)
+{
+	TLIBC_UNUSED(yylloc);
+
+	if(self->dfout == NULL)
+	{
+		goto done;
+	}
+
+	if(definition->type == E_DT_IMPORT)
+	{
+		fprintf(self->dfout, "    %s\\\n", definition->definition.de_import.package_name);
+	}
+
+done:
+	return E_TD_NOERROR;
+}
+
+error_code_t generator_on_alldefinition(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition)
+{
+	if(self->on_definition != NULL)
+	{
+		return self->on_alldefinition(self, yylloc, definition);
 	}
 	return E_TD_NOERROR;
 }

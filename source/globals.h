@@ -7,7 +7,6 @@
 //全局变量都是只读的哦
 
 extern const char *g_output_dir;
-
 #define INCLUDE_DIR_NUM 1024
 extern const char *g_include_dir[INCLUDE_DIR_NUM];
 extern size_t g_include_dir_num;

@@ -14,6 +14,6 @@ struct generator_types_h_s
 
 #define GENERATOR_TYPES_H_SUFFIX "_types.h"
 
-void generator_types_h_init(generator_types_h_t *self, const symbols_t *symbols);
+void generator_types_h_init(generator_types_h_t *self, const symbols_t *symbols, int make_rule);
 
 #endif//_H_TD_GENERATOR_TYPES_H_H

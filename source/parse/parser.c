@@ -21,21 +21,12 @@ void parser_init(PARSER *self)
 
 static void on_document_begin(PARSER *self, const YYLTYPE *yylloc, const char *file_name)
 {
-	uint32_t i;
-
-	for(i = 0; i < self->generator_num; ++i)
-	{
-		generator_on_document_begin(self->generator_list[i], yylloc, file_name);
-	}
+	generator_on_document_begin(self->generator, yylloc, file_name);
 }
 
 static void on_document_end(PARSER *self, const YYLTYPE *yylloc, const char *file_name)
 {
-	uint32_t i;
-	for(i = 0; i < self->generator_num; ++i)
-	{
-		generator_on_document_end(self->generator_list[i], yylloc, file_name);
-	}
+	generator_on_document_end(self->generator, yylloc, file_name);
 }
 
 static void parser_push(PARSER *self, const char *file_name)
@@ -57,12 +48,11 @@ static void parser_push(PARSER *self, const char *file_name)
 }
 
 int tdrparse (scanner_t *self);
-int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generator_list, uint32_t generator_list_num)
+int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator)
 {
-	int32_t ret;	
+	int32_t ret;
 
-	self->generator_list = generator_list;
-	self->generator_num = generator_list_num;
+	self->generator = generator;
 	scanner_init(&self->scanner);
 	
 	parser_push(self, file_name);
@@ -80,12 +70,8 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t **generato
 void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char* struct_name)
 {
 	if(scanner_size(&self->scanner) == 1)
-	{
-		uint32_t i;
-		for(i = 0; i < self->generator_num; ++i)
-		{
-			generator_on_struct_begin(self->generator_list[i], yylloc, struct_name);
-		}
+	{	
+		generator_on_struct_begin(self->generator, yylloc, struct_name);		
 	}
 }
 
@@ -93,11 +79,7 @@ void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
-		uint32_t i;
-		for(i = 0; i < self->generator_num; ++i)
-		{
-			generator_on_field(self->generator_list[i], yylloc, pn_field);
-		}
+		generator_on_field(self->generator, yylloc, pn_field);
 	}
 }
 
@@ -105,11 +87,7 @@ void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const syn_struct_
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
-		uint32_t i;
-		for(i = 0; i < self->generator_num; ++i)
-		{
-			generator_on_struct_end(self->generator_list[i], yylloc, pn_struct);
-		}
+		generator_on_struct_end(self->generator, yylloc, pn_struct);	
 	}
 }
 
@@ -118,13 +96,9 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definit
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
-		uint32_t i;
-		for(i = 0; i < self->generator_num; ++i)
-		{
-			generator_on_definition(self->generator_list[i], yylloc, pn_definition);
-		}
+		generator_on_definition(self->generator, yylloc, pn_definition);
 	}
-
+	
 	if(pn_definition->type == E_DT_IMPORT)
 	{
 		char file_name[TLIBC_MAX_PATH_LENGTH];
@@ -132,4 +106,6 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definit
 		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		parser_push(self, file_name);
 	}
+
+	generator_on_alldefinition(self->generator, yylloc, pn_definition);
 }

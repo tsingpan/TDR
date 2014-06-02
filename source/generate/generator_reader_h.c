@@ -118,9 +118,9 @@ static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, con
 	}
 }
 
-void generator_reader_h_init(generator_reader_h_t *self, const symbols_t *symbols)
+void generator_reader_h_init(generator_reader_h_t *self, const symbols_t *symbols, int make_rule)
 {
-	generator_init(&self->super, symbols);
+	generator_init(&self->super, symbols, make_rule);
 
 	self->super.on_document_begin = on_document_begin;
 	self->super.on_document_end = on_document_end;
