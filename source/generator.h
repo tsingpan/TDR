@@ -10,7 +10,7 @@
 #include "definition.h"
 
 
-#define DEP_SUFFIX ".d"
+#define DEP_SUFFIX "d"
 #define VEC_NUM_TYPE_STYLE "%s_num"
 static const syn_simple_type_t g_vec_num_type = {E_ST_UINT32, "", ""};
 static const syn_simple_type_t g_enum_type = {E_ST_INT32, "", ""};

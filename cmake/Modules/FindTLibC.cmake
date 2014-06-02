@@ -6,7 +6,7 @@ if(WIN32)
 else()
 	find_path(TLIBC_INCLUDE_DIR NAMES platform/tlibc_platform.h
 		PATHS
-		/usr/local/TLibC/include
+		/usr/local/tlibc/include
 	   )
 endif(WIN32)
 
@@ -18,7 +18,7 @@ if(WIN32)
 else()
 	find_library(TLIBC_LIBRARIES NAMES tlibc
 		PATHS 
-		/usr/local/TLibC/lib
+		/usr/local/tlibc/lib
 	   )
 endif(WIN32)
 

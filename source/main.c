@@ -44,10 +44,9 @@ void help()
 	fprintf(stderr, "                               searched for include directives.\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "  -M, --MMD                    Output a rule suitable for make describing \n");
-	fprintf(stderr, "                               the dependencies of input files.it takes\n");
-	fprintf(stderr, "                               the name of the input file, removes any\n");
-	fprintf(stderr, "                               directory components and suffix, and\n");
-	fprintf(stderr, "                               applies a .d suffix.\n");
+	fprintf(stderr, "                               the dependencies of input files.\n");
+	fprintf(stderr, "                               it takes the name of the input file, \n");
+	fprintf(stderr, "                               and applies a .%s suffix.\n", DEP_SUFFIX);
 	fprintf(stderr, "\n");
 	fprintf(stderr, "  -g STR, --gen=STR            Generate code with a generator.\n");
 	fprintf(stderr, "Available generators:\n");
@@ -67,7 +66,7 @@ const struct option long_options[] = {
 	{ "help"	,	0, NULL, 'h' },
 	{ "output"	,	1, NULL, 'o' },
 	{ "include"	,	1, NULL, 'I' },
-	{ "MMD",		1, NULL, 'M' },
+	{ "MMD",		0, NULL, 'M' },
 	{ "gen"	,		1, NULL, 'g' },
 	{ NULL,			0, NULL,  0  },
 };

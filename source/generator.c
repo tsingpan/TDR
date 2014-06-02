@@ -90,21 +90,14 @@ void strncpy_dir(char *dest, const char*src, size_t dest_len)
 	{
 		if((src[i] == '/') || (src[i] == '\\'))
 		{
-			if(i + 1 < src_len)
-			{
-				ptr = src + i + 1;
-			}
+			ptr = src + i;
 		}
 	}
 
-	if(ptr)
+	if((ptr) && (ptr > src))
 	{
-		len = ptr - src;	
-		if(len >= dest_len)
-		{
-			len = dest_len - 1;
-		}
-		memcpy(dest, src , len);
+        len = ptr - src;
+		memcpy(dest, src , ptr - src);
 		dest[len] = 0;
 	}
 	else
@@ -180,8 +173,7 @@ error_code_t generator_open(generator_t *self, const char *original_file, const 
 
 	if(self->make_rule)
 	{
-		memcpy(self->dep_filename, self->target_filename, TLIBC_MAX_PATH_LENGTH);
-		generator_replace_extension(self->dep_filename, TLIBC_MAX_PATH_LENGTH, DEP_SUFFIX);
+		snprintf(self->dep_filename, TLIBC_MAX_PATH_LENGTH, "%s.%s", self->target_filename, DEP_SUFFIX);
 		self->dfout = fopen(self->dep_filename, "w");
 		if(self->dfout == NULL)
 		{
