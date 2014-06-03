@@ -14,3 +14,4 @@ enum message_id
 const uint32 MESSAGE_ID_NUM = count(message_id);
 const string VERSION = "0.0.1";
 const uint32 MAX_NAME_LENGTH = 255;
+const uint32 MAX_URL_LENGTH = 1024;

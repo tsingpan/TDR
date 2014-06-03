@@ -18,6 +18,8 @@
 #include "protocol/tlibc_mybind_reader.h"
 #include "protocol/tlibc_mybind_writer.h"
 
+#include "protocol/tlibc_json_writer.h"
+
 
 #include "protocol_types.h"
 #include "protocol_writer.h"
@@ -469,13 +471,50 @@ void test_mysql_select()
 }
 
 
+void test_json()
+{
+	tlibc_error_code_t ret;
+	tlibc_json_writer_t json_writer;
+	msg_qq_rsp_userinfo_t qq_userinfo;
+	FILE* fout;
+	const char*ch;
+	static char output_buff[XML_OUTPUT_BUF];
+
+	qq_userinfo.ret = 0;
+	qq_userinfo.is_lost = 0;
+	snprintf(qq_userinfo.nickname, MAX_NAME_LENGTH, "Peter");
+	snprintf(qq_userinfo.gender, MAX_NAME_LENGTH, "男");
+	snprintf(qq_userinfo.country, MAX_NAME_LENGTH, "中国");
+	snprintf(qq_userinfo.province, MAX_NAME_LENGTH, "广东");
+	snprintf(qq_userinfo.city, MAX_NAME_LENGTH, "深圳");
+	snprintf(qq_userinfo.figureurl, MAX_URL_LENGTH, "http://imgcache.qq.com/qzone_v4/client/userinfo_icon/1236153759.gif");
+	qq_userinfo.is_yellow_vip = 1;
+	qq_userinfo.is_yellow_year_vip = 1;
+	qq_userinfo.yellow_vip_level = 7;
+	qq_userinfo.is_yellow_high_vip = 0;
+
+	tlibc_json_writer_init(&json_writer, output_buff, output_buff + XML_OUTPUT_BUF);
+	ret = tlibc_write_msg_qq_rsp_userinfo(&json_writer.super, &qq_userinfo);
+	assert(ret == E_TLIBC_NOERROR);
+	fout = fopen("qq_userinfo.json", "w");
+	assert(fout != NULL);
+	for(ch = json_writer.start; ch < json_writer.cur; ++ch)
+	{
+		fputc(*ch, fout);
+	}
+	fclose(fout);
+}
+
 int main()
 {
+	/*
 	test_protocol();
 	
 	test_xml();
 	
 	test_xlsx();
+	*/
+	test_json();
 
 	/*
 	test_mysql_insert();

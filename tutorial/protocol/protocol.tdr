@@ -108,3 +108,40 @@ struct item_table
 	vector<uint64, ITEM_VEC_NUM>	vec_int;
 };
 
+/*
+腾讯开放接口中获取用户信息的协议
+http://wiki.open.qq.com/wiki/v3/user/get_info#2.3.09HTTP.E8.AF.B7.E6.B1.82.E6.96.B9.E5.BC.8F
+
+Content-type: text/html; charset=utf-8
+{
+"ret":0,
+"is_lost":0,
+"nickname":"Peter",
+"gender":"男",
+"country":"中国",
+"province":"广东",
+"city":"深圳",
+"figureurl":"http://imgcache.qq.com/qzone_v4/client/userinfo_icon/1236153759.gif",
+"is_yellow_vip":1,
+"is_yellow_year_vip":1,
+"yellow_vip_level":7,
+"is_yellow_high_vip": 0
+}
+*/
+
+#腾讯开放接口， 获取用户信息的协议
+struct msg_qq_rsp_userinfo
+{
+	int32 ret;
+	int32 is_lost;
+	string<MAX_NAME_LENGTH> nickname;
+	string<MAX_NAME_LENGTH> gender;
+	string<MAX_NAME_LENGTH> country;
+	string<MAX_NAME_LENGTH> province;
+	string<MAX_NAME_LENGTH> city;
+	string<MAX_URL_LENGTH> figureurl;
+	int32 is_yellow_vip;
+	int32 is_yellow_year_vip;
+	int32 yellow_vip_level;
+	int32 is_yellow_high_vip;
+};
