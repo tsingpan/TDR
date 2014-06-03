@@ -19,6 +19,7 @@
 #include "protocol/tlibc_mybind_writer.h"
 
 #include "protocol/tlibc_json_writer.h"
+#include "protocol/tlibc_json_reader.h"
 
 
 #include "protocol_types.h"
@@ -475,6 +476,7 @@ void test_json()
 {
 	tlibc_error_code_t ret;
 	tlibc_json_writer_t json_writer;
+	//tlibc_json_reader_t json_reader;
 	msg_qq_rsp_userinfo_t qq_userinfo;
 	FILE* fout;
 	const char*ch;
@@ -503,14 +505,21 @@ void test_json()
 		fputc(*ch, fout);
 	}
 	fclose(fout);
+
+
+	/*
+	//json_reader功能并未开发完成， 请勿使用。
+	tlibc_json_reader_init(&json_reader, output_buff, json_writer.cur);
+	ret = tlibc_read_msg_qq_rsp_userinfo(&json_reader.super, &qq_userinfo);
+	*/
 }
 
 int main()
-{
+{	
 	/*
 	test_protocol();
 	
-	test_xml();
+	test_xml();	
 	
 	test_xlsx();
 	*/
