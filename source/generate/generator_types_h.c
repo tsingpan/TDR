@@ -26,6 +26,13 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 	generator_printline(super, 0, "#ifndef _H_%s", super->document_name);
 	generator_printline(super, 0, "#define _H_%s", super->document_name);
 	generator_printline(super, 0, "");
+
+	generator_printline(super, 0, "");
+	generator_printline(super, 0, "#ifdef  __cplusplus");
+	generator_printline(super, 0, "extern \"C\" {");
+	generator_printline(super, 0, "#endif");
+	generator_printline(super, 0, "");
+
 	generator_printline(super, 0, "#include <stdint.h>");
 	
 	generator_printline(super, 0, "");
@@ -37,6 +44,12 @@ static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, c
 {
 	TLIBC_UNUSED(yylloc);
 	TLIBC_UNUSED(file_name);
+
+	generator_printline(super, 0, "");
+	generator_printline(super, 0, "#ifdef  __cplusplus");
+	generator_printline(super, 0, "}");
+	generator_printline(super, 0, "#endif");
+	generator_printline(super, 0, "");
 
 	generator_printline(super, 0, "");
 	generator_printline(super, 0, "#endif //_H_%s", super->document_name);
