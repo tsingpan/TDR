@@ -13,6 +13,8 @@
 #include <stdarg.h>
 #include "parse/scanner.h"
 
+#include "script/script_functions.h"
+
 
 void parser_init(PARSER *self)
 {
@@ -90,7 +92,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	return E_TD_NOERROR;
 }
 
-void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char* struct_name)
+void parser_on_struct_begin_old(PARSER *self, const YYLTYPE *yylloc, const char* struct_name)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{	
@@ -98,7 +100,7 @@ void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char* str
 	}
 }
 
-void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field)
+void parser_on_field_old(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
@@ -106,7 +108,7 @@ void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_
 	}
 }
 
-void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
+void parser_on_struct_end_old(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
 {
 	if(scanner_size(&self->scanner) == 1)
 	{
@@ -129,4 +131,115 @@ void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definit
 		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
 		parser_push(self, file_name);
 	}
+}
+
+
+
+
+
+void parser_on_import(PARSER *self, const syn_import_t* syn_import)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+	sf_on_import(syn_import->package_name);
+}
+
+void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_const(PARSER *self, const syn_const_t *syn_const)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+
+}
+
+void parser_on_enum_begin(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_enum_field(PARSER *self, const enum_def_t* enum_def)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_enum_end(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_union_begin(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_union_end(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_struct_begin(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_struct_field(PARSER *self, const syn_field_t* union_field)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_struct_end(PARSER *self, const char* name)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+}
+
+void parser_on_unit_comment(PARSER *self, const syn_unix_comment_t* comment)
+{
+	if(scanner_size(&self->scanner) != 1)
+	{
+		return;
+	}
+
 }

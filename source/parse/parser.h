@@ -9,6 +9,8 @@
 #include "symbols.h"
 #include "definition.h"
 
+
+
 #define DEP_SUFFIX "d"
 
 typedef struct _PARSER PARSER;
@@ -27,12 +29,42 @@ void parser_init(PARSER *self);
 
 int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator, int make_rule);
 
-void parser_on_struct_begin(PARSER *self, const YYLTYPE *yylloc, const char *struct_name);
+void parser_on_struct_begin_old(PARSER *self, const YYLTYPE *yylloc, const char *struct_name);
 
-void parser_on_field(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field);
+void parser_on_field_old(PARSER *self, const YYLTYPE *yylloc, const syn_field_t *pn_field);
 
-void parser_on_struct_end(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
+void parser_on_struct_end_old(PARSER *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 
 void parser_on_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definition_t *pn_definition);
+
+
+//通过以下接口可以生成所有的代码
+void parser_on_import(PARSER *self, const syn_import_t* syn_import);
+
+void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef);
+
+void parser_on_const(PARSER *self, const syn_const_t *syn_const);
+
+void parser_on_enum_begin(PARSER *self, const char* name);
+
+void parser_on_enum_field(PARSER *self, const enum_def_t* enum_def);
+
+void parser_on_enum_end(PARSER *self, const char* name);
+
+
+void parser_on_union_begin(PARSER *self, const char* name);
+
+void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field);
+
+void parser_on_union_end(PARSER *self, const char* name);
+
+
+void parser_on_struct_begin(PARSER *self, const char* name);
+
+void parser_on_struct_field(PARSER *self, const syn_field_t* union_field);
+
+void parser_on_struct_end(PARSER *self, const char* name);
+
+void parser_on_unit_comment(PARSER *self, const syn_unix_comment_t* comment);
 
 #endif//_H_PARSER

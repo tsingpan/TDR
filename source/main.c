@@ -4,7 +4,7 @@
 #include "language/language.h"
 #include "version.h"
 #include "getopt.h"
-
+#include "script/script.h"
 
 #include "generate/generator_types_h.h"
 #include "generate/generator_reader_c.h"
@@ -48,6 +48,7 @@ void help()
 	fprintf(stderr, "                               it takes the name of the input file, \n");
 	fprintf(stderr, "                               and applies a .%s suffix.\n", DEP_SUFFIX);
 	fprintf(stderr, "\n");
+	fprintf(stderr, "-l file, --lua=file			Execute lua script.\n");
 	fprintf(stderr, "  -g STR, --gen=STR            Generate code with a generator.\n");
 	fprintf(stderr, "Available generators:\n");
 	fprintf(stderr, "types_h        Generate %%_types.h for TLibC.\n");
@@ -59,7 +60,7 @@ void help()
 	fprintf(stderr, "sql            Generate %%.sql for MySQL.\n");	
 }
 
-const char* const short_options = "vho:I:Mg:";
+const char* const short_options = "vho:I:Ml:g:";
 
 const struct option long_options[] = {
 	{ "version",	0, NULL, 'v' },
@@ -67,6 +68,7 @@ const struct option long_options[] = {
 	{ "output"	,	1, NULL, 'o' },
 	{ "include"	,	1, NULL, 'I' },
 	{ "MMD",		0, NULL, 'M' },
+	{ "lua"	,		1, NULL, 'l' },
 	{ "gen"	,		1, NULL, 'g' },
 	{ NULL,			0, NULL,  0  },
 };
@@ -88,6 +90,7 @@ int main(int32_t argc, char *argv[])
 	int opt;
 	int32_t i;
 	int make_rule = FALSE;
+	const char* script = NULL;
 
 	parser_init(&parser);
 	while((opt = getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
@@ -114,6 +117,9 @@ int main(int32_t argc, char *argv[])
 			break;
 		case 'M':
 			make_rule = TRUE;
+			break;
+		case 'l':
+			script = optarg;
 			break;
 		case 'g':
 			{
@@ -160,19 +166,35 @@ int main(int32_t argc, char *argv[])
 		}
 	}
 	
-	if(generator == NULL)
+	
+	if((generator == NULL) && (script == NULL))
 	{
 		fprintf(stderr, "Missing --gen=types\n");
 		usage();
 		goto ERROR_RET;
 	}
 
+	if(script)
+	{
+		if(script_init(script) != TRUE)
+		{
+			goto ERROR_RET;
+		}
+	}
+	
+
 	for(i = optind; i < argc; ++i)
 	{
 		if(parser_parse(&parser, argv[i], generator, make_rule) != E_TD_NOERROR)
 		{
-			goto ERROR_RET;
+			goto fini_script;
 		}
+	}
+
+fini_script:
+	if(script)
+	{
+		script_fini();
 	}
 
 done:

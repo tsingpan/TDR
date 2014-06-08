@@ -170,6 +170,8 @@ Import :
 		
 
 		reduce_Import(&$$, $2);
+
+		parser_on_import(GET_PARSER, &$$);
 	};
 
 Typedef :
@@ -181,6 +183,8 @@ Typedef :
 		reduce_Typedef(&$$, &$2, $3);
 
 		symbols_add_Typedef(&GET_SYMBOLS, &yylloc, &$$);
+
+		parser_on_typedef(GET_PARSER, &$$);
 	};
 
 Const :
@@ -195,6 +199,8 @@ Const :
 
 		reduce_Const(&$$, &$2, $3, &$5);		
 		symbols_add_Const(&GET_SYMBOLS, &yylloc, &$$);
+
+		parser_on_const(GET_PARSER, &$$);
 	};
 
 Enum :
@@ -202,6 +208,8 @@ Enum :
 	{
 		GET_SYMBOLS.enum_name = $2;
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
+
+		parser_on_enum_begin(GET_PARSER, $2);
 	}
 	'{' EnumDefList '}'	';'
 	{
@@ -210,6 +218,8 @@ Enum :
 		reduce_Enum(&GET_DEFINITION.definition.de_enum, $2);
 
 		symbols_add_Enum(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_enum);
+
+		parser_on_enum_end(GET_PARSER, $2);
 	};
 
 EnumDefList :
@@ -244,6 +254,8 @@ EnumDef :
 		reduce_EnumDef_Value(&$$, $1, &$3, &$5);
 
 		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &$$);
+
+		parser_on_enum_field(GET_PARSER, &$$);
 	}
 |	tok_identifier ',' UnixCommentOrNot
 	{
@@ -264,20 +276,26 @@ EnumDef :
 		}
 
 		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &$$);
+
+		parser_on_enum_field(GET_PARSER, &$$);
 	};
 
 Union :
-	tok_union tok_identifier
+	tok_union tok_identifier Parameters 
 	{
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 		GET_SYMBOLS.union_name = $2;
 		GET_UNION_FIELD_LIST.union_field_list_num = 0;
+
+		parser_on_union_begin(GET_PARSER, $2);
 	}
-	Parameters '{' UnionFieldList '}' ';'
+	'{' UnionFieldList '}' ';'
 	{
-		reduce_Union(&GET_DEFINITION.definition.de_union, $2, &$4);
+		reduce_Union(&GET_DEFINITION.definition.de_union, $2, &$3);
 
 		symbols_add_Union(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_union);
+
+		parser_on_union_end(GET_PARSER, $2);
 	};
 	
 UnionFieldList: 
@@ -308,6 +326,8 @@ UnionField :
 		reduce_UnionField(&$$, $1, &$3, $4, &$6);
 
 		symbols_add_UnionField(&GET_SYMBOLS, &yylloc, &$$);
+
+		parser_on_union_field(GET_PARSER, &$$);
 	};
 
 Parameters :
@@ -358,12 +378,14 @@ Parameter:
 Struct : 
 	tok_struct tok_identifier
 	{
-		parser_on_struct_begin(GET_PARSER, &yylloc, $2);
+		parser_on_struct_begin_old(GET_PARSER, &yylloc, $2);
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 
 		GET_SYMBOLS.struct_name = $2;
 		GET_FIELD_LIST.field_list_num = 0;
+
+		parser_on_struct_begin(GET_PARSER, $2);
 	}
 	'{' FieldList '}' ';'
 	{
@@ -371,7 +393,9 @@ Struct :
 		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
-		parser_on_struct_end(GET_PARSER, &yylloc, &GET_DEFINITION.definition.de_struct);
+		parser_on_struct_end_old(GET_PARSER, &yylloc, &GET_DEFINITION.definition.de_struct);
+
+		parser_on_struct_end(GET_PARSER, $2);
 	};
 
 FieldList: 
@@ -421,7 +445,9 @@ Field :
 		
 		symbols_add_Field(&GET_SYMBOLS, &yylloc, &$$);
 
-		parser_on_field(GET_PARSER, &yylloc, &$$);
+		parser_on_field_old(GET_PARSER, &yylloc, &$$);
+
+		parser_on_struct_field(GET_PARSER, &$$);
 	};
 	
 Condition : 
@@ -644,6 +670,8 @@ UnixComment:
 	{
 		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
 		$$.text[MAX_COMMENT_LENGTH - 1] = 0;
+
+		parser_on_unit_comment(GET_PARSER, &$$);
 	};
 
 UnixCommentOrNot:
@@ -651,6 +679,8 @@ UnixCommentOrNot:
 	{
 		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
 		$$.text[MAX_COMMENT_LENGTH - 1] = 0;
+
+		parser_on_unit_comment(GET_PARSER, &$$);
 	}
 |
 	{

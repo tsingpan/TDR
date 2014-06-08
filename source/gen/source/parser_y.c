@@ -451,7 +451,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   121
+#define YYLAST   135
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  48
@@ -528,7 +528,7 @@ static const yytype_int8 yyrhs[] =
       -1,    18,    73,    17,    37,    76,    38,    -1,    -1,    19,
       17,    56,    39,    57,    40,    38,    -1,    57,    58,    -1,
       58,    -1,    17,    37,    76,    41,    78,    -1,    17,    41,
-      78,    -1,    -1,     5,    17,    60,    63,    39,    61,    40,
+      78,    -1,    -1,     5,    17,    63,    60,    39,    61,    40,
       38,    -1,    61,    62,    -1,    62,    -1,    17,    42,    73,
       17,    38,    78,    -1,    43,    64,    44,    -1,    -1,    64,
       41,    65,    -1,    65,    -1,    73,    17,    -1,    -1,     4,
@@ -550,13 +550,13 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   122,   122,   125,   129,   133,   138,   143,   148,   152,
-     156,   160,   167,   176,   187,   202,   201,   216,   228,   234,
-     248,   271,   270,   284,   294,   300,   314,   319,   324,   334,
-     341,   360,   359,   378,   388,   394,   428,   442,   457,   473,
-     481,   485,   491,   505,   509,   513,   517,   521,   525,   529,
-     533,   537,   541,   545,   553,   563,   570,   575,   580,   589,
-     597,   601,   605,   609,   613,   617,   621,   625,   633,   643,
-     650,   656
+     156,   160,   167,   178,   191,   208,   207,   226,   238,   244,
+     260,   285,   284,   302,   312,   318,   334,   339,   344,   354,
+     361,   380,   379,   402,   412,   418,   454,   468,   483,   499,
+     507,   511,   517,   531,   535,   539,   543,   547,   551,   555,
+     559,   563,   567,   571,   579,   589,   596,   601,   606,   615,
+     623,   627,   631,   635,   639,   643,   647,   651,   659,   669,
+     678,   686
 };
 #endif
 
@@ -629,14 +629,14 @@ static const yytype_uint8 yydefact[] =
 {
        4,     0,     2,     1,     0,     0,     0,     0,     0,    69,
        0,     3,     5,     7,     6,    10,     9,     8,    11,    12,
-      31,    21,    53,    45,    46,    47,    48,    49,    50,    51,
-      52,    43,    44,    55,     0,    15,     0,     0,    27,     0,
-       0,     0,     0,    39,     0,     0,     0,     0,     0,    13,
-       0,    39,    34,     0,     0,    29,     0,     0,    54,    62,
-      60,    63,    61,    64,    65,    66,    67,     0,     0,     0,
-       0,    18,     0,     0,    33,     0,     0,    41,    40,     0,
-      26,    30,     0,     0,    24,     0,    14,     0,    71,     0,
-      17,     0,    32,     0,    57,    28,     0,     0,    23,     0,
+      31,    27,    53,    45,    46,    47,    48,    49,    50,    51,
+      52,    43,    44,    55,     0,    15,     0,     0,     0,    21,
+       0,     0,     0,     0,    39,     0,    29,     0,     0,     0,
+       0,     0,    13,     0,    39,    34,     0,     0,    26,    30,
+       0,    54,    62,    60,    63,    61,    64,    65,    66,    67,
+       0,     0,     0,     0,    18,     0,     0,    33,     0,     0,
+      41,    40,    28,     0,     0,    24,     0,    14,     0,    71,
+       0,    17,     0,    32,     0,    57,     0,     0,    23,     0,
        0,    70,    20,    16,     0,     0,     0,     0,     0,     0,
        0,    22,    68,    71,     0,     0,     0,     0,    59,     0,
       71,     0,    19,    37,    38,    36,     0,     0,    56,    35,
@@ -646,40 +646,40 @@ static const yytype_uint8 yydefact[] =
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     2,    11,    12,    13,    14,    15,    41,    70,
-      71,    16,    38,    83,    84,    45,    54,    55,    17,    37,
-      51,    52,    53,    76,    77,    56,   109,   119,    68,    18,
+      -1,     1,     2,    11,    12,    13,    14,    15,    42,    73,
+      74,    16,    48,    84,    85,    39,    45,    46,    17,    37,
+      54,    55,    56,    79,    80,    47,   109,   119,    71,    18,
      102
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -98
+#define YYPACT_NINF -66
 static const yytype_int8 yypact[] =
 {
-     -98,     9,     8,   -98,     5,    -9,     4,    42,     7,   -98,
-      42,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,
-     -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,
-     -98,   -98,   -98,   -24,    11,   -98,    17,     1,    -2,    25,
-       6,    21,    23,    38,    42,    24,    15,    68,    28,   -98,
-      44,    -5,   -98,    22,   -27,   -98,    47,    48,   -98,   -98,
-     -98,   -98,   -98,   -98,   -98,   -98,   -98,    45,    53,   -31,
-     -15,   -98,    49,    54,   -98,    50,    76,   -98,   -98,    42,
-     -98,   -98,    52,   -10,   -98,    78,   -98,    68,    74,    60,
-     -98,   -16,   -98,    42,    56,   -98,    42,    62,   -98,    57,
-      61,   -98,   -98,   -98,    68,    68,    68,    63,    86,    67,
-      89,   -98,   -98,    74,    64,    65,    66,    90,   -98,   -26,
-      74,    73,   -98,   -98,   -98,   -98,    69,    95,   -98,   -98,
-      74,   -98,   -98,   -98
+     -66,     9,     8,   -66,    18,    -9,    36,   -11,    37,   -66,
+     -11,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,
+     -66,   -33,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,
+     -66,   -66,   -66,    25,    56,   -66,    57,    38,   -11,   -66,
+      58,    39,    40,    42,    72,    23,   -66,    64,    43,    41,
+      46,    66,   -66,    47,    -5,   -66,    11,   -11,   -66,   -66,
+      67,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,
+      48,    54,    29,   -15,   -66,    68,    55,   -66,    49,    69,
+     -66,   -66,   -66,    52,   -10,   -66,    79,   -66,    46,    74,
+      60,   -66,   -16,   -66,   -11,    59,   -11,    61,   -66,    62,
+      63,   -66,   -66,   -66,    46,    46,    46,    70,    83,    65,
+      84,   -66,   -66,    74,    71,    73,    75,    88,   -66,    28,
+      74,    76,   -66,   -66,   -66,   -66,    77,    90,   -66,   -66,
+      74,   -66,   -66,   -66
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,   -98,
-      43,   -98,   -98,   -98,    31,   -98,   -98,    36,   -98,   -98,
-     -98,    70,   -98,   -98,   -98,    -7,   -98,   -98,   -68,   -98,
-     -97
+     -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,   -66,
+      35,   -66,   -66,   -66,    26,   -66,   -66,    78,   -66,   -66,
+     -66,    80,   -66,   -66,   -66,    -7,   -66,   -66,   -54,   -66,
+     -65
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -688,42 +688,44 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      34,    50,    69,    36,   104,   105,    87,    82,    20,     3,
-      88,     4,     5,     6,    79,   127,   122,    80,   128,   100,
-      19,    21,    39,   129,    35,    89,     7,     8,    40,   106,
-      97,     9,    10,   133,    42,    73,   114,   115,   116,    22,
-      43,    44,    46,    47,    50,    69,    78,    23,    24,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    75,    22,
-      48,    49,    58,    57,    81,    82,    91,    23,    24,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    59,    60,
-      61,    62,    63,    64,    65,    66,   107,    72,    85,   110,
-      67,    86,    92,    94,    96,    99,    93,   101,   103,   108,
-     111,   112,   113,   118,   117,   120,   121,   126,   123,   124,
-     125,   130,   132,    90,    98,    95,   131,     0,     0,     0,
-       0,    74
+      34,    53,    72,    36,   104,   105,    22,    83,    20,     3,
+      38,     4,     5,     6,    23,    24,    25,    26,    27,    28,
+      29,    30,    31,    32,    33,    90,     7,     8,    22,   106,
+      97,     9,    10,    19,   100,    76,    23,    24,    25,    26,
+      27,    28,    29,    30,    31,    32,    33,    78,   122,    81,
+     114,   115,   116,    21,    35,   129,    62,    63,    64,    65,
+      66,    67,    68,    69,    57,   133,    88,    58,    70,   127,
+      89,    40,   128,    41,    43,    49,    50,    44,    53,    51,
+      52,    59,    60,    72,    83,    92,    95,   107,    61,   110,
+      75,    86,    87,    93,    96,    94,    99,   101,   103,   111,
+     118,   121,   108,   120,   113,   126,   112,   132,    91,     0,
+      98,   117,     0,     0,   130,   123,     0,   124,     0,   125,
+       0,     0,     0,     0,   131,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    77,    82
 };
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-98)))
+  (!!((Yystate) == (-66)))
 
 #define yytable_value_is_error(Yytable_value) \
   YYID (0)
 
 static const yytype_int16 yycheck[] =
 {
-       7,     6,    17,    10,    20,    21,    37,    17,    17,     0,
-      41,     3,     4,     5,    41,    41,   113,    44,    44,    87,
-      15,    17,    46,   120,    17,    40,    18,    19,    17,    45,
-      40,    23,    24,   130,    17,    40,   104,   105,   106,    17,
-      39,    43,    17,    37,     6,    17,    53,    25,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    36,    17,
-      39,    38,    47,    39,    17,    17,    17,    25,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    10,    11,
-      12,    13,    14,    15,    16,    17,    93,    43,    43,    96,
-      22,    38,    38,    17,    42,    17,    46,    23,    38,    43,
-      38,    44,    41,    17,    41,    38,    17,    17,    44,    44,
-      44,    38,    17,    70,    83,    79,    47,    -1,    -1,    -1,
-      -1,    51
+       7,     6,    17,    10,    20,    21,    17,    17,    17,     0,
+      43,     3,     4,     5,    25,    26,    27,    28,    29,    30,
+      31,    32,    33,    34,    35,    40,    18,    19,    17,    45,
+      40,    23,    24,    15,    88,    40,    25,    26,    27,    28,
+      29,    30,    31,    32,    33,    34,    35,    36,   113,    56,
+     104,   105,   106,    17,    17,   120,    10,    11,    12,    13,
+      14,    15,    16,    17,    41,   130,    37,    44,    22,    41,
+      41,    46,    44,    17,    17,    17,    37,    39,     6,    39,
+      38,    17,    39,    17,    17,    17,    17,    94,    47,    96,
+      43,    43,    38,    38,    42,    46,    17,    23,    38,    38,
+      17,    17,    43,    38,    41,    17,    44,    17,    73,    -1,
+      84,    41,    -1,    -1,    38,    44,    -1,    44,    -1,    44,
+      -1,    -1,    -1,    -1,    47,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    54,    57
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -733,13 +735,13 @@ static const yytype_uint8 yystos[] =
        0,    49,    50,     0,     3,     4,     5,    18,    19,    23,
       24,    51,    52,    53,    54,    55,    59,    66,    77,    15,
       17,    17,    17,    25,    26,    27,    28,    29,    30,    31,
-      32,    33,    34,    35,    73,    17,    73,    67,    60,    46,
-      17,    56,    17,    39,    43,    63,    17,    37,    39,    38,
-       6,    68,    69,    70,    64,    65,    73,    39,    47,    10,
-      11,    12,    13,    14,    15,    16,    17,    22,    76,    17,
-      57,    58,    43,    40,    69,    36,    71,    72,    73,    41,
-      44,    17,    17,    61,    62,    43,    38,    37,    41,    40,
-      58,    17,    38,    46,    17,    65,    42,    40,    62,    17,
+      32,    33,    34,    35,    73,    17,    73,    67,    43,    63,
+      46,    17,    56,    17,    39,    64,    65,    73,    60,    17,
+      37,    39,    38,     6,    68,    69,    70,    41,    44,    17,
+      39,    47,    10,    11,    12,    13,    14,    15,    16,    17,
+      22,    76,    17,    57,    58,    43,    40,    69,    36,    71,
+      72,    73,    65,    17,    61,    62,    43,    38,    37,    41,
+      40,    58,    17,    38,    46,    17,    42,    40,    62,    17,
       76,    23,    78,    38,    20,    21,    45,    73,    43,    74,
       73,    38,    44,    41,    76,    76,    76,    41,    17,    75,
       38,    17,    78,    44,    44,    44,    17,    41,    44,    78,
@@ -1744,12 +1746,14 @@ yyreduce:
 		
 
 		reduce_Import(&(yyval.sn_import), (yyvsp[(2) - (2)].sn_string));
+
+		parser_on_import(GET_PARSER, &(yyval.sn_import));
 	}
     break;
 
   case 13:
 /* Line 1787 of yacc.c  */
-#line 177 "D:/GitHub/TDR/source/parser_y.yy"
+#line 179 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 		check_string_length(&yylloc, &(yyvsp[(2) - (4)].sn_simple_type), TRUE);
@@ -1757,12 +1761,14 @@ yyreduce:
 		reduce_Typedef(&(yyval.sn_typedef), &(yyvsp[(2) - (4)].sn_simple_type), (yyvsp[(3) - (4)].sn_tok_identifier));
 
 		symbols_add_Typedef(&GET_SYMBOLS, &yylloc, &(yyval.sn_typedef));
+
+		parser_on_typedef(GET_PARSER, &(yyval.sn_typedef));
 	}
     break;
 
   case 14:
 /* Line 1787 of yacc.c  */
-#line 188 "D:/GitHub/TDR/source/parser_y.yy"
+#line 192 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -1773,33 +1779,39 @@ yyreduce:
 
 		reduce_Const(&(yyval.sn_const), &(yyvsp[(2) - (6)].sn_simple_type), (yyvsp[(3) - (6)].sn_tok_identifier), &(yyvsp[(5) - (6)].sn_value));		
 		symbols_add_Const(&GET_SYMBOLS, &yylloc, &(yyval.sn_const));
+
+		parser_on_const(GET_PARSER, &(yyval.sn_const));
 	}
     break;
 
   case 15:
 /* Line 1787 of yacc.c  */
-#line 202 "D:/GitHub/TDR/source/parser_y.yy"
+#line 208 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_SYMBOLS.enum_name = (yyvsp[(2) - (2)].sn_tok_identifier);
 		GET_DEFINITION.definition.de_enum.enum_def_list_num = 0;
+
+		parser_on_enum_begin(GET_PARSER, (yyvsp[(2) - (2)].sn_tok_identifier));
 	}
     break;
 
   case 16:
 /* Line 1787 of yacc.c  */
-#line 207 "D:/GitHub/TDR/source/parser_y.yy"
+#line 215 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (7)].sn_tok_identifier));
 
 		reduce_Enum(&GET_DEFINITION.definition.de_enum, (yyvsp[(2) - (7)].sn_tok_identifier));
 
 		symbols_add_Enum(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_enum);
+
+		parser_on_enum_end(GET_PARSER, (yyvsp[(2) - (7)].sn_tok_identifier));
 	}
     break;
 
   case 17:
 /* Line 1787 of yacc.c  */
-#line 217 "D:/GitHub/TDR/source/parser_y.yy"
+#line 227 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_DEFINITION.definition.de_enum.enum_def_list_num >= MAX_ENUM_DEF_LIST_NUM)
 		{
@@ -1814,7 +1826,7 @@ yyreduce:
 
   case 18:
 /* Line 1787 of yacc.c  */
-#line 229 "D:/GitHub/TDR/source/parser_y.yy"
+#line 239 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_DEFINITION.definition.de_enum.enum_def_list[GET_DEFINITION.definition.de_enum.enum_def_list_num++] = (yyvsp[(1) - (1)].sn_enum_def);
 	}
@@ -1822,7 +1834,7 @@ yyreduce:
 
   case 19:
 /* Line 1787 of yacc.c  */
-#line 235 "D:/GitHub/TDR/source/parser_y.yy"
+#line 245 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
@@ -1835,12 +1847,14 @@ yyreduce:
 		reduce_EnumDef_Value(&(yyval.sn_enum_def), (yyvsp[(1) - (5)].sn_tok_identifier), &(yyvsp[(3) - (5)].sn_value), &(yyvsp[(5) - (5)].sn_unix_comment));
 
 		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &(yyval.sn_enum_def));
+
+		parser_on_enum_field(GET_PARSER, &(yyval.sn_enum_def));
 	}
     break;
 
   case 20:
 /* Line 1787 of yacc.c  */
-#line 249 "D:/GitHub/TDR/source/parser_y.yy"
+#line 261 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		syn_simple_type_t enum_type;
 		enum_type.st = E_ST_INT32;
@@ -1859,32 +1873,38 @@ yyreduce:
 		}
 
 		symbols_add_EnumDef(&GET_SYMBOLS, &yylloc, &(yyval.sn_enum_def));
+
+		parser_on_enum_field(GET_PARSER, &(yyval.sn_enum_def));
 	}
     break;
 
   case 21:
 /* Line 1787 of yacc.c  */
-#line 271 "D:/GitHub/TDR/source/parser_y.yy"
+#line 285 "D:/GitHub/TDR/source/parser_y.yy"
     {
-		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (2)].sn_tok_identifier));
-		GET_SYMBOLS.union_name = (yyvsp[(2) - (2)].sn_tok_identifier);
+		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (3)].sn_tok_identifier));
+		GET_SYMBOLS.union_name = (yyvsp[(2) - (3)].sn_tok_identifier);
 		GET_UNION_FIELD_LIST.union_field_list_num = 0;
+
+		parser_on_union_begin(GET_PARSER, (yyvsp[(2) - (3)].sn_tok_identifier));
 	}
     break;
 
   case 22:
 /* Line 1787 of yacc.c  */
-#line 277 "D:/GitHub/TDR/source/parser_y.yy"
+#line 293 "D:/GitHub/TDR/source/parser_y.yy"
     {
-		reduce_Union(&GET_DEFINITION.definition.de_union, (yyvsp[(2) - (8)].sn_tok_identifier), &(yyvsp[(4) - (8)].sn_parameters));
+		reduce_Union(&GET_DEFINITION.definition.de_union, (yyvsp[(2) - (8)].sn_tok_identifier), &(yyvsp[(3) - (8)].sn_parameters));
 
 		symbols_add_Union(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_union);
+
+		parser_on_union_end(GET_PARSER, (yyvsp[(2) - (8)].sn_tok_identifier));
 	}
     break;
 
   case 23:
 /* Line 1787 of yacc.c  */
-#line 285 "D:/GitHub/TDR/source/parser_y.yy"
+#line 303 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_UNION_FIELD_LIST.union_field_list_num >= MAX_UNION_FIELD_LIST_NUM)
 		{
@@ -1897,7 +1917,7 @@ yyreduce:
 
   case 24:
 /* Line 1787 of yacc.c  */
-#line 295 "D:/GitHub/TDR/source/parser_y.yy"
+#line 313 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_UNION_FIELD_LIST.union_field_list[GET_UNION_FIELD_LIST.union_field_list_num++] = (yyvsp[(1) - (1)].sn_union_field);
 	}
@@ -1905,7 +1925,7 @@ yyreduce:
 
   case 25:
 /* Line 1787 of yacc.c  */
-#line 301 "D:/GitHub/TDR/source/parser_y.yy"
+#line 319 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined_as_value(&GET_SYMBOLS, &yylloc, "", (yyvsp[(4) - (6)].sn_tok_identifier));
 
@@ -1916,12 +1936,14 @@ yyreduce:
 		reduce_UnionField(&(yyval.sn_union_field), (yyvsp[(1) - (6)].sn_tok_identifier), &(yyvsp[(3) - (6)].sn_simple_type), (yyvsp[(4) - (6)].sn_tok_identifier), &(yyvsp[(6) - (6)].sn_unix_comment));
 
 		symbols_add_UnionField(&GET_SYMBOLS, &yylloc, &(yyval.sn_union_field));
+
+		parser_on_union_field(GET_PARSER, &(yyval.sn_union_field));
 	}
     break;
 
   case 26:
 /* Line 1787 of yacc.c  */
-#line 315 "D:/GitHub/TDR/source/parser_y.yy"
+#line 335 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters) = (yyvsp[(2) - (3)].sn_parameters);
 	}
@@ -1929,7 +1951,7 @@ yyreduce:
 
   case 27:
 /* Line 1787 of yacc.c  */
-#line 319 "D:/GitHub/TDR/source/parser_y.yy"
+#line 339 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters).par_list_num = 0;
 	}
@@ -1937,7 +1959,7 @@ yyreduce:
 
   case 28:
 /* Line 1787 of yacc.c  */
-#line 325 "D:/GitHub/TDR/source/parser_y.yy"
+#line 345 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if((yyvsp[(1) - (3)].sn_parameters).par_list_num >= MAX_PARAMETER_NUM)
 		{
@@ -1950,7 +1972,7 @@ yyreduce:
 
   case 29:
 /* Line 1787 of yacc.c  */
-#line 335 "D:/GitHub/TDR/source/parser_y.yy"
+#line 355 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_parameters).par_list[0] = (yyvsp[(1) - (1)].sn_parameter);
 		(yyval.sn_parameters).par_list_num = 1;
@@ -1959,7 +1981,7 @@ yyreduce:
 
   case 30:
 /* Line 1787 of yacc.c  */
-#line 342 "D:/GitHub/TDR/source/parser_y.yy"
+#line 362 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_str_equal(&yylloc, (yyvsp[(2) - (2)].sn_tok_identifier), "selector");
 
@@ -1973,32 +1995,36 @@ yyreduce:
 
   case 31:
 /* Line 1787 of yacc.c  */
-#line 360 "D:/GitHub/TDR/source/parser_y.yy"
+#line 380 "D:/GitHub/TDR/source/parser_y.yy"
     {
-		parser_on_struct_begin(GET_PARSER, &yylloc, (yyvsp[(2) - (2)].sn_tok_identifier));
+		parser_on_struct_begin_old(GET_PARSER, &yylloc, (yyvsp[(2) - (2)].sn_tok_identifier));
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(2) - (2)].sn_tok_identifier));
 
 		GET_SYMBOLS.struct_name = (yyvsp[(2) - (2)].sn_tok_identifier);
 		GET_FIELD_LIST.field_list_num = 0;
+
+		parser_on_struct_begin(GET_PARSER, (yyvsp[(2) - (2)].sn_tok_identifier));
 	}
     break;
 
   case 32:
 /* Line 1787 of yacc.c  */
-#line 369 "D:/GitHub/TDR/source/parser_y.yy"
+#line 391 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy(GET_DEFINITION.definition.de_struct.name, (yyvsp[(2) - (7)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
 		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
-		parser_on_struct_end(GET_PARSER, &yylloc, &GET_DEFINITION.definition.de_struct);
+		parser_on_struct_end_old(GET_PARSER, &yylloc, &GET_DEFINITION.definition.de_struct);
+
+		parser_on_struct_end(GET_PARSER, (yyvsp[(2) - (7)].sn_tok_identifier));
 	}
     break;
 
   case 33:
 /* Line 1787 of yacc.c  */
-#line 379 "D:/GitHub/TDR/source/parser_y.yy"
+#line 403 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if(GET_FIELD_LIST.field_list_num >= MAX_FIELD_LIST_NUM)
 		{
@@ -2011,7 +2037,7 @@ yyreduce:
 
   case 34:
 /* Line 1787 of yacc.c  */
-#line 389 "D:/GitHub/TDR/source/parser_y.yy"
+#line 413 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		GET_FIELD_LIST.field_list[GET_FIELD_LIST.field_list_num++] = (yyvsp[(1) - (1)].sn_field);
 	}
@@ -2019,7 +2045,7 @@ yyreduce:
 
   case 35:
 /* Line 1787 of yacc.c  */
-#line 395 "D:/GitHub/TDR/source/parser_y.yy"
+#line 419 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2049,13 +2075,15 @@ yyreduce:
 		
 		symbols_add_Field(&GET_SYMBOLS, &yylloc, &(yyval.sn_field));
 
-		parser_on_field(GET_PARSER, &yylloc, &(yyval.sn_field));
+		parser_on_field_old(GET_PARSER, &yylloc, &(yyval.sn_field));
+
+		parser_on_struct_field(GET_PARSER, &(yyval.sn_field));
 	}
     break;
 
   case 36:
 /* Line 1787 of yacc.c  */
-#line 429 "D:/GitHub/TDR/source/parser_y.yy"
+#line 455 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2073,7 +2101,7 @@ yyreduce:
 
   case 37:
 /* Line 1787 of yacc.c  */
-#line 443 "D:/GitHub/TDR/source/parser_y.yy"
+#line 469 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2092,7 +2120,7 @@ yyreduce:
 
   case 38:
 /* Line 1787 of yacc.c  */
-#line 458 "D:/GitHub/TDR/source/parser_y.yy"
+#line 484 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(3) - (6)].sn_tok_identifier));
 
@@ -2111,7 +2139,7 @@ yyreduce:
 
   case 39:
 /* Line 1787 of yacc.c  */
-#line 473 "D:/GitHub/TDR/source/parser_y.yy"
+#line 499 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_condition).oper = E_EO_NON;
 	}
@@ -2119,7 +2147,7 @@ yyreduce:
 
   case 40:
 /* Line 1787 of yacc.c  */
-#line 482 "D:/GitHub/TDR/source/parser_y.yy"
+#line 508 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Type_SimpleType(&(yyval.sn_type), &(yyvsp[(1) - (1)].sn_simple_type));
 	}
@@ -2127,7 +2155,7 @@ yyreduce:
 
   case 41:
 /* Line 1787 of yacc.c  */
-#line 486 "D:/GitHub/TDR/source/parser_y.yy"
+#line 512 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_type) = (yyvsp[(1) - (1)].sn_type);
 	}
@@ -2135,7 +2163,7 @@ yyreduce:
 
   case 42:
 /* Line 1787 of yacc.c  */
-#line 492 "D:/GitHub/TDR/source/parser_y.yy"
+#line 518 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
 
@@ -2151,7 +2179,7 @@ yyreduce:
 
   case 43:
 /* Line 1787 of yacc.c  */
-#line 506 "D:/GitHub/TDR/source/parser_y.yy"
+#line 532 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2159,7 +2187,7 @@ yyreduce:
 
   case 44:
 /* Line 1787 of yacc.c  */
-#line 510 "D:/GitHub/TDR/source/parser_y.yy"
+#line 536 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2167,7 +2195,7 @@ yyreduce:
 
   case 45:
 /* Line 1787 of yacc.c  */
-#line 514 "D:/GitHub/TDR/source/parser_y.yy"
+#line 540 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2175,7 +2203,7 @@ yyreduce:
 
   case 46:
 /* Line 1787 of yacc.c  */
-#line 518 "D:/GitHub/TDR/source/parser_y.yy"
+#line 544 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2183,7 +2211,7 @@ yyreduce:
 
   case 47:
 /* Line 1787 of yacc.c  */
-#line 522 "D:/GitHub/TDR/source/parser_y.yy"
+#line 548 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2191,7 +2219,7 @@ yyreduce:
 
   case 48:
 /* Line 1787 of yacc.c  */
-#line 526 "D:/GitHub/TDR/source/parser_y.yy"
+#line 552 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2199,7 +2227,7 @@ yyreduce:
 
   case 49:
 /* Line 1787 of yacc.c  */
-#line 530 "D:/GitHub/TDR/source/parser_y.yy"
+#line 556 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2207,7 +2235,7 @@ yyreduce:
 
   case 50:
 /* Line 1787 of yacc.c  */
-#line 534 "D:/GitHub/TDR/source/parser_y.yy"
+#line 560 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2215,7 +2243,7 @@ yyreduce:
 
   case 51:
 /* Line 1787 of yacc.c  */
-#line 538 "D:/GitHub/TDR/source/parser_y.yy"
+#line 564 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2223,7 +2251,7 @@ yyreduce:
 
   case 52:
 /* Line 1787 of yacc.c  */
-#line 542 "D:/GitHub/TDR/source/parser_y.yy"
+#line 568 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_simple_type).st = (yyvsp[(1) - (1)].sn_st);
 	}
@@ -2231,7 +2259,7 @@ yyreduce:
 
   case 53:
 /* Line 1787 of yacc.c  */
-#line 546 "D:/GitHub/TDR/source/parser_y.yy"
+#line 572 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2243,7 +2271,7 @@ yyreduce:
 
   case 54:
 /* Line 1787 of yacc.c  */
-#line 554 "D:/GitHub/TDR/source/parser_y.yy"
+#line 580 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
@@ -2257,7 +2285,7 @@ yyreduce:
 
   case 55:
 /* Line 1787 of yacc.c  */
-#line 564 "D:/GitHub/TDR/source/parser_y.yy"
+#line 590 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_SimpleType_tok_t_string(&(yyval.sn_simple_type), NULL);
 	}
@@ -2265,7 +2293,7 @@ yyreduce:
 
   case 56:
 /* Line 1787 of yacc.c  */
-#line 571 "D:/GitHub/TDR/source/parser_y.yy"
+#line 597 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_arguments) = (yyvsp[(2) - (3)].sn_arguments);
 	}
@@ -2273,7 +2301,7 @@ yyreduce:
 
   case 57:
 /* Line 1787 of yacc.c  */
-#line 575 "D:/GitHub/TDR/source/parser_y.yy"
+#line 601 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_arguments).arg_list_num = 0;
 	}
@@ -2281,7 +2309,7 @@ yyreduce:
 
   case 58:
 /* Line 1787 of yacc.c  */
-#line 581 "D:/GitHub/TDR/source/parser_y.yy"
+#line 607 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		if((yyvsp[(1) - (3)].sn_arguments).arg_list_num >= MAX_ARGUMENT_NUM)
 		{
@@ -2294,7 +2322,7 @@ yyreduce:
 
   case 59:
 /* Line 1787 of yacc.c  */
-#line 590 "D:/GitHub/TDR/source/parser_y.yy"
+#line 616 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2304,7 +2332,7 @@ yyreduce:
 
   case 60:
 /* Line 1787 of yacc.c  */
-#line 598 "D:/GitHub/TDR/source/parser_y.yy"
+#line 624 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_uint64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_uint64));
 	}
@@ -2312,7 +2340,7 @@ yyreduce:
 
   case 61:
 /* Line 1787 of yacc.c  */
-#line 602 "D:/GitHub/TDR/source/parser_y.yy"
+#line 628 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_hex_uint64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_hex_uint64));
 	}
@@ -2320,7 +2348,7 @@ yyreduce:
 
   case 62:
 /* Line 1787 of yacc.c  */
-#line 606 "D:/GitHub/TDR/source/parser_y.yy"
+#line 632 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_int64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_int64));
 	}
@@ -2328,7 +2356,7 @@ yyreduce:
 
   case 63:
 /* Line 1787 of yacc.c  */
-#line 610 "D:/GitHub/TDR/source/parser_y.yy"
+#line 636 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_hex_int64(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_hex_int64));
 	}
@@ -2336,7 +2364,7 @@ yyreduce:
 
   case 64:
 /* Line 1787 of yacc.c  */
-#line 614 "D:/GitHub/TDR/source/parser_y.yy"
+#line 640 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_double(&(yyval.sn_value), (yyvsp[(1) - (1)].pn_tok_double));
 	}
@@ -2344,7 +2372,7 @@ yyreduce:
 
   case 65:
 /* Line 1787 of yacc.c  */
-#line 618 "D:/GitHub/TDR/source/parser_y.yy"
+#line 644 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_string(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_string));
 	}
@@ -2352,7 +2380,7 @@ yyreduce:
 
   case 66:
 /* Line 1787 of yacc.c  */
-#line 622 "D:/GitHub/TDR/source/parser_y.yy"
+#line 648 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		reduce_Value_tok_char(&(yyval.sn_value), (yyvsp[(1) - (1)].sn_char));
 	}
@@ -2360,7 +2388,7 @@ yyreduce:
 
   case 67:
 /* Line 1787 of yacc.c  */
-#line 626 "D:/GitHub/TDR/source/parser_y.yy"
+#line 652 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(1) - (1)].sn_tok_identifier));
 
@@ -2372,7 +2400,7 @@ yyreduce:
 
   case 68:
 /* Line 1787 of yacc.c  */
-#line 634 "D:/GitHub/TDR/source/parser_y.yy"
+#line 660 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", (yyvsp[(3) - (4)].sn_tok_identifier));
 
@@ -2384,25 +2412,29 @@ yyreduce:
 
   case 69:
 /* Line 1787 of yacc.c  */
-#line 644 "D:/GitHub/TDR/source/parser_y.yy"
+#line 670 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
 		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
+
+		parser_on_unit_comment(GET_PARSER, &(yyval.sn_unix_comment));
 	}
     break;
 
   case 70:
 /* Line 1787 of yacc.c  */
-#line 651 "D:/GitHub/TDR/source/parser_y.yy"
+#line 679 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
 		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
+
+		parser_on_unit_comment(GET_PARSER, &(yyval.sn_unix_comment));
 	}
     break;
 
   case 71:
 /* Line 1787 of yacc.c  */
-#line 656 "D:/GitHub/TDR/source/parser_y.yy"
+#line 686 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_unix_comment).text[0] = 0;
 	}
@@ -2410,7 +2442,7 @@ yyreduce:
 
 
 /* Line 1787 of yacc.c  */
-#line 2414 "D:/GitHub/TDR/source/gen/source/parser_y.c"
+#line 2446 "D:/GitHub/TDR/source/gen/source/parser_y.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2649,5 +2681,5 @@ yyreturn:
 
 
 /* Line 2050 of yacc.c  */
-#line 660 "D:/GitHub/TDR/source/parser_y.yy"
+#line 690 "D:/GitHub/TDR/source/parser_y.yy"
 
