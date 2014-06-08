@@ -145,3 +145,5 @@ struct msg_qq_rsp_userinfo
 	int32 yellow_vip_level;
 	int32 is_yellow_high_vip;
 };
+
+const uint64 test_ui64 = 0xffffffffffffffff;

@@ -145,22 +145,78 @@ void parser_on_import(PARSER *self, const syn_import_t* syn_import)
 	}
 	sf_on_import(syn_import->package_name);
 }
-
+static void get_simple_type(const syn_simple_type_t *st, const char **type, const char **arg)
+{
+	*arg = NULL;
+	switch(st->st)
+	{
+	case E_ST_INT8:
+		*type = "int8";
+		break;
+	case E_ST_INT16:
+		*type = "int16";
+		break;
+	case E_ST_INT32:
+		*type = "int32";
+		break;
+	case E_ST_INT64:
+		*type = "int64";
+		break;
+	case E_ST_UINT8:
+		*type = "uint8";
+		break;
+	case E_ST_UINT16:
+		*type = "uint16";
+		break;
+	case E_ST_UINT32:
+		*type = "uint32";
+		break;
+	case E_ST_UINT64:
+		*type = "uint64";
+		break;
+	case E_ST_CHAR:
+		*type = "char";
+		break;
+	case E_ST_DOUBLE:
+		*type = "double";
+		break;
+	case E_ST_STRING:
+		*type = "string";
+		*arg = st->string_length;
+		break;
+	case E_ST_REFER:
+		*type = st->st_refer;
+		break;
+	}
+}
 void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef)
 {
+	const char *type = NULL;
+	const char *arg = NULL;
+	const char *new_type = NULL;
+
 	if(scanner_size(&self->scanner) != 1)
 	{
 		return;
 	}
+	get_simple_type(&syn_typedef->type, &type, &arg);
+	new_type = syn_typedef->name;
+
+	sf_on_typedef(type, arg, new_type);
 }
 
 void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 {
+	const char *type = NULL;
+	const char *arg = NULL;
+
 	if(scanner_size(&self->scanner) != 1)
 	{
 		return;
 	}
 
+	get_simple_type(&syn_const->type, &type, &arg);
+	sf_on_const(type, &syn_const->val);
 }
 
 void parser_on_enum_begin(PARSER *self, const char* name)
