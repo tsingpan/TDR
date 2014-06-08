@@ -1,10 +1,9 @@
 #include "platform/tlibc_platform.h"
 #include "parse/scanner.h"
 
-
+#include "globals.h"
 #include "scanner_l.h"
 #include "parser_y.h"
-
 int32_t scanner_scan(scanner_t *self, YYLTYPE *yylloc)
 {
 restart:
@@ -14,6 +13,8 @@ restart:
 	}
 	yylloc->first_line = scanner_top(self)->yylineno;
 	yylloc->first_column = scanner_top(self)->yycolumn;
+	g_yyloc = *yylloc;
+
 	yytext = YYCURSOR;
 /*!re2c
 re2c:yyfill:check = 0;

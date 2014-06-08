@@ -30,6 +30,8 @@ typedef enum language_string_e
 	E_LS_ARGUMENT_TYPE_MISMATCH = 24,
 	E_LS_NOT_ENUM_TYPE = 25,
 	E_LS_SQL_NOT_SUPPORT_CONDITION = 26,
+	E_LS_SCRIPT_ERROR = 27,
+	E_LS_SCRIPT_HALT= 28,
 	E_LS_MAX,
 }language_string_t;
 

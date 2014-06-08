@@ -58,6 +58,10 @@ const char* tdr_strerror(language_string_t sid)
 		return "不是枚举类型";
 	case E_LS_SQL_NOT_SUPPORT_CONDITION:
 		return "SQL不支持条件判断";
+	case E_LS_SCRIPT_ERROR:
+		return "脚本错误: %s";
+	case E_LS_SCRIPT_HALT:
+		return "%s";
 	default:
 		return "未知错误";
 	}

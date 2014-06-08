@@ -75,7 +75,6 @@ const struct option long_options[] = {
 
 #define TD_MAX_GENERATOR 16
 
-static PARSER parser;
 static generator_types_h_t tlibc_types_generator;
 static generator_reader_c_t tlibc_reader_generator;
 static generator_reader_h_t tlibc_reader_header_generator;
@@ -92,7 +91,7 @@ int main(int32_t argc, char *argv[])
 	int make_rule = FALSE;
 	const char* script = NULL;
 
-	parser_init(&parser);
+	parser_init(&g_parser);
 	while((opt = getopt_long (argc, argv, short_options, long_options, NULL)) != -1)
 	{
 		switch(opt)
@@ -126,37 +125,37 @@ int main(int32_t argc, char *argv[])
 				const char *arg = optarg;
 				if(strcmp(arg, "types_h") == 0)
 				{
-					generator_types_h_init(&tlibc_types_generator, &parser.symbols);
+					generator_types_h_init(&tlibc_types_generator, &g_parser.symbols);
 					generator = &tlibc_types_generator.super;
 				}
 				else if(strcmp(arg, "reader_h") == 0)
 				{
-					generator_reader_h_init(&tlibc_reader_header_generator, &parser.symbols);
+					generator_reader_h_init(&tlibc_reader_header_generator, &g_parser.symbols);
 					generator = &tlibc_reader_header_generator.super;
 				}
 				else if(strcmp(arg, "reader_c") == 0)
 				{
-					generator_reader_c_init(&tlibc_reader_generator, &parser.symbols);
+					generator_reader_c_init(&tlibc_reader_generator, &g_parser.symbols);
 					generator = &tlibc_reader_generator.super;
 				}			
 				else if(strcmp(arg, "writer_h") == 0)
 				{
-					generator_writer_h_init(&tlibc_writer_header_generator, &parser.symbols);
+					generator_writer_h_init(&tlibc_writer_header_generator, &g_parser.symbols);
 					generator = &tlibc_writer_header_generator.super;
 				}
 				else if(strcmp(arg, "writer_c") == 0)
 				{
-					generator_writer_c_init(&tlibc_writer_generator, &parser.symbols);
+					generator_writer_c_init(&tlibc_writer_generator, &g_parser.symbols);
 					generator = &tlibc_writer_generator.super;
 				}
 				else if(strcmp(arg, "cs") == 0)
 				{
-					generator_cs_init(&tlibc_cs_generator, &parser.symbols);
+					generator_cs_init(&tlibc_cs_generator, &g_parser.symbols);
 					generator = &tlibc_cs_generator.super;
 				}
 				else if(strcmp(arg, "sql") == 0)
 				{
-					generator_sql_init(&tlibc_sql_generator, &parser.symbols);
+					generator_sql_init(&tlibc_sql_generator, &g_parser.symbols);
 					generator = &tlibc_sql_generator.super;
 				}
 			}
@@ -185,7 +184,7 @@ int main(int32_t argc, char *argv[])
 
 	for(i = optind; i < argc; ++i)
 	{
-		if(parser_parse(&parser, argv[i], generator, make_rule) != E_TD_NOERROR)
+		if(parser_parse(&g_parser, argv[i], generator, make_rule) != E_TD_NOERROR)
 		{
 			goto fini_script;
 		}
