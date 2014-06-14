@@ -12,6 +12,7 @@ IF(WIN32)
 ELSE()
 	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall")
 	SET(CMAKE_C_FLAGS_RELEASE "-O3 -Wall")
+	add_definitions(-DLUA_COMPAT_ALL -DLUA_USE_POSIX)
 ENDIF()
 
 SET(BUILDTYPE_DOCSTRING "Choose the type of build, options are: Debug(${CMAKE_C_FLAGS_DEBUG}) Release(${CMAKE_C_FLAGS_RELEASE})")
