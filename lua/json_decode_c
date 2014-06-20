@@ -57,15 +57,28 @@ end
 
 function on_document_begin(file)
 	len = string.len(file)
-	prefix = string.sub(file, 1, len - 4)
-	suffix = string.sub(file, len - 3, len)
-	if(suffix == ".tdr")then
-		g_output_file = prefix .. '_json_reader.c'
+	prefix = string.sub(file, 1, len - 9)
+	suffix = string.sub(file, len - 8, len)
+	if(suffix == "_json.tdr")then
+		g_output_file = prefix .. '_json_decode.c'
 	else
-		g_output_file = file .. '_json_reader.c'
+		g_output_file = file .. '_json_decode.c'
 	end
 
 	g_fout = io.open(g_output_file, "w")
+
+
+	g_fout:write('#include "json-c/json.h"\n')
+	g_fout:write('#include <stddef.h>\n')
+	g_fout:write('#include <stdbool.h>\n')
+	g_fout:write('#include <stdint.h>\n')
+	g_fout:write('#include <string.h>\n')
+	g_fout:write('\n')
+	g_fout:write(string.format('#include "%s"\n', prefix .. '_json_types.h'))
+	g_fout:write(string.format('#include "%s"\n', prefix .. '_json_decode.h'))
+	g_fout:write('\n')
+	g_fout:write('\n')
+	g_fout:write('\n')
 end
 
 function on_document_end()
@@ -85,113 +98,94 @@ function on_import(file)
 	prefix = string.sub(file, 1, len - 4)
 	suffix = string.sub(file, len - 3, len)
 	if(suffix == ".tdr")then
-		real_file = prefix .. '_json_reader.h'
+		real_file = prefix .. '_json_decode.h'
 	else
-		real_file = name .. '_json_reader.h'
+		real_file = name .. '_json_decode.h'
 	end
 
 	g_fout:write('#include "' .. real_file .. '"\n')
 end
 
 function on_typedef(type, name)
-	type_string = get_type_string(type)
-	g_fout:write(type_string .. name)
 end
 
 function on_const(type, real_type, val)
-	type_string = get_type_string(type)
-	if(real_type ~= nil)then
-		real_type_string = get_type_string(real_type)
-	else
-		real_type_string = ''
-	end
-	val_string = get_value_string(val)
-	g_fout:write(type_string .. real_type_string .. val_string)
 end
 
 function on_enum_begin(name)
-	g_fout:write('enum ' .. name)
-	g_fout:write('{')
 end
 
 function on_enum_field(name, val, comment)
-	val_string = get_value_string(val)
-	if(comment == nil)then
-		comment = ''
-	end
-	g_fout:write(name .. ' ' .. val_string .. ' ' .. comment)
 end
 
 function on_enum_end()
-	g_fout:write('}')
 end
 
 function on_union_begin(name, etype)
-	g_fout:write('union ' .. name .. ' ' .. etype)
-	g_fout:write('{')
 end
 
 function on_union_field(key, type, real_type, name, comment)
-	g_fout:write(key .. ' ')
-	type_string = get_type_string(type)
-
-	g_fout:write('    ' .. type_string .. ' ' .. name)
-	if(type.type == 'string')then
-		g_fout:write('[' .. type.length .. ']')
-	end
-
-	if(comment ~= nil)then
-		g_fout:write('//' .. comment)
-	end
-	g_fout:write('\n')
 end
 
 function on_union_end()
-	g_fout:write('}')
 end
 
 
 function on_struct_begin(name)
-	g_fout:write('struct ' .. name)
-	g_fout:write('{')
+	g_fout:write(string.format('bool %s__json_decode(%s_t *self, json_object *jo_root)\n', name, name))
+	g_fout:write('{\n')
+	g_fout:write('\tjson_object *jo_val = NULL;\n')
 end
 
 function on_struct_field(condition, type, real_type, vec_size, name, comment)
 	if(condition ~= nil)then
 		if(condition.oper ~= nil)then
 			op1_string = get_value_string(condition.op1)
-			g_fout:write('if ' .. ' (' .. condition.op0 .. ' ' .. condition.oper .. ' ' .. op1_string .. ')')
-			g_fout:write('{')
+			g_fout:write('\tif' .. ' (self->' .. condition.op0 .. ' ' .. condition.oper .. ' ' .. op1_string .. ')\n')
+			g_fout:write('\t{\n')
 		else
-			g_fout:write('if ' .. ' (' .. condition.op0 .. ')')
-			g_fout:write('{')
+			g_fout:write('\tif' .. ' (self->' .. condition.op0 .. ')\n')
+			g_fout:write('\t{\n')
 		end
+	else
+		g_fout:write('\t{\n')
 	end
 
-	type_string = get_type_string(type)
+	g_fout:write(string.format('\t\tif(!json_object_object_get_ex(jo_root, "%s", &jo_val))\n', name))
+    g_fout:write('\t\t{\n')
+	g_fout:write('\t\t\tgoto error_ret;\n')
+	g_fout:write('\t\t}\n')
 
-	g_fout:write('    ' .. name)
-	if(vec_size ~= nil)then
-		g_fout:write('[' .. vec_size .. ']')
-	end
-	if(type.type == 'string')then
-		g_fout:write('[' .. type.length .. ']')
+	if(type.type == 'bool')then
+		g_fout:write('\t\tif(!json_object_is_type(jo_val, json_type_boolean))\n')
+		g_fout:write('\t\t{\n')
+		g_fout:write('\t\t\tgoto error_ret;\n')
+		g_fout:write('\t\t}\n')
+		g_fout:write('\t\tself->result = json_object_get_boolean(jo_val) == TRUE?true:false;\n')
+	elseif(type.type == 'string')then
+		g_fout:write('\t\tif(!json_object_is_type(jo_val, json_type_string))\n')
+		g_fout:write('\t\t{\n')
+		g_fout:write('\t\t\tgoto error_ret;\n')
+		g_fout:write('\t\t}\n')
+		g_fout:write(string.format('\t\tmemcpy(self->%s, json_object_get_string(jo_val), (size_t)json_object_get_string_len(jo_val));\n', name))
+		g_fout:write(string.format('\t\tself->%s[%s - 1] = 0;\n', name, type.length))
 	end
 
 	if(comment ~= nil)then
 		g_fout:write('//' .. comment)
 	end
 
-	if(condition ~= nil)then
-		g_fout:write('}')
-	end
-	g_fout:write('\n')
+	g_fout:write('\t}\n')
 end
 
 function on_struct_end()
-	g_fout:write('}')
+	g_fout:write('\treturn true;\n')
+	g_fout:write('error_ret:\n')
+	g_fout:write('\treturn false;\n')
+	g_fout:write('}\n')
+	g_fout:write('\n')
 end
 
 function on_comment(comment)
-	g_fout:write(comment)
+	g_fout:write(comment .. '\n')
 end

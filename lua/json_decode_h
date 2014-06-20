@@ -1,0 +1,109 @@
+g_output_file = ''
+g_fout = nil
+g_file_tag = nil
+
+function strippath(filename)  
+    return string.match(filename, ".+/([^/]*%.%w+)$")
+end  
+
+function on_document_begin(file)
+	len = string.len(file)
+	prefix = string.sub(file, 1, len - 9)
+	suffix = string.sub(file, len - 8, len)
+	if(suffix == "_json.tdr")then
+		g_output_file = prefix .. '_json_decode.h'
+	else
+		g_output_file = file .. '_json_decode.h'
+	end
+
+	g_fout = io.open(g_output_file, "w")
+	g_file_tag = strippath(file)
+	g_file_tag = string.upper(g_file_tag)
+	g_file_tag = string.gsub(g_file_tag, "[^A-Z]", "_")
+	g_fout:write(string.format("#ifndef %s\n", g_file_tag))
+	g_fout:write(string.format("#define %s\n", g_file_tag))
+	g_fout:write('#ifdef  __cplusplus\n')
+	g_fout:write('extern "C"\n')
+	g_fout:write('{\n')
+	g_fout:write('#endif\n')
+
+
+	g_fout:write('#include "json-c/json.h"\n')
+	g_fout:write('#include <stddef.h>\n')
+	g_fout:write('#include <stdbool.h>\n')
+	g_fout:write('#include <stdint.h>\n')
+	g_fout:write('#include <string.h>\n')
+	g_fout:write('\n')
+	g_fout:write(string.format('#include "%s"\n', prefix .. '_json_types.h'))
+	g_fout:write('\n')
+	g_fout:write('\n')
+	g_fout:write('\n')
+end
+
+function on_document_end()
+	g_fout:write('#ifdef  __cplusplus\n')
+	g_fout:write('}\n')
+	g_fout:write('#endif\n')
+	g_fout:write(string.format("#endif //%s\n", g_file_tag))
+	g_fout.close()
+	make_rule(g_output_file)
+end
+
+function on_document_error()
+	if(g_fout ~= nil)then
+		g_fout:close()
+	end
+	os.remove(g_output_file)
+end
+
+function on_import(file)
+	len = string.len(file)
+	prefix = string.sub(file, 1, len - 4)
+	suffix = string.sub(file, len - 3, len)
+	if(suffix == ".tdr")then
+		real_file = prefix .. '_json_decode.h'
+	else
+		real_file = name .. '_json_decode.h'
+	end
+
+	g_fout:write('#include "' .. real_file .. '"\n')
+end
+
+function on_typedef(type, name)
+end
+
+function on_const(type, real_type, val)
+end
+
+function on_enum_begin(name)
+end
+
+function on_enum_field(name, val, comment)
+end
+
+function on_enum_end()
+end
+
+function on_union_begin(name, etype)
+end
+
+function on_union_field(key, type, real_type, name, comment)
+end
+
+function on_union_end()
+end
+
+
+function on_struct_begin(name)
+	g_fout:write(string.format('bool %s__json_decode(%s_t *self, json_object *jo_root);\n', name, name))
+end
+
+function on_struct_field(condition, type, real_type, vec_size, name, comment)
+end
+
+function on_struct_end()
+end
+
+function on_comment(comment)
+	g_fout:write(comment .. '\n')
+end
