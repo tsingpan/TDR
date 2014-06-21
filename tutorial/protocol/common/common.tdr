@@ -15,3 +15,7 @@ const uint32 MESSAGE_ID_NUM = count(message_id);
 const string VERSION = "0.0.1";
 const uint32 MAX_NAME_LENGTH = 255;
 const uint32 MAX_URL_LENGTH = 1024;
+
+const uint64 TEST_UINT64_A = 0xffffffffffffffff;
+const uint64 TEST_UINT64_B = 18446744073709551615;
+const uint64 TEST_UINT64_C = 9223372036854775808;

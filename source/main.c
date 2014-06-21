@@ -11,8 +11,6 @@
 #include "generate/generator_reader_h.h"
 #include "generate/generator_writer_c.h"
 #include "generate/generator_writer_h.h"
-#include "generate/generator_sql.h"
-#include "generate/generator_cs.h"
 
 
 #include <string.h>
@@ -56,8 +54,6 @@ void help()
 	fprintf(stderr, "reader_c       Generate %%_reader.c for TLibC.\n");
 	fprintf(stderr, "writer_h       Generate %%_writer.h for TLibC.\n");
 	fprintf(stderr, "writer_c       Generate %%_writer.c for TLibC.\n");	
-	fprintf(stderr, "cs             Generate %%.cs for TLibCS.\n");
-	fprintf(stderr, "sql            Generate %%.sql for MySQL.\n");	
 }
 
 const char* const short_options = "vho:I:Ml:g:";
@@ -80,8 +76,6 @@ static generator_reader_c_t tlibc_reader_generator;
 static generator_reader_h_t tlibc_reader_header_generator;
 static generator_writer_c_t tlibc_writer_generator;
 static td_generator_writer_h_t tlibc_writer_header_generator;
-static generator_sql_t tlibc_sql_generator;
-static generator_cs_t tlibc_cs_generator;
 
 static generator_t *generator = NULL;
 int main(int32_t argc, char *argv[])
@@ -147,17 +141,7 @@ int main(int32_t argc, char *argv[])
 				{
 					generator_writer_c_init(&tlibc_writer_generator, &g_parser.symbols);
 					generator = &tlibc_writer_generator.super;
-				}
-				else if(strcmp(arg, "cs") == 0)
-				{
-					generator_cs_init(&tlibc_cs_generator, &g_parser.symbols);
-					generator = &tlibc_cs_generator.super;
-				}
-				else if(strcmp(arg, "sql") == 0)
-				{
-					generator_sql_init(&tlibc_sql_generator, &g_parser.symbols);
-					generator = &tlibc_sql_generator.super;
-				}
+				}				
 			}
 			break;
 		default:
@@ -172,6 +156,13 @@ int main(int32_t argc, char *argv[])
 		usage();
 		goto ERROR_RET;
 	}
+	
+	if(optind >= argc)
+	{
+		fprintf(stderr, "Missing file\n");
+		usage();
+		goto ERROR_RET;
+	}
 
 	if(script)
 	{
@@ -179,13 +170,6 @@ int main(int32_t argc, char *argv[])
 		{
 			goto ERROR_RET;
 		}
-	}
-	
-	if(optind >= argc)
-	{
-		fprintf(stderr, "Missing file\n");
-		usage();
-		goto ERROR_RET;
 	}
 
 	for(i = optind; i < argc; ++i)
