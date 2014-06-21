@@ -32,7 +32,7 @@ void usage()
 
 void help()
 {
-	fprintf(stderr, "Usage: %s [options] file.\n", PROGRAM_NAME);
+	fprintf(stderr, "Usage: %s [options] file\n", PROGRAM_NAME);
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -h, --help                   Display this information.\n");
 	fprintf(stderr, "  -v, --version                Print the compiler version.\n");
@@ -181,6 +181,12 @@ int main(int32_t argc, char *argv[])
 		}
 	}
 	
+	if(optind >= argc)
+	{
+		fprintf(stderr, "Missing file\n");
+		usage();
+		goto ERROR_RET;
+	}
 
 	for(i = optind; i < argc; ++i)
 	{
