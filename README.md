@@ -8,7 +8,7 @@ TDR = [DDL](http://en.wikipedia.org/wiki/Data_Definition_Language) + [Compiler](
 ====
 
 	编译器使用re2c生成词法分析代码， bison生成语法分析代码。 
-	使用C语言编写， 具有很高的可移植性， 支持Windows, Linux, Unix(Mac OSX)平台。
+	使用C语言编写， 无第三方库依赖， 具有很高的可移植性， 支持Windows, Linux, Unix(Mac OSX)平台。
 
 问题和反馈
 ==========
