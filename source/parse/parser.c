@@ -181,7 +181,7 @@ void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 	const char *type = NULL;
 	const char *arg = NULL;
 
-	if(scanner_size(&self->scanner) != 1)
+	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
