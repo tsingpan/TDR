@@ -13,7 +13,7 @@
 #include "globals.h"
 #include "parse/scanner.h"
 
-#include <io.h>
+#include <stdio.h>
 lua_State* g_ls = NULL;
 
 static int script_error(lua_State *L)
@@ -25,9 +25,10 @@ static int script_error(lua_State *L)
 int script_init(const char* script)
 {
 	char path[TLIBC_MAX_PATH_LENGTH];
+	FILE* fs = NULL;
 	
-
-	if(access(script, 0) != 0)
+	fs = fopen(script, "r");
+	if(fs == NULL)
 	{
 		char *tdr_root = getenv("TDR_ROOT");
 		if(!tdr_root)
@@ -36,15 +37,18 @@ int script_init(const char* script)
 		}
 
 		snprintf(path, TLIBC_MAX_PATH_LENGTH, "%s%clua%c%s", tdr_root, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, script);
-		if(access(path, 0) != 0)
+		fs = fopen(path, "r");
+		if(fs == NULL)
 		{
 			fprintf(stderr, "File[%s] not exists , TDR_ROOT=%s\n", script, tdr_root);
 			goto ERROR_RET;
 		}
+		fclose(fs);
 	}
 	else
 	{
 		snprintf(path, TLIBC_MAX_PATH_LENGTH, script);
+		fclose(fs);
 	}
 
 	g_ls = luaL_newstate();
