@@ -26,10 +26,6 @@ struct generator_s
 	error_code_t (*on_document_begin)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_document_end)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_definition)(generator_t *self, const YYLTYPE *yylloc, const syn_definition_t *definition);
-
-	error_code_t (*on_struct_begin)(generator_t *self, const YYLTYPE *yylloc, const char * struct_name);
-	error_code_t (*on_field)(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field);
-	error_code_t (*on_struct_end)(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 };
 
 void generator_init(generator_t *self, const symbols_t *symbols);
@@ -63,11 +59,5 @@ error_code_t generator_on_definition(generator_t *self, const YYLTYPE *yylloc, c
 error_code_t generator_on_document_begin(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 
 error_code_t generator_on_document_end(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
-
-error_code_t generator_on_struct_begin(generator_t *self, const YYLTYPE *yylloc, const char * struct_name);
-
-error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field);
-
-error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct);
 
 #endif

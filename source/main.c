@@ -152,7 +152,7 @@ int main(int32_t argc, char *argv[])
 	
 	if((generator == NULL) && (script == NULL))
 	{
-		fprintf(stderr, "Missing --gen=types\n");
+		fprintf(stderr, "Missing --gen=types or --lua=file\n");
 		usage();
 		goto ERROR_RET;
 	}

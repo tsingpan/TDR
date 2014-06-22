@@ -124,7 +124,7 @@ Document : DefinitionList;
 DefinitionList :
 	DefinitionList Definition
 	{
-		parser_on_definition(GET_PARSER, &yylloc, &GET_DEFINITION);
+		parser_on_generator_definition(GET_PARSER, &yylloc, &GET_DEFINITION);
 	}
 |	{
 	};
@@ -378,8 +378,6 @@ Parameter:
 Struct : 
 	tok_struct tok_identifier
 	{
-		parser_on_struct_begin_old(GET_PARSER, &yylloc, $2);
-
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, "", $2);
 
 		GET_SYMBOLS.struct_name = $2;
@@ -393,7 +391,6 @@ Struct :
 		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
-		parser_on_struct_end_old(GET_PARSER, &yylloc, &GET_DEFINITION.definition.de_struct);
 
 		parser_on_struct_end(GET_PARSER, $2);
 	};
@@ -444,8 +441,6 @@ Field :
 		reduce_Field(&$$, &$1, &$2, $3, &$4, &$6);		
 		
 		symbols_add_Field(&GET_SYMBOLS, &yylloc, &$$);
-
-		parser_on_field_old(GET_PARSER, &yylloc, &$$);
 
 		parser_on_struct_field(GET_PARSER, &$$);
 	};

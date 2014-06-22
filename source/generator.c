@@ -13,9 +13,6 @@ void generator_init(generator_t *self, const symbols_t *symbols)
 	self->on_definition = NULL;
 	self->on_document_begin = NULL;
 	self->on_document_end = NULL;
-	self->on_struct_begin = NULL;
-	self->on_field = NULL;
-	self->on_struct_end = NULL;
 }
 
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix)
@@ -474,32 +471,5 @@ error_code_t generator_on_document_end(generator_t *self, const YYLTYPE *yylloc,
 		return self->on_document_end(self, yylloc, file_name);
 	}
 
-	return E_TD_NOERROR;
-}
-
-error_code_t generator_on_struct_begin(generator_t *self, const YYLTYPE *yylloc, const char * struct_name)
-{
-	if(self->on_struct_begin != NULL)
-	{
-		return self->on_struct_begin(self, yylloc, struct_name);
-	}
-	return E_TD_NOERROR;
-}
-
-error_code_t generator_on_field(generator_t *self, const YYLTYPE *yylloc, const syn_field_t *field)
-{
-	if(self->on_field != NULL)
-	{
-		return self->on_field(self, yylloc, field);
-	}
-	return E_TD_NOERROR;
-}
-
-error_code_t generator_on_struct_end(generator_t *self, const YYLTYPE *yylloc, const syn_struct_t *pn_struct)
-{
-	if(self->on_struct_end != NULL)
-	{
-		return self->on_struct_end(self, yylloc, pn_struct);
-	}
 	return E_TD_NOERROR;
 }

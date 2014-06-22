@@ -1,0 +1,17 @@
+function on_import(name)
+	print(name)
+end
+
+function on_typedef(type, arg, newtype)
+	print(type, arg, newtype)
+end
+
+function on_const(type, val, base)
+	print(type, val)
+end
+
+print(9223372036854775808)
+print(string.format("%u", 0xffffffffffffffff))
+print(string.format("0x%x", -1))
+print(string.format("o%o", 8))
+print(0xffffffffffffffff)
