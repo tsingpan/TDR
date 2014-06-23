@@ -1,11 +1,6 @@
 #ifndef _H_TDR_PLATFORM_COMMON
 #define _H_TDR_PLATFORM_COMMON
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-
 #include <stdint.h>
 
 #ifndef NULL
@@ -65,9 +60,5 @@ extern "C" {
 
 #define TDR_MAX_PATH_LENGTH 1024
 
-
-#ifdef  __cplusplus
-}
-#endif
 
 #endif

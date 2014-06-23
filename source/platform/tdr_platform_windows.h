@@ -1,10 +1,6 @@
 #ifndef _H_TDR_PLATFORM_WINDOWS
 #define _H_TDR_PLATFORM_WINDOWS
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 #include <stddef.h>
 //如果不包含stdlib.h strtoll会出错
 #include <stdlib.h>
@@ -32,9 +28,5 @@ extern "C" {
 
 //屏蔽广告
 #pragma warning (disable: 4996)
-
-#ifdef  __cplusplus
-}
-#endif
 
 #endif

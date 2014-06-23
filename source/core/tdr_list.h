@@ -1,10 +1,6 @@
 #ifndef _H_TDR_LIST
 #define _H_TDR_LIST
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 
 typedef struct tdr_list_head_s
 {
@@ -47,10 +43,5 @@ typedef struct tdr_list_head_s
 {\
 	__tdr_list_del((entry)->prev, (entry)->next);\
 }
-
-#ifdef  __cplusplus
-}
-#endif
-
 
 #endif

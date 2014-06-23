@@ -1,15 +1,11 @@
 #ifndef _H_TDR_HASH
 #define _H_TDR_HASH
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-
 #include "platform/tdr_platform.h"
 #include "core/tdr_list.h"
 #include "core/tdr_error_code.h"
 #include <stdint.h>
+
 typedef struct _tdr_hash_head_t tdr_hash_head_t;
 struct _tdr_hash_head_t
 {
@@ -50,9 +46,5 @@ tdr_hash_head_t* tdr_hash_find(tdr_hash_t *self, const char *key, uint32_t key_s
 void tdr_hash_remove(tdr_hash_t *self, tdr_hash_head_t *ele);
 
 void tdr_hash_clear(tdr_hash_t *self);
-
-#ifdef  __cplusplus
-}
-#endif
 
 #endif//_H_TDR_HASH

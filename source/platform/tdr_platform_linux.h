@@ -1,11 +1,6 @@
 #ifndef _H_TDR_PLATFORM_LINUX
 #define _H_TDR_PLATFORM_LINUX
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-
 #define TDR_FILE_SEPARATOR '/'
 
 #include <stddef.h>
@@ -21,10 +16,5 @@ extern "C" {
 #else
 #error "unknow wordsize"
 #endif
-
-#ifdef  __cplusplus
-}
-#endif
-
 
 #endif

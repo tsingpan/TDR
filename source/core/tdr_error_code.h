@@ -1,10 +1,6 @@
 #ifndef _H_TDR_ERROR_CODE
 #define _H_TDR_ERROR_CODE
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 #include "platform/tdr_platform.h"
 
 typedef enum tdr_error_code_e
@@ -27,10 +23,6 @@ typedef enum tdr_error_code_e
 }tdr_error_code_t;
 
 #define TDR_ERROR_CODE_NUM 15
-
-#ifdef  __cplusplus
-}
-#endif
 
 
 #endif
