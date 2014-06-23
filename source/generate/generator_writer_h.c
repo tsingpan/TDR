@@ -36,7 +36,7 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 	generator_printline(super, 0, "");
 	generator_printline(super, 0, "#include <stdint.h>");
 	generator_printline(super, 0, "#include \"protocol/tlibc_abstract_writer.h\"");
-	generator_printline(super, 0, "#include \"core/tlibc_error_code.h\"");
+	generator_printline(super, 0, "#include \"tlibc_error_code.h\"");
 	
 	//包含types的头文件
 	strncpy_notdir(types_header, file_name, MAX_PACKAGE_NAME_LENGTH - 1);
