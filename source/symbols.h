@@ -3,10 +3,10 @@
 
 #include "definition.h"
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include "parse/scanner.h"
 
-#include "core/tlibc_hash.h"
+#include "core/tdr_hash.h"
 
 typedef enum symbol_type_e
 {
@@ -22,7 +22,7 @@ typedef enum symbol_type_e
 typedef struct symbol_enum_s
 {
 	uint32_t enum_def_list_num;
-	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
 }symbol_enum_t;
 
 typedef struct symbol_union_s symbol_union_t;
@@ -43,10 +43,10 @@ typedef union symbol_body_u
 	uint32_t struct_field_list_num;
 }symbol_body_t;
 
-#define MAX_SYMBOL_KEY_LENGTH TLIBC_MAX_LENGTH_OF_IDENTIFIER * 2
+#define MAX_SYMBOL_KEY_LENGTH TDR_MAX_LENGTH_OF_IDENTIFIER * 2
 typedef struct symbol_s
 {
-	tlibc_hash_head_t hash_head;
+	tdr_hash_head_t hash_head;
 	char key[MAX_SYMBOL_KEY_LENGTH];
 	uint32_t key_len;
 
@@ -60,8 +60,8 @@ typedef struct symbol_s
 #define MAX_SYMBOL_BUCKETS 65536
 typedef struct symbols_s
 {
-	tlibc_hash_bucket_t symbol_buckets[MAX_SYMBOL_BUCKETS];
-	tlibc_hash_t symbols;
+	tdr_hash_bucket_t symbol_buckets[MAX_SYMBOL_BUCKETS];
+	tdr_hash_t symbols;
 	
 
 	const char *enum_name;

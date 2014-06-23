@@ -1,4 +1,4 @@
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 
 #include "script/script.h"
 
@@ -24,7 +24,7 @@ static int script_error(lua_State *L)
 
 int script_init(const char* script)
 {
-	char path[TLIBC_MAX_PATH_LENGTH];
+	char path[TDR_MAX_PATH_LENGTH];
 	FILE* fs = NULL;
 	
 	fs = fopen(script, "r");
@@ -36,7 +36,7 @@ int script_init(const char* script)
 			tdr_root = "/usr/local/tdr";			
 		}
 
-		snprintf(path, TLIBC_MAX_PATH_LENGTH, "%s%clua%c%s", tdr_root, TLIBC_FILE_SEPARATOR, TLIBC_FILE_SEPARATOR, script);
+		snprintf(path, TDR_MAX_PATH_LENGTH, "%s%clua%c%s", tdr_root, TDR_FILE_SEPARATOR, TDR_FILE_SEPARATOR, script);
 		fs = fopen(path, "r");
 		if(fs == NULL)
 		{
@@ -47,7 +47,7 @@ int script_init(const char* script)
 	}
 	else
 	{
-		snprintf(path, TLIBC_MAX_PATH_LENGTH, script);
+		snprintf(path, TDR_MAX_PATH_LENGTH, script);
 		fclose(fs);
 	}
 

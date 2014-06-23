@@ -3,20 +3,20 @@
 #include "error.h"
 #include "parse/scanner.h"
 #include <stdio.h>
-#include "platform/tlibc_platform.h"
-#include "core/tlibc_hash.h"
+#include "platform/tdr_platform.h"
+#include "core/tdr_hash.h"
 
 #include <assert.h>
 
 void symbols_init(symbols_t *self)
 {
-	tlibc_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
+	tdr_hash_init(&self->symbols, self->symbol_buckets, MAX_SYMBOL_BUCKETS);
 	self->symbol_list_num = 0;
 }
 
 void symbols_clear(symbols_t *self)
 {
-	tlibc_hash_clear(&self->symbols);
+	tdr_hash_clear(&self->symbols);
 	self->symbol_list_num = 0;
 }
 
@@ -38,26 +38,26 @@ void symbols_save(symbols_t *self, const char *preffix, const char *name, symbol
 	symbol->key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
 	symbol->key_len = strlen(symbol->key);
 
-	tlibc_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
+	tdr_hash_insert(&self->symbols, symbol->key, symbol->key_len, &symbol->hash_head);
 }
 
 const symbol_t* symbols_search(const symbols_t *self, const char* preffix, const char* name)
 {
 	const symbol_t *symbol;
 	char key[MAX_SYMBOL_KEY_LENGTH];
-	const tlibc_hash_head_t *ele;
+	const tdr_hash_head_t *ele;
 	uint32_t key_len;
 
 	snprintf(key, MAX_SYMBOL_KEY_LENGTH, "%s::%s", preffix, name);
 
 	key[MAX_SYMBOL_KEY_LENGTH - 1] = 0;
 	key_len = strlen(key);
-	ele = tlibc_hash_find_const(&self->symbols, key, key_len);
+	ele = tdr_hash_find_const(&self->symbols, key, key_len);
 	if(ele == NULL)
 	{
 		goto ERROR_RET;
 	}
-	symbol = TLIBC_CONTAINER_OF(ele, const symbol_t, hash_head);
+	symbol = TDR_CONTAINER_OF(ele, const symbol_t, hash_head);
 
 	return symbol;
 ERROR_RET:
@@ -136,8 +136,8 @@ void symbols_add_Enum(symbols_t *self, const YYLTYPE *yylloc, const syn_enum_t *
 	symbol->yylloc = *yylloc;
 
 	symbol->type = EN_HST_ENUM;
-	strncpy(symbol->body.symbol_enum.name, pn_enum->name, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	symbol->body.symbol_enum.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(symbol->body.symbol_enum.name, pn_enum->name, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	symbol->body.symbol_enum.name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	symbol->body.symbol_enum.enum_def_list_num = pn_enum->enum_def_list_num;
 
@@ -184,8 +184,8 @@ void symbols_add_Field(symbols_t *self, const YYLTYPE *yylloc, const syn_field_t
 		list_num.type.st.st = E_ST_UINT16;
 
 		//这里的标识符长度已经检查过了， 不会出界
-		snprintf(list_num.identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER, "%s_num", pn_field->identifier);
-		list_num.identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		snprintf(list_num.identifier, TDR_MAX_LENGTH_OF_IDENTIFIER, "%s_num", pn_field->identifier);
+		list_num.identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 		
 
 		list_num.args.arg_list_num = 0;

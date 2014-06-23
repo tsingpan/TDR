@@ -1,8 +1,8 @@
 #ifndef _H_SCANNER
 #define _H_SCANNER
 
-#include "platform/tlibc_platform.h"
-#include "core/tlibc_hash.h"
+#include "platform/tdr_platform.h"
+#include "core/tdr_hash.h"
 #include "language/language.h"
 #include "definition.h"
 #include "error.h"
@@ -10,7 +10,7 @@
 
 typedef struct _YYLTYPE
 {
-	char file_name[TLIBC_MAX_PATH_LENGTH];
+	char file_name[TDR_MAX_PATH_LENGTH];
 	int first_line;
 	int first_column;
 	int last_line;
@@ -23,7 +23,7 @@ typedef union _SCANNER_TOKEN_VALUE
 	syn_type_t sn_type;
 	syn_simple_type_t sn_simple_type;
 	syn_value_t sn_value;	
-	char sn_tok_identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char sn_tok_identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	syn_const_t sn_const;
 	double pn_tok_double;
 	const char* sn_tok_unixcomment;
@@ -65,13 +65,13 @@ typedef union _SCANNER_TOKEN_VALUE
 
 typedef struct scanner_file_s
 {
-	tlibc_hash_head_t hash_head;
-	char file_name[TLIBC_MAX_PATH_LENGTH];
+	tdr_hash_head_t hash_head;
+	char file_name[TDR_MAX_PATH_LENGTH];
 }scanner_file_t;
 
 typedef struct scanner_context_s
 {	
-	char file_name[TLIBC_MAX_PATH_LENGTH];
+	char file_name[TDR_MAX_PATH_LENGTH];
 	int yy_state;
 	YYCTYPE *yy_last;
 	YYCTYPE *yy_cursor;
@@ -100,8 +100,8 @@ typedef struct scanner_s
 	YYCTYPE *buff_curr;
 	YYCTYPE buff[MAX_LEX_BUFF_SIZE];
 
-	tlibc_hash_bucket_t file_hash_buckets[MAX_SCANNER_FILE_BUCKETS];
-	tlibc_hash_t file_hash;
+	tdr_hash_bucket_t file_hash_buckets[MAX_SCANNER_FILE_BUCKETS];
+	tdr_hash_t file_hash;
 	uint32_t file_vec_num;
 	scanner_file_t file_vec[MAX_SCANNER_FILE_NUM];
 }scanner_t;

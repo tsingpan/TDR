@@ -1,5 +1,5 @@
-#ifndef _H_TLIBC_PLATFORM_WINDOWS
-#define _H_TLIBC_PLATFORM_WINDOWS
+#ifndef _H_TDR_PLATFORM_WINDOWS
+#define _H_TDR_PLATFORM_WINDOWS
 
 #ifdef  __cplusplus
 extern "C" {
@@ -17,9 +17,9 @@ extern "C" {
 #define snwprintf _snwprintf
 
 #ifdef _WIN32
-#define TLIBC_WORDSIZE 32
+#define TDR_WORDSIZE 32
 #elif _WIN64
-#define TLIBC_WORDSIZE 64
+#define TDR_WORDSIZE 64
 #else
 #error "unknow wordsize"
 #endif

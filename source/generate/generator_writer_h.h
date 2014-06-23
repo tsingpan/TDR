@@ -1,7 +1,7 @@
 #ifndef _H_GENERATOR_WRITER_H_H
 #define _H_GENERATOR_WRITER_H_H
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include "symbols.h"
 #include "generator.h"
 

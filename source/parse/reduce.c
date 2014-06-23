@@ -11,37 +11,37 @@ void reduce_Import(syn_import_t* current, const char* str)
 void reduce_Typedef(syn_typedef_t *current, syn_simple_type_t* type, const char *tok_identifier)
 {
 	current->type = *type;
-	strncpy(current->name, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->name, tok_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_Const(syn_const_t* current, const syn_simple_type_t *type, const char *identifier, const syn_value_t *val)
 {
 	current->type = *type;
 
-	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;	
+	strncpy(current->identifier, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;	
 	current->val = *val;
 }
 
 void reduce_Enum(syn_enum_t *current, const char *identifier)
 {
-	strncpy(current->name, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->name, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_EnumDef_Value(enum_def_t *current, const char *identifier, const syn_value_t *st_value, const syn_unix_comment_t *comment)
 {
-	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->identifier, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->val = *st_value;
 	current->comment = *comment;
 }
 
 void reduce_EnumDef(enum_def_t *current, const char *identifier, const syn_value_t *st_last_value, const syn_unix_comment_t *comment)
 {
-	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->identifier, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->val.type = E_SNVT_INT64;
 	if(st_last_value != NULL)
 	{
@@ -63,8 +63,8 @@ void reduce_ContainerType_tok_t_vector(syn_type_t *current, const syn_simple_typ
 	current->ct.ct = E_CT_VECTOR;
 
 	current->ct.vector_type = *simple_type;
-	strncpy(current->ct.vector_length, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->ct.vector_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->ct.vector_length, tok_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->ct.vector_length[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_SimpleType_tok_t_string(syn_simple_type_t *current, const char *tok_identifier)
@@ -77,16 +77,16 @@ void reduce_SimpleType_tok_t_string(syn_simple_type_t *current, const char *tok_
 	}
 	else
 	{
-		strncpy(current->string_length, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		current->string_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy(current->string_length, tok_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		current->string_length[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	}
 }
 
 void reduce_SimpleType_tok_identifier(syn_simple_type_t* current, const char *tok_identifier)
 {
 	current->st = E_ST_REFER;
-	strncpy(current->st_refer, tok_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->st_refer[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->st_refer, tok_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->st_refer[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_Type_SimpleType(syn_type_t *current, const syn_simple_type_t *simple_type)
@@ -98,8 +98,8 @@ void reduce_Type_SimpleType(syn_type_t *current, const syn_simple_type_t *simple
 void reduce_Value_tok_identifier(syn_value_t* current, const char *sn_identifier)
 {
 	current->type = E_SNVT_IDENTIFIER;
-	strncpy(current->val.identifier, sn_identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->val.identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->val.identifier, sn_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->val.identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_Value_tok_char(syn_value_t* current, const char pn_char)
@@ -141,23 +141,23 @@ void reduce_Value_tok_double(syn_value_t* current, const double d)
 void reduce_Value_tok_string(syn_value_t* current, const char* str)
 {
 	current->type = E_SNVT_STRING;
-	strncpy(current->val.str, str, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
+	strncpy(current->val.str, str, TDR_MAX_LENGTH_OF_IDENTIFIER);
 }
 
 void reduce_ArgumentList_ArgumentList_tok_identifier(syn_arguments_t* current, const syn_arguments_t* argument_list, const char *identifier)
 {
 	*current = *argument_list;
 
-	strncpy(current->arg_list[current->arg_list_num], identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->arg_list[current->arg_list_num][TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->arg_list[current->arg_list_num], identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->arg_list[current->arg_list_num][TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	++(current->arg_list_num);
 }
 
 void reduce_ArgumentList_tok_identifier(syn_arguments_t* current, const char *identifier)
 {
 	current->arg_list_num = 0;
-	strncpy(current->arg_list[current->arg_list_num], identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->arg_list[current->arg_list_num][TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->arg_list[current->arg_list_num], identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->arg_list[current->arg_list_num][TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	++(current->arg_list_num);
 }
 
@@ -185,21 +185,21 @@ void reduce_Value_tok_count(const symbols_t *symbols, syn_value_t *current, cons
 
 void reduce_Union(syn_union_t *current, const char *identifier, const syn_parameters_t *parameters)
 {
-	strncpy(current->name, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->name, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->parameters = *parameters;
 }
 
 void reduce_UnionField(syn_union_field_t *current, const char *key, const syn_simple_type_t *simple_type, const char *identifier, const syn_unix_comment_t *comment)
 {
-	strncpy(current->key, key, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->key[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->key, key, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->key[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->simple_type = *simple_type;
 
-	strncpy(current->name, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->name, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 	current->comment = *comment;
 }
@@ -209,8 +209,8 @@ void reduce_Field(syn_field_t *current, const syn_condition_t *condition, const 
 {
 	current->condition = *condition;
 	current->type = *type;
-	strncpy(current->identifier, identifier, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-	current->identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	strncpy(current->identifier, identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	current->args = *args;
 	current->comment = *comment;
 }

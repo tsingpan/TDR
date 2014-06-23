@@ -16,7 +16,7 @@
 #define YYERROR_VERBOSE
 #define YYLEX_PARAM self
 
-#define GET_PARSER TLIBC_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
+#define GET_PARSER TDR_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
 #define GET_SYMBOLS GET_PARSER->symbols
 #define GET_DEFINITION GET_PARSER->pn_definition
 
@@ -365,8 +365,8 @@ Parameter:
 		check_simpletype_is_enum(&GET_SYMBOLS, &yylloc, &$1);
 
 		$$.type = $1;
-		strncpy($$.identifier, $2, TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1);
-		$$.identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy($$.identifier, $2, TDR_MAX_LENGTH_OF_IDENTIFIER - 1);
+		$$.identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	};
 
 
@@ -387,8 +387,8 @@ Struct :
 	}
 	'{' FieldList '}' ';'
 	{
-		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy(GET_DEFINITION.definition.de_struct.name, $2, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		GET_DEFINITION.definition.de_struct.name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
 
@@ -421,9 +421,9 @@ Field :
 
 		if(($2.type == E_SNT_CONTAINER) && ($2.ct.ct == E_CT_VECTOR))
 		{
-			char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-			check_strlen_too_long(&yylloc, $3, "_num", TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-			snprintf(name, TLIBC_MAX_LENGTH_OF_IDENTIFIER, "%s_num", $3);
+			char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
+			check_strlen_too_long(&yylloc, $3, "_num", TDR_MAX_LENGTH_OF_IDENTIFIER);
+			snprintf(name, TDR_MAX_LENGTH_OF_IDENTIFIER, "%s_num", $3);
 
 			check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, name);
 
@@ -454,8 +454,8 @@ Condition :
 
 		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
-		strncpy($$.op0, $3, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		$$.op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy($$.op0, $3, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		$$.op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		$$.oper = E_EO_AND;
 		$$.op1 = $5;
@@ -469,8 +469,8 @@ Condition :
 		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
 
-		strncpy($$.op0, $3, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		$$.op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy($$.op0, $3, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		$$.op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		$$.oper = E_EO_EQUAL;
 		$$.op1 = $5;
@@ -484,8 +484,8 @@ Condition :
 		check_integer_value(&GET_SYMBOLS, &yylloc, &$5);
 
 
-		strncpy($$.op0, $3, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		$$.op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy($$.op0, $3, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		$$.op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		$$.oper = E_EO_UNEQUAL;
 		$$.op1 = $5;

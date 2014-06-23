@@ -1,12 +1,12 @@
-#ifndef _H_TLIBC_PLATFORM_LINUX
-#define _H_TLIBC_PLATFORM_LINUX
+#ifndef _H_TDR_PLATFORM_LINUX
+#define _H_TDR_PLATFORM_LINUX
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 
-#define TLIBC_FILE_SEPARATOR '/'
+#define TDR_FILE_SEPARATOR '/'
 
 #include <stddef.h>
 #include <inttypes.h>
@@ -15,9 +15,9 @@ extern "C" {
 #include <stdlib.h>
 
 #if __WORDSIZE == 32
-#define TLIBC_WORDSIZE 32
+#define TDR_WORDSIZE 32
 #elif __WORDSIZE == 64
-#define TLIBC_WORDSIZE 64
+#define TDR_WORDSIZE 64
 #else
 #error "unknow wordsize"
 #endif

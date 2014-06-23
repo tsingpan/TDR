@@ -1,6 +1,6 @@
 #include "globals.h"
 #include "parse/parser.h"
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include "parse/scanner.h"
 #include "parse/parser.h"
 

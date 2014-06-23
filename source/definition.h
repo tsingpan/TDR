@@ -1,7 +1,7 @@
 #ifndef _H_DEFINITION
 #define _H_DEFINITION
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include <stdint.h>
 
 
@@ -29,10 +29,10 @@ typedef union syn_value_body_u
 {
     int64_t i64;
     uint64_t ui64;
-    char str[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char str[TDR_MAX_LENGTH_OF_IDENTIFIER];
     double d;
     char c;
-    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
+    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
 }syn_value_body_t;
 
 typedef struct  syn_value_s
@@ -66,9 +66,9 @@ typedef struct syn_simple_type_s
 {
 	syn_simple_type_type_t st;
 	
-	char string_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char string_length[TDR_MAX_LENGTH_OF_IDENTIFIER];
 
-	char st_refer[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char st_refer[TDR_MAX_LENGTH_OF_IDENTIFIER];
 }syn_simple_type_t;
 
 typedef enum syn_container_type_type_e
@@ -80,7 +80,7 @@ typedef struct syn_container_type_s
 	syn_container_type_type_t ct;
 
 	syn_simple_type_t vector_type;
-	char vector_length[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char vector_length[TDR_MAX_LENGTH_OF_IDENTIFIER];
 }syn_container_type_t;
 
 typedef struct  syn_type_s
@@ -95,7 +95,7 @@ typedef struct  syn_type_s
 typedef struct  syn_parameter_s
 {
     syn_simple_type_t type;
-    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];
 }syn_parameter_t;
 #define MAX_PARAMETER_NUM 1
 typedef struct  syn_parameters_s
@@ -107,7 +107,7 @@ typedef struct  syn_parameters_s
 typedef struct  syn_arguments_s
 {
 	uint32_t arg_list_num;
-    char arg_list[MAX_ARGUMENT_NUM][TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char arg_list[MAX_ARGUMENT_NUM][TDR_MAX_LENGTH_OF_IDENTIFIER];
 }syn_arguments_t;
 typedef enum syn_expression_oper_e
 {
@@ -119,14 +119,14 @@ typedef enum syn_expression_oper_e
 typedef struct  syn_condition_s
 {
 	syn_expression_oper_t oper;
-	char op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char op0[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	syn_value_t op1;
 }syn_condition_t;
 typedef struct  syn_field_s
 {
     syn_condition_t condition;
     syn_type_t type;    
-    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	syn_arguments_t args;
     syn_unix_comment_t comment;
 }syn_field_t;
@@ -134,9 +134,9 @@ typedef struct  syn_field_s
 
 typedef struct  syn_union_field_s
 {
-	char key[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char key[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	syn_simple_type_t simple_type;
-	char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+	char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	syn_unix_comment_t comment;
 }syn_union_field_t;
 #define MAX_UNION_FIELD_LIST_NUM 65536
@@ -155,19 +155,19 @@ typedef struct  syn_import_s
 typedef struct  syn_const_s
 {
     syn_simple_type_t type;
-    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];
     syn_value_t val;
 }syn_const_t;
 typedef struct  enum_def_s
 {
-    char identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];
     syn_value_t val;
     syn_unix_comment_t comment;
 }enum_def_t;
 #define MAX_ENUM_DEF_LIST_NUM 65536
 typedef struct  syn_enum_s
 {
-    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
 	uint32_t enum_def_list_num;
     enum_def_t enum_def_list[MAX_ENUM_DEF_LIST_NUM];
 }syn_enum_t;
@@ -179,19 +179,19 @@ typedef struct  syn_field_list_s
 }syn_field_list_t;
 typedef struct  syn_struct_s
 {
-    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
     syn_field_list_t field_list;
 }syn_struct_t;
 typedef struct  syn_union_s
 {
-    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
     syn_parameters_t parameters;
     syn_union_field_list_t union_field_list;
 }syn_union_t;
 typedef struct  syn_typedef_s
 {
     syn_simple_type_t type;
-    char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
+    char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
 }syn_typedef_t;
 typedef enum syn_definition_type_e
 {

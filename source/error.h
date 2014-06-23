@@ -1,7 +1,7 @@
 #ifndef _H_ERROR_H
 #define _H_ERROR_H
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 
 typedef enum error_code_e error_code_t;
 enum error_code_e

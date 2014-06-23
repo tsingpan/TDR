@@ -2,7 +2,7 @@
 #define _H_PARSER
 
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 
 #include "parse/scanner.h"
 #include "generator.h"

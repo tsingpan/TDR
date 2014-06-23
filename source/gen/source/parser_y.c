@@ -87,7 +87,7 @@
 #define YYERROR_VERBOSE
 #define YYLEX_PARAM self
 
-#define GET_PARSER TLIBC_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
+#define GET_PARSER TDR_CONTAINER_OF(YYLEX_PARAM, PARSER, scanner)
 #define GET_SYMBOLS GET_PARSER->symbols
 #define GET_DEFINITION GET_PARSER->pn_definition
 
@@ -1988,8 +1988,8 @@ yyreduce:
 		check_simpletype_is_enum(&GET_SYMBOLS, &yylloc, &(yyvsp[(1) - (2)].sn_simple_type));
 
 		(yyval.sn_parameter).type = (yyvsp[(1) - (2)].sn_simple_type);
-		strncpy((yyval.sn_parameter).identifier, (yyvsp[(2) - (2)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1);
-		(yyval.sn_parameter).identifier[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy((yyval.sn_parameter).identifier, (yyvsp[(2) - (2)].sn_tok_identifier), TDR_MAX_LENGTH_OF_IDENTIFIER - 1);
+		(yyval.sn_parameter).identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 	}
     break;
 
@@ -2010,8 +2010,8 @@ yyreduce:
 /* Line 1787 of yacc.c  */
 #line 389 "D:/GitHub/TDR/source/parser_y.yy"
     {
-		strncpy(GET_DEFINITION.definition.de_struct.name, (yyvsp[(2) - (7)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		GET_DEFINITION.definition.de_struct.name[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy(GET_DEFINITION.definition.de_struct.name, (yyvsp[(2) - (7)].sn_tok_identifier), TDR_MAX_LENGTH_OF_IDENTIFIER);
+		GET_DEFINITION.definition.de_struct.name[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		symbols_add_Struct(&GET_SYMBOLS, &yylloc, &GET_DEFINITION.definition.de_struct);
 
@@ -2051,9 +2051,9 @@ yyreduce:
 
 		if(((yyvsp[(2) - (6)].sn_type).type == E_SNT_CONTAINER) && ((yyvsp[(2) - (6)].sn_type).ct.ct == E_CT_VECTOR))
 		{
-			char name[TLIBC_MAX_LENGTH_OF_IDENTIFIER];
-			check_strlen_too_long(&yylloc, (yyvsp[(3) - (6)].sn_tok_identifier), "_num", TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-			snprintf(name, TLIBC_MAX_LENGTH_OF_IDENTIFIER, "%s_num", (yyvsp[(3) - (6)].sn_tok_identifier));
+			char name[TDR_MAX_LENGTH_OF_IDENTIFIER];
+			check_strlen_too_long(&yylloc, (yyvsp[(3) - (6)].sn_tok_identifier), "_num", TDR_MAX_LENGTH_OF_IDENTIFIER);
+			snprintf(name, TDR_MAX_LENGTH_OF_IDENTIFIER, "%s_num", (yyvsp[(3) - (6)].sn_tok_identifier));
 
 			check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, name);
 
@@ -2086,8 +2086,8 @@ yyreduce:
 
 		check_integer_value(&GET_SYMBOLS, &yylloc, &(yyvsp[(5) - (6)].sn_value));
 
-		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		(yyval.sn_condition).op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TDR_MAX_LENGTH_OF_IDENTIFIER);
+		(yyval.sn_condition).op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		(yyval.sn_condition).oper = E_EO_AND;
 		(yyval.sn_condition).op1 = (yyvsp[(5) - (6)].sn_value);
@@ -2105,8 +2105,8 @@ yyreduce:
 		check_integer_value(&GET_SYMBOLS, &yylloc, &(yyvsp[(5) - (6)].sn_value));
 
 
-		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		(yyval.sn_condition).op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TDR_MAX_LENGTH_OF_IDENTIFIER);
+		(yyval.sn_condition).op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		(yyval.sn_condition).oper = E_EO_EQUAL;
 		(yyval.sn_condition).op1 = (yyvsp[(5) - (6)].sn_value);
@@ -2124,8 +2124,8 @@ yyreduce:
 		check_integer_value(&GET_SYMBOLS, &yylloc, &(yyvsp[(5) - (6)].sn_value));
 
 
-		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TLIBC_MAX_LENGTH_OF_IDENTIFIER);
-		(yyval.sn_condition).op0[TLIBC_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+		strncpy((yyval.sn_condition).op0, (yyvsp[(3) - (6)].sn_tok_identifier), TDR_MAX_LENGTH_OF_IDENTIFIER);
+		(yyval.sn_condition).op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 
 		(yyval.sn_condition).oper = E_EO_UNEQUAL;
 		(yyval.sn_condition).op1 = (yyvsp[(5) - (6)].sn_value);

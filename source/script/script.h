@@ -1,5 +1,5 @@
 #ifndef _H_SCRIPT_H
-#define _H_SCRIPT_H
+#define _H_SCRIPT_Htlibc
 
 #include "lua.h"
 

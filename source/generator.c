@@ -33,7 +33,7 @@ error_code_t generator_replace_extension(char *filename, uint32_t filename_lengt
 			length = i;
 			break;
 		}
-		else if(filename[i] == TLIBC_FILE_SEPARATOR)
+		else if(filename[i] == TDR_FILE_SEPARATOR)
 		{
 			break;
 		}
@@ -104,37 +104,37 @@ void strncpy_dir(char *dest, const char*src, size_t dest_len)
 error_code_t generator_open(generator_t *self, const char *original_file, const char *suffix)
 {
 	uint32_t i, document_name_length;
-	char file_name[TLIBC_MAX_PATH_LENGTH];
-	char errormsg_filename[TLIBC_MAX_PATH_LENGTH];
+	char file_name[TDR_MAX_PATH_LENGTH];
+	char errormsg_filename[TDR_MAX_PATH_LENGTH];
 
-	strncpy_notdir(file_name, original_file, TLIBC_MAX_PATH_LENGTH);
+	strncpy_notdir(file_name, original_file, TDR_MAX_PATH_LENGTH);
 	
-	generator_replace_extension(file_name, TLIBC_MAX_PATH_LENGTH, suffix);
+	generator_replace_extension(file_name, TDR_MAX_PATH_LENGTH, suffix);
 
 	//计算输出目标文件的路径
 	if(g_output_dir)
 	{
-		snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TLIBC_FILE_SEPARATOR, file_name);
+		snprintf(self->target_filename, TDR_MAX_PATH_LENGTH, "%s%c%s", g_output_dir, TDR_FILE_SEPARATOR, file_name);
 	}
 	else
 	{
-		char opath[TLIBC_MAX_PATH_LENGTH];
-		strncpy_dir(opath, original_file, TLIBC_MAX_PATH_LENGTH);
+		char opath[TDR_MAX_PATH_LENGTH];
+		strncpy_dir(opath, original_file, TDR_MAX_PATH_LENGTH);
 		if(opath[0])
 		{
-			snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s%c%s", opath, TLIBC_FILE_SEPARATOR, file_name);
+			snprintf(self->target_filename, TDR_MAX_PATH_LENGTH, "%s%c%s", opath, TDR_FILE_SEPARATOR, file_name);
 		}
 		else
 		{
-			snprintf(self->target_filename, TLIBC_MAX_PATH_LENGTH, "%s", file_name);
+			snprintf(self->target_filename, TDR_MAX_PATH_LENGTH, "%s", file_name);
 		}		
 	}
 	
 	
 
 	//计算文档名字
-	strncpy(self->document_name, file_name, TLIBC_MAX_PATH_LENGTH);
-	self->document_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+	strncpy(self->document_name, file_name, TDR_MAX_PATH_LENGTH);
+	self->document_name[TDR_MAX_PATH_LENGTH - 1] = 0;
 	document_name_length = strlen(self->document_name);
 	for(i = 0;i < document_name_length; ++i)
 	{
@@ -159,7 +159,7 @@ error_code_t generator_open(generator_t *self, const char *original_file, const 
 	self->fout = fopen(self->target_filename, "w");
 	if(self->fout == NULL)
 	{
-		memcpy(errormsg_filename, self->target_filename, TLIBC_MAX_PATH_LENGTH);
+		memcpy(errormsg_filename, self->target_filename, TDR_MAX_PATH_LENGTH);
 		goto ERROR_RET;
 	}
 

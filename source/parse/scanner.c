@@ -11,8 +11,8 @@
 
 static int32_t path_repair(char* path, uint32_t *len)
 {
-	char file_path[TLIBC_MAX_PATH_LENGTH];
-	char *p[TLIBC_MAX_PATH_LENGTH];
+	char file_path[TDR_MAX_PATH_LENGTH];
+	char *p[TDR_MAX_PATH_LENGTH];
 	uint32_t ptail = 0;
 	int32_t first = 1;
 	uint32_t i = 0;
@@ -26,7 +26,7 @@ static int32_t path_repair(char* path, uint32_t *len)
 	}
 	file_path_len = (uint32_t)strlen(path);
 
-	snprintf(file_path, TLIBC_MAX_PATH_LENGTH, "%s", path);
+	snprintf(file_path, TDR_MAX_PATH_LENGTH, "%s", path);
 	if(path[0] == '/')
 	{
 		p[0] = "/";
@@ -83,11 +83,11 @@ static int32_t path_repair(char* path, uint32_t *len)
 
 	for(i = 0; i < ptail; ++i)
 	{
-		if((file_path_len > 0) && (strlen(p[i]) > 0) && (path[file_path_len - 1] != TLIBC_FILE_SEPARATOR))
+		if((file_path_len > 0) && (strlen(p[i]) > 0) && (path[file_path_len - 1] != TDR_FILE_SEPARATOR))
 		{
 			if(file_path_len < *len)
 			{
-				path[file_path_len++] += TLIBC_FILE_SEPARATOR;
+				path[file_path_len++] += TDR_FILE_SEPARATOR;
 			}
 			else
 			{
@@ -190,16 +190,16 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 	}
 	real_path = self->file_vec[self->file_vec_num].file_name;
 	
-	strncpy(real_path, file_name, TLIBC_MAX_PATH_LENGTH);
-	real_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+	strncpy(real_path, file_name, TDR_MAX_PATH_LENGTH);
+	real_path[TDR_MAX_PATH_LENGTH - 1] = 0;
 	fin = fopen(real_path, "r");
 	if(fin == NULL)
 	{
 		for(i = 0; i < g_include_dir_num; ++i)
 		{
-			snprintf(real_path, TLIBC_MAX_PATH_LENGTH, "%s%c%s", g_include_dir[i], TLIBC_FILE_SEPARATOR, file_name);
-			real_path[TLIBC_MAX_PATH_LENGTH - 1] = 0;
-			len = TLIBC_MAX_PATH_LENGTH;
+			snprintf(real_path, TDR_MAX_PATH_LENGTH, "%s%c%s", g_include_dir[i], TDR_FILE_SEPARATOR, file_name);
+			real_path[TDR_MAX_PATH_LENGTH - 1] = 0;
+			len = TDR_MAX_PATH_LENGTH;
 			if(path_repair(real_path, &len) != E_TD_NOERROR)
 			{
 				ret = E_TD_SCANNER_CAN_NOT_OPEN_FILE;
@@ -219,7 +219,7 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 		}
 	}
 
-	if(tlibc_hash_find_const(&self->file_hash, real_path, strlen(real_path)) != NULL)
+	if(tdr_hash_find_const(&self->file_hash, real_path, strlen(real_path)) != NULL)
 	{
 		//由于这个文件已经被展开过， 所以返回成功。
 		ret = E_TD_NOERROR;
@@ -239,8 +239,8 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 	fclose(fin);
 
 	scanner = &self->stack[self->stack_num];
-	strncpy(scanner->file_name, real_path, TLIBC_MAX_PATH_LENGTH);
-	scanner->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+	strncpy(scanner->file_name, real_path, TDR_MAX_PATH_LENGTH);
+	scanner->file_name[TDR_MAX_PATH_LENGTH - 1] = 0;
 	scanner->yy_start = yy_start;
 	scanner->yy_limit = self->buff_curr;
 	scanner->yy_state = state;
@@ -251,7 +251,7 @@ int32_t scanner_push(scanner_t *self, const char *file_name, int state)
 	scanner->yycolumn = 1;
 	++(self->stack_num);
 
-	tlibc_hash_insert(&self->file_hash, real_path, strlen(real_path), &self->file_vec[self->file_vec_num].hash_head);
+	tdr_hash_insert(&self->file_hash, real_path, strlen(real_path), &self->file_vec[self->file_vec_num].hash_head);
 	++(self->file_vec_num);
 
 	return E_TD_NOERROR;
@@ -272,7 +272,7 @@ void scanner_init(scanner_t *self)
 	self->buff_limit = self->buff + MAX_LEX_BUFF_SIZE;
 	self->stack_num = 0;
 	self->file_vec_num = 0;
-	tlibc_hash_init(&self->file_hash, self->file_hash_buckets, MAX_SCANNER_FILE_BUCKETS);
+	tdr_hash_init(&self->file_hash, self->file_hash_buckets, MAX_SCANNER_FILE_BUCKETS);
 }
 
 uint32_t scanner_size(scanner_t *self)
@@ -319,7 +319,7 @@ void tdrerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...)
 {
 	va_list ap;
 	char bison_error_msg[MAX_SCANNER_ERROR_MSG_LENGTH];
-	TLIBC_UNUSED(self);
+	TDR_UNUSED(self);
 	
 	va_start(ap, s);
 	vsnprintf(bison_error_msg, MAX_SCANNER_ERROR_MSG_LENGTH, s, ap);
@@ -518,9 +518,9 @@ static int32_t get_yylval(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yyl
 		}
 	case tok_identifier:
 		{
-			if(yyleng >= TLIBC_MAX_LENGTH_OF_IDENTIFIER)
+			if(yyleng >= TDR_MAX_LENGTH_OF_IDENTIFIER)
 			{
-				scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TLIBC_MAX_LENGTH_OF_IDENTIFIER);
+				scanner_error_halt(yylloc, E_LS_IDENTIFIER_LENGTH_ERROR, TDR_MAX_LENGTH_OF_IDENTIFIER);
 			}
 			memcpy(yylval->sn_tok_identifier, yytext, yyleng);
 			yylval->sn_tok_identifier[yyleng] = 0;
@@ -600,8 +600,8 @@ int tdrlex(SCANNER_TOKEN_VALUE * yylval_param, YYLTYPE * yylloc_param , scanner_
 	for(;;)
 	{
 		scanner_context_t *scanner = scanner_top(self);
-		strncpy(yylloc_param->file_name, scanner->file_name, TLIBC_MAX_PATH_LENGTH);
-		yylloc_param->file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+		strncpy(yylloc_param->file_name, scanner->file_name, TDR_MAX_PATH_LENGTH);
+		yylloc_param->file_name[TDR_MAX_PATH_LENGTH - 1] = 0;
 		ret = scanner_scan(self, yylloc_param);
 		yylloc_param->last_line = scanner->yylineno;
 		yylloc_param->last_column = scanner->yycolumn;

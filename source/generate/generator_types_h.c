@@ -9,7 +9,7 @@
 
 static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
-	TLIBC_UNUSED(yylloc);
+	TDR_UNUSED(yylloc);
 
 	generator_open(super, file_name, GENERATOR_TYPES_H_SUFFIX);
 
@@ -42,8 +42,8 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 
 static error_code_t on_document_end(generator_t *super, const YYLTYPE *yylloc, const char *file_name)
 {
-	TLIBC_UNUSED(yylloc);
-	TLIBC_UNUSED(file_name);
+	TDR_UNUSED(yylloc);
+	TDR_UNUSED(file_name);
 
 	generator_printline(super, 0, "");
 	generator_printline(super, 0, "#ifdef  __cplusplus");
@@ -230,8 +230,8 @@ static error_code_t _on_comment(generator_types_h_t *self, const syn_unix_commen
 
 static error_code_t on_definition(generator_t *super, const YYLTYPE *yylloc, const syn_definition_t *definition)
 {
-	generator_types_h_t *self = TLIBC_CONTAINER_OF(super, generator_types_h_t, super);
-	TLIBC_UNUSED(yylloc);
+	generator_types_h_t *self = TDR_CONTAINER_OF(super, generator_types_h_t, super);
+	TDR_UNUSED(yylloc);
 	switch(definition->type)
 	{
 		case E_DT_IMPORT:

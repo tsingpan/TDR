@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include "parse/parser.h"
 #include "language/language.h"
 #include "version.h"
@@ -46,14 +46,14 @@ void help()
 	fprintf(stderr, "                               it takes the name of the input file, \n");
 	fprintf(stderr, "                               and applies a .%s suffix.\n", DEP_SUFFIX);
 	fprintf(stderr, "\n");
-	fprintf(stderr, "-l file, --lua=file			Execute lua script.\n");
+	fprintf(stderr, "  -l file, --lua=file          Execute lua script.\n");
 	fprintf(stderr, "  -g STR, --gen=STR            Generate code with a generator.\n");
 	fprintf(stderr, "Available generators:\n");
-	fprintf(stderr, "types_h        Generate %%_types.h for TLibC.\n");
-	fprintf(stderr, "reader_h       Generate %%_reader.h for TLibC.\n");
-	fprintf(stderr, "reader_c       Generate %%_reader.c for TLibC.\n");
-	fprintf(stderr, "writer_h       Generate %%_writer.h for TLibC.\n");
-	fprintf(stderr, "writer_c       Generate %%_writer.c for TLibC.\n");	
+	fprintf(stderr, "types_h        Generate %%_types.h for TSF4G.\n");
+	fprintf(stderr, "reader_h       Generate %%_reader.h for TSF4G.\n");
+	fprintf(stderr, "reader_c       Generate %%_reader.c for TSF4G.\n");
+	fprintf(stderr, "writer_h       Generate %%_writer.h for TSF4G.\n");
+	fprintf(stderr, "writer_c       Generate %%_writer.c for TSF4G.\n");	
 }
 
 const char* const short_options = "vho:I:Ml:g:";
@@ -71,11 +71,11 @@ const struct option long_options[] = {
 
 #define TD_MAX_GENERATOR 16
 
-static generator_types_h_t tlibc_types_generator;
-static generator_reader_c_t tlibc_reader_generator;
-static generator_reader_h_t tlibc_reader_header_generator;
-static generator_writer_c_t tlibc_writer_generator;
-static td_generator_writer_h_t tlibc_writer_header_generator;
+static generator_types_h_t tdr_types_generator;
+static generator_reader_c_t tdr_reader_generator;
+static generator_reader_h_t tdr_reader_header_generator;
+static generator_writer_c_t tdr_writer_generator;
+static td_generator_writer_h_t tdr_writer_header_generator;
 
 static generator_t *generator = NULL;
 int main(int32_t argc, char *argv[])
@@ -119,28 +119,28 @@ int main(int32_t argc, char *argv[])
 				const char *arg = optarg;
 				if(strcmp(arg, "types_h") == 0)
 				{
-					generator_types_h_init(&tlibc_types_generator, &g_parser.symbols);
-					generator = &tlibc_types_generator.super;
+					generator_types_h_init(&tdr_types_generator, &g_parser.symbols);
+					generator = &tdr_types_generator.super;
 				}
 				else if(strcmp(arg, "reader_h") == 0)
 				{
-					generator_reader_h_init(&tlibc_reader_header_generator, &g_parser.symbols);
-					generator = &tlibc_reader_header_generator.super;
+					generator_reader_h_init(&tdr_reader_header_generator, &g_parser.symbols);
+					generator = &tdr_reader_header_generator.super;
 				}
 				else if(strcmp(arg, "reader_c") == 0)
 				{
-					generator_reader_c_init(&tlibc_reader_generator, &g_parser.symbols);
-					generator = &tlibc_reader_generator.super;
+					generator_reader_c_init(&tdr_reader_generator, &g_parser.symbols);
+					generator = &tdr_reader_generator.super;
 				}			
 				else if(strcmp(arg, "writer_h") == 0)
 				{
-					generator_writer_h_init(&tlibc_writer_header_generator, &g_parser.symbols);
-					generator = &tlibc_writer_header_generator.super;
+					generator_writer_h_init(&tdr_writer_header_generator, &g_parser.symbols);
+					generator = &tdr_writer_header_generator.super;
 				}
 				else if(strcmp(arg, "writer_c") == 0)
 				{
-					generator_writer_c_init(&tlibc_writer_generator, &g_parser.symbols);
-					generator = &tlibc_writer_generator.super;
+					generator_writer_c_init(&tdr_writer_generator, &g_parser.symbols);
+					generator = &tdr_writer_generator.super;
 				}				
 			}
 			break;

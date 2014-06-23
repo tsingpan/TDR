@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "platform/tlibc_platform.h"
+#include "platform/tdr_platform.h"
 #include "error.h"
 #include "symbols.h"
 
@@ -19,9 +19,9 @@ struct generator_s
 {
 	const symbols_t *symbols;
 	FILE* fout;
-	char target_filename[TLIBC_MAX_PATH_LENGTH];
+	char target_filename[TDR_MAX_PATH_LENGTH];
 
-	char document_name[TLIBC_MAX_PATH_LENGTH];
+	char document_name[TDR_MAX_PATH_LENGTH];
 
 	error_code_t (*on_document_begin)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);
 	error_code_t (*on_document_end)(generator_t *self, const YYLTYPE *yylloc, const char *file_name);

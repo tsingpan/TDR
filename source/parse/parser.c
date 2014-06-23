@@ -42,9 +42,9 @@ static void parser_push(PARSER *self, const char *file_name)
 static void parser_make_rule(PARSER *self)
 {
 	size_t i;
-	char filename[TLIBC_MAX_PATH_LENGTH];
+	char filename[TDR_MAX_PATH_LENGTH];
 	FILE *fout;
-	snprintf(filename, TLIBC_MAX_PATH_LENGTH, "%s.%s", self->generator->target_filename, DEP_SUFFIX);
+	snprintf(filename, TDR_MAX_PATH_LENGTH, "%s.%s", self->generator->target_filename, DEP_SUFFIX);
 	fout = fopen(filename, "w");
 	if(fout == NULL)
 	{
@@ -98,9 +98,9 @@ void parser_on_generator_definition(PARSER *self, const YYLTYPE *yylloc, const s
 
 	if(pn_definition->type == E_DT_IMPORT)
 	{
-		char file_name[TLIBC_MAX_PATH_LENGTH];
-		snprintf(file_name, TLIBC_MAX_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
-		file_name[TLIBC_MAX_PATH_LENGTH - 1] = 0;
+		char file_name[TDR_MAX_PATH_LENGTH];
+		snprintf(file_name, TDR_MAX_PATH_LENGTH, "%s", pn_definition->definition.de_import.package_name);
+		file_name[TDR_MAX_PATH_LENGTH - 1] = 0;
 		parser_push(self, file_name);
 	}
 }
