@@ -33,7 +33,7 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 	generator_printline(super, 0, "#ifndef _H_%s", super->document_name);
 	generator_printline(super, 0, "#define _H_%s", super->document_name);
 	generator_printline(super, 0, "");
-	generator_printline(super, 0, "#include <stdint.h>");
+	generator_printline(super, 0, "#include <stdint.h>");	
 	generator_printline(super, 0, "#include \"protocol/tlibc_abstract_reader.h\"");
 	generator_printline(super, 0, "#include \"core/tlibc_error_code.h\"");
 	
