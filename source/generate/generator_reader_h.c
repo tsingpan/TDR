@@ -34,8 +34,8 @@ static error_code_t on_document_begin(generator_t *super, const YYLTYPE *yylloc,
 	generator_printline(super, 0, "#define _H_%s", super->document_name);
 	generator_printline(super, 0, "");
 	generator_printline(super, 0, "#include <stdint.h>");
-	generator_printline(super, 0, "#include \"protocol/tdr_abstract_reader.h\"");
-	generator_printline(super, 0, "#include \"core/tdr_error_code.h\"");
+	generator_printline(super, 0, "#include \"protocol/tlibc_abstract_reader.h\"");
+	generator_printline(super, 0, "#include \"core/tlibc_error_code.h\"");
 	
 	//包含types的头文件
 	strncpy_notdir(types_header, file_name, MAX_PACKAGE_NAME_LENGTH - 1);
@@ -80,7 +80,7 @@ static error_code_t _on_import(generator_reader_h_t *self, const syn_import_t *d
 
 static error_code_t _on_enum(generator_reader_h_t *self, const syn_enum_t *de_enum)
 {	
-	generator_printline(&self->super, 0, "tdr_error_code_t tdr_read_%s(tdr_abstract_reader_t *self, enum %s *data);", de_enum->name, de_enum->name);
+	generator_printline(&self->super, 0, "tlibc_error_code_t tlibc_read_%s(tlibc_abstract_reader_t *self, enum %s *data);", de_enum->name, de_enum->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -88,7 +88,7 @@ static error_code_t _on_enum(generator_reader_h_t *self, const syn_enum_t *de_en
 
 static error_code_t _on_struct(generator_reader_h_t *self, const syn_struct_t *de_struct)
 {
-	generator_printline(&self->super, 0, "tdr_error_code_t tdr_read_%s(tdr_abstract_reader_t *self, struct %s *data);", de_struct->name, de_struct->name);
+	generator_printline(&self->super, 0, "tlibc_error_code_t tlibc_read_%s(tlibc_abstract_reader_t *self, struct %s *data);", de_struct->name, de_struct->name);
 	generator_printline(&self->super, 0, "");
 
 	return E_TD_NOERROR;
@@ -96,7 +96,7 @@ static error_code_t _on_struct(generator_reader_h_t *self, const syn_struct_t *d
 
 static error_code_t _on_union(generator_reader_h_t *self, const syn_union_t *de_union)
 {
-	generator_print(&self->super, 0, "tdr_error_code_t tdr_read_%s(tdr_abstract_reader_t *self, union %s *data, ", de_union->name, de_union->name);
+	generator_print(&self->super, 0, "tlibc_error_code_t tlibc_read_%s(tlibc_abstract_reader_t *self, union %s *data, ", de_union->name, de_union->name);
 	generator_print_ctype(&self->super, &de_union->parameters.par_list[0].type);
 	generator_printline(&self->super, 0, " selector);");
 	
