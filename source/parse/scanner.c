@@ -457,6 +457,18 @@ static int32_t get_yylval(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yyl
 			get_yylval_tok_string(self, token, yylval, yylloc);
 			break;
 		}
+	case tok_true:
+		{
+			*token = tok_bool;
+			yylval->sn_bool = TRUE;
+			break;
+		}
+	case tok_false:
+		{
+			*token = tok_bool;
+			yylval->sn_bool = FALSE;
+			break;
+		}
 	case tok_int:
 		{
 			errno = 0;
@@ -530,6 +542,11 @@ static int32_t get_yylval(scanner_t *self, int *token, SCANNER_TOKEN_VALUE * yyl
 		{
 			yytext[yyleng] = 0;
 			scanner_error_halt(yylloc, E_LS_CANNOT_USE_RESERVED_LANGUAGE_KEYWORD, yytext);
+			break;
+		}
+	case tok_t_bool:
+		{
+			yylval->sn_st = E_ST_BOOL;
 			break;
 		}
 	case tok_t_char:

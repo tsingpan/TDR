@@ -43,6 +43,10 @@ void sf_on_const(const char* type, const syn_value_t *val)
 			lua_pushnil(g_ls);
 		}
 		break;
+	case E_SNVT_BOOL:
+		lua_pushboolean(g_ls, val->val.b);
+		lua_pushnil(g_ls);
+		break;
 	case E_SNVT_DOUBLE:
 		lua_pushnumber(g_ls, val->val.d);
 		lua_pushnil(g_ls);
@@ -63,7 +67,6 @@ void sf_on_const(const char* type, const syn_value_t *val)
 		lua_pushinteger(g_ls, val->val.i64);
 		lua_pushinteger(g_ls, 16);
 		break;
-	//lua的uint64输出有问题0xffffffffffffffff居然输出的-1
 	case E_SNVT_HEX_UINT64:
 		lua_pushunsigned(g_ls, val->val.ui64);
 		lua_pushinteger(g_ls, 16);

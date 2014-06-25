@@ -61,6 +61,7 @@ anychar			([^])
 <INITIAL>"uint64"				{return tok_t_uint64;															}
 <INITIAL>"double"				{return tok_t_double;															}
 <INITIAL>"char"					{return tok_t_char;																}
+<INITIAL>"bool"					{return tok_t_bool;																}
 <INITIAL>"vector"				{return tok_t_vector;															}
 <INITIAL>"string"				{return tok_t_string;															}
 <INITIAL>"=="					{return tok_equal;																}
@@ -72,6 +73,8 @@ anychar			([^])
 <INITIAL>{doubleconstant}|{DNUM}{return tok_double;																}
 <INITIAL>{hexconstant}			{return tok_hex;																}
 <INITIAL>{intconstant}			{return tok_int;																}
+<INITIAL>"true"					{return tok_true;																}
+<INITIAL>"false"				{return tok_false;																}
 
 <INITIAL>"BEGIN"              { return tok_reserved_keyword; }
 <INITIAL>"END"                { return tok_reserved_keyword; }

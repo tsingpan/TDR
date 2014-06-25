@@ -320,6 +320,9 @@ error_code_t generator_print_type_name(generator_t *self, const syn_simple_type_
 	case E_ST_CHAR:
 		fprintf(self->fout, "char");
 		return E_TD_NOERROR;
+	case E_ST_BOOL:
+		fprintf(self->fout, "bool");
+		return E_TD_NOERROR;
 	case E_ST_DOUBLE:
 		fprintf(self->fout, "double");
 		return E_TD_NOERROR;
@@ -335,6 +338,9 @@ error_code_t generator_print_ctype(generator_t *self, const syn_simple_type_t *s
 {
 	switch(simple_type->st)
 	{
+	case E_ST_BOOL:
+		fprintf(self->fout, "bool");
+		return E_TD_NOERROR;
 	case E_ST_INT8:
 		fprintf(self->fout, "int8_t");
 		return E_TD_NOERROR;
@@ -390,55 +396,6 @@ error_code_t generator_print_ctype(generator_t *self, const syn_simple_type_t *s
 				break;
 			}
 
-			return E_TD_NOERROR;
-		}
-	default:
-		return E_TD_ERROR;
-	}
-}
-
-error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *simple_type)
-{
-	const syn_simple_type_t *st = symbols_get_real_type(self->symbols, simple_type);
-
-	switch(st->st)
-	{
-	case E_ST_INT8:
-		fprintf(self->fout, "sbyte");
-		return E_TD_NOERROR;
-	case E_ST_INT16:
-		fprintf(self->fout, "short");
-		return E_TD_NOERROR;
-	case E_ST_INT32:
-		fprintf(self->fout, "int");
-		return E_TD_NOERROR;
-	case E_ST_INT64:
-		fprintf(self->fout, "long");
-		return E_TD_NOERROR;
-	case E_ST_UINT8:
-		fprintf(self->fout, "byte");
-		return E_TD_NOERROR;
-	case E_ST_UINT16:
-		fprintf(self->fout, "ushort");
-		return E_TD_NOERROR;
-	case E_ST_UINT32:
-		fprintf(self->fout, "uint");
-		return E_TD_NOERROR;
-	case E_ST_UINT64:
-		fprintf(self->fout, "ulong");
-		return E_TD_NOERROR;
-	case E_ST_STRING:
-		fprintf(self->fout, "string");
-		return E_TD_NOERROR;
-	case E_ST_CHAR:
-		fprintf(self->fout, "char");
-		return E_TD_NOERROR;
-	case E_ST_DOUBLE:
-		fprintf(self->fout, "double");
-		return E_TD_NOERROR;
-	case E_ST_REFER:
-		{
-			fprintf(self->fout, "%s", st->st_refer);
 			return E_TD_NOERROR;
 		}
 	default:

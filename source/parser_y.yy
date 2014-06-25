@@ -51,6 +51,9 @@
 %token tok_double
 %token tok_string
 %token tok_char
+%token tok_true
+%token tok_false
+%token tok_bool
 
 
 %token tok_identifier 
@@ -73,7 +76,7 @@
 %token tok_t_double
 %token tok_t_string
 %token tok_t_vector
-
+%token tok_t_bool
 
 %type<sn_definition> Definition
 %type<sn_import> Import
@@ -84,6 +87,7 @@
 %type<sn_uint64> tok_uint64
 %type<sn_hex_uint64> tok_hex_uint64
 %type<sn_char> tok_char
+%type<sn_bool> tok_true tok_false tok_bool
 %type<sn_tok_unixcomment> tok_unixcomment
 %type<sn_unix_comment> UnixComment UnixCommentOrNot
 
@@ -95,7 +99,7 @@
 %type<sn_string> tok_string
 %type<sn_typedef> Typedef
 
-%type<sn_st> tok_t_char tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64 tok_t_string
+%type<sn_st> tok_t_bool tok_t_char tok_t_double tok_t_int8 tok_t_int16 tok_t_int32 tok_t_int64 tok_t_uint8 tok_t_uint16 tok_t_uint32 tok_t_uint64 tok_t_string
 %type<sn_ct> tok_t_vector
 
 %type<sn_arguments> Arguments ArgumentList
@@ -563,6 +567,10 @@ SimpleType:
 	{
 		$$.st = $1;
 	}
+|	tok_t_bool
+	{
+		$$.st = $1;
+	}
 |	tok_identifier
    	{
 		check_identifier_defined(&GET_SYMBOLS, &yylloc, "", $1);
@@ -642,6 +650,10 @@ Value :
 |	tok_char
 	{
 		reduce_Value_tok_char(&$$, $1);
+	}
+|	tok_bool
+	{
+		reduce_Value_tok_bool(&$$, $1);
 	}
 |	tok_identifier
 	{

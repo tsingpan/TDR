@@ -48,8 +48,6 @@ error_code_t generator_print_type_name(generator_t *self, const syn_simple_type_
 
 error_code_t generator_print_ctype(generator_t *self, const syn_simple_type_t *simple_type);
 
-error_code_t generator_print_cstype(generator_t *self, const syn_simple_type_t *simple_type);
-
 error_code_t generator_replace_extension(char *filename, uint32_t filename_length, const char *suffix);
 
 

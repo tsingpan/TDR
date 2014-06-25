@@ -31,6 +31,8 @@ void reduce_Value_tok_identifier(syn_value_t* current, const char *sn_identifier
 
 void reduce_Value_tok_char(syn_value_t* current, const char pn_char);
 
+void reduce_Value_tok_bool(syn_value_t* current, int pn_b);
+
 void reduce_Value_tok_int64(syn_value_t* current, const int64_t i64);
 
 void reduce_Value_tok_hex_int64(syn_value_t* current, const int64_t i64);

@@ -34,6 +34,7 @@ typedef union _SCANNER_TOKEN_VALUE
 	int64_t sn_hex_int64;
 	char* sn_string;
 	char sn_char;
+	int sn_bool;
 	syn_simple_type_type_t sn_st;
 	syn_arguments_t sn_arguments;
 	syn_container_type_type_t sn_ct;

@@ -16,12 +16,13 @@ typedef enum syn_value_type_e
 {
     E_SNVT_IDENTIFIER = 0,
     E_SNVT_CHAR = 1,
-    E_SNVT_DOUBLE = 2,
-    E_SNVT_STRING = 3,
-    E_SNVT_INT64 = 4,
-    E_SNVT_UINT64 = 5,
-    E_SNVT_HEX_INT64 = 6,
-    E_SNVT_HEX_UINT64 = 7,
+	E_SNVT_BOOL = 2,
+    E_SNVT_DOUBLE = 3,
+    E_SNVT_STRING = 4,
+    E_SNVT_INT64 = 5,
+    E_SNVT_UINT64 = 6,
+    E_SNVT_HEX_INT64 = 7,
+    E_SNVT_HEX_UINT64 = 8,
 }syn_value_type_t;
 
 
@@ -32,6 +33,7 @@ typedef union syn_value_body_u
     char str[TDR_MAX_LENGTH_OF_IDENTIFIER];
     double d;
     char c;
+	int b;
     char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
 }syn_value_body_t;
 
@@ -58,9 +60,10 @@ typedef enum syn_simple_type_type_e
     E_ST_UINT32 = 6,
     E_ST_UINT64 = 7,    
     E_ST_CHAR = 8,
-    E_ST_DOUBLE = 9,
-	E_ST_STRING = 10,
-	E_ST_REFER = 11,//struct, union, enum, typedef
+    E_ST_BOOL = 9,
+	E_ST_DOUBLE = 10,
+	E_ST_STRING = 11,
+	E_ST_REFER = 12,//struct, union, enum, typedef
 }syn_simple_type_type_t;
 typedef struct syn_simple_type_s
 {

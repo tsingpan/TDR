@@ -108,6 +108,12 @@ void reduce_Value_tok_char(syn_value_t* current, const char pn_char)
 	current->val.c = pn_char;
 }
 
+void reduce_Value_tok_bool(syn_value_t* current, int pn_b)
+{
+	current->type = E_SNVT_BOOL;
+	current->val.b = pn_b;
+}
+
 void reduce_Value_tok_int64(syn_value_t* current, const int64_t i64)
 {
 	current->type = E_SNVT_INT64;

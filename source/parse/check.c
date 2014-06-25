@@ -370,6 +370,12 @@ void check_value_type(const symbols_t *symbols, const YYLTYPE *yylloc, const syn
 			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		}
 		break;
+	case E_ST_BOOL:
+		if(vt != E_SNVT_BOOL)
+		{
+			scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
+		}
+		break;		
 	default:
 		scanner_error_halt(yylloc, E_LS_CONSTANT_TYPES_DO_NOT_MATCH);
 		break;

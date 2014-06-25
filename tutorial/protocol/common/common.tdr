@@ -19,3 +19,5 @@ const uint32 MAX_URL_LENGTH = 1024;
 const uint64 TEST_UINT64_A = 0xffffffffffffffff;
 const uint64 TEST_UINT64_B = 18446744073709551615;
 const uint64 TEST_UINT64_C = 9223372036854775808;
+const bool TEST_BOOL_TRUE = true;
+const bool TEST_BOOL_FALSE = false;
