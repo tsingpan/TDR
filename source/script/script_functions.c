@@ -8,6 +8,19 @@
 
 #include "definition.h"
 
+void sf_on_document_begin(const char* file)
+{
+	lua_getglobal(g_ls, "on_document_begin");
+	lua_pushstring(g_ls, file);
+	lua_call(g_ls, 1, 0);
+}
+
+void sf_on_document_end()
+{
+	lua_getglobal(g_ls, "on_document_end");
+	lua_call(g_ls, 0, 0);
+}
+
 void sf_on_import(const char* file)
 {
 	lua_getglobal(g_ls, "on_import");
@@ -24,10 +37,11 @@ void sf_on_typedef(const char* type, const char* arg, const char* new_type)
 	lua_call(g_ls, 3, 0);
 }
 
-void sf_on_const(const char* type, const syn_value_t *val)
+void sf_on_const(const char* type, const char* real_type, const syn_value_t *val)
 {
 	lua_getglobal(g_ls, "on_const");
 	lua_pushstring(g_ls, type);
+	lua_pushstring(g_ls, real_type);
 	switch(val->type)
 	{
 	case E_SNVT_IDENTIFIER:
@@ -73,5 +87,5 @@ void sf_on_const(const char* type, const syn_value_t *val)
 		break;	
 	}
 	
-	lua_call(g_ls, 3, 0);
+	lua_call(g_ls, 4, 0);
 }

@@ -9,6 +9,7 @@ import "common/common.tdr"
 import "common/common.tdr"
 
 
+
 struct login_req
 {
 	string<MAX_NAME_LENGTH> name;
@@ -22,6 +23,7 @@ struct login_rsp
 		bool_t result;#0表示成功， 非0表示失败
 if(result == 0)	uint64 session_id;#可以使用条件判断与据来规定何时出现这个元素， 合法的运算符有==, !=, &这三种。
 };
+const bool_t TEST_TYPEDEF_INT32 = 10;
 
 union message_body(message_id selector)
 {
@@ -144,6 +146,7 @@ struct msg_qq_rsp_userinfo
 	int32 is_yellow_year_vip;
 	int32 yellow_vip_level;
 	int32 is_yellow_high_vip;
+	bool test;
 };
 
 const uint64 test_ui64 = 0xffffffffffffffff;

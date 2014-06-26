@@ -74,6 +74,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	{
 		generator_on_document_begin(self->generator, NULL, file_name);
 	}
+	parser_on_document_begin(self, file_name);
 
 	ret = tdrparse(&self->scanner);
 	if(make_rule)
@@ -84,6 +85,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	{
 		generator_on_document_end(self->generator, NULL, file_name);
 	}
+	parser_on_document_end(self);
 	scanner_pop(&self->scanner);
 	symbols_clear(&self->symbols);
 	return E_TD_NOERROR;
@@ -107,6 +109,31 @@ void parser_on_generator_definition(PARSER *self, const YYLTYPE *yylloc, const s
 
 
 //do
+
+void parser_on_document_begin(PARSER *self, const char *file_name)
+{
+	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
+	{
+		return;
+	}
+}
+
+void parser_on_document_error(PARSER *self)
+{
+	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
+	{
+		return;
+	}
+}
+
+void parser_on_document_end(PARSER *self)
+{
+	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
+	{
+		return;
+	}
+}
+
 void parser_on_import(PARSER *self, const syn_import_t* syn_import)
 {
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
@@ -178,16 +205,23 @@ void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef)
 
 void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 {
-	const char *type = NULL;
+	const syn_simple_type_t *real_type = NULL;
+	const syn_simple_type_t *type = NULL;
+	const char *type_name = NULL;
+	const char *real_type_name = NULL;
 	const char *arg = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
+	
+	type = &syn_const->type;
+	real_type = symbols_get_real_type(&self->symbols, &syn_const->type);
+	get_simple_type(type, &type_name, &arg);
+	get_simple_type(real_type, &real_type_name, &arg);
 
-	get_simple_type(&syn_const->type, &type, &arg);
-	sf_on_const(type, &syn_const->val);
+	sf_on_const(type_name, real_type_name, &syn_const->val);
 }
 
 void parser_on_enum_begin(PARSER *self, const char* name)

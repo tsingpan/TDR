@@ -33,7 +33,9 @@ void parser_on_generator_definition(PARSER *self, const YYLTYPE *yylloc, const s
 //通过以下接口可以生成所有的代码
 void parser_on_document_begin(PARSER *self, const char *file_name);
 
-void parser_on_document_end(PARSER *self, const char *file_name);
+void parser_on_document_error(PARSER *self);
+
+void parser_on_document_end(PARSER *self);
 
 void parser_on_import(PARSER *self, const syn_import_t* syn_import);
 

@@ -311,6 +311,7 @@ void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...)
 	scanner_error_ap(yylloc, result, ap);
 	va_end(ap);
 
+	parser_on_document_error(&g_parser);
 	exit(result);
 }
 
