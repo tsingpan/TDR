@@ -291,7 +291,7 @@ Union :
 		GET_SYMBOLS.union_name = $2;
 		GET_UNION_FIELD_LIST.union_field_list_num = 0;
 
-		parser_on_union_begin(GET_PARSER, $2);
+		parser_on_union_begin(GET_PARSER, $2, $3.par_list[0].type.st_refer);
 	}
 	'{' UnionFieldList '}' ';'
 	{
@@ -686,8 +686,6 @@ UnixCommentOrNot:
 	{
 		strncpy($$.text, $1, MAX_COMMENT_LENGTH);
 		$$.text[MAX_COMMENT_LENGTH - 1] = 0;
-
-		parser_on_unit_comment(GET_PARSER, &$$);
 	}
 |
 	{

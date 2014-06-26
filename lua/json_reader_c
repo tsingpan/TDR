@@ -1,36 +1,123 @@
-function on_document_begin(file)
+g_output_file = ''
+g_fout = nil
 
+function on_document_begin(file)
+	len = string.len(file)
+	prefix = string.sub(file, 1, len - 4)
+	suffix = string.sub(file, len - 3, len)
+	if(suffix == ".tdr")then
+		g_output_file = prefix .. '_json_reader.c'
+	else
+		g_output_file = file .. '_json_reader.c'
+	end
+
+	g_fout = io.open(g_output_file, "w")
 end
 
 function on_document_end()
+	g_fout.close()
 end
 
 function on_document_error()
+	if(g_fout ~= nil)then
+		g_fout:close()
+	end
+	os.remove(g_output_file)
 end
 
-function on_import(name)
-	len = string.len(name)
-	prefix = string.sub(name, 1, len - 4)
-	suffix = string.sub(name, len - 3, len)
+function on_import(file)
+	len = string.len(file)
+	prefix = string.sub(file, 1, len - 4)
+	suffix = string.sub(file, len - 3, len)
 	if(suffix == ".tdr")then
-		file = prefix .. '_json_types.h'
+		real_file = prefix .. '_json_reader.h'
 	else
-		file = name .. '_json_types.h'
+		real_file = name .. '_json_reader.h'
 	end
 
-	print('#include "' .. file .. '"')
+	g_fout:write('#include "' .. real_file .. '"\n')
 end
 
-function on_typedef(type, arg, newtype)
-	print(type, arg, newtype)
+function on_typedef(type, type_arg, newtype)
+	print(type, type_arg, newtype)
 end
 
 function on_const(type, real_type, val, base)
 	print(type, real_type, val, base)
 end
 
-print(9223372036854775808)
-print(string.format("%u", 0xffffffffffffffff))
-print(string.format("0x%x", -1))
-print(string.format("o%o", 8))
-print(0xffffffffffffffff)
+function on_enum_begin(name)
+	print('enum ' .. name)
+	print('{')
+end
+
+function on_enum_field(name, val, base, comment)
+	print(name .. ' ' .. val)
+end
+
+function on_enum_end()
+	print('}')
+end
+
+function on_union_begin(name, etype)
+	print('union ' .. name .. ' ' .. etype)
+	print('{')
+end
+
+function on_union_field(key, type, real_type, type_arg, name, comment)
+	print(key .. ' ' .. type .. ' ' .. real_type .. ' ' .. name)
+end
+
+function on_union_end()
+	print('}')
+end
+
+
+function on_struct_begin(name)
+	print('struct ' .. name)
+	print('{')
+end
+
+function on_struct_vector_field(op, op0, op1_val, op1_base, vec_type, vec_real_type, vec_type_arg, vec_size, name, comment)
+	if(op ~= nil)then
+		print('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
+		print('{')
+	end
+	if(vec_type_arg ~= nil)then
+		print(vec_type .. '(' .. vec_real_type .. ') ' .. name .. '[' .. vec_size .. ']' .. '[' .. vec_type_arg .. ']')
+	else
+		print(vec_type .. '(' .. vec_real_type .. ') ' .. name .. '[' .. vec_size .. '] ')
+	end
+	if(comment ~= nil)then
+		print('//' .. comment)
+	end
+	if(op ~= nil)then
+		print('}')
+	end
+end
+
+function on_struct_field(op, op0, op1_val, op1_base, type, real_type, type_arg, name, comment)
+	if(op ~= nil)then
+		print('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
+		print('{')
+	end
+	if(type_arg ~= nil)then
+		print(type .. '(' .. real_type .. ') ' .. name .. '[' .. type_arg .. ']')
+	else
+		print(type .. '(' .. real_type .. ') ' .. name)
+	end
+	if(comment ~= nil)then
+		print('//' .. comment)
+	end
+	if(op ~= nil)then
+		print('}')
+	end
+end
+
+function on_struct_end()
+	print('}')
+end
+
+function on_comment(comment)
+	print(comment)
+end

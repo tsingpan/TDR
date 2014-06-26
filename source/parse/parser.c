@@ -1,20 +1,19 @@
 #include "parse/parser.h"
 #include "error.h"
-
 #include "scanner_l.h"
 #include "parser_y.h"
 #include "parse/scanner.h"
 #include "globals.h"
-
 #include "symbols.h"
+#include "parse/scanner.h"
+#include "script/script_functions.h"
+#include "script/script.h"
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "parse/scanner.h"
+#include <assert.h>
 
-#include "script/script_functions.h"
-#include "script/script.h"
 
 void parser_init(PARSER *self)
 {
@@ -116,6 +115,8 @@ void parser_on_document_begin(PARSER *self, const char *file_name)
 	{
 		return;
 	}
+
+	sf_on_document_begin(file_name);
 }
 
 void parser_on_document_error(PARSER *self)
@@ -124,6 +125,8 @@ void parser_on_document_error(PARSER *self)
 	{
 		return;
 	}
+
+	sf_on_document_error();
 }
 
 void parser_on_document_end(PARSER *self)
@@ -132,6 +135,7 @@ void parser_on_document_end(PARSER *self)
 	{
 		return;
 	}
+	sf_on_document_end();
 }
 
 void parser_on_import(PARSER *self, const syn_import_t* syn_import)
@@ -175,6 +179,9 @@ static void get_simple_type(const syn_simple_type_t *st, const char **type, cons
 	case E_ST_CHAR:
 		*type = "char";
 		break;
+	case E_ST_BOOL:
+		*type = "bool";
+		break;
 	case E_ST_DOUBLE:
 		*type = "double";
 		break;
@@ -215,6 +222,7 @@ void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 	{
 		return;
 	}
+
 	
 	type = &syn_const->type;
 	real_type = symbols_get_real_type(&self->symbols, &syn_const->type);
@@ -230,6 +238,7 @@ void parser_on_enum_begin(PARSER *self, const char* name)
 	{
 		return;
 	}
+	sf_on_enum_begin(name);
 }
 
 void parser_on_enum_field(PARSER *self, const enum_def_t* enum_def)
@@ -238,6 +247,8 @@ void parser_on_enum_field(PARSER *self, const enum_def_t* enum_def)
 	{
 		return;
 	}
+
+	sf_on_enum_field(enum_def);
 }
 
 void parser_on_enum_end(PARSER *self, const char* name)
@@ -246,22 +257,46 @@ void parser_on_enum_end(PARSER *self, const char* name)
 	{
 		return;
 	}
+	TDR_UNUSED(name);
+	sf_on_enum_end();
 }
 
-void parser_on_union_begin(PARSER *self, const char* name)
+void parser_on_union_begin(PARSER *self, const char* name, const char *etype)
 {
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
+	sf_on_union_begin(name, etype);
 }
 
 void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 {
+	const syn_simple_type_t *real_type = NULL;
+	const syn_simple_type_t *type = NULL;
+	const char *type_name = NULL;
+	const char *real_type_name = NULL;
+	const char *arg = NULL;
+
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
+
+	type = &union_field->simple_type;
+	real_type = symbols_get_real_type(&self->symbols, type);
+	get_simple_type(type, &type_name, &arg);
+	get_simple_type(real_type, &real_type_name, &arg);
+
+	if(union_field->comment.text[0])
+	{
+		sf_on_union_field(union_field->key, type_name, real_type_name, arg, union_field->name, union_field->comment.text);
+	}
+	else
+	{
+		sf_on_union_field(union_field->key, type_name, real_type_name, arg, union_field->name, NULL);
+	}
+	
 }
 
 void parser_on_union_end(PARSER *self, const char* name)
@@ -270,6 +305,8 @@ void parser_on_union_end(PARSER *self, const char* name)
 	{
 		return;
 	}
+	TDR_UNUSED(name);
+	sf_on_union_end();
 }
 
 void parser_on_struct_begin(PARSER *self, const char* name)
@@ -278,13 +315,83 @@ void parser_on_struct_begin(PARSER *self, const char* name)
 	{
 		return;
 	}
+
+	sf_on_struct_begin(name);
 }
 
-void parser_on_struct_field(PARSER *self, const syn_field_t* union_field)
+static const char* get_op_name(syn_expression_oper_t oper)
 {
+	switch (oper)
+	{
+	case E_EO_NON:
+		return NULL;
+	case E_EO_AND:
+		return "&";
+	case E_EO_EQUAL:
+		return "==";
+	case E_EO_UNEQUAL:
+		return "!=";
+	default:
+		return NULL;
+	}
+}
+
+void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
+{
+	const syn_simple_type_t *type = NULL;
+	const char *type_name = NULL;
+	const char *type_arg = NULL;
+	const syn_simple_type_t *real_type = NULL;		
+	const char *real_type_name = NULL;
+	const char *real_type_arg = NULL;
+	const char *comment = NULL;
+	const char *oper = NULL;
+	const char *op0 = NULL;
+	const syn_value_t *op1 = NULL;
+
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
+	}
+
+	if(struct_field->comment.text[0])
+	{
+		comment = struct_field->comment.text;
+	}
+	else
+	{
+		comment = NULL;
+	}
+
+	oper = get_op_name(struct_field->condition.oper);
+	if(oper != NULL)
+	{
+		op0 = struct_field->condition.op0;
+		op1 = &struct_field->condition.op1;
+	}
+
+	if(struct_field->type.type == E_SNT_CONTAINER)
+	{
+		if(struct_field->type.ct.ct == E_CT_VECTOR)
+		{
+			type = &struct_field->type.ct.vector_type;
+			real_type = symbols_get_real_type(&self->symbols, type);
+			get_simple_type(type, &type_name, &type_arg);
+			get_simple_type(real_type, &real_type_name, &real_type_arg);
+
+			sf_on_struct_vector_field(oper, op0, op1, type_name, real_type_name, type_arg, struct_field->type.ct.vector_length
+				, struct_field->identifier, comment);
+		}
+	}
+	else
+	{
+		type = &struct_field->type.st;
+		real_type = symbols_get_real_type(&self->symbols, type);
+		get_simple_type(type, &type_name, &type_arg);
+		get_simple_type(real_type, &real_type_name, &real_type_arg);
+
+		sf_on_struct_field(oper, op0, op1, type_name, real_type_name, type_arg
+			, struct_field->identifier, comment);
 	}
 }
 
@@ -294,6 +401,8 @@ void parser_on_struct_end(PARSER *self, const char* name)
 	{
 		return;
 	}
+	TDR_UNUSED(name);
+	sf_on_struct_end();
 }
 
 void parser_on_unit_comment(PARSER *self, const syn_unix_comment_t* comment)
@@ -303,4 +412,8 @@ void parser_on_unit_comment(PARSER *self, const syn_unix_comment_t* comment)
 		return;
 	}
 
+	if(comment->text[0])
+	{
+		sf_on_comment(comment->text);
+	}	
 }

@@ -561,7 +561,7 @@ static const yytype_uint16 yyrline[] =
      506,   510,   516,   530,   534,   538,   542,   546,   550,   554,
      558,   562,   566,   570,   574,   582,   592,   599,   604,   609,
      618,   626,   630,   634,   638,   642,   646,   650,   654,   658,
-     666,   676,   685,   693
+     666,   676,   685,   691
 };
 #endif
 
@@ -1891,7 +1891,7 @@ yyreduce:
 		GET_SYMBOLS.union_name = (yyvsp[(2) - (3)].sn_tok_identifier);
 		GET_UNION_FIELD_LIST.union_field_list_num = 0;
 
-		parser_on_union_begin(GET_PARSER, (yyvsp[(2) - (3)].sn_tok_identifier));
+		parser_on_union_begin(GET_PARSER, (yyvsp[(2) - (3)].sn_tok_identifier), (yyvsp[(3) - (3)].sn_parameters).par_list[0].type.st_refer);
 	}
     break;
 
@@ -2443,14 +2443,12 @@ yyreduce:
     {
 		strncpy((yyval.sn_unix_comment).text, (yyvsp[(1) - (1)].sn_tok_unixcomment), MAX_COMMENT_LENGTH);
 		(yyval.sn_unix_comment).text[MAX_COMMENT_LENGTH - 1] = 0;
-
-		parser_on_unit_comment(GET_PARSER, &(yyval.sn_unix_comment));
 	}
     break;
 
   case 73:
 /* Line 1787 of yacc.c  */
-#line 693 "D:/GitHub/TDR/source/parser_y.yy"
+#line 691 "D:/GitHub/TDR/source/parser_y.yy"
     {
 		(yyval.sn_unix_comment).text[0] = 0;
 	}
@@ -2458,7 +2456,7 @@ yyreduce:
 
 
 /* Line 1787 of yacc.c  */
-#line 2462 "D:/GitHub/TDR/source/gen/source/parser_y.c"
+#line 2460 "D:/GitHub/TDR/source/gen/source/parser_y.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2697,5 +2695,5 @@ yyreturn:
 
 
 /* Line 2050 of yacc.c  */
-#line 697 "D:/GitHub/TDR/source/parser_y.yy"
+#line 695 "D:/GitHub/TDR/source/parser_y.yy"
 

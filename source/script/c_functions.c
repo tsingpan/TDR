@@ -19,6 +19,6 @@ void cf_init(lua_State *ls)
 int cf_error_halt(lua_State *ls)
 {
 	const char* error = luaL_checkstring(ls,1);
-	scanner_error_halt(&g_yyloc, E_LS_SCRIPT_HALT, error);
-	return 0;
+	scanner_error(&g_yyloc, E_LS_SCRIPT_HALT, error);
+	exit(E_LS_SCRIPT_HALT);
 }

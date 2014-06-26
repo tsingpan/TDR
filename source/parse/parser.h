@@ -49,7 +49,7 @@ void parser_on_enum_field(PARSER *self, const enum_def_t* enum_def);
 
 void parser_on_enum_end(PARSER *self, const char* name);
 
-void parser_on_union_begin(PARSER *self, const char* name);
+void parser_on_union_begin(PARSER *self, const char* name, const char *etype);
 
 void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field);
 
@@ -57,7 +57,7 @@ void parser_on_union_end(PARSER *self, const char* name);
 
 void parser_on_struct_begin(PARSER *self, const char* name);
 
-void parser_on_struct_field(PARSER *self, const syn_field_t* union_field);
+void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field);
 
 void parser_on_struct_end(PARSER *self, const char* name);
 
