@@ -42,23 +42,37 @@ function on_typedef(type, type_arg, newtype)
 	g_fout:write(type .. newtype)
 end
 
-function on_const(type, real_type, val, val_fmt)
-	if(val_fmt == 'bool')then
-		if(val)then
-			g_fout:write(type .. real_type .. 'true')
-		else
-			g_fout:write(type .. real_type .. 'false')
+function get_value_string(val)
+	if(val ~= nil)then
+		if(val.type == 'identifier')then
+			return val.value
+		elseif(val.type == 'char')then
+			return string.format("'%q'", val.value)
+		elseif(val.type == 'bool')then
+			if(val.value)then
+				return 'true'
+			else
+				return 'false'
+			end
+		elseif(val.type == 'string')then
+			return string.format('"%q"', val.value)
+		elseif(val.type == 'int64')then
+			return string.format('%d', val.value)
+		elseif(val.type == 'hex_int64')then
+			return string.format('%X', val.value)
+		elseif(val.type == 'uint64')then
+			return string.format('%u', val.value)
+		elseif(val.type == 'hex_uint64')then
+			return string.format('%X', val.value)
 		end
-	elseif(val_fmt == 'identifier')then
-		g_fout:write(type .. real_type .. val)
-	elseif(val_fmt == 'char')then
-		g_fout:write(type .. real_type .. string.format("'%q'", val))
-	elseif(val_fmt == 'string')then
-		g_fout:write(type .. real_type .. string.format('"%q"', val))
-	else
-		g_fout:write(type .. real_type .. string.format('%' .. val_fmt, val))
+		print(val.type)
+		print(val.value)
 	end
-	g_fout:write(type .. real_type .. val .. string.format(val_fmt, val))
+end
+
+function on_const(type, real_type, val)
+	val_string = get_value_string(val)
+	g_fout:write(type .. real_type .. val_string)
 end
 
 function on_enum_begin(name)
@@ -116,9 +130,10 @@ function on_struct_begin(name)
 	g_fout:write('{')
 end
 
-function on_struct_field(op, op0, op1_val, op1_base, type, type_arg, real_type, real_type_arg, vec_size, name, comment)
+function on_struct_field(op, op0, op1, type, type_arg, real_type, real_type_arg, vec_size, name, comment)
 	if(op ~= nil)then
-		g_fout:write('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
+		op1_string = get_value_string(op1)
+		g_fout:write('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_string .. ')')
 		g_fout:write('{')
 	end
 
