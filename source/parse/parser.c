@@ -76,7 +76,7 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	parser_on_document_begin(self, file_name);
 
 	ret = tdrparse(&self->scanner);
-	if(make_rule)
+	if((make_rule) && (self->generator))
 	{
 		parser_make_rule(self);
 	}	
