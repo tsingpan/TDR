@@ -157,9 +157,14 @@ end
 
 function on_struct_field(condition, type, real_type, vec_size, name, comment)
 	if(condition ~= nil)then
-		op1_string = get_value_string(condition.op1)
-		g_fout:write('if ' .. ' (' .. condition.op0 .. ' ' .. condition.oper .. ' ' .. op1_string .. ')')
-		g_fout:write('{')
+		if(condition.oper ~= nil)then
+			op1_string = get_value_string(condition.op1)
+			g_fout:write('if ' .. ' (' .. condition.op0 .. ' ' .. condition.oper .. ' ' .. op1_string .. ')')
+			g_fout:write('{')
+		else
+			g_fout:write('if ' .. ' (' .. condition.op0 .. ')')
+			g_fout:write('{')
+		end
 	end
 
 	type_string = get_type_string(type)

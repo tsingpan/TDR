@@ -138,7 +138,7 @@ static error_code_t _on_struct(generator_reader_c_t *self, const syn_struct_t *d
 			case E_EO_AND:
 				op = "&";		
 				break;
-			case E_EO_EQUAL:		
+			case E_EO_EQUAL:
 				op = "==";
 				break;
 			case E_EO_UNEQUAL:

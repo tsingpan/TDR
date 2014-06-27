@@ -151,3 +151,14 @@ struct msg_qq_rsp_userinfo
 };
 
 const uint64 test_ui64 = 0xffffffffffffffff;
+
+const uint16 PWEB_SESSION_ID_LENGTH = 64; 
+
+#读取WebServer发来的json协议
+struct pweb_login_rsp
+{
+                    bool                            result;
+if(result)          uint32                          session_id_len;
+if(result == true)  string<PWEB_SESSION_ID_LENGTH>  session_id;
+};
+

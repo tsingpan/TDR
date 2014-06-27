@@ -158,6 +158,7 @@ void check_integer_value(const symbols_t *symbols, const YYLTYPE *yylloc, const 
 	case E_SNVT_UINT64:
 	case E_SNVT_HEX_INT64:
 	case E_SNVT_HEX_UINT64:
+	case E_SNVT_BOOL:
 		break;
 	default:
 		scanner_error_halt(yylloc, E_LS_NOT_INTEGER_VALUE);
