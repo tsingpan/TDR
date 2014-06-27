@@ -46,7 +46,7 @@ struct message
 */
 enum tconnd_instance_level
 {
-	e_low,
+	e_low = 0x7fffffff,
 	e_high,
 };
 const uint32 TONND_CONFIG_NUM = 1024;

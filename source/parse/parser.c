@@ -276,7 +276,8 @@ void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 	const syn_simple_type_t *type = NULL;
 	const char *type_name = NULL;
 	const char *real_type_name = NULL;
-	const char *arg = NULL;
+	const char *type_arg = NULL;
+	const char *real_type_arg = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
@@ -285,16 +286,16 @@ void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 
 	type = &union_field->simple_type;
 	real_type = symbols_get_real_type(&self->symbols, type);
-	get_simple_type(type, &type_name, &arg);
-	get_simple_type(real_type, &real_type_name, &arg);
+	get_simple_type(type, &type_name, &type_arg);
+	get_simple_type(real_type, &real_type_name, &real_type_arg);
 
 	if(union_field->comment.text[0])
 	{
-		sf_on_union_field(union_field->key, type_name, real_type_name, arg, union_field->name, union_field->comment.text);
+		sf_on_union_field(union_field->key, type_name, type_arg, real_type_name, real_type_arg, union_field->name, union_field->comment.text);
 	}
 	else
 	{
-		sf_on_union_field(union_field->key, type_name, real_type_name, arg, union_field->name, NULL);
+		sf_on_union_field(union_field->key, type_name, type_arg, real_type_name, real_type_arg, union_field->name, NULL);
 	}
 	
 }
@@ -379,7 +380,7 @@ void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 			get_simple_type(type, &type_name, &type_arg);
 			get_simple_type(real_type, &real_type_name, &real_type_arg);
 
-			sf_on_struct_vector_field(oper, op0, op1, type_name, real_type_name, type_arg, struct_field->type.ct.vector_length
+			sf_on_struct_vector_field(oper, op0, op1, type_name, type_arg, real_type_name, real_type_arg, struct_field->type.ct.vector_length
 				, struct_field->identifier, comment);
 		}
 	}
@@ -390,7 +391,7 @@ void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 		get_simple_type(type, &type_name, &type_arg);
 		get_simple_type(real_type, &real_type_name, &real_type_arg);
 
-		sf_on_struct_field(oper, op0, op1, type_name, real_type_name, type_arg
+		sf_on_struct_vector_field(oper, op0, op1, type_name, type_arg, real_type_name, real_type_arg, NULL
 			, struct_field->identifier, comment);
 	}
 }

@@ -39,85 +39,122 @@ function on_import(file)
 end
 
 function on_typedef(type, type_arg, newtype)
-	print(type, type_arg, newtype)
+	g_fout:write(type .. newtype)
 end
 
-function on_const(type, real_type, val, base)
-	print(type, real_type, val, base)
+function on_const(type, real_type, val, val_fmt)
+	if(val_fmt == 'bool')then
+		if(val)then
+			g_fout:write(type .. real_type .. 'true')
+		else
+			g_fout:write(type .. real_type .. 'false')
+		end
+	elseif(val_fmt == 'identifier')then
+		g_fout:write(type .. real_type .. val)
+	elseif(val_fmt == 'char')then
+		g_fout:write(type .. real_type .. string.format("'%q'", val))
+	elseif(val_fmt == 'string')then
+		g_fout:write(type .. real_type .. string.format('"%q"', val))
+	else
+		g_fout:write(type .. real_type .. string.format('%' .. val_fmt, val))
+	end
+	g_fout:write(type .. real_type .. val .. string.format(val_fmt, val))
 end
 
 function on_enum_begin(name)
-	print('enum ' .. name)
-	print('{')
+	g_fout:write('enum ' .. name)
+	g_fout:write('{')
 end
-
-function on_enum_field(name, val, base, comment)
-	print(name .. ' ' .. val)
+-- val 只可能是int32类型
+function on_enum_field(name, val, comment)
+	g_fout:write(name .. ' ' .. val)
 end
 
 function on_enum_end()
-	print('}')
+	g_fout:write('}')
 end
 
 function on_union_begin(name, etype)
-	print('union ' .. name .. ' ' .. etype)
-	print('{')
+	g_fout:write('union ' .. name .. ' ' .. etype)
+	g_fout:write('{')
 end
 
-function on_union_field(key, type, real_type, type_arg, name, comment)
-	print(key .. ' ' .. type .. ' ' .. real_type .. ' ' .. name)
+function on_union_field(key, type, type_arg, real_type, real_type_arg, name, comment)
+	g_fout:write(key .. ' ')
+	if(type_arg ~= nil)then
+		g_fout:write('char')
+	elseif(real_type_arg ~= nil)then
+		g_fout:write('char')
+	else
+		g_fout:write(type)
+	end
+
+	g_fout:write('    ' .. name)
+	if(vec_size ~= nil)then
+		g_fout:write('[' .. vec_size .. ']')
+	end
+
+	if(type_arg ~= nil)then
+		g_fout:write('[' ..  type_arg .. ']')
+	elseif(real_type_arg ~= nil)then
+		g_fout:write('[' ..  real_type_arg .. ']')
+	end
+
+	if(comment ~= nil)then
+		g_fout:write('//' .. comment)
+	end
+	g_fout:write('\n')
 end
 
 function on_union_end()
-	print('}')
+	g_fout:write('}')
 end
 
 
 function on_struct_begin(name)
-	print('struct ' .. name)
-	print('{')
+	g_fout:write('struct ' .. name)
+	g_fout:write('{')
 end
 
-function on_struct_vector_field(op, op0, op1_val, op1_base, vec_type, vec_real_type, vec_type_arg, vec_size, name, comment)
+function on_struct_field(op, op0, op1_val, op1_base, type, type_arg, real_type, real_type_arg, vec_size, name, comment)
 	if(op ~= nil)then
-		print('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
-		print('{')
+		g_fout:write('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
+		g_fout:write('{')
 	end
-	if(vec_type_arg ~= nil)then
-		print(vec_type .. '(' .. vec_real_type .. ') ' .. name .. '[' .. vec_size .. ']' .. '[' .. vec_type_arg .. ']')
-	else
-		print(vec_type .. '(' .. vec_real_type .. ') ' .. name .. '[' .. vec_size .. '] ')
-	end
-	if(comment ~= nil)then
-		print('//' .. comment)
-	end
-	if(op ~= nil)then
-		print('}')
-	end
-end
 
-function on_struct_field(op, op0, op1_val, op1_base, type, real_type, type_arg, name, comment)
-	if(op ~= nil)then
-		print('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_val .. ')')
-		print('{')
-	end
 	if(type_arg ~= nil)then
-		print(type .. '(' .. real_type .. ') ' .. name .. '[' .. type_arg .. ']')
+		g_fout:write('char')
+	elseif(real_type_arg ~= nil)then
+		g_fout:write('char')
 	else
-		print(type .. '(' .. real_type .. ') ' .. name)
+		g_fout:write(type)
 	end
+
+	g_fout:write('    ' .. name)
+	if(vec_size ~= nil)then
+		g_fout:write('[' .. vec_size .. ']')
+	end
+
+	if(type_arg ~= nil)then
+		g_fout:write('[' ..  type_arg .. ']')
+	elseif(real_type_arg ~= nil)then
+		g_fout:write('[' ..  real_type_arg .. ']')
+	end
+
 	if(comment ~= nil)then
-		print('//' .. comment)
+		g_fout:write('//' .. comment)
 	end
+
 	if(op ~= nil)then
-		print('}')
+		g_fout:write('}')
 	end
+	g_fout:write('\n')
 end
 
 function on_struct_end()
-	print('}')
+	g_fout:write('}')
 end
 
 function on_comment(comment)
-	print(comment)
+	g_fout:write(comment)
 end
