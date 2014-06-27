@@ -185,22 +185,12 @@ void sf_on_typedef(const syn_simple_type_t* type, const char* name)
 	lua_call(g_ls, 2, 0);
 }
 
-void sf_on_const(const syn_simple_type_t *type, const syn_simple_type_t *real_type, const syn_value_t *val)
+void sf_on_const(const syn_simple_type_t *type, const syn_value_t *val)
 {
 	lua_getglobal(g_ls, "on_const");
 	push_type(type);
-	if(real_type != NULL)
-	{
-		push_type(real_type);
-	}
-	else
-	{
-		lua_pushnil(g_ls);
-	}
-	
-	push_value(val);
-	
-	lua_call(g_ls, 3, 0);
+	push_value(val);	
+	lua_call(g_ls, 2, 0);
 }
 
 void sf_on_enum_begin(const char* name)
@@ -241,21 +231,11 @@ void sf_on_union_begin(const char* name, const char *etype)
 	lua_call(g_ls, 2, 0);
 }
 
-void sf_on_union_field(const char* key, const syn_simple_type_t *type, const syn_simple_type_t *real_type,
-					   const char* name, const char *comment)
+void sf_on_union_field(const char* key, const syn_simple_type_t *type, const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_union_field");
 	lua_pushstring(g_ls, key);
 	push_type(type);
-	if(real_type == NULL)
-	{
-		lua_pushnil(g_ls);
-	}
-	else
-	{
-		push_type(real_type);
-	}
-
 	lua_pushstring(g_ls, name);
 	if(comment)
 	{
@@ -265,7 +245,7 @@ void sf_on_union_field(const char* key, const syn_simple_type_t *type, const syn
 	{
 		lua_pushnil(g_ls);
 	}
-	lua_call(g_ls, 5, 0);
+	lua_call(g_ls, 4, 0);
 }
 
 void sf_on_union_end()
@@ -321,7 +301,7 @@ static void push_condition(const syn_condition_t *condition)
 done:
 	return;
 }
-void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_t *type, const syn_simple_type_t *real_type
+void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_t *type
 						, const char *vec_size, const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_struct_field");
@@ -335,14 +315,6 @@ void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_
 	}
 
 	push_type(type);
-	if(real_type != NULL)
-	{
-		push_type(real_type);
-	}
-	else
-	{
-		lua_pushnil(g_ls);
-	}
 
 	if(vec_size)
 	{
@@ -363,7 +335,7 @@ void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_
 		lua_pushnil(g_ls);
 	}
 	
-	lua_call(g_ls, 6, 0);
+	lua_call(g_ls, 5, 0);
 }
 
 

@@ -109,7 +109,7 @@ end
 function on_typedef(type, name)
 end
 
-function on_const(type, real_type, val)
+function on_const(type, val)
 end
 
 function on_enum_begin(name)
@@ -124,7 +124,7 @@ end
 function on_union_begin(name, etype)
 end
 
-function on_union_field(key, type, real_type, name, comment)
+function on_union_field(key, type, name, comment)
 end
 
 function on_union_end()
@@ -137,7 +137,7 @@ function on_struct_begin(name)
 	g_fout:write('\tjson_object *jo_val = NULL;\n')
 end
 
-function on_struct_field(condition, type, real_type, vec_size, name, comment)
+function on_struct_field(condition, type, vec_size, name, comment)
 	if(condition ~= nil)then
 		if(condition.oper ~= nil)then
 			op1_string = get_value_string(condition.op1)

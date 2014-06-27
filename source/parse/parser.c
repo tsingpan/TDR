@@ -158,7 +158,6 @@ void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef)
 
 void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 {
-	const syn_simple_type_t *real_type = NULL;
 	const syn_simple_type_t *type = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
@@ -167,12 +166,7 @@ void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 	}
 	
 	type = &syn_const->type;
-	real_type = symbols_get_real_type(&self->symbols, &syn_const->type);
-	if(type == real_type)
-	{
-		real_type = NULL;
-	}
-	sf_on_const(type, real_type, &syn_const->val);
+	sf_on_const(type, &syn_const->val);
 }
 
 void parser_on_enum_begin(PARSER *self, const char* name)
@@ -216,7 +210,6 @@ void parser_on_union_begin(PARSER *self, const char* name, const char *etype)
 void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 {
 	const syn_simple_type_t *type = NULL;
-	const syn_simple_type_t *real_type = NULL;
 	const char *comment = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
@@ -225,18 +218,13 @@ void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 	}
 
 	type = &union_field->simple_type;
-	real_type = symbols_get_real_type(&self->symbols, type);
-	if(type == real_type)
-	{
-		real_type = NULL;
-	}
 	
 	if(union_field->comment.text[0])
 	{
 		comment = union_field->comment.text;		
 	}
 
-	sf_on_union_field(union_field->key, type, real_type, union_field->name, comment);
+	sf_on_union_field(union_field->key, type, union_field->name, comment);
 }
 
 void parser_on_union_end(PARSER *self, const char* name)
@@ -262,7 +250,6 @@ void parser_on_struct_begin(PARSER *self, const char* name)
 void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 {
 	const syn_simple_type_t *type = NULL;
-	const syn_simple_type_t *real_type = NULL;		
 	const char *comment = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
@@ -284,26 +271,16 @@ void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 		if(struct_field->type.ct.ct == E_CT_VECTOR)
 		{
 			type = &struct_field->type.ct.vector_type;
-			real_type = symbols_get_real_type(&self->symbols, type);
-			if(type == real_type)
-			{
-				real_type = NULL;
-			}
 
-			sf_on_struct_field(&struct_field->condition, type, real_type, struct_field->type.ct.vector_length
+			sf_on_struct_field(&struct_field->condition, type, struct_field->type.ct.vector_length
 				, struct_field->identifier, comment);
 		}
 	}
 	else
 	{
 		type = &struct_field->type.st;
-		real_type = symbols_get_real_type(&self->symbols, type);
-		if(type == real_type)
-		{
-			real_type = NULL;
-		}
 
-		sf_on_struct_field(&struct_field->condition, type, real_type, NULL
+		sf_on_struct_field(&struct_field->condition, type, NULL
 			, struct_field->identifier, comment);
 	}
 }
