@@ -149,7 +149,13 @@ int main(int32_t argc, char *argv[])
 		}
 	}
 	
-	
+	if((generator == NULL) && (make_rule))
+	{
+		fprintf(stderr, "When specifying the -MMD parameter, you must specify a code generator.\n");
+		usage();
+		goto ERROR_RET;
+	}
+
 	if((generator == NULL) && (script == NULL))
 	{
 		fprintf(stderr, "Missing --gen=types or --lua=file\n");
