@@ -70,6 +70,7 @@ end
 
 function on_document_end()
 	g_fout.close()
+	make_rule(g_output_file)
 end
 
 function on_document_error()

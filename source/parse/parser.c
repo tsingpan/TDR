@@ -38,19 +38,19 @@ static void parser_push(PARSER *self, const char *file_name)
 	}
 }
 
-static void parser_make_rule(PARSER *self)
+void parser_make_rule(PARSER *self, const char *target_file)
 {
 	size_t i;
 	char filename[TDR_MAX_PATH_LENGTH];
 	FILE *fout;
-	snprintf(filename, TDR_MAX_PATH_LENGTH, "%s.%s", self->generator->target_filename, DEP_SUFFIX);
+	snprintf(filename, TDR_MAX_PATH_LENGTH, "%s.%s", target_file, DEP_SUFFIX);
 	fout = fopen(filename, "w");
 	if(fout == NULL)
 	{
 		scanner_error_halt(NULL, E_LS_CANNOT_OPEN_FILE, filename);
 	}
 
-	fprintf(fout, "%s: \\\n", self->generator->target_filename);
+	fprintf(fout, "%s: \\\n", target_file);
 	for(i = 0; i <self->scanner.file_vec_num; ++i)
 	{
 		fprintf(fout, "    %s\\\n", self->scanner.file_vec[i].file_name);
@@ -76,9 +76,9 @@ int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator
 	parser_on_document_begin(self, file_name);
 
 	ret = tdrparse(&self->scanner);
-	if((make_rule) && (self->generator))
+	if(make_rule)
 	{
-		parser_make_rule(self);
+		parser_make_rule(self, self->generator->target_filename);
 	}	
 	if(self->generator)
 	{

@@ -29,6 +29,7 @@ void parser_init(PARSER *self);
 
 int32_t parser_parse(PARSER *self, const char* file_name, generator_t *generator, int make_rule);
 void parser_on_generator_definition(PARSER *self, const YYLTYPE *yylloc, const syn_definition_t *pn_definition);
+void parser_make_rule(PARSER *self, const char *target_file);
 
 //通过以下接口可以生成所有的代码
 void parser_on_document_begin(PARSER *self, const char *file_name);

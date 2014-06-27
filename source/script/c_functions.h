@@ -10,4 +10,6 @@ void cf_init(lua_State *ls);
 
 int cf_error_halt(lua_State *ls);
 
+int cf_make_rule(lua_State *ls);
+
 #endif//_H_C_FUNCTIONS_H
