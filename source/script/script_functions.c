@@ -306,6 +306,9 @@ static void push_condition(const syn_condition_t *condition)
 	case E_EO_UNEQUAL:
 		lua_pushstring(g_ls, "!=");
 		break;
+	case E_EO_BOOL:
+		lua_pushnil(g_ls);
+		break;
 	default:
 		assert(0);
 	}

@@ -118,6 +118,7 @@ typedef enum syn_expression_oper_e
     E_EO_AND = 2,
     E_EO_EQUAL = 3,
 	E_EO_UNEQUAL = 4,
+	E_EO_BOOL = 5,
 }syn_expression_oper_t;
 typedef struct  syn_condition_s
 {

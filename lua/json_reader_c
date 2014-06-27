@@ -135,6 +135,9 @@ function on_union_field(key, type, real_type, name, comment)
 	type_string = get_type_string(type)
 
 	g_fout:write('    ' .. type_string .. ' ' .. name)
+	if(type.type == 'string')then
+		g_fout:write('[' .. type.length .. ']')
+	end
 
 	if(comment ~= nil)then
 		g_fout:write('//' .. comment)

@@ -129,6 +129,7 @@ void check_integer_type(const symbols_t *symbols, const YYLTYPE *yylloc, const s
 	case E_ST_UINT16:
 	case E_ST_UINT32:
 	case E_ST_UINT64:
+	case E_ST_BOOL:
 		break;
 	case E_ST_REFER:
 		{

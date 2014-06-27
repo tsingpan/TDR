@@ -144,12 +144,22 @@ static error_code_t _on_struct(generator_reader_c_t *self, const syn_struct_t *d
 			case E_EO_UNEQUAL:
 				op = "!=";
 				break;
+			case E_EO_BOOL:
+				op = NULL;
+				break;
 			default:
 				assert(0);
 			}
-			generator_print(&self->super, 0, "\tif(data->%s %s ", de_struct->field_list.field_list[i].condition.op0, op);
-			generator_print_value(&self->super, &de_struct->field_list.field_list[i].condition.op1);
-			generator_printline(&self->super, 0, ")");
+			if(op)
+			{
+				generator_print(&self->super, 0, "\tif(data->%s %s ", de_struct->field_list.field_list[i].condition.op0, op);
+				generator_print_value(&self->super, &de_struct->field_list.field_list[i].condition.op1);
+				generator_printline(&self->super, 0, ")");
+			}
+			else
+			{
+				generator_printline(&self->super, 0, "\tif(data->%s)", de_struct->field_list.field_list[i].condition.op0);
+			}
 		}
 		else
 		{

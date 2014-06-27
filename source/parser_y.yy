@@ -494,6 +494,14 @@ Condition :
 		$$.oper = E_EO_UNEQUAL;
 		$$.op1 = $5;
 	}
+|	tok_if '(' tok_identifier ')'
+	{
+		check_identifier_refer_to_a_field_with_integer_type(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.struct_name, $3);
+
+		$$.oper = E_EO_BOOL;
+		strncpy($$.op0, $3, TDR_MAX_LENGTH_OF_IDENTIFIER);
+		$$.op0[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	}
 |
 	{
 		$$.oper = E_EO_NON;
