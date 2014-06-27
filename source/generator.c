@@ -246,8 +246,8 @@ error_code_t generator_print_value(generator_t *self, const syn_value_t *val)
 {
 	switch (val->type)
 	{
-	case E_SNVT_IDENTIFIER:
-		fprintf(self->fout, "%s", val->val.identifier);
+	case E_SNVT_REFER:
+		fprintf(self->fout, "%s", val->val.refer);
 		return E_TD_NOERROR;
 	case E_SNVT_CHAR:
 		fputc('\'', self->fout);

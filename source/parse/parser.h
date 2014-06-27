@@ -9,7 +9,7 @@
 #include "symbols.h"
 #include "definition.h"
 
-
+#define STRING_LEN 10
 
 #define DEP_SUFFIX "d"
 

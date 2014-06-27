@@ -108,7 +108,6 @@ void parser_on_generator_definition(PARSER *self, const YYLTYPE *yylloc, const s
 
 
 //do
-
 void parser_on_document_begin(PARSER *self, const char *file_name)
 {
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
@@ -147,89 +146,33 @@ void parser_on_import(PARSER *self, const syn_import_t* syn_import)
 	sf_on_import(syn_import->package_name);
 }
 
-static void get_simple_type(const syn_simple_type_t *st, const char **type, const char **arg)
-{
-	*arg = NULL;
-	switch(st->st)
-	{
-	case E_ST_INT8:
-		*type = "int8";
-		break;
-	case E_ST_INT16:
-		*type = "int16";
-		break;
-	case E_ST_INT32:
-		*type = "int32";
-		break;
-	case E_ST_INT64:
-		*type = "int64";
-		break;
-	case E_ST_UINT8:
-		*type = "uint8";
-		break;
-	case E_ST_UINT16:
-		*type = "uint16";
-		break;
-	case E_ST_UINT32:
-		*type = "uint32";
-		break;
-	case E_ST_UINT64:
-		*type = "uint64";
-		break;
-	case E_ST_CHAR:
-		*type = "char";
-		break;
-	case E_ST_BOOL:
-		*type = "bool";
-		break;
-	case E_ST_DOUBLE:
-		*type = "double";
-		break;
-	case E_ST_STRING:
-		*type = "string";
-		*arg = st->string_length;
-		break;
-	case E_ST_REFER:
-		*type = st->st_refer;
-		break;
-	}
-}
 void parser_on_typedef(PARSER *self, const syn_typedef_t *syn_typedef)
 {
-	const char *type = NULL;
-	const char *arg = NULL;
-	const char *new_type = NULL;
-
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
-	get_simple_type(&syn_typedef->type, &type, &arg);
-	new_type = syn_typedef->name;
 
-	sf_on_typedef(type, arg, new_type);
+	sf_on_typedef(&syn_typedef->type, syn_typedef->name);
 }
 
 void parser_on_const(PARSER *self, const syn_const_t *syn_const)
 {
 	const syn_simple_type_t *real_type = NULL;
 	const syn_simple_type_t *type = NULL;
-	const char *type_name = NULL;
-	const char *real_type_name = NULL;
-	const char *arg = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
 		return;
 	}
-
 	
 	type = &syn_const->type;
 	real_type = symbols_get_real_type(&self->symbols, &syn_const->type);
-	get_simple_type(type, &type_name, &arg);
-	get_simple_type(real_type, &real_type_name, &arg);
-
-	sf_on_const(type_name, real_type_name, &syn_const->val);
+	if(type == real_type)
+	{
+		real_type = NULL;
+	}
+	sf_on_const(type, real_type, &syn_const->val);
 }
 
 void parser_on_enum_begin(PARSER *self, const char* name)
@@ -272,12 +215,9 @@ void parser_on_union_begin(PARSER *self, const char* name, const char *etype)
 
 void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 {
-	const syn_simple_type_t *real_type = NULL;
 	const syn_simple_type_t *type = NULL;
-	const char *type_name = NULL;
-	const char *real_type_name = NULL;
-	const char *type_arg = NULL;
-	const char *real_type_arg = NULL;
+	const syn_simple_type_t *real_type = NULL;
+	const char *comment = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
@@ -286,18 +226,17 @@ void parser_on_union_field(PARSER *self, const syn_union_field_t* union_field)
 
 	type = &union_field->simple_type;
 	real_type = symbols_get_real_type(&self->symbols, type);
-	get_simple_type(type, &type_name, &type_arg);
-	get_simple_type(real_type, &real_type_name, &real_type_arg);
-
-	if(union_field->comment.text[0])
+	if(type == real_type)
 	{
-		sf_on_union_field(union_field->key, type_name, type_arg, real_type_name, real_type_arg, union_field->name, union_field->comment.text);
-	}
-	else
-	{
-		sf_on_union_field(union_field->key, type_name, type_arg, real_type_name, real_type_arg, union_field->name, NULL);
+		real_type = NULL;
 	}
 	
+	if(union_field->comment.text[0])
+	{
+		comment = union_field->comment.text;		
+	}
+
+	sf_on_union_field(union_field->key, type, real_type, union_field->name, comment);
 }
 
 void parser_on_union_end(PARSER *self, const char* name)
@@ -320,35 +259,11 @@ void parser_on_struct_begin(PARSER *self, const char* name)
 	sf_on_struct_begin(name);
 }
 
-static const char* get_op_name(syn_expression_oper_t oper)
-{
-	switch (oper)
-	{
-	case E_EO_NON:
-		return NULL;
-	case E_EO_AND:
-		return "&";
-	case E_EO_EQUAL:
-		return "==";
-	case E_EO_UNEQUAL:
-		return "!=";
-	default:
-		return NULL;
-	}
-}
-
 void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 {
 	const syn_simple_type_t *type = NULL;
-	const char *type_name = NULL;
-	const char *type_arg = NULL;
 	const syn_simple_type_t *real_type = NULL;		
-	const char *real_type_name = NULL;
-	const char *real_type_arg = NULL;
 	const char *comment = NULL;
-	const char *oper = NULL;
-	const char *op0 = NULL;
-	const syn_value_t *op1 = NULL;
 
 	if((scanner_size(&self->scanner) != 1) || (g_ls == NULL))
 	{
@@ -363,24 +278,19 @@ void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 	{
 		comment = NULL;
 	}
-
-	oper = get_op_name(struct_field->condition.oper);
-	if(oper != NULL)
-	{
-		op0 = struct_field->condition.op0;
-		op1 = &struct_field->condition.op1;
-	}
-
+	
 	if(struct_field->type.type == E_SNT_CONTAINER)
 	{
 		if(struct_field->type.ct.ct == E_CT_VECTOR)
 		{
 			type = &struct_field->type.ct.vector_type;
 			real_type = symbols_get_real_type(&self->symbols, type);
-			get_simple_type(type, &type_name, &type_arg);
-			get_simple_type(real_type, &real_type_name, &real_type_arg);
+			if(type == real_type)
+			{
+				real_type = NULL;
+			}
 
-			sf_on_struct_vector_field(oper, op0, op1, type_name, type_arg, real_type_name, real_type_arg, struct_field->type.ct.vector_length
+			sf_on_struct_field(&struct_field->condition, type, real_type, struct_field->type.ct.vector_length
 				, struct_field->identifier, comment);
 		}
 	}
@@ -388,10 +298,12 @@ void parser_on_struct_field(PARSER *self, const syn_field_t* struct_field)
 	{
 		type = &struct_field->type.st;
 		real_type = symbols_get_real_type(&self->symbols, type);
-		get_simple_type(type, &type_name, &type_arg);
-		get_simple_type(real_type, &real_type_name, &real_type_arg);
+		if(type == real_type)
+		{
+			real_type = NULL;
+		}
 
-		sf_on_struct_vector_field(oper, op0, op1, type_name, type_arg, real_type_name, real_type_arg, NULL
+		sf_on_struct_field(&struct_field->condition, type, real_type, NULL
 			, struct_field->identifier, comment);
 	}
 }

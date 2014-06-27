@@ -34,13 +34,73 @@ void sf_on_import(const char* file)
 	lua_call(g_ls, 1, 0);
 }
 
-void sf_on_typedef(const char* type, const char* arg, const char* new_type)
+static void push_type(const syn_simple_type_t *st)
 {
-	lua_getglobal(g_ls, "on_typedef");
-	lua_pushstring(g_ls, type);
-	lua_pushstring(g_ls, arg);
-	lua_pushstring(g_ls, new_type);
-	lua_call(g_ls, 3, 0);
+	lua_newtable(g_ls);
+	lua_pushstring(g_ls, "type");	
+	switch(st->st)
+	{
+	case E_ST_INT8:
+		lua_pushstring(g_ls, "int8");
+		break;
+	case E_ST_INT16:
+		lua_pushstring(g_ls, "int16");
+		break;
+	case E_ST_INT32:
+		lua_pushstring(g_ls, "int32");
+		break;
+	case E_ST_INT64:
+		lua_pushstring(g_ls, "int64");
+		break;
+	case E_ST_UINT8:
+		lua_pushstring(g_ls, "uint8");
+		break;
+	case E_ST_UINT16:
+		lua_pushstring(g_ls, "uint16");
+		break;
+	case E_ST_UINT32:
+		lua_pushstring(g_ls, "uint32");
+		break;
+	case E_ST_UINT64:
+		lua_pushstring(g_ls, "uint64");
+		break;
+	case E_ST_CHAR:
+		lua_pushstring(g_ls, "char");
+		break;
+	case E_ST_BOOL:
+		lua_pushstring(g_ls, "bool");
+		break;
+	case E_ST_DOUBLE:
+		lua_pushstring(g_ls, "double");
+		break;
+	case E_ST_STRING:
+		lua_pushstring(g_ls, "string");
+		break;
+	case E_ST_REFER:
+		lua_pushstring(g_ls, "refer");//enum typedef struct union
+		break;
+	}
+	lua_settable(g_ls,-3);
+
+	if(st->st == E_ST_STRING)
+	{
+		lua_pushstring(g_ls, "length");
+		if(st->string_length[0])
+		{
+			lua_pushstring(g_ls, st->string_length);//const enum
+		}
+		else
+		{
+			lua_pushnil(g_ls);
+		}		
+		lua_settable(g_ls,-3);
+	}
+	else if(st->st == E_ST_REFER)
+	{
+		lua_pushstring(g_ls, "refer");
+		lua_pushstring(g_ls, st->st_refer);//enum typedef struct union
+		lua_settable(g_ls,-3);
+	}
 }
 
 static void push_value(const syn_value_t *val)
@@ -49,8 +109,8 @@ static void push_value(const syn_value_t *val)
 	lua_pushstring(g_ls, "type");
 	switch(val->type)
 	{
-	case E_SNVT_IDENTIFIER:			
-		lua_pushstring(g_ls, "identifier");
+	case E_SNVT_REFER:			
+		lua_pushstring(g_ls, "refer");
 		break;
 	case E_SNVT_CHAR:
 		lua_pushstring(g_ls, "char");	
@@ -81,8 +141,8 @@ static void push_value(const syn_value_t *val)
 	lua_pushstring(g_ls, "value");
 	switch(val->type)
 	{
-	case E_SNVT_IDENTIFIER:			
-		lua_pushstring(g_ls, val->val.identifier);
+	case E_SNVT_REFER:			
+		lua_pushstring(g_ls, val->val.refer);
 		break;
 	case E_SNVT_CHAR:
 		{
@@ -117,11 +177,27 @@ static void push_value(const syn_value_t *val)
 	lua_settable(g_ls,-3);
 }
 
-void sf_on_const(const char* type, const char* real_type, const syn_value_t *val)
+void sf_on_typedef(const syn_simple_type_t* type, const char* name)
+{
+	lua_getglobal(g_ls, "on_typedef");
+	push_type(type);
+	lua_pushstring(g_ls, name);
+	lua_call(g_ls, 2, 0);
+}
+
+void sf_on_const(const syn_simple_type_t *type, const syn_simple_type_t *real_type, const syn_value_t *val)
 {
 	lua_getglobal(g_ls, "on_const");
-	lua_pushstring(g_ls, type);
-	lua_pushstring(g_ls, real_type);
+	push_type(type);
+	if(real_type != NULL)
+	{
+		push_type(real_type);
+	}
+	else
+	{
+		lua_pushnil(g_ls);
+	}
+	
 	push_value(val);
 	
 	lua_call(g_ls, 3, 0);
@@ -138,8 +214,7 @@ void sf_on_enum_field(const enum_def_t* enum_def)
 {
 	lua_getglobal(g_ls, "on_enum_field");
 	lua_pushstring(g_ls, enum_def->identifier);
-	assert((enum_def->val.type == E_SNVT_INT64) || (enum_def->val.type == E_SNVT_HEX_INT64));
-	lua_pushinteger(g_ls, enum_def->val.val.i64);
+	push_value(&enum_def->val);
 	if(enum_def->comment.text[0])
 	{
 		lua_pushstring(g_ls, enum_def->comment.text);
@@ -166,31 +241,21 @@ void sf_on_union_begin(const char* name, const char *etype)
 	lua_call(g_ls, 2, 0);
 }
 
-void sf_on_union_field(const char* key, const char* type
-					   , const char* type_arg, const char* real_type, const char* real_type_arg
-					   , const char* name, const char *comment)
+void sf_on_union_field(const char* key, const syn_simple_type_t *type, const syn_simple_type_t *real_type,
+					   const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_union_field");
 	lua_pushstring(g_ls, key);
-	lua_pushstring(g_ls, type);
-	if(type_arg)
+	push_type(type);
+	if(real_type == NULL)
 	{
-		lua_pushstring(g_ls, type_arg);
+		lua_pushnil(g_ls);
 	}
 	else
 	{
-		lua_pushnil(g_ls);
+		push_type(real_type);
 	}
 
-	lua_pushstring(g_ls, real_type);
-	if(real_type_arg)
-	{
-		lua_pushstring(g_ls, real_type_arg);
-	}
-	else
-	{
-		lua_pushnil(g_ls);
-	}	
 	lua_pushstring(g_ls, name);
 	if(comment)
 	{
@@ -200,7 +265,7 @@ void sf_on_union_field(const char* key, const char* type
 	{
 		lua_pushnil(g_ls);
 	}
-	lua_call(g_ls, 7, 0);
+	lua_call(g_ls, 5, 0);
 }
 
 void sf_on_union_end()
@@ -216,38 +281,60 @@ void sf_on_struct_begin(const char* name)
 	lua_call(g_ls, 1, 0);
 }
 
-void sf_on_struct_vector_field(const char* op, const char* op0, const syn_value_t* op1
-							   , const char *type, const char *type_arg
-							   , const char *real_type, const char *real_type_arg
-							   , const char *vec_size, const char* name, const char *comment)
+static void push_condition(const syn_condition_t *condition)
+{
+	if(condition->oper == E_EO_NON)
+	{
+		lua_pushnil(g_ls);
+		goto done;
+	}
+	lua_newtable(g_ls);
+
+	lua_pushstring(g_ls, "op0");
+	lua_pushstring(g_ls, condition->op0);
+	lua_settable(g_ls, -3);
+
+	lua_pushstring(g_ls, "oper");
+	switch (condition->oper)
+	{
+	case E_EO_AND:
+		lua_pushstring(g_ls, "&");
+		break;
+	case E_EO_EQUAL:
+		lua_pushstring(g_ls, "==");
+		break;
+	case E_EO_UNEQUAL:
+		lua_pushstring(g_ls, "!=");
+		break;
+	default:
+		assert(0);
+	}
+	lua_settable(g_ls, -3);
+
+	lua_pushstring(g_ls, "op1");
+	push_value(&condition->op1);
+	lua_settable(g_ls, -3);
+
+done:
+	return;
+}
+void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_t *type, const syn_simple_type_t *real_type
+						, const char *vec_size, const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_struct_field");
-	if(op != NULL)
+	if((condition != NULL) && (condition->oper != E_EO_NON))
 	{
-		lua_pushstring(g_ls, op);
-		lua_pushstring(g_ls, op0);
-		push_value(op1);
-	}
-	else
-	{
-		lua_pushnil(g_ls);
-		lua_pushnil(g_ls);
-		lua_pushnil(g_ls);
-	}
-	lua_pushstring(g_ls, type);
-	if(type_arg != NULL)
-	{
-		lua_pushstring(g_ls, type_arg);
+		push_condition(condition);
 	}
 	else
 	{
 		lua_pushnil(g_ls);
 	}
 
-	lua_pushstring(g_ls, real_type);
-	if(real_type_arg != NULL)
+	push_type(type);
+	if(real_type != NULL)
 	{
-		lua_pushstring(g_ls, real_type_arg);
+		push_type(real_type);
 	}
 	else
 	{
@@ -273,7 +360,7 @@ void sf_on_struct_vector_field(const char* op, const char* op0, const syn_value_
 		lua_pushnil(g_ls);
 	}
 	
-	lua_call(g_ls, 10, 0);
+	lua_call(g_ls, 6, 0);
 }
 
 

@@ -14,7 +14,7 @@ typedef struct syn_unix_comment_s
 
 typedef enum syn_value_type_e
 {
-    E_SNVT_IDENTIFIER = 0,
+    E_SNVT_REFER = 0,
     E_SNVT_CHAR = 1,
 	E_SNVT_BOOL = 2,
     E_SNVT_DOUBLE = 3,
@@ -34,7 +34,7 @@ typedef union syn_value_body_u
     double d;
     char c;
 	int b;
-    char identifier[TDR_MAX_LENGTH_OF_IDENTIFIER];//const, enumdef
+    char refer[TDR_MAX_LENGTH_OF_IDENTIFIER];//const or enum
 }syn_value_body_t;
 
 typedef struct  syn_value_s

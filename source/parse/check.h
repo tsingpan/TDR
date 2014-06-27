@@ -26,10 +26,7 @@ void check_identifier_not_defined_as_value(const symbols_t *symbols, const YYLTY
 //检查符号是否指向一个正整数常量
 void check_identifier_is_non_zero_positive_integer(const symbols_t *symbols, const YYLTYPE *yylloc, const char *prefix, const char *identifier);
 
-//检查string长度定义
-void check_string_length_defined(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type);
-
-//检查string长度未定义
+//检查string长度是否定义
 void check_string_length(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type, int defined);
 
 //检查类型是整数

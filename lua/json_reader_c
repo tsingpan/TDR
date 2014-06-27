@@ -1,6 +1,60 @@
 g_output_file = ''
 g_fout = nil
 
+function get_value_string(val)
+	if(val.type == 'refer')then
+		return val.value
+	elseif(val.type == 'char')then
+		return string.format("'%q'", val.value)
+	elseif(val.type == 'bool')then
+		if(val.value)then
+			return 'true'
+		else
+			return 'false'
+		end
+	elseif(val.type == 'string')then
+		return string.format('"%q"', val.value)
+	elseif(val.type == 'int64')then
+		return string.format('%d', val.value)
+	elseif(val.type == 'hex_int64')then
+		return string.format('%X', val.value)
+	elseif(val.type == 'uint64')then
+		return string.format('%u', val.value)
+	elseif(val.type == 'hex_uint64')then
+		return string.format('%X', val.value)
+	end
+end
+
+function get_type_string(type)
+	if(type.type == 'int8')then
+		return 'int8'
+	elseif(type.type == 'int16')then
+		return 'int16'
+	elseif(type.type == 'int32')then
+		return 'int32'
+	elseif(type.type == 'int64')then
+		return 'int64'
+	elseif(type.type == 'uint8')then
+		return 'uint8'
+	elseif(type.type == 'uint16')then
+		return 'uint16'
+	elseif(type.type == 'uint32')then
+		return 'uint32'
+	elseif(type.type == 'uint64')then
+		return 'uint64'
+	elseif(type.type == 'char')then
+		return 'char'
+	elseif(type.type == 'string')then
+		return 'char'
+	elseif(type.type == 'double')then
+		return 'double'
+	elseif(type.type == 'bool')then
+		return 'bool'
+	elseif(type.type == 'refer')then
+		return type.refer
+	end
+end
+
 function on_document_begin(file)
 	len = string.len(file)
 	prefix = string.sub(file, 1, len - 4)
@@ -38,50 +92,33 @@ function on_import(file)
 	g_fout:write('#include "' .. real_file .. '"\n')
 end
 
-function on_typedef(type, type_arg, newtype)
-	g_fout:write(type .. newtype)
-end
-
-function get_value_string(val)
-	if(val ~= nil)then
-		if(val.type == 'identifier')then
-			return val.value
-		elseif(val.type == 'char')then
-			return string.format("'%q'", val.value)
-		elseif(val.type == 'bool')then
-			if(val.value)then
-				return 'true'
-			else
-				return 'false'
-			end
-		elseif(val.type == 'string')then
-			return string.format('"%q"', val.value)
-		elseif(val.type == 'int64')then
-			return string.format('%d', val.value)
-		elseif(val.type == 'hex_int64')then
-			return string.format('%X', val.value)
-		elseif(val.type == 'uint64')then
-			return string.format('%u', val.value)
-		elseif(val.type == 'hex_uint64')then
-			return string.format('%X', val.value)
-		end
-		print(val.type)
-		print(val.value)
-	end
+function on_typedef(type, name)
+	type_string = get_type_string(type)
+	g_fout:write(type_string .. name)
 end
 
 function on_const(type, real_type, val)
+	type_string = get_type_string(type)
+	if(real_type ~= nil)then
+		real_type_string = get_type_string(real_type)
+	else
+		real_type_string = ''
+	end
 	val_string = get_value_string(val)
-	g_fout:write(type .. real_type .. val_string)
+	g_fout:write(type_string .. real_type_string .. val_string)
 end
 
 function on_enum_begin(name)
 	g_fout:write('enum ' .. name)
 	g_fout:write('{')
 end
--- val 只可能是int32类型
+
 function on_enum_field(name, val, comment)
-	g_fout:write(name .. ' ' .. val)
+	val_string = get_value_string(val)
+	if(comment == nil)then
+		comment = ''
+	end
+	g_fout:write(name .. ' ' .. val_string .. ' ' .. comment)
 end
 
 function on_enum_end()
@@ -93,26 +130,11 @@ function on_union_begin(name, etype)
 	g_fout:write('{')
 end
 
-function on_union_field(key, type, type_arg, real_type, real_type_arg, name, comment)
+function on_union_field(key, type, real_type, name, comment)
 	g_fout:write(key .. ' ')
-	if(type_arg ~= nil)then
-		g_fout:write('char')
-	elseif(real_type_arg ~= nil)then
-		g_fout:write('char')
-	else
-		g_fout:write(type)
-	end
+	type_string = get_type_string(type)
 
-	g_fout:write('    ' .. name)
-	if(vec_size ~= nil)then
-		g_fout:write('[' .. vec_size .. ']')
-	end
-
-	if(type_arg ~= nil)then
-		g_fout:write('[' ..  type_arg .. ']')
-	elseif(real_type_arg ~= nil)then
-		g_fout:write('[' ..  real_type_arg .. ']')
-	end
+	g_fout:write('    ' .. type_string .. ' ' .. name)
 
 	if(comment ~= nil)then
 		g_fout:write('//' .. comment)
@@ -130,37 +152,28 @@ function on_struct_begin(name)
 	g_fout:write('{')
 end
 
-function on_struct_field(op, op0, op1, type, type_arg, real_type, real_type_arg, vec_size, name, comment)
-	if(op ~= nil)then
-		op1_string = get_value_string(op1)
-		g_fout:write('if ' .. ' (' .. op0 .. ' ' .. op .. ' ' .. op1_string .. ')')
+function on_struct_field(condition, type, real_type, vec_size, name, comment)
+	if(condition ~= nil)then
+		op1_string = get_value_string(condition.op1)
+		g_fout:write('if ' .. ' (' .. condition.op0 .. ' ' .. condition.oper .. ' ' .. op1_string .. ')')
 		g_fout:write('{')
 	end
 
-	if(type_arg ~= nil)then
-		g_fout:write('char')
-	elseif(real_type_arg ~= nil)then
-		g_fout:write('char')
-	else
-		g_fout:write(type)
-	end
+	type_string = get_type_string(type)
 
 	g_fout:write('    ' .. name)
 	if(vec_size ~= nil)then
 		g_fout:write('[' .. vec_size .. ']')
 	end
-
-	if(type_arg ~= nil)then
-		g_fout:write('[' ..  type_arg .. ']')
-	elseif(real_type_arg ~= nil)then
-		g_fout:write('[' ..  real_type_arg .. ']')
+	if(type.type == 'string')then
+		g_fout:write('[' .. type.length .. ']')
 	end
 
 	if(comment ~= nil)then
 		g_fout:write('//' .. comment)
 	end
 
-	if(op ~= nil)then
+	if(condition ~= nil)then
 		g_fout:write('}')
 	end
 	g_fout:write('\n')

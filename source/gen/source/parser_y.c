@@ -1936,7 +1936,7 @@ yyreduce:
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.union_name, (yyvsp[(1) - (6)].sn_tok_identifier));
 
-		check_string_length_defined(&yylloc, &(yyvsp[(3) - (6)].sn_simple_type));
+		check_string_length(&yylloc, &(yyvsp[(3) - (6)].sn_simple_type), TRUE);
 
 		reduce_UnionField(&(yyval.sn_union_field), (yyvsp[(1) - (6)].sn_tok_identifier), &(yyvsp[(3) - (6)].sn_simple_type), (yyvsp[(4) - (6)].sn_tok_identifier), &(yyvsp[(6) - (6)].sn_unix_comment));
 
@@ -2068,7 +2068,7 @@ yyreduce:
 
 		if((yyvsp[(2) - (6)].sn_type).type == E_SNT_SIMPLE)
 		{
-			check_string_length_defined(&yylloc, &(yyvsp[(2) - (6)].sn_type).st);
+			check_string_length(&yylloc, &(yyvsp[(2) - (6)].sn_type).st, TRUE);
 		}
 
 		check_arguments(&GET_SYMBOLS, &yylloc, &(yyvsp[(2) - (6)].sn_type), &(yyvsp[(4) - (6)].sn_arguments));
@@ -2171,7 +2171,7 @@ yyreduce:
 
 		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", (yyvsp[(5) - (6)].sn_tok_identifier));
 
-		check_string_length_defined(&yylloc, &(yyvsp[(3) - (6)].sn_simple_type));
+		check_string_length(&yylloc, &(yyvsp[(3) - (6)].sn_simple_type), TRUE);
 
 		reduce_ContainerType_tok_t_vector(&(yyval.sn_type), &(yyvsp[(3) - (6)].sn_simple_type), (yyvsp[(5) - (6)].sn_tok_identifier));
 	}

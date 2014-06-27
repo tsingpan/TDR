@@ -325,7 +325,7 @@ UnionField :
 
 		check_identifier_not_defined(&GET_SYMBOLS, &yylloc, GET_SYMBOLS.union_name, $1);
 
-		check_string_length_defined(&yylloc, &$3);
+		check_string_length(&yylloc, &$3, TRUE);
 
 		reduce_UnionField(&$$, $1, &$3, $4, &$6);
 
@@ -437,7 +437,7 @@ Field :
 
 		if($2.type == E_SNT_SIMPLE)
 		{
-			check_string_length_defined(&yylloc, &$2.st);
+			check_string_length(&yylloc, &$2.st, TRUE);
 		}
 
 		check_arguments(&GET_SYMBOLS, &yylloc, &$2, &$4);
@@ -521,7 +521,7 @@ ContainerType:
 
 		check_identifier_is_non_zero_positive_integer(&GET_SYMBOLS, &yylloc, "", $5);
 
-		check_string_length_defined(&yylloc, &$3);
+		check_string_length(&yylloc, &$3, TRUE);
 
 		reduce_ContainerType_tok_t_vector(&$$, &$3, $5);
 	};

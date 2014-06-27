@@ -86,21 +86,6 @@ void check_identifier_is_non_zero_positive_integer(const symbols_t *symbols, con
 	}
 }
 
-void check_string_length_defined(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type)
-{
-	if(symbol_type->st != E_ST_STRING)
-	{
-		goto done;
-	}
-
-	if(symbol_type->string_length[0] == 0)
-	{
-		scanner_error_halt(yylloc, E_LS_STRING_LENGTH_NOT_DEFINED);
-	}
-done:
-	return;
-}
-
 //检查string长度是否定义
 void check_string_length(const YYLTYPE *yylloc, const syn_simple_type_t *symbol_type, int defined)
 {

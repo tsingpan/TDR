@@ -87,9 +87,9 @@ const syn_simple_type_t* symbols_get_real_type(const symbols_t *self, const syn_
 
 const syn_value_t* symbols_get_real_value(const symbols_t *self, const syn_value_t* sn_value)
 {
-	if(sn_value->type == E_SNVT_IDENTIFIER)
+	if(sn_value->type == E_SNVT_REFER)
 	{
-		const symbol_t *ptr = symbols_search(self, "", sn_value->val.identifier);
+		const symbol_t *ptr = symbols_search(self, "", sn_value->val.refer);
 		if(ptr == NULL)
 		{
 			return NULL;

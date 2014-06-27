@@ -16,7 +16,8 @@ struct login_req
 	string<MAX_NAME_LENGTH> password;
 	uint8			age;
 };
-
+const uint32 STRING_LEN = 1024;
+typedef string<STRING_LEN> TEST_STRING_T;
 typedef int32 bool_t;
 struct login_rsp
 {

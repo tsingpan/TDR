@@ -97,9 +97,9 @@ void reduce_Type_SimpleType(syn_type_t *current, const syn_simple_type_t *simple
 
 void reduce_Value_tok_identifier(syn_value_t* current, const char *sn_identifier)
 {
-	current->type = E_SNVT_IDENTIFIER;
-	strncpy(current->val.identifier, sn_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
-	current->val.identifier[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
+	current->type = E_SNVT_REFER;
+	strncpy(current->val.refer, sn_identifier, TDR_MAX_LENGTH_OF_IDENTIFIER);
+	current->val.refer[TDR_MAX_LENGTH_OF_IDENTIFIER - 1] = 0;
 }
 
 void reduce_Value_tok_char(syn_value_t* current, const char pn_char)
