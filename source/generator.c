@@ -281,6 +281,16 @@ error_code_t generator_print_value(generator_t *self, const syn_value_t *val)
 	case E_SNVT_HEX_UINT64:
 		fprintf(self->fout, "0x%"PRIx64, val->val.ui64);
 		return E_TD_NOERROR;
+	case E_SNVT_BOOL:
+		if(val->val.b)
+		{
+			fprintf(self->fout, "true");
+		}
+		else
+		{
+			fprintf(self->fout, "false");
+		}
+		return E_TD_NOERROR;
 	default:
 		return E_TD_ERROR;		
 	}
