@@ -18,7 +18,7 @@ lua_State* g_ls = NULL;
 
 static int script_error(lua_State *L)
 {
-	scanner_error_halt(&g_yyloc, E_LS_SCRIPT_ERROR, lua_tostring(L, -1));
+	scanner_script_error_halt(&g_yyloc, E_LS_SCRIPT_ERROR, lua_tostring(L, -1));
 	return 1;
 }
 

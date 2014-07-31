@@ -11,25 +11,47 @@
 void sf_on_document_begin(const char* file)
 {
 	lua_getglobal(g_ls, "on_document_begin");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, file);
 	lua_call(g_ls, 1, 0);
+done:
+	return;
 }
 
 void sf_on_document_error()
 {
 	lua_getglobal(g_ls, "on_document_error");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_call(g_ls, 0, 0);
 }
 
 void sf_on_document_end()
 {
 	lua_getglobal(g_ls, "on_document_end");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_call(g_ls, 0, 0);
 }
 
 void sf_on_import(const char* file)
 {
 	lua_getglobal(g_ls, "on_import");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, file);
 	lua_call(g_ls, 1, 0);
 }
@@ -180,6 +202,11 @@ static void push_value(const syn_value_t *val)
 void sf_on_typedef(const syn_simple_type_t* type, const char* name)
 {
 	lua_getglobal(g_ls, "on_typedef");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	push_type(type);
 	lua_pushstring(g_ls, name);
 	lua_call(g_ls, 2, 0);
@@ -188,6 +215,11 @@ void sf_on_typedef(const syn_simple_type_t* type, const char* name)
 void sf_on_const(const syn_simple_type_t *type, const syn_value_t *val)
 {
 	lua_getglobal(g_ls, "on_const");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	push_type(type);
 	push_value(val);	
 	lua_call(g_ls, 2, 0);
@@ -196,6 +228,11 @@ void sf_on_const(const syn_simple_type_t *type, const syn_value_t *val)
 void sf_on_enum_begin(const char* name)
 {
 	lua_getglobal(g_ls, "on_enum_begin");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, name);
 	lua_call(g_ls, 1, 0);
 }
@@ -203,6 +240,11 @@ void sf_on_enum_begin(const char* name)
 void sf_on_enum_field(const enum_def_t* enum_def)
 {
 	lua_getglobal(g_ls, "on_enum_field");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, enum_def->identifier);
 	push_value(&enum_def->val);
 	if(enum_def->comment.text[0])
@@ -220,12 +262,22 @@ void sf_on_enum_field(const enum_def_t* enum_def)
 void sf_on_enum_end()
 {
 	lua_getglobal(g_ls, "on_enum_end");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_call(g_ls, 0, 0);
 }
 
 void sf_on_union_begin(const char* name, const char *etype)
 {
 	lua_getglobal(g_ls, "on_union_begin");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, name);
 	lua_pushstring(g_ls, etype);
 	lua_call(g_ls, 2, 0);
@@ -234,6 +286,11 @@ void sf_on_union_begin(const char* name, const char *etype)
 void sf_on_union_field(const char* key, const syn_simple_type_t *type, const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_union_field");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, key);
 	push_type(type);
 	lua_pushstring(g_ls, name);
@@ -251,12 +308,22 @@ void sf_on_union_field(const char* key, const syn_simple_type_t *type, const cha
 void sf_on_union_end()
 {
 	lua_getglobal(g_ls, "on_union_end");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_call(g_ls, 0, 0);
 }
 
 void sf_on_struct_begin(const char* name)
 {
 	lua_getglobal(g_ls, "on_struct_begin");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, name);
 	lua_call(g_ls, 1, 0);
 }
@@ -305,6 +372,11 @@ void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_
 						, const char *vec_size, const char* name, const char *comment)
 {
 	lua_getglobal(g_ls, "on_struct_field");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	if((condition != NULL) && (condition->oper != E_EO_NON))
 	{
 		push_condition(condition);
@@ -342,12 +414,22 @@ void sf_on_struct_field(const syn_condition_t *condition, const syn_simple_type_
 void sf_on_struct_end()
 {
 	lua_getglobal(g_ls, "on_struct_end");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_call(g_ls, 0, 0);
 }
 
 void sf_on_comment(const char *comment)
 {
 	lua_getglobal(g_ls, "on_comment");
+	if(lua_isnil(g_ls, -1))
+	{
+		return;
+	}
+
 	lua_pushstring(g_ls, comment);
 	lua_call(g_ls, 1, 0);
 }

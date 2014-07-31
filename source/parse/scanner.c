@@ -303,6 +303,15 @@ void scanner_error(const YYLTYPE *yylloc, language_string_t result, ...)
 	va_end(ap);
 }
 
+void scanner_script_error_halt(const YYLTYPE *yylloc, language_string_t result, ...)
+{
+	va_list ap;
+	va_start(ap, result);
+	scanner_error_ap(yylloc, result, ap);
+	va_end(ap);
+
+	exit(result);
+}
 
 void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...) 
 {

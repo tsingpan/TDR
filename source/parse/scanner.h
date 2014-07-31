@@ -124,6 +124,8 @@ void scanner_error(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
 void scanner_error_halt(const YYLTYPE *yylloc, language_string_t result, ...);
 //此函数会调用exit
+void scanner_script_error_halt(const YYLTYPE *yylloc, language_string_t result, ...);
+//此函数会调用exit
 void tdrerror(const YYLTYPE *yylloc, scanner_t *self, const char *s, ...);
 
 #endif//_H_SCANNER
