@@ -13,7 +13,7 @@ void sf_on_document_begin(const char* file)
 	lua_getglobal(g_ls, "on_document_begin");
 	if(lua_isnil(g_ls, -1))
 	{
-		return;
+		goto done;
 	}
 
 	lua_pushstring(g_ls, file);
