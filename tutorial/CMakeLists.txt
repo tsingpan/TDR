@@ -6,7 +6,6 @@ FILE(GLOB_RECURSE FILE_LIST *.h *.c)
 SET(CMAKE_MODULE_PATH "${Example_SOURCE_DIR}/cmake/Modules/;${CMAKE_MODULE_PATH}" )
 
 find_package(TDR REQUIRED)
-find_package(TLibC REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(ZLIB REQUIRED)
 
@@ -28,7 +27,7 @@ ENDIF()
 
 set(GEN_PATH ${Example_BINARY_DIR}/gen)
 INCLUDE_DIRECTORIES(
-	${TLIBC_INCLUDE_DIR}
+	/usr/local/tsf4g/include
 	${GEN_PATH}/
 	${ZLIB_INCLUDE_DIRS}
 	${MYSQL_INCLUDE_DIR}
@@ -62,4 +61,4 @@ add_custom_command(OUTPUT ${TDR_OUTPUTS}
 )
 
 ADD_EXECUTABLE(Example ${FILE_LIST} ${TDR_OUTPUTS})
-TARGET_LINK_LIBRARIES(Example ${ZLIB_LIBRARIES} ${MYSQL_LIBRARIES} ${TLIBC_LIBRARIES})
+TARGET_LINK_LIBRARIES(Example ${ZLIB_LIBRARIES} ${MYSQL_LIBRARIES} /usr/local/tsf4g/lib/libtlibc.a)
