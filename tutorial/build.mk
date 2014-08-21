@@ -9,7 +9,7 @@ SOURCES?=.
 
 CFLAGS?=-Wall -Wconversion -Wcast-qual -Wpointer-arith -Wredundant-decls -Wmissing-declarations -Werror --pipe -fno-common
 
-ifdef debug
+ifndef release
 DEBUG_CFLAGS=-g3 -ggdb3 -DMAKE_DEBUG
 else
 DEBUG_CFLAGS=-O3 -DMAKE_RELEASE

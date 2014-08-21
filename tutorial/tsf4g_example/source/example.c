@@ -24,13 +24,6 @@
 
 #include <assert.h>
 
-/*
-#include "sql_types.h"
-#include "sql_writer.h"
-#include "sql_reader.h"
-#include "mysql.h"
-*/
-
 
 #include <string.h>
 #include <time.h>
@@ -164,15 +157,9 @@ done:
 	return ret;
 }
 
-#define MAX_XML_FILES 100000
-//it takes 7 seconds by reading 100000 xml.
-//k480n-i7 debian 32
 #define XML_OUTPUT_BUF 65536
 static void test_xml()
 {
-	size_t i;
-	time_t start_time;
-	time_t current_time;
 	tlibc_xml_reader_t xml_reader;
 	tlibc_xml_writer_t xml_writer;
 	int ret;
@@ -212,21 +199,12 @@ static void test_xml()
 	memset(&config, 1, sizeof(tconnd_config_t));
 	bret = read_xml_from_file("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 
-	memset(&config, 0, sizeof(tconnd_config_t));
-	start_time = time(0);
-	for(i = 0; i < MAX_XML_FILES; ++i)
-	{
-		bret = read_xml_from_file("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
-	}
-	current_time = time(0);
-	printf("it takes %u seconds by reading %lu xml.\n", (uint32_t)(current_time - start_time), i);
-
 
 	memset(&config, 0, sizeof(tconnd_config_t));
 	//用下面这个命令可以来添加查找包含文件的目录
 	tlibc_xml_reader_init(&xml_reader);
-	ret = tlibc_xml_add_include(&xml_reader, "./gen");
-	ret = tlibc_xml_reader_push_file(&xml_reader, "./gen/tconnd_inc.xml");
+	ret = tlibc_xml_add_include(&xml_reader, "./etc");
+	ret = tlibc_xml_reader_push_file(&xml_reader, "./etc/tconnd_inc.xml");
 	ret = tlibc_read_tconnd_config(&xml_reader.super, &config);
 	tlibc_xml_reader_pop_file(&xml_reader);
 }
@@ -300,176 +278,12 @@ done:
 	return ret;
 }
 
-#define MAX_XLSX_FILES 100
-//item.xlsx have 20002 rows
-//it takes 10 seconds by reading 100 xlsx.
-//k480n-i7 debian 32
 static void test_xlsx()
 {
-	uint32_t i;
-	time_t start_time;
-	time_t current_time;
-
-	start_time = time(0);
-	for(i = 0; i < MAX_XLSX_FILES; ++i)
-	{
-		g_item_table_num = MAX_ITEM_NUM;
-		read_xlsx("./gen/item.xlsx", (char*)g_item_table, sizeof(item_table_t), &g_item_table_num, (reader_func)tlibc_read_item_table);
-	}
-	current_time = time(0);
-	printf("it takes %u seconds by reading %u xlsx.\n", (uint32_t)(current_time - start_time), i);
-	
+	g_item_table_num = MAX_ITEM_NUM;
+	read_xlsx("./etc/item.xlsx", (char*)g_item_table, sizeof(item_table_t), &g_item_table_num, (reader_func)tlibc_read_item_table);
 }
 
-/*
-void test_mysql_insert()
-{
-	tlibc_error_code_t ret;
-	MYSQL *mysql = NULL;	
-	const char *sql_insert = "insert into user value(?, ?, ?, ?);";
-	MYSQL_STMT *stmt;
-	int iret;
-	user_t user;
-
-	MYSQL_BIND   par_bind[1024];
-
-	tlibc_mybind_reader_t bind_reader;
-
-	mysql = mysql_init(NULL);
-	if(mysql == NULL)
-	{		
-		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
-		, 3306, NULL, 0) == NULL)
-	{
-		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	stmt = mysql_stmt_init(mysql);
-	if(stmt == NULL)
-	{
-		printf("mysql_stmt_init Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	if(mysql_stmt_prepare(stmt, sql_insert, strlen(sql_insert)))
-	{
-		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	memset(&par_bind, 0, sizeof(par_bind));
-	tlibc_mybind_reader_init(&bind_reader, par_bind, sizeof(par_bind));
-	user.id = 2;
-	user.exp = 123.321;
-	user.gold = UINT32_MAX;
-	snprintf(user.username, MAX_NAME_LENGTH, "xiaoxingxing");
-
-	ret = tlibc_read_user(&bind_reader.super, &user);
-	iret = mysql_stmt_bind_param(stmt, par_bind);
-	if(iret)
-	{
-		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-	
-	
-
-
-	iret = mysql_stmt_execute(stmt);
-	if(iret != 0)
-	{
-		printf("mysql_real_query Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	mysql_stmt_close(stmt);
-	mysql_close(mysql);
-}
-
-void test_mysql_select()
-{
-	tlibc_error_code_t ret;
-	MYSQL *mysql = NULL;	
-	const char *sql_insert = "select * from user_s;";
-	MYSQL_STMT *stmt;
-	int iret;
-	user_t user;
-
-	MYSQL_BIND   res_bind[1024];
-
-	tlibc_mybind_writer_t bind_writer;
-
-	mysql = mysql_init(NULL);
-	if(mysql == NULL)
-	{		
-		printf("mysql_client_init Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	if(mysql_real_connect(mysql, "192.168.0.71", "tsqld", "tsqld", "testdb"
-		, 3306, NULL, 0) == NULL)
-	{
-		printf("mysql_real_connect Error %u: %s", mysql_errno(mysql), mysql_error(mysql));
-		exit(1);
-	}
-
-	stmt = mysql_stmt_init(mysql);
-	if(stmt == NULL)
-	{
-		printf("mysql_stmt_init Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	if(mysql_stmt_prepare(stmt, sql_insert, strlen(sql_insert)))
-	{
-		printf("mysql_stmt_prepare Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	memset(&res_bind, 0, sizeof(res_bind));
-	tlibc_mybind_writer_init(&bind_writer, res_bind, sizeof(res_bind));
-	ret = tlibc_write_user(&bind_writer.super, &user);
-	iret = mysql_stmt_bind_result(stmt, res_bind);
-	if(iret)
-	{
-		printf("mysql_stmt_bind_param Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-	iret = mysql_stmt_execute(stmt);
-	if(iret != 0)
-	{
-		printf("mysql_real_query Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-		exit(1);
-	}
-
-
-	iret = mysql_stmt_store_result(stmt);
-	if(iret)
-	{
-			printf("mysql_stmt_store_result Error %u: %s", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-			exit(1);
-	}
-
-	for(;;)
-	{
-		memset(&user, 0, sizeof(user));
-		if(mysql_stmt_fetch(stmt) == MYSQL_NO_DATA)
-		{
-			break;
-		}
-		printf("%u\n", user.id);
-	}
-	mysql_stmt_free_result(stmt);
-	mysql_stmt_close(stmt);
-	mysql_close(mysql);
-}
-*/
 
 int main()
 {	
@@ -479,10 +293,5 @@ int main()
 	
 	test_xlsx();
 
-	/*
-	test_mysql_insert();
-
-	test_mysql_select();
-	*/	
 	return 0;
 }
