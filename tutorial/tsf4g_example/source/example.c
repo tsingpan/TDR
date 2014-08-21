@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include "platform/tlibc_platform.h"
-#include "core/tlibc_error_code.h"
+#include "tlibc_error_code.h"
 #include "core/tlibc_string.h"
 
 #include "protocol/tlibc_xml_reader.h"
@@ -21,6 +20,7 @@
 #include "protocol_types.h"
 #include "protocol_writer.h"
 #include "protocol_reader.h"
+#include <stdbool.h>
 
 #include <assert.h>
 
@@ -36,7 +36,7 @@
 #include <time.h>
 
 #define MAX_BUFF_SIZE 1024
-void test_compact()
+static void test_compact()
 {
 	char buff[MAX_BUFF_SIZE];
 	tlibc_compact_writer_t compact_writer;
@@ -57,7 +57,7 @@ void test_compact()
 	ret = tlibc_read_message(&compact_reader.super, &message);
 }
 
-void test_binary()
+static void test_binary()
 {
 	char buff[MAX_BUFF_SIZE];
 	tlibc_binary_writer_t writer;
@@ -78,7 +78,7 @@ void test_binary()
 	ret = tlibc_read_message(&reader.super, &message);
 }
 
-void test_protocol()
+static void test_protocol()
 {
 	//compact型协议具有简单的压缩数据功能， 同时处理速度也非常快， 适合外网数据的传输
 	test_compact();
@@ -89,16 +89,16 @@ void test_protocol()
 
 
 typedef tlibc_error_code_t (*reader_func)(tlibc_abstract_reader_t *self, void *data);
-int read_xml_from_file(const char* file, void *ptr, reader_func reader)
+static int read_xml_from_file(const char* file, void *ptr, reader_func reader)
 {
-	int ret = TRUE;
+	bool ret = true;
 	tlibc_xml_reader_t xml_reader;
 	tlibc_error_code_t r;
 
 	tlibc_xml_reader_init(&xml_reader);	
 	if(tlibc_xml_reader_push_file(&xml_reader, "tconnd.xml") != E_TLIBC_NOERROR)
 	{
-		ret = FALSE;
+		ret = false;
 		goto done;
 	}
 
@@ -118,7 +118,7 @@ int read_xml_from_file(const char* file, void *ptr, reader_func reader)
 			fprintf(stderr, "%s %s", file, tstrerror(r));
 		}   	
 
-		ret = FALSE;
+		ret = false;
 		goto pop_file;
 	}
 pop_file:
@@ -127,16 +127,16 @@ done:
 	return ret;
 }
 
-int read_xml_from_buff(const char* start, const char*limit, void *ptr, reader_func reader)
+static int read_xml_from_buff(const char* start, const char*limit, void *ptr, reader_func reader)
 {
-	int ret = TRUE;
+	int ret = true;
 	tlibc_xml_reader_t xml_reader;
 	tlibc_error_code_t r;
 
 	tlibc_xml_reader_init(&xml_reader);	
 	if(tlibc_xml_reader_push_buff(&xml_reader, start, limit) != E_TLIBC_NOERROR)
 	{
-		ret = FALSE;
+		ret = false;
 		goto done;
 	}
 
@@ -155,7 +155,7 @@ int read_xml_from_buff(const char* start, const char*limit, void *ptr, reader_fu
 			fprintf(stderr, "%s", tstrerror(r));
 		}   	
 
-		ret = FALSE;
+		ret = false;
 		goto pop_file;
 	}
 pop_file:
@@ -168,7 +168,7 @@ done:
 //it takes 7 seconds by reading 100000 xml.
 //k480n-i7 debian 32
 #define XML_OUTPUT_BUF 65536
-void test_xml()
+static void test_xml()
 {
 	size_t i;
 	time_t start_time;
@@ -219,7 +219,7 @@ void test_xml()
 		bret = read_xml_from_file("tconnd.xml", &config, (reader_func)tlibc_read_tconnd_config);
 	}
 	current_time = time(0);
-	printf("it takes %u seconds by reading %u xml.\n", (uint32_t)(current_time - start_time), i);
+	printf("it takes %u seconds by reading %lu xml.\n", (uint32_t)(current_time - start_time), i);
 
 
 	memset(&config, 0, sizeof(tconnd_config_t));
@@ -235,9 +235,9 @@ item_table_t g_item_table[MAX_ITEM_NUM];
 size_t g_item_table_num;
 #define COL_STR_LEN 1024
 
-int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, reader_func reader)
+static int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, reader_func reader)
 {
-	int ret = TRUE;
+	bool ret = true;
 	tlibc_xlsx_reader_t xlsx_reader;
 	uint32_t i;
 	tlibc_error_code_t r;
@@ -247,13 +247,13 @@ int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, 
 	r = tlibc_xlsx_reader_init(&xlsx_reader, file);
 	if(r != E_TLIBC_NOERROR)
 	{
-		ret = FALSE;
+		ret = false;
 		goto done;
 	}
 	r = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
 	if(r != E_TLIBC_NOERROR)
 	{
-		ret = FALSE;
+		ret = false;
 		goto fini;
 	}
 	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
@@ -262,7 +262,7 @@ int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, 
 		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);	
 		if(num >= *list_num)
 		{
-			ret = FALSE;
+			ret = false;
 			goto close_sheet;
 		}
 		r = reader(&xlsx_reader.super, list + unit_size * num);
@@ -275,7 +275,7 @@ int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, 
 		{
 			size_t col = tlibc_xlsx_current_col(&xlsx_reader);
 			char col_str[COL_STR_LEN];
-			const char* col_str_ptr = tlibc_xlsx_num2str(col, col_str, COL_STR_LEN);
+			const char* col_str_ptr = tlibc_xlsx_num2str((int)col, col_str, COL_STR_LEN);
 
 			if(col_str_ptr != NULL)
 			{
@@ -285,7 +285,7 @@ int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, 
 			{
 				fprintf(stderr, "?%d, %s\n", i, tstrerror(r));
 			}
-			ret = FALSE;
+			ret = false;
 			goto close_sheet;
 		}
 		++num;
@@ -304,7 +304,7 @@ done:
 //item.xlsx have 20002 rows
 //it takes 10 seconds by reading 100 xlsx.
 //k480n-i7 debian 32
-void test_xlsx()
+static void test_xlsx()
 {
 	uint32_t i;
 	time_t start_time;
