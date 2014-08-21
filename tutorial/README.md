@@ -1,4 +1,3 @@
 Tutorial
 ========
-教学程序暂时不可编译， 请参考TSF4G和PServer中使用的例子。
-
+	璇︾粏鐨勬暀瀛︾▼搴忚鍙傝�僛tsf4g](https://github.com/randyliu/TSF4G)
