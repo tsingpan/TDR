@@ -22,12 +22,14 @@
 #include "protocol_writer.h"
 #include "protocol_reader.h"
 
+#include <assert.h>
+
+/*
 #include "sql_types.h"
 #include "sql_writer.h"
 #include "sql_reader.h"
-
-#include <assert.h>
 #include "mysql.h"
+*/
 
 
 #include <string.h>
@@ -319,6 +321,7 @@ void test_xlsx()
 	
 }
 
+/*
 void test_mysql_insert()
 {
 	tlibc_error_code_t ret;
@@ -466,6 +469,7 @@ void test_mysql_select()
 	mysql_stmt_close(stmt);
 	mysql_close(mysql);
 }
+*/
 
 int main()
 {	
