@@ -13,10 +13,6 @@
 
 #include "protocol/tlibc_xlsx_reader.h"
 
-
-#include "protocol/tlibc_mybind_reader.h"
-#include "protocol/tlibc_mybind_writer.h"
-
 #include "protocol_types.h"
 #include "protocol_writer.h"
 #include "protocol_reader.h"
