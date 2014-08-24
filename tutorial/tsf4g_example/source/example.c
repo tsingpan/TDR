@@ -13,6 +13,8 @@
 
 #include "protocol/tlibc_xlsx_reader.h"
 
+#include "tlibc_csv_reader.h"
+
 #include "protocol_types.h"
 #include "protocol_writer.h"
 #include "protocol_reader.h"
@@ -280,9 +282,28 @@ static void test_xlsx()
 	read_xlsx("./etc/item.xlsx", (char*)g_item_table, sizeof(item_table_t), &g_item_table_num, (reader_func)tlibc_read_item_table);
 }
 
+static void test_csv()
+{
+	FILE *fin = NULL;
+	char *line = NULL;
+	size_t line_size = 0;
+	ssize_t read;
+	tlibc_csv_reader_t reader;
+
+	fin = fopen("etc/item.csv", "r");
+	getline(&line, &line_size, fin);
+
+
+	read = getline(&line, &line_size, fin);
+	tlibc_csv_reader_init(&reader, line, (uint16_t)line_size);
+
+}
 
 int main()
 {	
+	test_csv();
+	return 0;
+
 	test_protocol();
 	
 	test_xml();	

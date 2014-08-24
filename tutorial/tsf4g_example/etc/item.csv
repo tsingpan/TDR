@@ -1,0 +1,4 @@
+id,ItemName,物品转生需求,物品使用时间,充值,代币物品,勋章值,价值,储备金,品质等级,物品类型,使用物品吟唱时间,使用目标,可否被移动,可否销毁,可否交易,可否买卖,可否放入仓库,可否加锁,装备后不可交易,是否独占,可否消耗,ColdDownType,ColdDownTime,是否会掉落,分解包ID,是否可合成,,
+ID,ItemName,Metempsychosis,UseTime,Bill,ReplaceItem,Medals,Value,ReserveMoneyFlag,Quality,ItemType,UseSingTime,UserTarget,CanMoved,CanDeleted,CanTrade,CanSold,CanStored,CanLocked,CanBound,IsExclusive,IsExpendable,ColdDownType,ColdDownTime,CanDrop,DecomposePackID,IsMerge,vec,vec_int
+1,强化水晶,0,,,64389,1,1,0,1,crystal,0,,1,1,1,1,1,1,0,0,,,,1,0,,haha;heihei,
+2,一朵鲜花,0,,,,,1,0,1,other,0,,1,1,1,1,1,1,0,0,,,,1,0,,,1;2;3
