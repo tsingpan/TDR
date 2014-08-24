@@ -11,8 +11,6 @@
 #include "protocol/tlibc_binary_reader.h"
 #include "protocol/tlibc_binary_writer.h"
 
-#include "protocol/tlibc_xlsx_reader.h"
-
 #include "tlibc_csv_reader.h"
 
 #include "protocol_types.h"
@@ -211,77 +209,6 @@ item_table_t g_item_table[MAX_ITEM_NUM];
 size_t g_item_table_num;
 #define COL_STR_LEN 1024
 
-static int read_xlsx(const char *file, char *list, size_t unit_size, size_t *list_num, reader_func reader)
-{
-	bool ret = true;
-	tlibc_xlsx_reader_t xlsx_reader;
-	uint32_t i;
-	tlibc_error_code_t r;
-	uint32_t num, row;
-
-	num = 0;
-	r = tlibc_xlsx_reader_init(&xlsx_reader, file);
-	if(r != E_TLIBC_NOERROR)
-	{
-		ret = false;
-		goto done;
-	}
-	r = tlibc_xlsx_reader_open_sheet(&xlsx_reader, NULL, 2);
-	if(r != E_TLIBC_NOERROR)
-	{
-		ret = false;
-		goto fini;
-	}
-	row = tlibc_xlsx_reader_num_rows(&xlsx_reader);
-	for(i = 3; i <= row; ++i)
-	{
-		tlibc_xlsx_reader_row_seek(&xlsx_reader, i);	
-		if(num >= *list_num)
-		{
-			ret = false;
-			goto close_sheet;
-		}
-		r = reader(&xlsx_reader.super, list + unit_size * num);
-
-		if(r == E_TLIBC_EMPTY)
-		{
-			continue;
-		}
-		else if(r != E_TLIBC_NOERROR)
-		{
-			size_t col = tlibc_xlsx_current_col(&xlsx_reader);
-			char col_str[COL_STR_LEN];
-			const char* col_str_ptr = tlibc_xlsx_num2str((int)col, col_str, COL_STR_LEN);
-
-			if(col_str_ptr != NULL)
-			{
-				fprintf(stderr, "%s%d, %s\n", col_str_ptr, i, tstrerror(r));
-			}
-			else
-			{
-				fprintf(stderr, "?%d, %s\n", i, tstrerror(r));
-			}
-			ret = false;
-			goto close_sheet;
-		}
-		++num;
-	}
-	*list_num = num;
-
-close_sheet:
-	tlibc_xlsx_reader_close_sheet(&xlsx_reader);
-fini:
-	tlibc_xlsx_reader_fini(&xlsx_reader);
-done:
-	return ret;
-}
-
-static void test_xlsx()
-{
-	g_item_table_num = MAX_ITEM_NUM;
-	read_xlsx("./etc/item.xlsx", (char*)g_item_table, sizeof(item_table_t), &g_item_table_num, (reader_func)tlibc_read_item_table);
-}
-
 static void test_csv()
 {
 	FILE *fin = NULL;
@@ -319,13 +246,10 @@ static void test_csv()
 int main()
 {	
 	test_csv();
-	return 0;
 
 	test_protocol();
 	
 	test_xml();	
-	
-	test_xlsx();
 
 	return 0;
 }
