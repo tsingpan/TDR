@@ -308,6 +308,12 @@ static void test_csv()
 	tlibc_csv_reader_store(&reader, line, line_size);
 	ret = tlibc_read_item_table(&reader.super, &item);
 	tlibc_csv_reader_close(&reader);
+
+	fgets(line, sizeof(line), fin);
+	line_size = strlen(line);
+	tlibc_csv_reader_store(&reader, line, line_size);
+	ret = tlibc_read_item_table(&reader.super, &item);
+	tlibc_csv_reader_close(&reader);
 }
 
 int main()

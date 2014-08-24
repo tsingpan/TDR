@@ -1,11 +1,12 @@
 #include "tlibc_csv_reader.h"
 #include "tlibc_error_code.h"
+#include "tlibcdef.h"
 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "tlibcdef.h"
+#include <errno.h>
 
 static const char *php_fgetcsv_lookup_trailing_spaces(const char *ptr, size_t len)
 {
@@ -295,12 +296,18 @@ tlibc_error_code_t tlibc_csv_reader_init(tlibc_csv_reader_t *self, const char *t
 {
 	tlibc_error_code_t ret = E_TLIBC_NOERROR;
 	size_t i;
+	tlibc_abstract_reader_init(&self->super);
 
 	self->super.enable_name = true;
 	self->pre_read_uint32 = false;
+	self->field = NULL;
+	self->field_end = NULL;
+	self->read_enum_name_once = false;
+	self->pre_u32 = 0;
 
 	self->super.read_vector_begin = tlibc_csv_read_vector_begin;
 	self->super.read_vector_element_begin = tlibc_csv_read_vector_element_begin;
+	self->super.read_vector_element_end = tlibc_csv_read_vector_element_end;
 	self->super.read_field_begin = tlibc_csv_read_field_begin;	
 	self->super.read_enum_begin = tlibc_csv_read_enum_begin;
 
@@ -343,6 +350,7 @@ tlibc_error_code_t tlibc_csv_reader_init(tlibc_csv_reader_t *self, const char *t
 	for(i = 0; i < self->top_line_fields_num; ++i)
 	{
 		self->top_line_fields[i] = self->top_line + (self->cur_line_fields[i] - self->cur_line);
+		self->field_index[i] = -1;
 	}
 	line_close(self);
 
@@ -361,6 +369,8 @@ void tlibc_csv_reader_fini(tlibc_csv_reader_t *self)
 tlibc_error_code_t tlibc_csv_reader_store(tlibc_csv_reader_t *self, const char *line, size_t line_size)
 {
 	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	self->col = 0;
+
 	line_open(self, line, line_size);
 	if(self->cur_line == NULL)
 	{
@@ -377,92 +387,412 @@ void tlibc_csv_reader_close(tlibc_csv_reader_t *self)
 	line_close(self);
 }
 
-tlibc_error_code_t tlibc_csv_read_vector_begin(tlibc_abstract_reader_t *super, const char* vec_name)
+static int get_field_index(tlibc_csv_reader_t *self, int32_t col)
 {
-	return E_TLIBC_NOERROR;
+	int32_t i;
+	if(col >= TLIBC_CSV_FIELD_NUM)
+	{
+		return -1;
+	}
+
+	if(self->field_index[self->col] >= 0)
+	{
+		return self->field_index[self->col];
+	}
+
+	for(i = 0; i < self->top_line_fields_num; ++i)
+	{
+		if(strcmp(self->top_line_fields[i], self->super.name + 1) == 0)
+		{
+			self->field_index[self->col] = i;
+			return i;
+		}
+	}
+	return -1;
 }
 
-tlibc_error_code_t tlibc_csv_read_vector_element_begin(tlibc_abstract_reader_t *super, const char* var_name, uint32_t index)
+tlibc_error_code_t tlibc_csv_read_vector_begin(tlibc_abstract_reader_t *super, const char* vec_name)
 {
+	char *ch;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	int32_t index;
+	index = get_field_index(self, self->col);
+	if((index < 0) || (index >= TLIBC_CSV_FIELD_NUM))
+	{
+		return E_TLIBC_ERROR;
+	}
+	self->pre_read_uint32 = true;
+	self->field = self->cur_line_fields[index];
+	if((self->field == NULL) || (*self->field == 0))
+	{
+		self->pre_u32 = 0;
+	}
+	else
+	{
+		self->pre_u32 = 1;
+		for(ch = self->field; *ch; ++ch)
+		{
+			if(*ch == ';')
+			{
+				++self->pre_u32;
+			}
+		}
+	}
+
+	++self->col;
 	return E_TLIBC_NOERROR;
 }
 
 tlibc_error_code_t tlibc_csv_read_field_begin(tlibc_abstract_reader_t *super, const char *var_name)
 {
 	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	int32_t index;
 
 	if(self->pre_read_uint32)
 	{   
 		return E_TLIBC_NOERROR;
 	}   
-
 	TLIBC_UNUSED(var_name);
+	index = get_field_index(self, self->col);
+	if((index < 0) || (index >= TLIBC_CSV_FIELD_NUM))
+	{
+		return E_TLIBC_ERROR;
+	}
+	self->field = self->cur_line_fields[index];
 
+	++self->col;
 	return E_TLIBC_NOERROR;
 }
 
+tlibc_error_code_t tlibc_csv_read_vector_element_begin(tlibc_abstract_reader_t *super, const char* var_name, uint32_t index)
+{
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	TLIBC_UNUSED(var_name);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	if(*self->field == '\0')
+	{
+		goto done;
+	}
+
+	self->field_end = self->field;
+	while((*self->field_end != ';') && (*self->field_end != 0))
+	{
+		++self->field_end;
+	}
+
+	if(*self->field_end == ';')
+	{
+		*self->field_end = 0;
+	}
+	else
+	{
+		self->field_end = NULL;
+	}
+	
+done:
+	return ret;
+}
+
+tlibc_error_code_t tlibc_csv_read_vector_element_end(tlibc_abstract_reader_t *super, const char* var_name, uint32_t index)
+{
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	TLIBC_UNUSED(var_name);
+	TLIBC_UNUSED(index);
+	if(self->field_end == NULL)
+	{
+		self->field = NULL;
+	}
+	else
+	{
+		self->field = self->field_end + 1;
+	}
+	return E_TLIBC_NOERROR;
+}
 
 tlibc_error_code_t tlibc_csv_read_enum_begin(tlibc_abstract_reader_t *super, const char *enum_name)
 {
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	TLIBC_UNUSED(enum_name);
+
+	self->read_enum_name_once = true;
 	return E_TLIBC_NOERROR;
 }
 
 tlibc_error_code_t tlibc_csv_read_int8(tlibc_abstract_reader_t *super, int8_t *val)
 {
-	return E_TLIBC_NOERROR;
+	int64_t i64;
+	tlibc_error_code_t ret = tlibc_csv_read_int64(super, &i64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+
+	*val = (int8_t)i64;
+	if(*val != i64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_int16(tlibc_abstract_reader_t *super, int16_t *val)
 {
-	return E_TLIBC_NOERROR;
+	int64_t i64;
+	tlibc_error_code_t ret = tlibc_csv_read_int64(super, &i64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+
+	*val = (int16_t)i64;
+	if(*val != i64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_int32(tlibc_abstract_reader_t *super, int32_t *val)
 {
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	int64_t i64;
+	tlibc_error_code_t ret;
+	if(self->read_enum_name_once)
+	{
+		self->read_enum_name_once = false;
+		ret = E_TLIBC_PLEASE_READ_ENUM_NAME;
+		goto done;
+	}
+	ret = tlibc_csv_read_int64(super, &i64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+
+	*val = (int32_t)i64;
+	if(*val != i64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 	return E_TLIBC_NOERROR;
 }
 
 tlibc_error_code_t tlibc_csv_read_int64(tlibc_abstract_reader_t *super, int64_t *val)
 {
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	if(self->field[0] == '\0')
+	{
+		*val = 0;
+		goto done;
+	}
+
+	errno = 0;
+	*val = strtoll(self->field, NULL, 10);
+	if(errno != 0)
+	{
+		ret = E_TLIBC_ERRNO;
+		goto done;
+	}
+
+	return E_TLIBC_NOERROR;
+done:
+	return ret;
 	return E_TLIBC_NOERROR;
 }
 
 tlibc_error_code_t tlibc_csv_read_uint8(tlibc_abstract_reader_t *super, uint8_t *val)
 {
-	return E_TLIBC_NOERROR;
+	uint64_t ui64;
+	tlibc_error_code_t ret = tlibc_csv_read_uint64(super, &ui64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+
+	*val = (uint8_t)ui64;
+	if(*val != ui64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_uint16(tlibc_abstract_reader_t *super, uint16_t *val)
 {
-	return E_TLIBC_NOERROR;
+	uint64_t ui64;
+	tlibc_error_code_t ret = tlibc_csv_read_uint64(super, &ui64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+	*val = (uint16_t)ui64;
+	if(*val != ui64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_uint32(tlibc_abstract_reader_t *super, uint32_t *val)
 {
-	return E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	uint64_t ui64;
+	if(self->pre_read_uint32)
+	{
+		self->pre_read_uint32 = false;
+		*val = self->pre_u32;
+		goto done;
+	}
+
+	ret = tlibc_csv_read_uint64(super, &ui64);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		goto done;
+	}
+	*val = (uint32_t)ui64;
+	if(*val != ui64)
+	{
+		return E_TLIBC_INTEGER_OVERFLOW;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_uint64(tlibc_abstract_reader_t *super, uint64_t *val)
 {
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	if(self->field[0] == '\0')
+	{
+		*val = 0;
+		goto done;
+	}
+
+	errno = 0;
+	*val = strtoull(self->field, NULL, 10);
+	if(errno != 0)
+	{
+		ret = E_TLIBC_ERRNO;
+		goto done;
+	}
+
 	return E_TLIBC_NOERROR;
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_bool(tlibc_abstract_reader_t *super, bool *val)
 {
-	return E_TLIBC_NOERROR;
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	if(strcmp(self->field, "true") == 0)
+	{
+		*val = true;
+	}
+	else if(strcmp(self->field, "false") == 0)
+	{
+		*val = false;
+	}
+	else
+	{
+		ret = E_TLIBC_MISMATCH;
+		goto done;
+	}
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_double(tlibc_abstract_reader_t *super, double *val)
 {
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	if(*self->field == '\0')
+	{
+		*val = 0;		
+		goto done;
+	}
+
+	errno = 0;
+	*val = strtod(self->field, NULL);
+	if(errno != 0)
+	{
+		ret = E_TLIBC_ERRNO;
+		goto done;
+	}
+
 	return E_TLIBC_NOERROR;
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_char(tlibc_abstract_reader_t *super, char *val)
 {
-	return E_TLIBC_NOERROR;
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+	*val = *self->field;
+
+done:
+	return ret;
 }
 
 tlibc_error_code_t tlibc_csv_read_string(tlibc_abstract_reader_t *super, char *str, uint32_t str_len)
 {
-	return E_TLIBC_NOERROR;
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+	size_t slen = 0;
+	if(self->field == NULL)
+	{
+		ret = E_TLIBC_NOT_FOUND;
+		goto done;
+	}
+
+	slen = strlen(self->field);
+	if(slen >= str_len)
+	{
+		ret = E_TLIBC_OUT_OF_MEMORY;
+		goto done;
+	}
+	memcpy(str, self->field, slen + 1);
+
+done:
+	return ret;
 }
+
