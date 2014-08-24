@@ -285,18 +285,29 @@ static void test_xlsx()
 static void test_csv()
 {
 	FILE *fin = NULL;
-	char *line = NULL;
+	char line[65536];
 	size_t line_size = 0;
-	ssize_t read;
 	tlibc_csv_reader_t reader;
+	item_table_t item;
+	tlibc_error_code_t ret;
 
 	fin = fopen("etc/item.csv", "r");
-	getline(&line, &line_size, fin);
+
+	//¿¿¿¿¿¿¿
+	fgets(line, sizeof(line), fin);
+	line_size = strlen(line);
+
+	//¿¿¿¿¿¿¿¿
+	fgets(line, sizeof(line), fin);
+	line_size = strlen(line);
+	tlibc_csv_reader_init(&reader, line, (uint16_t)(line_size));
 
 
-	read = getline(&line, &line_size, fin);
-	tlibc_csv_reader_init(&reader, line, (uint16_t)line_size);
-
+	fgets(line, sizeof(line), fin);
+	line_size = strlen(line);
+	tlibc_csv_reader_store(&reader, line, line_size);
+	ret = tlibc_read_item_table(&reader.super, &item);
+	tlibc_csv_reader_close(&reader);
 }
 
 int main()

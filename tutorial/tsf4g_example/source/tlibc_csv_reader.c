@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <ctype.h>
+#include "tlibcdef.h"
 
 static const char *php_fgetcsv_lookup_trailing_spaces(const char *ptr, size_t len)
 {
@@ -43,8 +43,18 @@ quit_loop:
 	return ptr;
 }
 
-//移植php中的php_fgetcsv函数
-static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_len)
+static void line_close(tlibc_csv_reader_t *self)
+{
+	if(self->cur_line != NULL)
+	{
+		free(self->cur_line);
+		self->cur_line = NULL;
+	}
+	self->cur_line_size = 0;
+	self->cur_line_fields_num = 0;
+}
+
+static void line_open(tlibc_csv_reader_t *self, const char *buf, size_t buf_len)
 {
 	const char escape_char = '\\';
 	const char delimiter = ',';
@@ -66,8 +76,15 @@ static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_le
 	line_end = limit = const_tptr;
 
 	/* reserve workspace for building each individual field */
+	self->cur_line_fields_num = 0;
 	temp_len = buf_len;
-	temp = malloc(temp_len + line_end_len + 1);
+	self->cur_line_size = temp_len + line_end_len + 1;
+	self->cur_line = malloc(self->cur_line_size);
+	if(self->cur_line == NULL)
+	{
+		return;
+	}
+	temp = self->cur_line;
 
 	/* Initialize return array */
 
@@ -92,7 +109,6 @@ static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_le
 		}
 
 		if (first_field && bptr == line_end) {
-			//add_next_index_null(return_value);
 			break;
 		}
 		first_field = 0;
@@ -121,12 +137,6 @@ static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_le
 								/* break is omitted intentionally */
 
 							case 0: {
-								/*
-										char *new_buf;
-										size_t new_len;
-										char *new_temp;
-										*/
-
 										if (hunk_begin != line_end) {
 											memcpy(tptr, hunk_begin, (size_t)(bptr - hunk_begin));
 											tptr += (bptr - hunk_begin);
@@ -138,36 +148,6 @@ static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_le
 										tptr += line_end_len;
 
 										goto quit_loop_2;
-										/*
-										if (stream == NULL) {
-											goto quit_loop_2;
-										} else if ((new_buf = php_stream_get_line(stream, NULL, 0, &new_len)) == NULL) {
-											 we've got an unterminated enclosure,
-											 * 									 * assign all the data from the start of
-											 * 									 									 * the enclosure to end of data to the
-											 * 									 									 									 * last element 
-											if ((size_t)temp_len > (size_t)(limit - buf)) {
-												goto quit_loop_2;
-											}
-											zval_dtor(return_value);
-											RETVAL_FALSE;
-											goto out;
-										}
-										temp_len += new_len;
-										new_temp = erealloc(temp, temp_len);
-										tptr = new_temp + (size_t)(tptr - temp);
-										temp = new_temp;
-
-										efree(buf);
-										buf_len = new_len;
-										bptr = buf = new_buf;
-										hunk_begin = buf;
-
-										line_end = limit = (char *)php_fgetcsv_lookup_trailing_spaces(buf, buf_len, delimiter TSRMLS_CC);
-										line_end_len = buf_len - (size_t)(limit - buf);
-
-										state = 0;
-										*/
 									} break;
 						}
 						break;
@@ -202,7 +182,8 @@ static void parser_line(tlibc_csv_reader_t *self, const char *buf, size_t buf_le
 								if (*bptr == enclosure) {
 									state = 2;
 								} else if (*bptr == escape_char) {
-									state = 1;
+								//不处理转义字符
+								//	state = 1;
 								}
 								bptr++;
 								break;
@@ -299,19 +280,189 @@ quit_loop_4:
 
 		/* 3. Now pass our field back to php */
 		*comp_end = '\0';
-		//add_next_index_stringl(return_value, temp, comp_end - temp, 1);
-		printf("%s\n", temp);
+		if(self->cur_line_fields_num >= TLIBC_CSV_FIELD_NUM)
+		{
+			break;
+		}
+		self->cur_line_fields[self->cur_line_fields_num] = temp;
+		++self->cur_line_fields_num;
+		temp = comp_end + 1;
 	} while (inc_len > 0);
-
-	free(temp);
 }
 
 
-tlibc_error_code_t tlibc_csv_reader_init(tlibc_csv_reader_t *self, const char *top_line, uint16_t top_line_size)
+tlibc_error_code_t tlibc_csv_reader_init(tlibc_csv_reader_t *self, const char *top_line, size_t top_line_size)
 {
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	size_t i;
+
+	self->super.enable_name = true;
+	self->pre_read_uint32 = false;
+
+	self->super.read_vector_begin = tlibc_csv_read_vector_begin;
+	self->super.read_vector_element_begin = tlibc_csv_read_vector_element_begin;
+	self->super.read_field_begin = tlibc_csv_read_field_begin;	
+	self->super.read_enum_begin = tlibc_csv_read_enum_begin;
+
+	self->super.read_int8 = tlibc_csv_read_int8;
+	self->super.read_int16 = tlibc_csv_read_int16;
+	self->super.read_int32 = tlibc_csv_read_int32;
+	self->super.read_int64 = tlibc_csv_read_int64;
+
+	self->super.read_uint8 = tlibc_csv_read_uint8;
+	self->super.read_uint16 = tlibc_csv_read_uint16;
+	self->super.read_uint32 = tlibc_csv_read_uint32;
+	self->super.read_uint64 = tlibc_csv_read_uint64;
+
+	self->super.read_double = tlibc_csv_read_double;
+	self->super.read_char = tlibc_csv_read_char;
+	self->super.read_bool = tlibc_csv_read_bool;
+	self->super.read_string = tlibc_csv_read_string;
+
+
+
+	self->top_line = NULL;
+	self->top_line_size = 0;
+	self->top_line_fields_num = 0;
+
 	self->cur_line = NULL;
-	parser_line(self, top_line, top_line_size);
+	self->cur_line_size = 0;
+	self->cur_line_fields_num = 0;
+	line_open(self, top_line, top_line_size);
+	if(self->cur_line == NULL)
+	{
+		line_close(self);
+		ret = E_TLIBC_NO_MEMORY;
+		goto done;
+	}
+	self->top_line_size = self->cur_line_size;
+	self->top_line = malloc(self->top_line_size);
+	memcpy(self->top_line, self->cur_line, self->top_line_size);
+
+	self->top_line_fields_num = self->cur_line_fields_num;
+	for(i = 0; i < self->top_line_fields_num; ++i)
+	{
+		self->top_line_fields[i] = self->top_line + (self->cur_line_fields[i] - self->cur_line);
+	}
+	line_close(self);
+
+done:
+	return ret;
+}
+
+void tlibc_csv_reader_fini(tlibc_csv_reader_t *self)
+{
+	if(self->top_line != NULL)
+	{
+		free(self->top_line);
+	}
+}
+
+tlibc_error_code_t tlibc_csv_reader_store(tlibc_csv_reader_t *self, const char *line, size_t line_size)
+{
+	tlibc_error_code_t ret = E_TLIBC_NOERROR;
+	line_open(self, line, line_size);
+	if(self->cur_line == NULL)
+	{
+		line_close(self);
+		goto error_ret;
+	}
+	return E_TLIBC_NOERROR;
+error_ret:
+	return ret;
+}
+
+void tlibc_csv_reader_close(tlibc_csv_reader_t *self)
+{
+	line_close(self);
+}
+
+tlibc_error_code_t tlibc_csv_read_vector_begin(tlibc_abstract_reader_t *super, const char* vec_name)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_vector_element_begin(tlibc_abstract_reader_t *super, const char* var_name, uint32_t index)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_field_begin(tlibc_abstract_reader_t *super, const char *var_name)
+{
+	tlibc_csv_reader_t *self = TLIBC_CONTAINER_OF(super, tlibc_csv_reader_t, super);
+
+	if(self->pre_read_uint32)
+	{   
+		return E_TLIBC_NOERROR;
+	}   
+
+	TLIBC_UNUSED(var_name);
 
 	return E_TLIBC_NOERROR;
 }
 
+
+tlibc_error_code_t tlibc_csv_read_enum_begin(tlibc_abstract_reader_t *super, const char *enum_name)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_int8(tlibc_abstract_reader_t *super, int8_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_int16(tlibc_abstract_reader_t *super, int16_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_int32(tlibc_abstract_reader_t *super, int32_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_int64(tlibc_abstract_reader_t *super, int64_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_uint8(tlibc_abstract_reader_t *super, uint8_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_uint16(tlibc_abstract_reader_t *super, uint16_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_uint32(tlibc_abstract_reader_t *super, uint32_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_uint64(tlibc_abstract_reader_t *super, uint64_t *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_bool(tlibc_abstract_reader_t *super, bool *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_double(tlibc_abstract_reader_t *super, double *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_char(tlibc_abstract_reader_t *super, char *val)
+{
+	return E_TLIBC_NOERROR;
+}
+
+tlibc_error_code_t tlibc_csv_read_string(tlibc_abstract_reader_t *super, char *str, uint32_t str_len)
+{
+	return E_TLIBC_NOERROR;
+}
