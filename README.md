@@ -2,23 +2,23 @@ The Data Representation
 ======
 TDR = [DDL](http://en.wikipedia.org/wiki/Data_Definition_Language) + [Compiler](http://en.wikipedia.org/wiki/Compiler)
 
-ÏêÏ¸ÊÖ²á£¬ Çëµã»÷ÕâÀï ¡ú [https://github.com/randyliu/TDR/wiki](https://github.com/randyliu/TDR/wiki)
+è¯¦ç»†æ‰‹å†Œï¼Œ è¯·ç‚¹å‡»è¿™é‡Œ â†’ [https://github.com/randyliu/TDR/wiki](https://github.com/randyliu/TDR/wiki)
 
-ÌØĞÔ
+ç‰¹æ€§
 ====
 
-	±àÒëÆ÷Ê¹ÓÃre2cÉú³É´Ê·¨·ÖÎö´úÂë£¬ bisonÉú³ÉÓï·¨·ÖÎö´úÂë¡£ 
-	Ê¹ÓÃCÓïÑÔ±àĞ´£¬ ÎŞµÚÈı·½¿âÒÀÀµ£¬ ¾ßÓĞºÜ¸ßµÄ¿ÉÒÆÖ²ĞÔ£¬ Ö§³ÖWindows, Linux, Unix(Mac OSX)Æ½Ì¨¡£
+	ç¼–è¯‘å™¨ä½¿ç”¨re2cç”Ÿæˆè¯æ³•åˆ†æä»£ç ï¼Œ bisonç”Ÿæˆè¯­æ³•åˆ†æä»£ç ã€‚ 
+	ä½¿ç”¨Cè¯­è¨€ç¼–å†™ï¼Œ æ— ç¬¬ä¸‰æ–¹åº“ä¾èµ–ï¼Œ å…·æœ‰å¾ˆé«˜çš„å¯ç§»æ¤æ€§ï¼Œ æ”¯æŒWindows, Linux, Unix(Mac OSX)å¹³å°ã€‚
 
-ÎÊÌâºÍ·´À¡
+é—®é¢˜å’Œåé¦ˆ
 ==========
-µã»÷ÕâÀï ¡ú [https://github.com/randyliu/TDR/issues](https://github.com/randyliu/TDR/issues)
+ç‚¹å‡»è¿™é‡Œ â†’ [https://github.com/randyliu/TDR/issues](https://github.com/randyliu/TDR/issues)
 
-°²×°
+å®‰è£…
 ====
-ÏêÏ¸µÄ°²×°ËµÃ÷£¬ Çëµã»÷ÕâÀï ¡ú [https://github.com/randyliu/TDR/wiki/Installation](https://github.com/randyliu/TDR/wiki/Installation)
+è¯¦ç»†çš„å®‰è£…è¯´æ˜ï¼Œ è¯·ç‚¹å‡»è¿™é‡Œ â†’ [https://github.com/randyliu/TDR/wiki/Installation](https://github.com/randyliu/TDR/wiki/Installation)
 
-LinuxÏÂÃæÒ»¸öµäĞÍµÄ°²×°¹ı³ÌÈçÏÂ£º
+Linuxä¸‹é¢ä¸€ä¸ªå…¸å‹çš„å®‰è£…è¿‡ç¨‹å¦‚ä¸‹ï¼š
 
 	git clone https://github.com/randyliu/TDR tdr
 	mkdir build
