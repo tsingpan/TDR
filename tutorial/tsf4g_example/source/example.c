@@ -11,7 +11,7 @@
 #include "protocol/tlibc_binary_reader.h"
 #include "protocol/tlibc_binary_writer.h"
 
-#include "tlibc_csv_reader.h"
+#include "protocol/tlibc_csv_reader.h"
 
 #include "protocol_types.h"
 #include "protocol_writer.h"
@@ -214,6 +214,8 @@ static void test_csv()
 	FILE *fin = NULL;
 	char line[65536];
 	size_t line_size = 0;
+	int32_t row = 0;
+
 	tlibc_csv_reader_t reader;
 	item_table_t item;
 	tlibc_error_code_t ret;
@@ -221,26 +223,38 @@ static void test_csv()
 	fin = fopen("etc/item.csv", "r");
 
 	//¿¿¿¿¿¿¿
+	++row;
 	fgets(line, sizeof(line), fin);
 	line_size = strlen(line);
 
 	//¿¿¿¿¿¿¿¿
+	++row;
 	fgets(line, sizeof(line), fin);
 	line_size = strlen(line);
 	tlibc_csv_reader_init(&reader, line, (uint16_t)(line_size));
 
 
+	++row;
+	fgets(line, sizeof(line), fin);
+	line_size = strlen(line);
+	tlibc_csv_reader_store(&reader, line, line_size);
+	ret = tlibc_read_item_table(&reader.super, &item);
+	if(ret != E_TLIBC_NOERROR)
+	{
+		int32_t col = tlibc_csv_reader_get_cur_col(&reader);
+		const char *name = tlibc_csv_reader_get_cur_name(&reader);
+		printf("error(%d, %d[%s]), %s\n", row, col, name, tstrerror(ret));
+	}
+	tlibc_csv_reader_close(&reader);
+
+	++row;
 	fgets(line, sizeof(line), fin);
 	line_size = strlen(line);
 	tlibc_csv_reader_store(&reader, line, line_size);
 	ret = tlibc_read_item_table(&reader.super, &item);
 	tlibc_csv_reader_close(&reader);
 
-	fgets(line, sizeof(line), fin);
-	line_size = strlen(line);
-	tlibc_csv_reader_store(&reader, line, line_size);
-	ret = tlibc_read_item_table(&reader.super, &item);
-	tlibc_csv_reader_close(&reader);
+	tlibc_csv_reader_fini(&reader);
 }
 
 int main()
