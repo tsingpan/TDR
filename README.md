@@ -8,8 +8,8 @@ TDR = [DDL](http://en.wikipedia.org/wiki/Data_Definition_Language) + [Compiler](
 
 特性
 ----
-	使用C语言编写， 不链接任何第三方库， 具有很高的可移植性。
-	具有严谨的语法结构，使用re2c和bison进行编译前端的处理。
+- 使用C语言编写， 不链接任何第三方库， 具有很高的可移植性。
+- 具有严谨的语法结构，使用[re2c](http://www.re2c.org/)和[bison](http://www.gnu.org/software/bison/)进行编译前端的处理。
 
 
 问题和反馈
