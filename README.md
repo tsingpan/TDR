@@ -20,7 +20,7 @@ TDR = [DDL](http://en.wikipedia.org/wiki/Data_Definition_Language) + [Compiler](
 ----
 详细的安装说明， 请点击这里 → [https://github.com/randyliu/TDR/wiki/Installation](https://github.com/randyliu/TDR/wiki/Installation)
 
-Linux下面一个典型的安装过程如下：
+Linux下的安装过程如下：
 
 	git clone https://github.com/randyliu/TDR tdr
 	mkdir build
