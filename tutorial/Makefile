@@ -1,3 +1,3 @@
-SUBMODS = tsf4g_example
+SUBMODS = tlibc_example
 
 include search.mk

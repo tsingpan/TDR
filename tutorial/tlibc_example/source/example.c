@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include "tlibc_error_code.h"
-#include "core/tlibc_string.h"
+#include "tlibc_string.h"
 
-#include "protocol/tlibc_xml_reader.h"
-#include "protocol/tlibc_xml_writer.h"
+#include "tlibc_xml_reader.h"
+#include "tlibc_xml_writer.h"
 
-#include "protocol/tlibc_compact_reader.h"
-#include "protocol/tlibc_compact_writer.h"
+#include "tlibc_compact_reader.h"
+#include "tlibc_compact_writer.h"
 
-#include "protocol/tlibc_binary_reader.h"
-#include "protocol/tlibc_binary_writer.h"
+#include "tlibc_binary_reader.h"
+#include "tlibc_binary_writer.h"
 
-#include "protocol/tlibc_csv_reader.h"
+#include "tlibc_csv_reader.h"
 
 #include "protocol_types.h"
 #include "protocol_writer.h"

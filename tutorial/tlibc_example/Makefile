@@ -1,12 +1,12 @@
-BINARY=bin/tsf4g_example
+BINARY=bin/tlibc_example
 TARGET= $(BINARY)
-TSF4G=/usr/local/tsf4g
+TLIBC=/usr/local/tlibc
 HOME=../
-CINC=-I$(TSF4G)/include -I$(TSF4G)/tdr -Itdr -Itdr/common
-LDPATH=-L$(TSF4G)/lib
-DEPLIBS=-lrt -ltlibc -lz
+CINC=-I$(TLIBC)/include -I$(TLIBC)/tdr -Itdr -Itdr/common
+LDPATH=-L$(TLIBC)/lib
+DEPLIBS=-lrt -lz -ltprotocol -ltcore
 DEPOFILE=
-TDRINC=-I$(TSF4G)/tdr -Itdr
+TDRINC=-I$(tlibc)/tdr -Itdr
 
 CFILE=$(wildcard source/*.c)
 TYPES_TDR_FILE=$(wildcard tdr/*.tdr)
